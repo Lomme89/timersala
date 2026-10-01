@@ -42,6 +42,7 @@ public sealed class AppSettings
     public bool FlashOnOvertime { get; set; } = true;
 
     // ── Messaggi all'oratore ──
+    public bool MessagesEnabled { get; set; } = true;
     public List<string> MessagePresets { get; set; } = ["Concludi", "Ultimo minuto", "Più forte", "Avvicinati al microfono", "Tempo scaduto"];
 
     /// <summary>Per quanti secondi resta il messaggio (0 = finché non viene tolto).</summary>

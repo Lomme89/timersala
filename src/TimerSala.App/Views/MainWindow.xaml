@@ -228,22 +228,32 @@
                 <Button Style="{StaticResource FlatButton}" Content="−1 min" Command="{Binding RemoveMinuteCommand}" Margin="0,0,3,0" ToolTip="Togli un minuto (−)" />
                 <Button Style="{StaticResource FlatButton}" Content="+1 min" Command="{Binding AddMinuteCommand}" Margin="3,0,0,0" ToolTip="Aggiungi un minuto (+)" />
             </UniformGrid>
-            <Grid Margin="0,6,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <ComboBox x:Name="MessageInput" IsEditable="True" ItemsSource="{Binding MessagePresets}"
-                          Text="{Binding MessageText, UpdateSourceTrigger=PropertyChanged}" KeyDown="MessageInput_KeyDown"
-                          ToolTip="Messaggio per l'oratore: scegli una frase o scrivila e premi Invio" />
-                <Button Grid.Column="1" Style="{StaticResource IconButton}" Content="&#xE724;" Margin="6,0,0,0"
-                        Command="{Binding SendMessageCommand}" ToolTip="Mostra il messaggio sullo schermo" />
-                <Button Grid.Column="2" Style="{StaticResource IconButton}" Content="&#xE711;" Margin="6,0,0,0"
-                        Command="{Binding ClearMessageCommand}" ToolTip="Togli il messaggio" />
-            </Grid>
-            <TextBlock Text="{Binding MessageInfo}" Foreground="{StaticResource AmberBrush}" FontSize="12" Margin="2,4,0,0"
-                       TextTrimming="CharacterEllipsis" Visibility="{Binding HasMessage, Converter={StaticResource BoolToVis}}" />
+            <Border Margin="0,10,0,0" CornerRadius="10" Padding="10,8,10,10" Background="#14FBBF24" BorderBrush="#55FBBF24" BorderThickness="1"
+                    Visibility="{Binding MessagesEnabled, Converter={StaticResource BoolToVis}}">
+                <StackPanel>
+                    <DockPanel Margin="0,0,0,6">
+                        <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE8BD;" Foreground="{StaticResource AmberBrush}" FontSize="12"
+                                   VerticalAlignment="Center" Margin="0,0,6,0" />
+                        <TextBlock Text="MESSAGGIO ALL'ORATORE" Foreground="{StaticResource AmberBrush}" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    </DockPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <ComboBox x:Name="MessageInput" IsEditable="True" ItemsSource="{Binding MessagePresets}"
+                                  Text="{Binding MessageText, UpdateSourceTrigger=PropertyChanged}" KeyDown="MessageInput_KeyDown"
+                                  ToolTip="Scegli una frase o scrivila e premi Invio" />
+                        <Button Grid.Column="1" Style="{StaticResource IconButton}" Content="&#xE724;" Margin="6,0,0,0"
+                                Command="{Binding SendMessageCommand}" ToolTip="Mostra il messaggio sullo schermo" />
+                        <Button Grid.Column="2" Style="{StaticResource IconButton}" Content="&#xE711;" Margin="6,0,0,0"
+                                Command="{Binding ClearMessageCommand}" ToolTip="Togli il messaggio" />
+                    </Grid>
+                    <TextBlock Text="{Binding MessageInfo}" Foreground="{StaticResource AmberBrush}" FontSize="12" Margin="2,6,0,0"
+                               TextTrimming="CharacterEllipsis" Visibility="{Binding HasMessage, Converter={StaticResource BoolToVis}}" />
+                </StackPanel>
+            </Border>
         </StackPanel>
 
         <!-- Elenco parti -->

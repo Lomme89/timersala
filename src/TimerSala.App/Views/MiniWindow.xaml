@@ -66,6 +66,13 @@
             <Button Style="{StaticResource FlatButton}" Padding="4,5" FontSize="12" Content="+1 min" Command="{Binding AddMinuteCommand}" Margin="3,0,0,0" />
         </UniformGrid>
         <Grid Grid.Row="4" Margin="0,6,0,0">
+            <Grid.Visibility>
+                <Binding Path="MessagesEnabled">
+                    <Binding.Converter>
+                        <BooleanToVisibilityConverter />
+                    </Binding.Converter>
+                </Binding>
+            </Grid.Visibility>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />

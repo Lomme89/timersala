@@ -27,11 +27,11 @@ public class RemoteControlTests
         public TimerWebServer Server { get; }
         public HttpClient Http { get; }
 
-        public Fixture(bool enabled = true)
+        public Fixture(bool enabled = true, bool messages = true)
         {
             Timer.LoadMeeting(MeetingTemplates.DefaultMidweek());
             Server = new TimerWebServer(Timer, () => new DisplayOptions(true, true, false), Messages,
-                () => new RemoteConfig(enabled, "1234", ["Concludi"]),
+                () => new RemoteConfig(enabled, "1234", ["Concludi"], messages),
                 (a, v) =>
                 {
                     Received.Add((a, v));
@@ -96,6 +96,17 @@ public class RemoteControlTests
         }
         await using var f = new Fixture();
         Assert.Equal(HttpStatusCode.BadRequest, (await f.Send("1234", "shutdown")).StatusCode);
+    }
+
+    [Fact]
+    public async Task Messages_can_be_disabled_globally()
+    {
+        await using var f = new Fixture(messages: false);
+        Assert.Equal(HttpStatusCode.BadRequest, (await f.Send("1234", RemoteActions.Message, "Concludi")).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await f.Send("1234", RemoteActions.Toggle)).StatusCode);
+        using var config = JsonDocument.Parse(await f.Http.GetStringAsync("/api/config"));
+        Assert.False(config.RootElement.GetProperty("messages").GetBoolean());
+        Assert.Equal(0, config.RootElement.GetProperty("presets").GetArrayLength());
     }
 
     [Fact]

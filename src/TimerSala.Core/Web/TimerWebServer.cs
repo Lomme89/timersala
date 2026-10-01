@@ -42,7 +42,7 @@ public sealed record DisplayOptions(bool ShowClockWhenIdle, bool ShowNextPartWhe
 }
 
 /// <summary>Configurazione del controllo remoto.</summary>
-public sealed record RemoteConfig(bool Enabled, string Pin, IReadOnlyList<string> Presets);
+public sealed record RemoteConfig(bool Enabled, string Pin, IReadOnlyList<string> Presets, bool MessagesEnabled = true);
 
 /// <summary>Comandi accettati dal controllo remoto.</summary>
 public static class RemoteActions
@@ -106,7 +106,12 @@ public sealed class TimerWebServer : IAsyncDisposable
         app.MapGet("/api/config", () =>
         {
             var r = _remote();
-            return Results.Json(new { control = r.Enabled, presets = r.Enabled ? r.Presets : [] }, Json);
+            return Results.Json(new
+            {
+                control = r.Enabled,
+                messages = r.MessagesEnabled,
+                presets = r.Enabled && r.MessagesEnabled ? r.Presets : [],
+            }, Json);
         });
         app.MapPost("/api/control", HandleControl);
 
@@ -142,6 +147,8 @@ public sealed class TimerWebServer : IAsyncDisposable
         if (req.Action == "check") return Results.Json(new { ok = true }, Json);
         if (req.Action is null || !RemoteActions.All.Contains(req.Action))
             return Results.Json(new { error = "Comando sconosciuto." }, Json, statusCode: 400);
+        if (!r.MessagesEnabled && req.Action is RemoteActions.Message or RemoteActions.ClearMessage)
+            return Results.Json(new { error = "I messaggi all'oratore sono disattivati sul PC." }, Json, statusCode: 400);
 
         await _onCommand(req.Action, req.Value);
         return Results.Json(new { ok = true }, Json);

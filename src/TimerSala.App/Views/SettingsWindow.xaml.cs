@@ -74,6 +74,7 @@ public partial class SettingsWindow : Window
         ShowClock.IsChecked = s.ShowClockWhenIdle;
         ShowNext.IsChecked = s.ShowNextPartWhenIdle;
 
+        MessagesEnabled.IsChecked = s.MessagesEnabled;
         Presets.Text = string.Join(Environment.NewLine, s.MessagePresets);
         MessageSeconds.Text = s.MessageSeconds.ToString();
         RemoteEnabled.IsChecked = s.RemoteControlEnabled;
@@ -131,6 +132,7 @@ public partial class SettingsWindow : Window
 
         s.MessagePresets = Presets.Text.Split('\n').Select(l => l.Trim()).Where(l => l.Length > 0).Take(20).ToList();
         s.MessageSeconds = msgSeconds;
+        s.MessagesEnabled = MessagesEnabled.IsChecked == true;
         s.RemoteControlEnabled = RemoteEnabled.IsChecked == true;
         if (pin.Length >= 4) s.RemotePin = pin;
         s.WebServerEnabled = WebEnabled.IsChecked == true;

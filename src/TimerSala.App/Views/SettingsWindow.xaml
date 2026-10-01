@@ -150,6 +150,9 @@
             <TabItem Header="Messaggi">
                 <DockPanel Margin="12">
                     <StackPanel DockPanel.Dock="Top">
+                        <CheckBox x:Name="MessagesEnabled" Content="Abilita i messaggi all'oratore" FontWeight="SemiBold" Margin="0,0,0,4" />
+                        <TextBlock Style="{StaticResource Hint}" Margin="0,0,0,12"
+                                   Text="Se disattivati, la riga dei messaggi sparisce dal controller, dalla modalità mini e dalla pagina web." />
                         <TextBlock Text="Frasi pronte per l'oratore, una per riga:" Margin="0,0,0,8" />
                     </StackPanel>
                     <StackPanel DockPanel.Dock="Bottom" Margin="0,10,0,0">

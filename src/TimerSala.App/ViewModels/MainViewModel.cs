@@ -47,7 +47,7 @@ public sealed partial class MainViewModel : ObservableObject
         Settings = store.LoadSettings();
         _wol = new WolClient { DiagnosticsFolder = store.DiagnosticsFolder };
         _web = new TimerWebServer(Timer, () => DisplayOptions.From(Settings), Messages,
-            () => new RemoteConfig(Settings.RemoteControlEnabled, Settings.RemotePin, Settings.MessagePresets),
+            () => new RemoteConfig(Settings.RemoteControlEnabled, Settings.RemotePin, Settings.MessagePresets, Settings.MessagesEnabled),
             (action, value) => Application.Current.Dispatcher.InvokeAsync(() => ExecuteRemote(action, value)).Task);
         Messages.Changed += (_, _) => Application.Current.Dispatcher.BeginInvoke(RefreshDisplay);
         ApplyTimerSettings();
@@ -636,13 +636,14 @@ public sealed partial class MainViewModel : ObservableObject
     public bool HasMessage { get; set => Set(ref field, value); }
     public string MessageInfo { get; set => Set(ref field, value); } = "";
     public IReadOnlyList<string> MessagePresets => Settings.MessagePresets;
+    public bool MessagesEnabled => Settings.MessagesEnabled;
 
     public ICommand SendMessageCommand => field ??= new RelayCommand(p => ShowMessage(p as string ?? MessageText));
     public ICommand ClearMessageCommand => field ??= new RelayCommand(() => Messages.Clear());
 
     public void ShowMessage(string? text)
     {
-        if (string.IsNullOrWhiteSpace(text)) return;
+        if (string.IsNullOrWhiteSpace(text) || !Settings.MessagesEnabled) return;
         Messages.Show(text, Settings.MessageSeconds > 0 ? TimeSpan.FromSeconds(Settings.MessageSeconds) : null);
         MessageText = "";
     }
@@ -721,6 +722,8 @@ public sealed partial class MainViewModel : ObservableObject
         bool webChanged = settings.WebServerEnabled != Settings.WebServerEnabled || settings.WebServerPort != Settings.WebServerPort;
         Settings = settings;
         OnPropertyChanged(nameof(MessagePresets));
+        OnPropertyChanged(nameof(MessagesEnabled));
+        if (!settings.MessagesEnabled) Messages.Clear();
         OnPropertyChanged(nameof(ControlUrl));
         ApplyTimerSettings();
         UpdateMeetingStart();

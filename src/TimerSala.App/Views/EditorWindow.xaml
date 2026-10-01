@@ -155,9 +155,11 @@
                         <Button Grid.Column="3" Style="{StaticResource IconButton}" Content="&#xE70D;" Command="{Binding MoveDownCommand}" ToolTip="Sposta giù (Alt+↓)" />
                     </Grid>
                     <ListBox x:Name="PartsList" ItemsSource="{Binding Parts}" SelectedItem="{Binding Selected}" ItemTemplate="{StaticResource PartRow}"
-                             ItemContainerStyle="{StaticResource PartItem}" AllowDrop="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                             PreviewMouseLeftButtonDown="List_PreviewMouseDown" PreviewMouseMove="List_PreviewMouseMove" Drop="List_Drop"
-                             DragOver="List_DragOver" PreviewKeyDown="List_PreviewKeyDown" />
+                             ItemContainerStyle="{StaticResource PartItem}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             ScrollViewer.CanContentScroll="False"
+                             PreviewMouseLeftButtonDown="List_PreviewMouseDown" PreviewMouseMove="List_PreviewMouseMove"
+                             PreviewMouseLeftButtonUp="List_PreviewMouseUp" LostMouseCapture="List_LostMouseCapture"
+                             PreviewKeyDown="List_PreviewKeyDown" />
                 </DockPanel>
             </Border>
 

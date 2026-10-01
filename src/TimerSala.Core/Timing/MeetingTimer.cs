@@ -30,6 +30,35 @@ public sealed class MeetingTimer
 
     public int CounselSeconds { get; set; } = 60;
 
+    DateTimeOffset? _meetingStart;
+    int _countdownLeadSeconds = 300;
+    bool _forceCountdown;
+
+    /// <summary>Orario di inizio dell'adunanza corrente (per il conto alla rovescia).</summary>
+    public DateTimeOffset? MeetingStart
+    {
+        get { lock (_lock) return _meetingStart; }
+        set { lock (_lock) _meetingStart = value; }
+    }
+
+    /// <summary>Quanti secondi prima dell'inizio compare il conto alla rovescia (0 = disattivato).</summary>
+    public int CountdownLeadSeconds
+    {
+        get { lock (_lock) return _countdownLeadSeconds; }
+        set { lock (_lock) _countdownLeadSeconds = Math.Max(0, value); }
+    }
+
+    /// <summary>Mostra il conto alla rovescia fino all'inizio anche prima del preavviso.</summary>
+    public bool ForceCountdown
+    {
+        get { lock (_lock) return _forceCountdown; }
+        set
+        {
+            lock (_lock) _forceCountdown = value;
+            Raise();
+        }
+    }
+
     /// <summary>Alla fermata seleziona automaticamente la parte successiva.</summary>
     public bool AutoAdvance { get; set; } = true;
 
@@ -99,6 +128,7 @@ public sealed class MeetingTimer
             _targetSeconds = part.DurationSeconds;
             _carried = _actual.TryGetValue(_selected, out var t) ? t : TimeSpan.Zero;
             _startedAt = _clock.GetUtcNow();
+            _forceCountdown = false;
         }
         Raise();
     }
@@ -112,6 +142,7 @@ public sealed class MeetingTimer
             _targetSeconds = CounselSeconds;
             _carried = TimeSpan.Zero;
             _startedAt = _clock.GetUtcNow();
+            _forceCountdown = false;
         }
         Raise();
     }
@@ -223,6 +254,25 @@ public sealed class MeetingTimer
             {
                 int n = FirstTimedFrom(from);
                 return n >= 0 ? _meeting.Parts[n].Title : null;
+            }
+
+            if (_startedAt is null && _meetingStart is { } start && now < start &&
+                (_forceCountdown || (_countdownLeadSeconds > 0 && start - now <= TimeSpan.FromSeconds(_countdownLeadSeconds))))
+            {
+                double remainingToStart = (start - now).TotalSeconds;
+                int target = Math.Max(_countdownLeadSeconds, (int)Math.Ceiling(remainingToStart));
+                return new TimerSnapshot
+                {
+                    Phase = remainingToStart <= 60 ? TimerPhase.Warning : TimerPhase.Normal,
+                    Mode = TimerMode.Countdown,
+                    Title = "L'adunanza inizia tra",
+                    TargetSeconds = target,
+                    ElapsedSeconds = target - remainingToStart,
+                    NextTitle = _selected >= 0 ? _meeting.Parts[_selected].Title : null,
+                    MeetingTitle = _meeting.Title,
+                    DelaySeconds = delay,
+                    Now = now,
+                };
             }
 
             if (_startedAt is null)

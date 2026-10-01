@@ -113,3 +113,57 @@ public class MeetingTimerTests
     public void Formats_remaining(double secs, string expected) =>
         Assert.Equal(expected, TimerSnapshot.FormatRemaining(secs));
 }
+
+public class CountdownTests
+{
+    static (MeetingTimer, FakeClock) Create()
+    {
+        var clock = new FakeClock(new DateTimeOffset(2026, 10, 7, 18, 50, 0, TimeSpan.Zero));
+        var t = new MeetingTimer(clock) { CountdownLeadSeconds = 300 };
+        t.LoadMeeting(MeetingTemplates.DefaultMidweek());
+        t.MeetingStart = new DateTimeOffset(2026, 10, 7, 19, 0, 0, TimeSpan.Zero);
+        return (t, clock);
+    }
+
+    [Fact]
+    public void Countdown_appears_only_in_the_last_minutes()
+    {
+        var (t, clock) = Create();
+        Assert.Equal(TimerPhase.Idle, t.GetSnapshot().Phase);
+
+        clock.Advance(TimeSpan.FromMinutes(5.5));
+        var s = t.GetSnapshot();
+        Assert.Equal(TimerMode.Countdown, s.Mode);
+        Assert.Equal("04:30", s.Display);
+        Assert.Equal(TimerPhase.Normal, s.Phase);
+
+        clock.Advance(TimeSpan.FromMinutes(4));
+        Assert.Equal(TimerPhase.Warning, t.GetSnapshot().Phase);
+
+        clock.Advance(TimeSpan.FromMinutes(1));
+        Assert.Equal(TimerPhase.Idle, t.GetSnapshot().Phase);
+    }
+
+    [Fact]
+    public void Forced_countdown_shows_early_and_ends_when_a_part_starts()
+    {
+        var (t, _) = Create();
+        t.ForceCountdown = true;
+        var s = t.GetSnapshot();
+        Assert.Equal(TimerMode.Countdown, s.Mode);
+        Assert.Equal("10:00", s.Display);
+
+        t.Start();
+        Assert.Equal(TimerMode.Part, t.GetSnapshot().Mode);
+        t.Stop();
+        Assert.False(t.ForceCountdown);
+    }
+
+    [Fact]
+    public void Start_time_is_computed_from_settings()
+    {
+        var s = new TimerSala.Core.Storage.AppSettings { MidweekDay = DayOfWeek.Thursday, MidweekTime = new TimeOnly(19, 30) };
+        Assert.Equal(new DateTime(2026, 10, 8, 19, 30, 0), s.StartOf(MeetingKind.Midweek, new DateOnly(2026, 10, 5)));
+        Assert.Equal(new DateTime(2026, 10, 11, 10, 0, 0), s.StartOf(MeetingKind.Weekend, new DateOnly(2026, 10, 5)));
+    }
+}

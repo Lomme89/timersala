@@ -71,6 +71,7 @@
         <!-- Intestazione -->
         <DockPanel Margin="0,0,0,8">
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                <Button Style="{StaticResource GhostIconButton}" Content="&#xE73F;" ToolTip="Modalità mini (M)" Command="{Binding ToggleMiniCommand}" />
                 <Button Style="{StaticResource GhostIconButton}" Content="&#xE70F;" ToolTip="Modifica schema (E)" Click="Edit_Click" />
                 <Button Style="{StaticResource GhostIconButton}" Content="&#xE713;" ToolTip="Impostazioni" Click="Settings_Click" />
             </StackPanel>
@@ -129,6 +130,7 @@
                         </StackPanel>
                     </ToggleButton>
                 </Grid>
+                <TextBlock Text="{Binding ScheduleText}" Style="{StaticResource Caption}" HorizontalAlignment="Center" Margin="0,8,0,0" />
             </StackPanel>
         </Border>
 
@@ -199,10 +201,10 @@
                 </Button>
                 <Button Grid.Column="2" Style="{StaticResource IconButton}" Width="50" Height="56" Content="&#xE893;" Command="{Binding NextCommand}" ToolTip="Parte successiva (→)" HorizontalAlignment="Right" />
             </Grid>
-            <UniformGrid Columns="3" Margin="0,6,0,0">
+            <UniformGrid Columns="4" Margin="0,6,0,0">
                 <Button Style="{StaticResource FlatButton}" Content="−1 min" Command="{Binding RemoveMinuteCommand}" Margin="0,0,3,0" ToolTip="Togli un minuto (−)" />
                 <Button Style="{StaticResource FlatButton}" Content="+1 min" Command="{Binding AddMinuteCommand}" Margin="3,0" ToolTip="Aggiungi un minuto (+)" />
-                <Button x:Name="CounselButton" Command="{Binding CounselCommand}" Margin="3,0,0,0"
+                <Button x:Name="CounselButton" Command="{Binding CounselCommand}" Margin="3,0"
                         ToolTip="Avvia il timer del consiglio (C)">
                     <Button.Style>
                         <Style TargetType="Button" BasedOn="{StaticResource FlatButton}">
@@ -215,10 +217,21 @@
                             </Style.Triggers>
                         </Style>
                     </Button.Style>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE8BD;" VerticalAlignment="Center" Margin="0,0,6,0" />
-                        <TextBlock Text="Consiglio" />
-                    </StackPanel>
+                    <TextBlock Text="Consiglio" />
+                </Button>
+                <Button Command="{Binding ToggleCountdownCommand}" Margin="3,0,0,0"
+                        ToolTip="Conto alla rovescia fino all'inizio dell'adunanza (I). Compare comunque da solo qualche minuto prima.">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource FlatButton}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsCountdown}" Value="True">
+                                    <Setter Property="BorderBrush" Value="{StaticResource GreenBrush}" />
+                                    <Setter Property="Foreground" Value="{StaticResource GreenBrush}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                    <TextBlock Text="Countdown" />
                 </Button>
             </UniformGrid>
         </StackPanel>

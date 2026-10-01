@@ -13,7 +13,33 @@ using TimerSala.Core.Timing;
 namespace TimerSala.Core.Web;
 
 /// <summary>Opzioni di visualizzazione condivise con la pagina web.</summary>
-public sealed record DisplayOptions(bool ShowClockWhenIdle, bool ShowNextPartWhenIdle, bool ShowDelay);
+public sealed record DisplayOptions(bool ShowClockWhenIdle, bool ShowNextPartWhenIdle, bool ShowDelay)
+{
+    public string Theme { get; init; } = "dark";
+    public string Layout { get; init; } = "classic";
+    public string Font { get; init; } = "";
+    public bool ColoredDigits { get; init; } = true;
+    public bool ShowTitle { get; init; } = true;
+    public bool ShowSection { get; init; } = true;
+    public bool ShowBar { get; init; } = true;
+    public bool ShowNext { get; init; } = true;
+    public bool ShowClock { get; init; } = true;
+    public bool Flash { get; init; } = true;
+
+    public static DisplayOptions From(Storage.AppSettings s) => new(s.ShowClockWhenIdle, s.ShowNextPartWhenIdle, s.ShowDelayOnDisplay)
+    {
+        Theme = s.DisplayTheme.ToString().ToLowerInvariant(),
+        Layout = s.DisplayLayout.ToString().ToLowerInvariant(),
+        Font = s.DisplayFont,
+        ColoredDigits = s.ColoredDigits,
+        ShowTitle = s.ShowTitle,
+        ShowSection = s.ShowSection,
+        ShowBar = s.ShowProgressBar,
+        ShowNext = s.ShowNextPart,
+        ShowClock = s.ShowClockWhileRunning,
+        Flash = s.FlashOnOvertime,
+    };
+}
 
 /// <summary>
 /// Server web integrato: permette di vedere il timer da qualsiasi dispositivo in rete
@@ -109,6 +135,19 @@ public sealed class TimerWebServer : IAsyncDisposable
             showClock = o.ShowClockWhenIdle,
             showNext = o.ShowNextPartWhenIdle,
             showDelay = o.ShowDelay,
+            style = new
+            {
+                theme = o.Theme,
+                layout = o.Layout,
+                font = o.Font,
+                colored = o.ColoredDigits,
+                showTitle = o.ShowTitle,
+                showSection = o.ShowSection,
+                showBar = o.ShowBar,
+                showNext = o.ShowNext,
+                showClock = o.ShowClock,
+                flash = o.Flash,
+            },
         };
     }
 

@@ -14,6 +14,10 @@ public partial class TimerWindow : Window
         InitializeComponent();
         DataContext = vm;
         SizeChanged += (_, _) => ApplyScale();
+        vm.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(MainViewModel.ShowScreenHeader)) ApplyScale();
+        };
         DpiChanged += (_, _) => Dispatcher.BeginInvoke(PlaceOnMonitor);
     }
 
@@ -36,7 +40,12 @@ public partial class TimerWindow : Window
         TitleTb.MaxHeight = TitleTb.FontSize * 1.35 * 2;
         SectionTb.FontSize = h * 0.032;
         Chip.Width = Math.Max(6, h * 0.012);
-        Bar.Height = Math.Max(8, h * 0.025);
+        Bar.Height = Track.Height = Math.Max(8, h * 0.025);
+
+        // in "Solo cifre" le cifre occupano tutto lo schermo
+        bool full = DataContext is MainViewModel { ShowScreenHeader: false };
+        HeaderRow.Height = new GridLength(full ? 0 : 17, GridUnitType.Star);
+        FooterRow.Height = new GridLength(full ? 0 : 10, GridUnitType.Star);
         FooterLeft.FontSize = h * 0.045;
         FooterRight.FontSize = h * 0.05;
     }

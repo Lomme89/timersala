@@ -3,8 +3,60 @@ using TimerSala.Core.Wol;
 
 namespace TimerSala.Core.Storage;
 
+[JsonConverter(typeof(JsonStringEnumConverter<DisplayTheme>))]
+public enum DisplayTheme { Dark, Light }
+
+[JsonConverter(typeof(JsonStringEnumConverter<DisplayLayout>))]
+public enum DisplayLayout
+{
+    /// <summary>Titolo, cifre, barra e piè di pagina.</summary>
+    Classic,
+    /// <summary>Lo sfondo si svuota da destra a sinistra come una clessidra orizzontale.</summary>
+    Hourglass,
+    /// <summary>Solo le cifre, il più grandi possibile.</summary>
+    DigitsOnly,
+}
+
 public sealed class AppSettings
 {
+    // ── Orari delle adunanze ──
+    public DayOfWeek MidweekDay { get; set; } = DayOfWeek.Wednesday;
+    public TimeOnly MidweekTime { get; set; } = new(19, 0);
+    public DayOfWeek WeekendDay { get; set; } = DayOfWeek.Sunday;
+    public TimeOnly WeekendTime { get; set; } = new(10, 0);
+    public int MeetingLengthMinutes { get; set; } = 105;
+
+    /// <summary>Minuti prima dell'inizio in cui compare il conto alla rovescia (0 = mai).</summary>
+    public int CountdownMinutes { get; set; } = 5;
+
+    // ── Stile dello schermo del timer ──
+    public DisplayTheme DisplayTheme { get; set; } = DisplayTheme.Dark;
+    public DisplayLayout DisplayLayout { get; set; } = DisplayLayout.Classic;
+    public string DisplayFont { get; set; } = "Bahnschrift SemiBold";
+    public bool ColoredDigits { get; set; } = true;
+    public bool ShowTitle { get; set; } = true;
+    public bool ShowSection { get; set; } = true;
+    public bool ShowProgressBar { get; set; } = true;
+    public bool ShowNextPart { get; set; } = true;
+    public bool ShowClockWhileRunning { get; set; } = true;
+    public bool FlashOnOvertime { get; set; } = true;
+
+    // ── Modalità mini ──
+    public bool MiniMode { get; set; }
+    public double? MiniLeft { get; set; }
+    public double? MiniTop { get; set; }
+
+    public (DayOfWeek Day, TimeOnly Time) ScheduleFor(Models.MeetingKind kind) =>
+        kind == Models.MeetingKind.Midweek ? (MidweekDay, MidweekTime) : (WeekendDay, WeekendTime);
+
+    /// <summary>Data e ora di inizio dell'adunanza nella settimana che inizia con <paramref name="monday"/>.</summary>
+    public DateTime StartOf(Models.MeetingKind kind, DateOnly monday)
+    {
+        var (day, time) = ScheduleFor(kind);
+        int offset = ((int)day + 6) % 7;
+        return monday.AddDays(offset).ToDateTime(time);
+    }
+
     public string WolCode { get; set; } = WolLanguage.Italian.Code;
     public string WolRsconf { get; set; } = WolLanguage.Italian.Rsconf;
     public string WolLib { get; set; } = WolLanguage.Italian.Lib;

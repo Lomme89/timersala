@@ -1,7 +1,7 @@
 <Window x:Class="TimerSala.App.Views.SettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Impostazioni" Width="520" SizeToContent="Height" ResizeMode="NoResize"
+        Title="Impostazioni" Width="580" Height="600" ResizeMode="CanResize" MinHeight="480" MinWidth="520"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
         Background="{StaticResource BgBrush}" Foreground="{StaticResource TextBrush}" FontFamily="{StaticResource UiFont}">
     <Window.Resources>
@@ -15,57 +15,154 @@
             <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
             <Setter Property="Margin" Value="0,16,0,8" />
         </Style>
+        <Style TargetType="TextBlock" x:Key="Hint">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Margin" Value="0,4,0,0" />
+        </Style>
+        <Style TargetType="CheckBox">
+            <Setter Property="Margin" Value="0,0,0,6" />
+        </Style>
     </Window.Resources>
-    <StackPanel Margin="20">
-        <TextBlock Text="SCHEMI DA WOL.JW.ORG" Style="{StaticResource Group}" Margin="0,0,0,8" />
-        <Grid Margin="0,0,0,8">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="170" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="Lingua della guida" Style="{StaticResource Label}" />
-            <ComboBox x:Name="LanguageBox" Grid.Column="1" />
-        </Grid>
-        <CheckBox x:Name="AutoDownload" Content="Scarica automaticamente le settimane non ancora salvate" />
-
-        <TextBlock Text="TIMER" Style="{StaticResource Group}" />
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="170" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <TextBlock Text="Avviso giallo (secondi)" Style="{StaticResource Label}" ToolTip="Il timer diventa giallo quando mancano questi secondi" />
-            <TextBox x:Name="WarningSeconds" Grid.Column="1" Width="90" HorizontalAlignment="Left" />
-            <TextBlock Grid.Row="1" Text="Consiglio (secondi)" Style="{StaticResource Label}" Margin="0,8,12,0" />
-            <TextBox x:Name="CounselSeconds" Grid.Row="1" Grid.Column="1" Width="90" HorizontalAlignment="Left" Margin="0,8,0,0" />
-        </Grid>
-
-        <TextBlock Text="SCHERMO DEL TIMER" Style="{StaticResource Group}" />
-        <CheckBox x:Name="ShowClock" Content="Mostra l'orologio quando il timer è fermo" Margin="0,0,0,6" />
-        <CheckBox x:Name="ShowNext" Content="Mostra la prossima parte quando il timer è fermo" Margin="0,0,0,6" />
-        <CheckBox x:Name="ShowDelay" Content="Mostra il ritardo accumulato sullo schermo" />
-
-        <TextBlock Text="RETE" Style="{StaticResource Group}" />
-        <CheckBox x:Name="WebEnabled" Content="Server web attivo (timer visibile da altri dispositivi in rete)" Margin="0,0,0,8" />
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Porta" Style="{StaticResource Label}" Width="170" />
-            <TextBox x:Name="WebPort" Width="90" />
-        </StackPanel>
-
-        <TextBlock Text="CONTROLLER" Style="{StaticResource Group}" />
-        <CheckBox x:Name="TopmostBox" Content="Finestra di controllo sempre in primo piano" />
-
-        <DockPanel Margin="0,24,0,0">
+    <DockPanel Margin="16">
+        <DockPanel DockPanel.Dock="Bottom" Margin="0,14,0,0">
             <Button Style="{StaticResource FlatButton}" Content="Cartella dati" Click="OpenData_Click" ToolTip="Apre la cartella con impostazioni, schemi salvati e diagnostica" />
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Style="{StaticResource FlatButton}" Content="Annulla" IsCancel="True" Width="100" Margin="0,0,8,0" />
-                <Button Style="{StaticResource FlatButton}" Content="Salva" IsDefault="True" Width="100" Click="Save_Click"
+                <Button Style="{StaticResource FlatButton}" Content="Applica" Width="90" Margin="0,0,8,0" Click="Apply_Click"
+                        ToolTip="Applica senza chiudere (utile per provare lo stile dello schermo)" />
+                <Button Style="{StaticResource FlatButton}" Content="Annulla" IsCancel="True" Width="90" Margin="0,0,8,0" />
+                <Button Style="{StaticResource FlatButton}" Content="Salva" IsDefault="True" Width="90" Click="Save_Click"
                         Background="{StaticResource AccentBrush}" BorderThickness="0" Foreground="White" />
             </StackPanel>
         </DockPanel>
-    </StackPanel>
+
+        <TabControl>
+            <!-- ADUNANZE -->
+            <TabItem Header="Adunanze">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="12">
+                        <TextBlock Text="ORARI" Style="{StaticResource Group}" Margin="0,0,0,8" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="170" />
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="90" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="Infrasettimanale" Style="{StaticResource Label}" />
+                            <ComboBox x:Name="MidweekDay" Grid.Column="1" />
+                            <TextBox x:Name="MidweekTime" Grid.Column="2" Margin="8,0,0,0" ToolTip="Ora di inizio, es. 19:00" />
+                            <TextBlock Grid.Row="1" Text="Fine settimana" Style="{StaticResource Label}" Margin="0,8,12,0" />
+                            <ComboBox x:Name="WeekendDay" Grid.Row="1" Grid.Column="1" Margin="0,8,0,0" />
+                            <TextBox x:Name="WeekendTime" Grid.Row="1" Grid.Column="2" Margin="8,8,0,0" ToolTip="Ora di inizio, es. 10:00" />
+                        </Grid>
+                        <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                            <TextBlock Text="Durata adunanza (min)" Style="{StaticResource Label}" Width="170" />
+                            <TextBox x:Name="MeetingLength" Width="80" />
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource Hint}" Text="Serve per calcolare la fine prevista. All'avvio viene proposta l'adunanza di oggi o la prossima." />
+
+                        <TextBlock Text="CONTO ALLA ROVESCIA PRIMA DELL'INIZIO" Style="{StaticResource Group}" />
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Compare (minuti prima)" Style="{StaticResource Label}" Width="170" />
+                            <TextBox x:Name="CountdownMinutes" Width="80" />
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource Hint}" Text="0 = solo manuale (pulsante Countdown o tasto I). Sparisce da solo all'orario di inizio o quando avvii la prima parte." />
+
+                        <TextBlock Text="SCHEMI DA WOL.JW.ORG" Style="{StaticResource Group}" />
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="170" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Lingua della guida" Style="{StaticResource Label}" />
+                            <ComboBox x:Name="LanguageBox" Grid.Column="1" />
+                        </Grid>
+                        <CheckBox x:Name="AutoDownload" Content="Scarica automaticamente le settimane non ancora salvate" />
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- TIMER -->
+            <TabItem Header="Timer">
+                <StackPanel Margin="12">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Avviso giallo (secondi)" Style="{StaticResource Label}" ToolTip="Il timer diventa giallo quando mancano questi secondi" />
+                        <TextBox x:Name="WarningSeconds" Grid.Column="1" Width="90" HorizontalAlignment="Left" />
+                        <TextBlock Grid.Row="1" Text="Consiglio (secondi)" Style="{StaticResource Label}" Margin="0,8,12,0" />
+                        <TextBox x:Name="CounselSeconds" Grid.Row="1" Grid.Column="1" Width="90" HorizontalAlignment="Left" Margin="0,8,0,0" />
+                    </Grid>
+                    <TextBlock Text="CONTROLLER" Style="{StaticResource Group}" />
+                    <CheckBox x:Name="TopmostBox" Content="Finestra di controllo sempre in primo piano" />
+                    <TextBlock Style="{StaticResource Hint}" Text="La modalità mini (tasto M o pulsante in alto) è sempre in primo piano." />
+                </StackPanel>
+            </TabItem>
+
+            <!-- SCHERMO -->
+            <TabItem Header="Schermo">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="12">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="Tema" Style="{StaticResource Label}" />
+                            <ComboBox x:Name="ThemeBox" Grid.Column="1" />
+                            <TextBlock Grid.Row="1" Text="Layout" Style="{StaticResource Label}" Margin="0,8,12,0" />
+                            <ComboBox x:Name="LayoutBox" Grid.Row="1" Grid.Column="1" Margin="0,8,0,0" />
+                            <TextBlock Grid.Row="2" Text="Carattere" Style="{StaticResource Label}" Margin="0,8,12,0" />
+                            <ComboBox x:Name="FontBox" Grid.Row="2" Grid.Column="1" Margin="0,8,0,0" IsEditable="True" />
+                        </Grid>
+                        <TextBlock Style="{StaticResource Hint}"
+                                   Text="Clessidra: lo sfondo colorato si accorcia da destra verso sinistra man mano che il tempo passa. Solo cifre: massima grandezza, senza testi." />
+
+                        <TextBlock Text="DURANTE IL TIMER" Style="{StaticResource Group}" />
+                        <CheckBox x:Name="ColoredDigits" Content="Cifre colorate (verde / giallo / rosso)" />
+                        <CheckBox x:Name="FlashOvertime" Content="Cifre lampeggianti quando il tempo è scaduto" />
+                        <CheckBox x:Name="ShowTitle" Content="Mostra il titolo della parte" />
+                        <CheckBox x:Name="ShowSection" Content="Mostra la sezione (Tesori, Ministero, Vita cristiana…)" />
+                        <CheckBox x:Name="ShowBar" Content="Mostra la barra di avanzamento (layout classico)" />
+                        <CheckBox x:Name="ShowNextPart" Content="Mostra la parte successiva" />
+                        <CheckBox x:Name="ShowClockRunning" Content="Mostra l'ora in basso a destra" />
+                        <CheckBox x:Name="ShowDelay" Content="Mostra il ritardo accumulato (al posto dell'ora)" />
+
+                        <TextBlock Text="A TIMER FERMO" Style="{StaticResource Group}" />
+                        <CheckBox x:Name="ShowClock" Content="Mostra l'orologio" />
+                        <CheckBox x:Name="ShowNext" Content="Mostra la prossima parte" />
+                        <TextBlock Style="{StaticResource Hint}" Text="Le stesse impostazioni valgono per la pagina web del timer." />
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- RETE -->
+            <TabItem Header="Rete">
+                <StackPanel Margin="12">
+                    <CheckBox x:Name="WebEnabled" Content="Server web attivo (timer visibile da altri dispositivi in rete)" Margin="0,0,0,8" />
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Porta" Style="{StaticResource Label}" Width="170" />
+                        <TextBox x:Name="WebPort" Width="90" />
+                    </StackPanel>
+                    <TextBlock Style="{StaticResource Hint}" Text="Se gli altri dispositivi non si collegano, controlla che Windows Firewall consenta TimerSala sulle reti private." />
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
 </Window>

@@ -11,10 +11,24 @@
     --green: #22c55e; --amber: #fbbf24; --red: #ef4444; --accent: #3b82f6;
     --font: "Bahnschrift", "Segoe UI Variable Display", "Segoe UI", Roboto, system-ui, sans-serif;
   }
+  body.theme-light {
+    --bg: #fff; --fg: #111827; --muted: #4b5563; --card: #f3f4f6; --line: #e5e7eb;
+    --green: #15803d; --amber: #b45309; --red: #b91c1c;
+  }
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); font-family: var(--font); overflow: hidden; }
   body { display: flex; flex-direction: column; }
   body.overtime { background: #1d0505; }
+  body.theme-light.overtime { background: #fde2e2; }
+  #hg { position: fixed; left: 0; top: 0; bottom: 0; width: 0; background: var(--green); opacity: .45; display: none; transition: width .25s linear, background .3s; }
+  body.layout-hourglass:not(.idle) #hg { display: block; }
+  body.layout-hourglass .bar, body.layout-digits .bar, body.layout-digits .top, body.layout-digits .bottom { display: none; }
+  body.layout-hourglass #digits { color: var(--fg) !important; }
+  #timer, .tools, #schedule { position: relative; z-index: 1; }
+  body.mono #digits:not(.idle) { color: var(--fg); }
+  body.hide-title #title, body.hide-section #section, body.hide-section .chip, body.hide-bar .bar { visibility: hidden; }
+  body.flash.overtime #digits { animation: pulse 1s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity: .35; } }
 
   #timer { flex: 1; display: flex; flex-direction: column; min-height: 0; padding: 3vh 4vw 2vh; }
   .top { display: flex; align-items: center; gap: 1.5vw; min-height: 12vh; }
@@ -63,6 +77,7 @@
 </style>
 </head>
 <body>
+  <div id="hg"></div>
   <div id="offline">Connessione al PC persa… riconnessione</div>
   <section id="timer">
     <div class="top">
@@ -87,7 +102,30 @@
   const fmtDelay = s => { const a = Math.abs(s); return (s > 0 ? '+' : '−') + Math.floor(a / 60) + ':' + String(a % 60).padStart(2, '0'); };
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
+  let lastFont = null;
+  function applyStyle(st) {
+    if (!st) return;
+    const b = document.body.classList;
+    b.toggle('theme-light', st.theme === 'light');
+    b.toggle('layout-hourglass', st.layout === 'hourglass');
+    b.toggle('layout-digits', st.layout === 'digitsonly');
+    b.toggle('mono', !st.colored);
+    b.toggle('hide-title', !st.showTitle);
+    b.toggle('hide-section', !st.showSection);
+    b.toggle('hide-bar', !st.showBar);
+    b.toggle('flash', st.flash);
+    if (st.font !== lastFont) {
+      lastFont = st.font;
+      document.documentElement.style.setProperty('--font', (st.font ? `"${st.font}", ` : '') + '"Bahnschrift", "Segoe UI", Roboto, system-ui, sans-serif');
+      fit();
+    }
+  }
+
   function render(s) {
+    applyStyle(s.style);
+    const hg = $('hg');
+    hg.style.width = (s.phase === 'overtime' ? 100 : (1 - s.progress) * 100) + '%';
+    hg.style.background = s.phase === 'overtime' ? 'var(--red)' : s.phase === 'warning' ? 'var(--amber)' : 'var(--green)';
     document.body.classList.toggle('overtime', s.phase === 'overtime');
     document.body.classList.toggle('idle', s.phase === 'idle');
     const d = $('digits');
@@ -100,19 +138,19 @@
       $('chip').style.background = 'var(--muted)';
       $('next').textContent = '';
     } else {
-      $('section').textContent = s.sectionLabel || (s.mode === 'counsel' ? 'Consiglio' : '');
+      $('section').textContent = s.sectionLabel || (s.mode === 'counsel' ? 'Consiglio' : s.mode === 'countdown' ? s.meeting : '');
       $('title').textContent = s.title;
       d.textContent = s.display;
       $('fill').style.width = (s.phase === 'overtime' ? 100 : s.progress * 100) + '%';
       $('fill').style.background = s.phase === 'overtime' ? 'var(--red)' : s.phase === 'warning' ? 'var(--amber)' : 'var(--green)';
       $('chip').style.background = s.sectionColor || 'var(--muted)';
-      $('next').textContent = s.next ? 'Dopo: ' + s.next : '';
+      $('next').textContent = s.style?.showNext === false ? '' : s.mode === 'countdown' ? (s.next ? 'Prima parte: ' + s.next : '') : (s.next ? 'Dopo: ' + s.next : '');
     }
     const dl = $('delay');
     if (s.showDelay && s.delay !== 0) {
       dl.textContent = (s.delay > 0 ? 'Ritardo ' : 'Anticipo ') + fmtDelay(s.delay);
       dl.className = s.delay > 0 ? 'late' : 'early';
-    } else { dl.textContent = s.phase === 'idle' ? '' : s.clock; dl.className = ''; }
+    } else { dl.textContent = s.phase === 'idle' || s.style?.showClock === false ? '' : s.clock; dl.className = ''; }
   }
 
   async function loadSchedule() {

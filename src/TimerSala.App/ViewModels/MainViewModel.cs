@@ -46,7 +46,7 @@ public sealed partial class MainViewModel : ObservableObject
         _store = store;
         Settings = store.LoadSettings();
         _wol = new WolClient { DiagnosticsFolder = store.DiagnosticsFolder };
-        _web = new TimerWebServer(Timer, () => new DisplayOptions(Settings.ShowClockWhenIdle, Settings.ShowNextPartWhenIdle, Settings.ShowDelayOnDisplay));
+        _web = new TimerWebServer(Timer, () => DisplayOptions.From(Settings));
         ApplyTimerSettings();
 
         Timer.StateChanged += (_, _) => Application.Current.Dispatcher.BeginInvoke(RefreshParts);
@@ -58,7 +58,7 @@ public sealed partial class MainViewModel : ObservableObject
         RefreshMonitors();
 
         var today = DateOnly.FromDateTime(DateTime.Today);
-        Kind = today.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday ? MeetingKind.Weekend : MeetingKind.Midweek;
+        Kind = NextMeetingKind(DateTime.Now);
         LoadWeek(today);
 
         _tick = new DispatcherTimer(DispatcherPriority.Render) { Interval = TimeSpan.FromMilliseconds(100) };
@@ -134,9 +134,13 @@ public sealed partial class MainViewModel : ObservableObject
             _ = DownloadAsync(silent: true);
     }
 
+    void UpdateMeetingStart() =>
+        Timer.MeetingStart = new DateTimeOffset(Settings.StartOf(Kind, Week.WeekStart));
+
     void ApplyMeeting()
     {
         Timer.LoadMeeting(CurrentMeeting);
+        UpdateMeetingStart();
         _lastStoppedIndex = -1;
         RebuildParts();
         UpdateWeekTexts();
@@ -154,6 +158,53 @@ public sealed partial class MainViewModel : ObservableObject
         else bits.Add("schema predefinito");
         WeekSubtitle = string.Join(" · ", bits);
     }
+
+    /// <summary>L'adunanza di oggi, se c'è, altrimenti la prossima della settimana.</summary>
+    MeetingKind NextMeetingKind(DateTime now)
+    {
+        var monday = WeekMath.MondayOf(DateOnly.FromDateTime(now));
+        var mid = Settings.StartOf(MeetingKind.Midweek, monday);
+        var wkd = Settings.StartOf(MeetingKind.Weekend, monday);
+        if (mid.Date == now.Date) return MeetingKind.Midweek;
+        if (wkd.Date == now.Date) return MeetingKind.Weekend;
+        bool midAhead = mid > now, wkdAhead = wkd > now;
+        if (midAhead && (!wkdAhead || mid < wkd)) return MeetingKind.Midweek;
+        if (wkdAhead) return MeetingKind.Weekend;
+        return mid > wkd ? MeetingKind.Midweek : MeetingKind.Weekend;
+    }
+
+    public ICommand ToggleCountdownCommand => field ??= new RelayCommand(ToggleCountdown);
+
+    void ToggleCountdown()
+    {
+        if (Timer.IsRunning) return;
+        if (Timer.MeetingStart is not { } start || start <= DateTimeOffset.Now)
+        {
+            ShowStatus($"L'orario di inizio ({Timer.MeetingStart:ddd dd/MM HH:mm}) è già passato. Controlla gli orari nelle impostazioni.", error: true);
+            return;
+        }
+        Timer.ForceCountdown = !Timer.ForceCountdown;
+        RefreshDisplay();
+    }
+
+    // ───────────── Modalità mini ─────────────
+
+    public event EventHandler? MiniModeChanged;
+
+    public bool IsMiniMode
+    {
+        get => Settings.MiniMode;
+        set
+        {
+            if (Settings.MiniMode == value) return;
+            Settings.MiniMode = value;
+            SaveSettings();
+            OnPropertyChanged();
+            MiniModeChanged?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    public ICommand ToggleMiniCommand => field ??= new RelayCommand(() => IsMiniMode = !IsMiniMode);
 
     public ICommand PreviousWeekCommand => field ??= new RelayCommand(PreviousWeek);
 
@@ -385,9 +436,11 @@ public sealed partial class MainViewModel : ObservableObject
     void RefreshDisplay()
     {
         var s = Timer.GetSnapshot();
+        bool countdown = s.Mode == TimerMode.Countdown;
         IsRunning = s.IsRunning;
         IsIdle = s.Phase == TimerPhase.Idle;
         Phase = s.Phase;
+        IsCountdown = countdown;
         IsCounselOrManual = s.IsRunning && s.Mode != TimerMode.Part;
         ClockText = s.Now.ToString("HH:mm");
         ClockSeconds = s.Now.ToString("ss");
@@ -399,7 +452,6 @@ public sealed partial class MainViewModel : ObservableObject
             TimerPhase.Normal => Green,
             _ => White,
         };
-        DisplayBackground = s.Phase == TimerPhase.Overtime ? OvertimeBg : Black;
 
         SectionInfo.TryParse(s.Section, out var section);
         SectionBrush = s.Section is null ? Muted : BrushCache.Get(SectionInfo.Color(section));
@@ -415,6 +467,7 @@ public sealed partial class MainViewModel : ObservableObject
 
             ScreenDigits = Settings.ShowClockWhenIdle ? ClockText : "";
             ScreenTitle = Settings.ShowNextPartWhenIdle && !string.IsNullOrEmpty(s.Title) ? $"Prossima: {s.Title}" : "";
+            ScreenSection = s.MeetingTitle;
             ScreenFooterLeft = "";
         }
         else
@@ -425,15 +478,19 @@ public sealed partial class MainViewModel : ObservableObject
             {
                 TimerMode.Counsel => "CONSIGLIO",
                 TimerMode.Manual => "TIMER",
+                TimerMode.Countdown => s.MeetingTitle.ToUpperInvariant(),
                 _ => s.Section is null ? "" : SectionInfo.Label(section).ToUpperInvariant(),
             };
             Progress = s.Phase == TimerPhase.Overtime ? 1 : s.Progress;
-            InfoText = $"Assegnato {TimerSnapshot.FormatDuration(s.TargetSeconds)} · trascorso {TimerSnapshot.FormatDuration(s.ElapsedSeconds)}";
-            NextText = s.NextTitle is null ? "" : $"Dopo: {s.NextTitle}";
+            InfoText = countdown
+                ? $"Inizio alle {Timer.MeetingStart:HH:mm}"
+                : $"Assegnato {TimerSnapshot.FormatDuration(s.TargetSeconds)} · trascorso {TimerSnapshot.FormatDuration(s.ElapsedSeconds)}";
+            NextText = s.NextTitle is null ? "" : countdown ? $"Prima parte: {s.NextTitle}" : $"Dopo: {s.NextTitle}";
 
             ScreenDigits = s.Display;
             ScreenTitle = s.Title;
-            ScreenFooterLeft = s.Mode == TimerMode.Part ? NextText : "";
+            ScreenSection = SectionText;
+            ScreenFooterLeft = Settings.ShowNextPart && s.Mode is TimerMode.Part or TimerMode.Countdown ? NextText : "";
         }
 
         if (Math.Abs(s.DelaySeconds) < 5)
@@ -447,10 +504,83 @@ public sealed partial class MainViewModel : ObservableObject
             DelayText = s.DelaySeconds > 0 ? $"Ritardo +{d}" : $"Anticipo −{d}";
             DelayBrush = s.DelaySeconds > 0 ? Red : Green;
         }
-        ScreenFooterRight = Settings.ShowDelayOnDisplay && Math.Abs(s.DelaySeconds) >= 5 ? DelayText : (IsIdle ? "" : ClockText);
+        ScreenFooterRight = Settings.ShowDelayOnDisplay && Math.Abs(s.DelaySeconds) >= 5 ? DelayText
+            : !IsIdle && Settings.ShowClockWhileRunning ? ClockText : "";
+
+        if (Timer.MeetingStart is { } start)
+        {
+            var end = start.AddMinutes(Settings.MeetingLengthMinutes).AddSeconds(Math.Max(0, s.DelaySeconds));
+            ScheduleText = $"Inizio {start:HH:mm} · fine prevista {end:HH:mm}";
+        }
 
         CanCounsel = !s.IsRunning && _lastStoppedIndex >= 0 && _lastStoppedIndex < CurrentMeeting.Parts.Count
                      && CurrentMeeting.Parts[_lastStoppedIndex].HasCounsel;
+
+        RefreshScreenStyle();
+    }
+
+    // ───────────── Stile dello schermo del timer ─────────────
+
+    sealed record Palette(Brush Bg, Brush Fg, Brush Muted, Brush Track, Brush Green, Brush Amber, Brush Red, Brush OvertimeBg);
+
+    static readonly Palette DarkPalette = new(Black, White, Muted, BrushCache.Get("#262A32"), Green, Amber, Red, OvertimeBg);
+    static readonly Palette LightPalette = new(BrushCache.Get("#FFFFFF"), BrushCache.Get("#111827"), BrushCache.Get("#4B5563"),
+        BrushCache.Get("#E5E7EB"), BrushCache.Get("#15803D"), BrushCache.Get("#B45309"), BrushCache.Get("#B91C1C"), BrushCache.Get("#FDE2E2"));
+
+    public Brush ScreenForeground { get; set => Set(ref field, value); } = White;
+    public Brush ScreenMuted { get; set => Set(ref field, value); } = Muted;
+    public Brush ScreenTrack { get; set => Set(ref field, value); } = BrushCache.Get("#262A32");
+    public Brush ScreenDigitsBrush { get; set => Set(ref field, value); } = White;
+    public Brush ScreenPhaseBrush { get; set => Set(ref field, value); } = Green;
+    public string ScreenSection { get; set => Set(ref field, value); } = "";
+    public FontFamily ScreenFont { get; set => Set(ref field, value); } = new("Bahnschrift SemiBold");
+    public double RemainingFraction { get; set => Set(ref field, value); }
+    public bool IsCountdown { get; set => Set(ref field, value); }
+    public bool ShowScreenHeader { get; set => Set(ref field, value); } = true;
+    public bool ShowScreenTitle { get; set => Set(ref field, value); } = true;
+    public bool ShowScreenSection { get; set => Set(ref field, value); } = true;
+    public bool ShowScreenBar { get; set => Set(ref field, value); } = true;
+    public bool ShowScreenFooter { get; set => Set(ref field, value); } = true;
+    public bool ShowHourglass { get; set => Set(ref field, value); }
+    public bool FlashDigits { get; set => Set(ref field, value); }
+    public string ScheduleText { get; set => Set(ref field, value); } = "";
+
+    string? _fontName;
+
+    void RefreshScreenStyle()
+    {
+        var p = Settings.DisplayTheme == DisplayTheme.Light ? LightPalette : DarkPalette;
+        var layout = Settings.DisplayLayout;
+        bool active = Phase != TimerPhase.Idle;
+
+        var phaseBrush = Phase switch
+        {
+            TimerPhase.Warning => p.Amber,
+            TimerPhase.Overtime => p.Red,
+            _ => p.Green,
+        };
+        ScreenPhaseBrush = phaseBrush;
+        DisplayBackground = Phase == TimerPhase.Overtime ? p.OvertimeBg : p.Bg;
+        ScreenForeground = p.Fg;
+        ScreenMuted = p.Muted;
+        ScreenTrack = p.Track;
+        // nella clessidra le cifre restano neutre per contrastare con il riempimento colorato
+        ScreenDigitsBrush = !active || !Settings.ColoredDigits || layout == DisplayLayout.Hourglass ? p.Fg : phaseBrush;
+
+        ShowScreenHeader = layout != DisplayLayout.DigitsOnly;
+        ShowScreenTitle = Settings.ShowTitle;
+        ShowScreenSection = Settings.ShowSection;
+        ShowScreenFooter = layout != DisplayLayout.DigitsOnly;
+        ShowScreenBar = layout == DisplayLayout.Classic && Settings.ShowProgressBar && active;
+        ShowHourglass = layout == DisplayLayout.Hourglass && active;
+        RemainingFraction = Phase == TimerPhase.Overtime ? 1 : 1 - Progress;
+        FlashDigits = Settings.FlashOnOvertime && Phase == TimerPhase.Overtime;
+
+        if (_fontName != Settings.DisplayFont)
+        {
+            _fontName = Settings.DisplayFont;
+            ScreenFont = new FontFamily($"{Settings.DisplayFont}, Bahnschrift SemiBold, Segoe UI");
+        }
     }
 
     void RebuildParts()
@@ -570,6 +700,7 @@ public sealed partial class MainViewModel : ObservableObject
         bool webChanged = settings.WebServerEnabled != Settings.WebServerEnabled || settings.WebServerPort != Settings.WebServerPort;
         Settings = settings;
         ApplyTimerSettings();
+        UpdateMeetingStart();
         SaveSettings();
         if (webChanged) _ = StartWebServerAsync();
         RefreshDisplay();
@@ -579,6 +710,7 @@ public sealed partial class MainViewModel : ObservableObject
     {
         Timer.WarningSeconds = Settings.WarningSeconds;
         Timer.CounselSeconds = Settings.CounselSeconds;
+        Timer.CountdownLeadSeconds = Settings.CountdownMinutes * 60;
     }
 
     public void SaveSettings()

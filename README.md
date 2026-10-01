@@ -27,6 +27,8 @@ Timer per le adunanze di congregazione, per Windows 10/11. Fa quello che fa Only
 | Aggiungi / togli un minuto | `+` / `−` |
 | Timer del consiglio (1 min) | `C` |
 | Modifica lo schema | `E` |
+| Countdown fino all'inizio | `I` |
+| Modalità mini / completa | `M` |
 
 - Fai clic su una parte dell'elenco per selezionarla. Quando fermi il timer, il tempo effettivo viene registrato (verde in orario, rosso se sforato) e si passa alla parte successiva.
 - Se fermi una parte per errore, riavviala: il conteggio riprende da dove era. Per azzerarla usa il tasto destro sulla parte.
@@ -34,12 +36,21 @@ Timer per le adunanze di congregazione, per Windows 10/11. Fa quello che fa Only
 - Dopo le parti degli studenti il pulsante **Consiglio** si illumina.
 - `◀ ▶` cambiano settimana; clic sulla data per tornare alla settimana corrente; il pulsante di download riscarica lo schema da wol.jw.org.
 
+### Orari e countdown prima dell'inizio
+
+Nelle impostazioni (scheda *Adunanze*) indichi giorno e ora di inizio dell'infrasettimanale e del fine settimana. All'avvio TimerSala propone l'adunanza di oggi (o la prossima) e, qualche minuto prima dell'inizio (5 per impostazione), lo schermo mostra **"L'adunanza inizia tra 04:59"** con la prima parte. Il countdown sparisce all'orario di inizio o appena avvii la prima parte. Con il pulsante **Countdown** (o il tasto `I`) lo mostri prima, a mano. Nel controller trovi anche l'orario di inizio e la **fine prevista** (che tiene conto del ritardo).
+
+### Modalità mini
+
+Con un solo monitor la finestra completa può essere ingombrante: il pulsante in alto (o il tasto `M`) la riduce a una piccola finestra sempre in primo piano con il timer, il titolo della parte, avvia/ferma, parte precedente/successiva, ±1 min, Consiglio e Countdown. Si sposta trascinandola dalla barra in alto; il pulsante in alto a destra riapre la finestra completa. TimerSala ricorda la modalità e la posizione.
+
 ### Schermo del timer
 
 In basso nel controller scegli lo **schermo** (il pulsante accanto mostra il numero su ogni monitor) e spunta **Mostra**. La scelta viene ricordata.
 
 - Verde: tempo regolare. Giallo: ultimo minuto (configurabile). Rosso con `+`: tempo sforato, lo sfondo diventa rosso scuro.
 - Quando il timer è fermo mostra l'orologio e la prossima parte.
+- Stile personalizzabile (Impostazioni → *Schermo*): tema scuro o chiaro, carattere a scelta, layout **Classico**, **Clessidra orizzontale** (lo sfondo colorato si accorcia verso sinistra man mano che il tempo passa) o **Solo cifre**; puoi nascondere titolo, sezione, barra, parte successiva, ora; cifre colorate o neutre; lampeggio allo scadere. Con *Applica* vedi subito l'effetto senza chiudere le impostazioni. La pagina web usa lo stesso stile.
 - Le cifre occupano circa il 70% dell'altezza dello schermo: su un monitor da 22" (Full HD) sono alte circa 10 cm, ben leggibili a 20 metri.
 
 ### Visita del sorvegliante
@@ -56,7 +67,7 @@ In basso nel controller è indicato l'indirizzo (es. `http://192.168.1.20:8090`)
 
 ## Impostazioni e dati
 
-Impostazioni (ingranaggio): lingua della guida (italiano, inglese, spagnolo, francese, tedesco, portoghese), secondi di preavviso giallo, durata del consiglio, cosa mostrare sullo schermo a timer fermo, ritardo sullo schermo, server web e porta, controller sempre in primo piano.
+Impostazioni (ingranaggio), divise in schede: *Adunanze* (orari, durata, countdown, lingua della guida), *Timer* (preavviso giallo, durata del consiglio, controller in primo piano), *Schermo* (stile del timer) e *Rete* (server web e porta).
 
 I dati sono in `%AppData%\TimerSala`:
 

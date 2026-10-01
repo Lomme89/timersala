@@ -13,6 +13,8 @@ public partial class MainWindow : Window
 {
     readonly MainViewModel _vm;
     TimerWindow? _timerWindow;
+    MiniWindow? _mini;
+    bool _closing;
 
     public MainWindow(MainViewModel vm)
     {
@@ -25,7 +27,12 @@ public partial class MainWindow : Window
         RestorePlacement();
         Topmost = vm.Settings.ControllerTopmost;
 
-        Loaded += (_, _) => UpdateTimerWindow();
+        vm.MiniModeChanged += (_, _) => ApplyMiniMode();
+        Loaded += (_, _) =>
+        {
+            UpdateTimerWindow();
+            ApplyMiniMode();
+        };
         LocationChanged += (_, _) => UpdateTopmostOfDisplay();
         SystemEvents.DisplaySettingsChanged += OnDisplaySettingsChanged;
         PreviewKeyDown += OnPreviewKeyDown;
@@ -47,7 +54,34 @@ public partial class MainWindow : Window
         if (!_timerWindow.IsVisible) _timerWindow.Show();
         _timerWindow.PlaceOnMonitor();
         UpdateTopmostOfDisplay();
-        Activate();
+        if (_vm.IsMiniMode) _mini?.Activate(); else Activate();
+    }
+
+    void ApplyMiniMode()
+    {
+        if (_vm.IsMiniMode)
+        {
+            if (_mini is null)
+            {
+                _mini = new MiniWindow(_vm);
+                // chiudere la mini equivale a chiudere il programma
+                _mini.Closing += (_, e) =>
+                {
+                    if (_closing) return;
+                    e.Cancel = true;
+                    Dispatcher.BeginInvoke(Close);
+                };
+            }
+            _mini.Show();
+            _mini.Activate();
+            Hide();
+        }
+        else
+        {
+            Show();
+            Activate();
+            _mini?.Hide();
+        }
     }
 
     void UpdateTopmostOfDisplay()
@@ -58,44 +92,8 @@ public partial class MainWindow : Window
         _timerWindow.Topmost = !sameScreen;
     }
 
-    void OnPreviewKeyDown(object sender, KeyEventArgs e)
-    {
-        if (e.OriginalSource is TextBox or ComboBox or ComboBoxItem) return;
-        switch (e.Key)
-        {
-            case Key.Space:
-            case Key.Enter:
-                _vm.ToggleStartCommand.Execute(null);
-                break;
-            case Key.Right:
-            case Key.Down:
-            case Key.PageDown:
-                _vm.NextCommand.Execute(null);
-                break;
-            case Key.Left:
-            case Key.Up:
-            case Key.PageUp:
-                _vm.PreviousCommand.Execute(null);
-                break;
-            case Key.Add:
-            case Key.OemPlus:
-                _vm.AddMinuteCommand.Execute(null);
-                break;
-            case Key.Subtract:
-            case Key.OemMinus:
-                _vm.RemoveMinuteCommand.Execute(null);
-                break;
-            case Key.C:
-                _vm.CounselCommand.Execute(null);
-                break;
-            case Key.E when Keyboard.Modifiers == ModifierKeys.None:
-                Edit_Click(this, new RoutedEventArgs());
-                break;
-            default:
-                return;
-        }
-        e.Handled = true;
-    }
+    void OnPreviewKeyDown(object sender, KeyEventArgs e) =>
+        Shortcuts.Handle(_vm, e, () => Edit_Click(this, new RoutedEventArgs()));
 
     void PartsList_Click(object sender, MouseButtonEventArgs e)
     {
@@ -163,14 +161,14 @@ public partial class MainWindow : Window
     protected override void OnClosing(CancelEventArgs e)
     {
         if (_vm.IsRunning &&
-            MessageBox.Show(this, "Il timer è in funzione. Chiudere comunque TimerSala?", "TimerSala",
+            MessageBox.Show(_vm.IsMiniMode && _mini is not null ? _mini : this, "Il timer è in funzione. Chiudere comunque TimerSala?", "TimerSala",
                 MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
         {
             e.Cancel = true;
             return;
         }
         var s = _vm.Settings;
-        if (WindowState == WindowState.Normal)
+        if (WindowState == WindowState.Normal && !_vm.IsMiniMode)
         {
             s.ControllerLeft = Left;
             s.ControllerTop = Top;
@@ -179,7 +177,9 @@ public partial class MainWindow : Window
         }
         _vm.SaveSettings();
         SystemEvents.DisplaySettingsChanged -= OnDisplaySettingsChanged;
+        _closing = true;
         _timerWindow?.Close();
+        _mini?.Close();
         base.OnClosing(e);
     }
 }

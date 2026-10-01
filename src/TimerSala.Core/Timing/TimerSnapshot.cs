@@ -18,6 +18,8 @@ public enum TimerMode
     Part,
     Counsel,
     Manual,
+    /// <summary>Conto alla rovescia prima dell'inizio dell'adunanza.</summary>
+    Countdown,
 }
 
 /// <summary>Stato istantaneo del timer, condiviso tra schermo, controller e server web.</summary>

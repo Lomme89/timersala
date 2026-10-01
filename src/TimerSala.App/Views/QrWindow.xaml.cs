@@ -34,6 +34,18 @@ public partial class QrWindow : Window
         }
     }
 
+    void ShowControl_Click(object sender, RoutedEventArgs e)
+    {
+        ControlHidden.Visibility = Visibility.Collapsed;
+        ControlShown.Visibility = Visibility.Visible;
+    }
+
+    void HideControl_Click(object sender, RoutedEventArgs e)
+    {
+        ControlShown.Visibility = Visibility.Collapsed;
+        ControlHidden.Visibility = Visibility.Visible;
+    }
+
     void NewPin_Click(object sender, RoutedEventArgs e)
     {
         _vm.RegeneratePin();

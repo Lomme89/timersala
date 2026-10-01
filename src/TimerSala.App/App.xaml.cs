@@ -1,5 +1,7 @@
 using System.IO;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using TimerSala.App.ViewModels;
 using TimerSala.App.Views;
@@ -16,12 +18,29 @@ public partial class App : Application
         base.OnStartup(e);
         DispatcherUnhandledException += OnUnhandled;
 
+        // tutte le finestre: barra del titolo scura, angoli arrotondati e comparsa in dissolvenza
+        EventManager.RegisterClassHandler(typeof(Window), FrameworkElement.LoadedEvent, new RoutedEventHandler(OnWindowLoaded));
+
         var store = new DataStore();
         _vm = new MainViewModel(store);
         var main = new MainWindow(_vm);
         MainWindow = main;
         main.Show();
         await _vm.StartWebServerAsync();
+    }
+
+    static void OnWindowLoaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Window w || !ReferenceEquals(e.OriginalSource, w)) return;
+        Interop.DarkTitleBar.Apply(w, roundCorners: w.WindowStyle == WindowStyle.None && w is not TimerWindow);
+        if (w is TimerWindow || w.Content is not UIElement content) return;
+
+        var duration = new Duration(TimeSpan.FromMilliseconds(180));
+        var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
+        content.BeginAnimation(UIElement.OpacityProperty, new DoubleAnimation(0, 1, duration) { EasingFunction = ease });
+        var shift = new TranslateTransform(0, 8);
+        content.RenderTransform = shift;
+        shift.BeginAnimation(TranslateTransform.YProperty, new DoubleAnimation(8, 0, duration) { EasingFunction = ease });
     }
 
     protected override void OnExit(ExitEventArgs e)

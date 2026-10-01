@@ -21,16 +21,32 @@
                 <StackPanel>
                     <TextBlock Text="Controlla il timer" FontSize="16" FontWeight="SemiBold" />
                     <TextBlock Text="Avvia, ferma, cambia parte, messaggi" Style="{StaticResource Caption}" Margin="0,2,0,10" />
-                    <Border Background="White" CornerRadius="8" Padding="6" HorizontalAlignment="Center">
-                        <Image x:Name="ControlQr" Width="220" Height="220" RenderOptions.BitmapScalingMode="NearestNeighbor" />
-                    </Border>
-                    <TextBlock Margin="0,10,0,0" FontSize="13" HorizontalAlignment="Center">
-                        <Run Text="PIN: " /><Run x:Name="PinRun" FontWeight="Bold" FontSize="18" />
-                    </TextBlock>
-                    <TextBlock Text="Il codice contiene già il PIN: mostralo solo a chi deve controllare il timer." Style="{StaticResource Caption}"
-                               TextWrapping="Wrap" TextAlignment="Center" Margin="0,6,0,0" />
-                    <Button Style="{StaticResource FlatButton}" Content="Nuovo PIN" Margin="0,10,0,0" HorizontalAlignment="Center" Click="NewPin_Click"
-                            ToolTip="Genera un nuovo PIN: i dispositivi collegati dovranno inserirlo di nuovo" />
+                    <StackPanel x:Name="ControlHidden">
+                        <Border Background="{StaticResource BgBrush}" CornerRadius="8" Width="232" Height="232" HorizontalAlignment="Center">
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <TextBlock Text="&#xE72E;" FontFamily="{StaticResource IconFont}" FontSize="36" Foreground="{StaticResource MutedBrush}"
+                                           HorizontalAlignment="Center" />
+                                <TextBlock Text="Nascosto: contiene il PIN" Style="{StaticResource Caption}" Margin="0,8,0,0" HorizontalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                        <Button Style="{StaticResource FlatButton}" Content="Mostra codice di controllo" Margin="0,10,0,0" HorizontalAlignment="Center"
+                                Click="ShowControl_Click" />
+                    </StackPanel>
+                    <StackPanel x:Name="ControlShown" Visibility="Collapsed">
+                        <Border Background="White" CornerRadius="8" Padding="6" HorizontalAlignment="Center">
+                            <Image x:Name="ControlQr" Width="220" Height="220" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+                        </Border>
+                        <TextBlock Margin="0,10,0,0" FontSize="13" HorizontalAlignment="Center">
+                            <Run Text="PIN: " /><Run x:Name="PinRun" FontWeight="Bold" FontSize="18" />
+                        </TextBlock>
+                        <TextBlock Text="Il codice contiene già il PIN: mostralo solo a chi deve controllare il timer." Style="{StaticResource Caption}"
+                                   TextWrapping="Wrap" TextAlignment="Center" Margin="0,6,0,0" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                            <Button Style="{StaticResource FlatButton}" Content="Nuovo PIN" Click="NewPin_Click" Margin="0,0,8,0"
+                                    ToolTip="Genera un nuovo PIN: i dispositivi collegati dovranno inserirlo di nuovo" />
+                            <Button Style="{StaticResource FlatButton}" Content="Nascondi" Click="HideControl_Click" />
+                        </StackPanel>
+                    </StackPanel>
                 </StackPanel>
             </Border>
             <Border x:Name="ControlOff" Style="{StaticResource Card}" Width="280" Visibility="Collapsed">

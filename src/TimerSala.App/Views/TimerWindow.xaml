@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="TimerSala — Schermo"
         WindowStyle="None" ResizeMode="NoResize" ShowInTaskbar="False" ShowActivated="False"
-        Background="{Binding DisplayBackground}" Foreground="{Binding ScreenForeground}"
+        Background="Black" Foreground="{Binding ScreenForeground}"
         FontFamily="{Binding ScreenFont}" Cursor="None"
         Width="1280" Height="720" UseLayoutRounding="True">
     <Window.Resources>
@@ -54,7 +54,7 @@
             <Viewbox x:Name="DigitsBox" Grid.Row="1" Stretch="Uniform" StretchDirection="Both">
                 <Grid>
                     <TextBlock Text="+88:88" Opacity="0" FontSize="200" Typography.NumeralAlignment="Tabular" />
-                    <TextBlock Text="{Binding ScreenDigits}" Foreground="{Binding ScreenDigitsBrush}" FontSize="200"
+                    <TextBlock x:Name="DigitsText" Text="{Binding ScreenDigits}" FontSize="200"
                                HorizontalAlignment="Center" Typography.NumeralAlignment="Tabular">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
@@ -117,6 +117,9 @@
         <!-- Messaggio per l'oratore -->
         <Border x:Name="MsgBanner" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Background="#FBBF24" CornerRadius="16"
                 Visibility="{Binding HasMessage, Converter={StaticResource BoolToVis}}">
+            <Border.RenderTransform>
+                <TranslateTransform x:Name="MsgShift" />
+            </Border.RenderTransform>
             <TextBlock x:Name="MsgText" Text="{Binding ScreenMessage}" Foreground="#111111" FontWeight="Bold"
                        TextAlignment="Center" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" />
         </Border>

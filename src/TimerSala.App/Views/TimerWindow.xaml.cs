@@ -1,4 +1,7 @@
+using System.ComponentModel;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 using TimerSala.App.Interop;
 using TimerSala.App.ViewModels;
 
@@ -9,16 +12,64 @@ public partial class TimerWindow : Window
 {
     public MonitorInfo? Monitor { get; set; }
 
+    static readonly Duration ColorFade = new(TimeSpan.FromMilliseconds(450));
+    static readonly IEasingFunction Ease = new CubicEase { EasingMode = EasingMode.EaseOut };
+
+    readonly MainViewModel _vm;
+    readonly SolidColorBrush _digits = new(Colors.White);
+    readonly SolidColorBrush _background = new(Colors.Black);
+
     public TimerWindow(MainViewModel vm)
     {
         InitializeComponent();
+        _vm = vm;
         DataContext = vm;
+        DigitsText.Foreground = _digits;
+        Background = _background;
+        SetColor(_digits, vm.ScreenDigitsBrush, animate: false);
+        SetColor(_background, vm.DisplayBackground, animate: false);
         SizeChanged += (_, _) => ApplyScale();
-        vm.PropertyChanged += (_, e) =>
-        {
-            if (e.PropertyName == nameof(MainViewModel.ShowScreenHeader)) ApplyScale();
-        };
+        vm.PropertyChanged += OnViewModelChanged;
+        Closed += (_, _) => vm.PropertyChanged -= OnViewModelChanged;
         DpiChanged += (_, _) => Dispatcher.BeginInvoke(PlaceOnMonitor);
+    }
+
+    void OnViewModelChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        switch (e.PropertyName)
+        {
+            case nameof(MainViewModel.ShowScreenHeader):
+                ApplyScale();
+                break;
+            case nameof(MainViewModel.ScreenDigitsBrush):
+                SetColor(_digits, _vm.ScreenDigitsBrush, animate: true);
+                break;
+            case nameof(MainViewModel.DisplayBackground):
+                SetColor(_background, _vm.DisplayBackground, animate: true);
+                break;
+            case nameof(MainViewModel.IsIdle):
+                // passaggio morbido tra orologio e timer
+                DigitsBox.BeginAnimation(OpacityProperty, new DoubleAnimation(0.15, 1, new Duration(TimeSpan.FromMilliseconds(350))) { EasingFunction = Ease });
+                break;
+            case nameof(MainViewModel.HasMessage) when _vm.HasMessage:
+                // il messaggio entra scorrendo dal basso
+                var d = new Duration(TimeSpan.FromMilliseconds(320));
+                MsgShift.BeginAnimation(TranslateTransform.YProperty, new DoubleAnimation(ActualHeight * 0.15, 0, d) { EasingFunction = new BackEase { EasingMode = EasingMode.EaseOut, Amplitude = 0.4 } });
+                MsgBanner.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, d));
+                break;
+        }
+    }
+
+    static void SetColor(SolidColorBrush target, Brush source, bool animate)
+    {
+        if (source is not SolidColorBrush s) return;
+        if (!animate)
+        {
+            target.BeginAnimation(SolidColorBrush.ColorProperty, null);
+            target.Color = s.Color;
+            return;
+        }
+        target.BeginAnimation(SolidColorBrush.ColorProperty, new ColorAnimation(s.Color, ColorFade) { EasingFunction = Ease });
     }
 
     public void PlaceOnMonitor()

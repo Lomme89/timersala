@@ -210,6 +210,39 @@ public sealed partial class MainViewModel : ObservableObject
 
     Task Download() => DownloadAsync(silent: false);
 
+    public ICommand DownloadAllCommand => field ??= new RelayCommand(() => _ = DownloadAllAsync());
+
+    /// <summary>Scarica tutte le settimane pubblicate a partire da quella visualizzata.</summary>
+    async Task DownloadAllAsync()
+    {
+        if (IsBusy) return;
+        _downloadCts?.Cancel();
+        var cts = _downloadCts = new CancellationTokenSource();
+        IsBusy = true;
+        var progress = new Progress<string>(m => ShowStatus(m));
+        try
+        {
+            var result = await WeekSync.DownloadAheadAsync(_wol, _store, Settings.Language, Week.WeekStart, progress: progress, ct: cts.Token);
+            ShowStatus(result.Summary, error: result.Error is not null || result.Updated == 0);
+            // ricarica la settimana visualizzata con lo schema appena scaricato
+            if (!Timer.IsRunning && result.UpdatedWeeks.Contains(Week.WeekStart))
+            {
+                var keep = StatusMessage;
+                LoadWeek(Week.WeekStart);
+                ShowStatus(keep ?? "", error: StatusIsError);
+            }
+        }
+        catch (OperationCanceledException) { }
+        catch (Exception ex)
+        {
+            ShowStatus(ex.Message, error: true);
+        }
+        finally
+        {
+            if (ReferenceEquals(cts, _downloadCts)) IsBusy = false;
+        }
+    }
+
     async Task DownloadAsync(bool silent)
     {
         if (!silent && Week.EditedManually &&

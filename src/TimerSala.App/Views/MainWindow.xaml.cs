@@ -130,6 +130,18 @@ public partial class MainWindow : Window
             Topmost = _vm.Settings.ControllerTopmost;
     }
 
+    void Download_Click(object sender, RoutedEventArgs e)
+    {
+        var menu = DownloadButton.ContextMenu;
+        menu.PlacementTarget = DownloadButton;
+        menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+        menu.IsOpen = true;
+    }
+
+    void DownloadWeek_Click(object sender, RoutedEventArgs e) => _vm.DownloadCommand.Execute(null);
+
+    void DownloadAll_Click(object sender, RoutedEventArgs e) => _vm.DownloadAllCommand.Execute(null);
+
     void Qr_Click(object sender, RoutedEventArgs e)
     {
         if (_vm.WebUrl is null)

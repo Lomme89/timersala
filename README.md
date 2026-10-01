@@ -31,7 +31,8 @@ Timer per le adunanze di congregazione, per Windows 10/11. Fa quello che fa Only
 - Fai clic su una parte dell'elenco per selezionarla. Quando fermi il timer, il tempo effettivo viene registrato (verde in orario, rosso se sforato) e si passa alla parte successiva.
 - Se fermi una parte per errore, riavviala: il conteggio riprende da dove era. Per azzerarla usa il tasto destro sulla parte.
 - In alto vedi l'ora e il **ritardo/anticipo** accumulato sull'adunanza.
-- `◀ ▶` cambiano settimana; clic sulla data per tornare alla settimana corrente; il pulsante di download riscarica lo schema da wol.jw.org.
+- `◀ ▶` cambiano settimana; clic sulla data per tornare alla settimana corrente.
+- Il pulsante di download apre un menu: **Aggiorna questa settimana** oppure **Scarica tutte le prossime settimane** (dalla settimana visualizzata in avanti, finché wol.jw.org ha schemi pubblicati). Gli schemi già salvati vengono sovrascritti, tranne le settimane **modificate a mano** (editor o ±1 min a timer fermo), che restano intatte; per le settimane con la visita del sorvegliante lo schema nuovo viene adattato di nuovo.
 
 ### Orari e countdown prima dell'inizio
 

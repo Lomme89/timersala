@@ -343,6 +343,17 @@
         </Setter>
     </Style>
 
+    <!-- ListBox: il colore di sistema sarebbe nero -->
+    <Style TargetType="ListBox">
+        <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
+
+    <Style TargetType="ListBoxItem">
+        <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+    </Style>
+
     <!-- Tooltip -->
     <Style TargetType="ToolTip">
         <Setter Property="Background" Value="{StaticResource CardBrush}" />

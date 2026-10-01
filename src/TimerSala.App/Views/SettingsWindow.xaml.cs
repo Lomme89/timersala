@@ -53,9 +53,9 @@ public partial class SettingsWindow : Window
         ThemeBox.SelectedItem = themes.First(t => t.Value == s.DisplayTheme);
         var layouts = new List<Option<DisplayLayout>>
         {
-            new(DisplayLayout.Classic, "Classico"),
-            new(DisplayLayout.Hourglass, "Clessidra orizzontale"),
-            new(DisplayLayout.DigitsOnly, "Solo cifre"),
+            new(DisplayLayout.Classic, "Classico — titolo, cifre e barra"),
+            new(DisplayLayout.Hourglass, "Clessidra — lo sfondo si svuota col tempo"),
+            new(DisplayLayout.DigitsOnly, "Solo cifre — massima grandezza"),
         };
         LayoutBox.ItemsSource = layouts;
         LayoutBox.SelectedItem = layouts.First(l => l.Value == s.DisplayLayout);

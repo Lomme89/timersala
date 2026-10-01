@@ -1,7 +1,7 @@
 <Window x:Class="TimerSala.App.Views.SettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Impostazioni" Width="580" Height="820" ResizeMode="CanResize" MinHeight="480" MinWidth="520"
+        Title="Impostazioni" Width="600" Height="860" ResizeMode="CanResize" MinHeight="480" MinWidth="520"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
         Background="{StaticResource BgBrush}" Foreground="{StaticResource TextBrush}" FontFamily="{StaticResource UiFont}">
     <Window.Resources>
@@ -87,23 +87,6 @@
                 </ScrollViewer>
             </TabItem>
 
-            <!-- TIMER -->
-            <TabItem Header="Timer">
-                <StackPanel Margin="12">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="200" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="Avviso giallo (secondi)" Style="{StaticResource Label}" ToolTip="Il timer diventa giallo quando mancano questi secondi" />
-                        <TextBox x:Name="WarningSeconds" Grid.Column="1" Width="90" HorizontalAlignment="Left" />
-                    </Grid>
-                    <TextBlock Text="CONTROLLER" Style="{StaticResource Group}" />
-                    <CheckBox x:Name="TopmostBox" Content="Finestra di controllo sempre in primo piano" />
-                    <TextBlock Style="{StaticResource Hint}" Text="La modalità mini (tasto M o pulsante in alto) è sempre in primo piano." />
-                </StackPanel>
-            </TabItem>
-
             <!-- SCHERMO -->
             <TabItem Header="Schermo">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -124,10 +107,11 @@
                             </Button>
                         </Grid>
                         <CheckBox x:Name="ShowTimerWindow" Content="Mostra il timer su questo schermo" Margin="0,10,0,0" />
+
                         <TextBlock Text="ASPETTO" Style="{StaticResource Group}" />
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="140" />
+                                <ColumnDefinition Width="110" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
@@ -142,23 +126,33 @@
                             <TextBlock Grid.Row="2" Text="Carattere" Style="{StaticResource Label}" Margin="0,8,12,0" />
                             <ComboBox x:Name="FontBox" Grid.Row="2" Grid.Column="1" Margin="0,8,0,0" IsEditable="True" />
                         </Grid>
-                        <TextBlock Style="{StaticResource Hint}"
-                                   Text="Clessidra: lo sfondo colorato si accorcia da destra verso sinistra man mano che il tempo passa. Solo cifre: massima grandezza, senza testi." />
 
                         <TextBlock Text="DURANTE IL TIMER" Style="{StaticResource Group}" />
-                        <CheckBox x:Name="ColoredDigits" Content="Cifre colorate (verde / giallo / rosso)" />
-                        <CheckBox x:Name="FlashOvertime" Content="Cifre lampeggianti quando il tempo è scaduto" />
-                        <CheckBox x:Name="ShowTitle" Content="Mostra il titolo della parte" />
-                        <CheckBox x:Name="ShowSection" Content="Mostra la sezione (Tesori, Ministero, Vita cristiana…)" />
-                        <CheckBox x:Name="ShowBar" Content="Mostra la barra di avanzamento (layout classico)" />
-                        <CheckBox x:Name="ShowNextPart" Content="Mostra la parte successiva" />
-                        <CheckBox x:Name="ShowClockRunning" Content="Mostra l'ora in basso a destra" />
-                        <CheckBox x:Name="ShowDelay" Content="Mostra il ritardo accumulato (al posto dell'ora)" />
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <TextBlock Text="Giallo quando mancano" Style="{StaticResource Label}" />
+                            <TextBox x:Name="WarningSeconds" Width="64" HorizontalContentAlignment="Center" />
+                            <TextBlock Text="secondi" Style="{StaticResource Label}" Margin="8,0,0,0" />
+                        </StackPanel>
+                        <UniformGrid Columns="2">
+                            <CheckBox x:Name="ColoredDigits" Content="Cifre colorate" ToolTip="Verde, giallo e rosso" />
+                            <CheckBox x:Name="FlashOvertime" Content="Lampeggio allo scadere" />
+                            <CheckBox x:Name="ShowTitle" Content="Titolo della parte" />
+                            <CheckBox x:Name="ShowSection" Content="Sezione" ToolTip="Tesori, Ministero, Vita cristiana…" />
+                            <CheckBox x:Name="ShowBar" Content="Barra di avanzamento" ToolTip="Solo nel layout classico" />
+                            <CheckBox x:Name="ShowNextPart" Content="Parte successiva" />
+                            <CheckBox x:Name="ShowClockRunning" Content="Ora in basso" />
+                            <CheckBox x:Name="ShowDelay" Content="Ritardo al posto dell'ora" />
+                        </UniformGrid>
 
                         <TextBlock Text="A TIMER FERMO" Style="{StaticResource Group}" />
-                        <CheckBox x:Name="ShowClock" Content="Mostra l'orologio" />
-                        <CheckBox x:Name="ShowNext" Content="Mostra la prossima parte" />
-                        <TextBlock Style="{StaticResource Hint}" Text="Le stesse impostazioni valgono per la pagina web del timer." />
+                        <UniformGrid Columns="2">
+                            <CheckBox x:Name="ShowClock" Content="Orologio" />
+                            <CheckBox x:Name="ShowNext" Content="Prossima parte" />
+                        </UniformGrid>
+
+                        <TextBlock Text="CONTROLLER" Style="{StaticResource Group}" />
+                        <CheckBox x:Name="TopmostBox" Content="Finestra di controllo sempre in primo piano" />
+                        <TextBlock Style="{StaticResource Hint}" Text="Lo stile vale anche per la pagina web. La modalità mini (tasto M) è sempre in primo piano." />
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>

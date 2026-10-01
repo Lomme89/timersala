@@ -133,3 +133,25 @@ public class RemoteControlTests
         Assert.Equal([0x89, 0x50, 0x4E, 0x47], png[..4]);
     }
 }
+
+public class NetworkInfoTests
+{
+    [Fact]
+    public void Resolves_host_by_mode()
+    {
+        Assert.Equal(Environment.MachineName, NetworkInfo.ResolveHost("hostname"));
+        var auto = NetworkInfo.ResolveHost("auto");
+        Assert.False(string.IsNullOrWhiteSpace(auto));
+        // un IP non presente sul PC ricade sull'automatico
+        Assert.Equal(auto, NetworkInfo.ResolveHost("10.255.255.254"));
+    }
+
+    [Fact]
+    public void Preferred_address_comes_first()
+    {
+        var all = NetworkInfo.Addresses();
+        if (all.Count == 0) return; // nessuna rete nell'ambiente di test
+        Assert.Equal(all[0].Ip, NetworkInfo.ResolveHost("auto"));
+        Assert.DoesNotContain(all, a => a.Ip.StartsWith("127."));
+    }
+}

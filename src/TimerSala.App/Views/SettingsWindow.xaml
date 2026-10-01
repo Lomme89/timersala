@@ -108,6 +108,23 @@
             <TabItem Header="Schermo">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel Margin="12">
+                        <TextBlock Text="MONITOR DEL TIMER" Style="{StaticResource Group}" Margin="0,0,0,8" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ComboBox x:Name="MonitorBox" />
+                            <Button Grid.Column="1" Style="{StaticResource FlatButton}" Margin="8,0,0,0" Click="Identify_Click"
+                                    ToolTip="Mostra per qualche secondo il numero su ogni schermo">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xE7F8;" FontFamily="{StaticResource IconFont}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                    <TextBlock Text="Identifica" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                        <CheckBox x:Name="ShowTimerWindow" Content="Mostra il timer su questo schermo" Margin="0,10,0,0" />
+                        <TextBlock Text="ASPETTO" Style="{StaticResource Group}" />
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="140" />
@@ -175,6 +192,9 @@
                         <TextBlock Text="Porta" Style="{StaticResource Label}" Width="170" />
                         <TextBox x:Name="WebPort" Width="90" />
                     </StackPanel>
+                    <TextBlock Text="Indirizzo nei collegamenti e nei codici QR" Margin="0,12,0,6" />
+                    <ComboBox x:Name="AddressBox" />
+                    <TextBlock Style="{StaticResource Hint}" Text="Automatico usa la scheda di rete principale (quella con cui il PC esce in rete) e ignora le schede virtuali. Il nome del PC funziona solo se la rete lo risolve." />
                     <TextBlock Style="{StaticResource Hint}" Text="Se gli altri dispositivi non si collegano, controlla che Windows Firewall consenta TimerSala sulle reti private." />
 
                     <TextBlock Text="CONTROLLO REMOTO" Style="{StaticResource Group}" />

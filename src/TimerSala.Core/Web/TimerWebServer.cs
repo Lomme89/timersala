@@ -272,26 +272,6 @@ public sealed class TimerWebServer : IAsyncDisposable
 
     public ValueTask DisposeAsync() => new(StopAsync());
 
-    /// <summary>Indirizzi IPv4 locali con cui il PC è raggiungibile in rete.</summary>
-    public static IReadOnlyList<string> LocalAddresses()
-    {
-        var list = new List<string>();
-        try
-        {
-            foreach (var ni in NetworkInterface.GetAllNetworkInterfaces())
-            {
-                if (ni.OperationalStatus != OperationalStatus.Up) continue;
-                if (ni.NetworkInterfaceType is NetworkInterfaceType.Loopback or NetworkInterfaceType.Tunnel) continue;
-                foreach (var ua in ni.GetIPProperties().UnicastAddresses)
-                {
-                    if (ua.Address.AddressFamily != AddressFamily.InterNetwork) continue;
-                    var ip = ua.Address.ToString();
-                    if (ip.StartsWith("169.254.")) continue;
-                    list.Add(ip);
-                }
-            }
-        }
-        catch (NetworkInformationException) { }
-        return list.Distinct().ToList();
-    }
+    /// <summary>Indirizzi IPv4 locali, dal più probabile (vedi <see cref="NetworkInfo"/>).</summary>
+    public static IReadOnlyList<string> LocalAddresses() => NetworkInfo.Addresses().Select(a => a.Ip).ToList();
 }

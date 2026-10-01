@@ -689,11 +689,17 @@ public sealed partial class MainViewModel : ObservableObject
 
     public string? WebUrl { get; set => Set(ref field, value); }
     public string WebStatus { get; set => Set(ref field, value); } = "Server web disattivato";
+    public bool WebRunning { get; set => Set(ref field, value); }
+
+    /// <summary>Indirizzo senza "http://" da mostrare nel controller.</summary>
+    public string WebAddressText { get; set => Set(ref field, value); } = "";
 
     public async Task StartWebServerAsync()
     {
         await _web.StopAsync();
         WebUrl = null;
+        WebRunning = false;
+        WebAddressText = "";
         if (!Settings.WebServerEnabled)
         {
             WebStatus = "Server web disattivato";
@@ -702,15 +708,24 @@ public sealed partial class MainViewModel : ObservableObject
         try
         {
             await _web.StartAsync(Settings.WebServerPort);
-            var ip = TimerWebServer.LocalAddresses().FirstOrDefault() ?? "localhost";
-            WebUrl = $"http://{ip}:{Settings.WebServerPort}";
-            OnPropertyChanged(nameof(ControlUrl));
-            WebStatus = WebUrl;
+            WebRunning = true;
+            UpdateWebUrl();
         }
         catch (Exception ex)
         {
             WebStatus = $"Server web non avviato (porta {Settings.WebServerPort}): {ex.Message}";
         }
+    }
+
+    /// <summary>Ricalcola l'indirizzo (scheda di rete preferita, nome del PC o IP scelto).</summary>
+    public void UpdateWebUrl()
+    {
+        if (!WebRunning) return;
+        var host = NetworkInfo.ResolveHost(Settings.WebAddressMode);
+        WebUrl = $"http://{host}:{Settings.WebServerPort}";
+        WebAddressText = $"{host}:{Settings.WebServerPort}";
+        WebStatus = WebUrl;
+        OnPropertyChanged(nameof(ControlUrl));
     }
 
     public Task StopWebServerAsync() => _web.StopAsync();
@@ -729,6 +744,7 @@ public sealed partial class MainViewModel : ObservableObject
         UpdateMeetingStart();
         SaveSettings();
         if (webChanged) _ = StartWebServerAsync();
+        else UpdateWebUrl();
         RefreshDisplay();
     }
 
@@ -745,6 +761,8 @@ public sealed partial class MainViewModel : ObservableObject
     }
 
     public string DataFolder => _store.Root;
+
+    public void ShowInfo(string message) => ShowStatus(message);
 
     void ShowStatus(string message, bool error = false)
     {

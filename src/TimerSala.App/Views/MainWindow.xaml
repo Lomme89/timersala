@@ -284,35 +284,57 @@
             </ListBox>
         </Border>
 
-        <!-- Schermo e rete -->
+        <!-- Rete -->
         <StackPanel Grid.Row="5" Margin="0,8,0,0">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE7F4;" VerticalAlignment="Center" Margin="2,0,8,0"
-                           Foreground="{StaticResource MutedBrush}" FontSize="16" />
-                <ComboBox Grid.Column="1" ItemsSource="{Binding AvailableMonitors}" SelectedItem="{Binding SelectedMonitor}"
-                          ToolTip="Schermo su cui mostrare il timer" />
-                <CheckBox Grid.Column="2" Content="Mostra" IsChecked="{Binding TimerWindowVisible}" Margin="8,0,0,0" VerticalAlignment="Center"
-                          ToolTip="Mostra o nasconde il timer sullo schermo scelto" />
-                <Button Grid.Column="3" Style="{StaticResource GhostIconButton}" Content="&#xE7F8;" Click="Identify_Click"
-                        ToolTip="Identifica gli schermi" />
-            </Grid>
-            <DockPanel Margin="0,6,0,0">
-                <TextBlock DockPanel.Dock="Left" FontFamily="{StaticResource IconFont}" Text="&#xE774;" VerticalAlignment="Center"
-                           Foreground="{StaticResource MutedBrush}" Margin="2,0,8,0" FontSize="14" />
-                <Button DockPanel.Dock="Right" Style="{StaticResource GhostIconButton}" Width="30" Height="26" FontSize="14" Content="&#xED14;"
-                        Click="Qr_Click" ToolTip="Codici QR per vedere o controllare il timer dal telefono" />
-                <TextBlock VerticalAlignment="Center" TextTrimming="CharacterEllipsis" FontSize="13">
-                    <Hyperlink x:Name="WebLink" Click="WebLink_Click" Foreground="{StaticResource AccentBrush}">
-                        <Run Text="{Binding WebStatus, Mode=OneWay}" />
-                    </Hyperlink>
-                </TextBlock>
-            </DockPanel>
+            <Border Style="{StaticResource Card}" Padding="12,8">
+                <DockPanel>
+                    <Button DockPanel.Dock="Right" Click="Qr_Click" Padding="12,7"
+                            Visibility="{Binding WebRunning, Converter={StaticResource BoolToVis}}"
+                            ToolTip="Mostra i codici QR per aprire il timer sul telefono">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource FlatButton}">
+                                <Setter Property="Background" Value="{StaticResource BgBrush}" />
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xED14;" FontFamily="{StaticResource IconFont}" FontSize="14" VerticalAlignment="Center" Margin="0,0,8,0" />
+                            <TextBlock Text="Collega telefono" FontSize="13" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Ellipse Width="8" Height="8" VerticalAlignment="Center" Margin="2,0,10,0">
+                        <Ellipse.Style>
+                            <Style TargetType="Ellipse">
+                                <Setter Property="Fill" Value="{StaticResource MutedBrush}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding WebRunning}" Value="True">
+                                        <Setter Property="Fill" Value="{StaticResource GreenBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Ellipse.Style>
+                    </Ellipse>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="TIMER IN RETE" Style="{StaticResource Caption}" FontSize="10" FontWeight="SemiBold" />
+                        <TextBlock x:Name="AddressText" FontFamily="{StaticResource DigitsFont}" FontSize="14" Cursor="Hand"
+                                   TextTrimming="CharacterEllipsis" MouseLeftButtonDown="Address_Click"
+                                   ToolTip="Clic per copiare l'indirizzo · doppio clic per aprirlo nel browser">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Text" Value="{Binding WebAddressText}" />
+                                    <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding WebRunning}" Value="False">
+                                            <Setter Property="Text" Value="{Binding WebStatus}" />
+                                            <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+                                            <Setter Property="FontSize" Value="12" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
             <TextBlock x:Name="StatusText" Text="{Binding StatusMessage}" TextWrapping="Wrap" FontSize="12" Margin="2,6,0,0">
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">

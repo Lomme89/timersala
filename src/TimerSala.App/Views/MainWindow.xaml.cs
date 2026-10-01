@@ -147,12 +147,20 @@ public partial class MainWindow : Window
         e.Handled = true;
     }
 
-    void Identify_Click(object sender, RoutedEventArgs e) => IdentifyWindow.ShowAll();
-
-    void WebLink_Click(object sender, RoutedEventArgs e)
+    void Address_Click(object sender, MouseButtonEventArgs e)
     {
         if (_vm.WebUrl is null) return;
-        try { Process.Start(new ProcessStartInfo(_vm.WebUrl) { UseShellExecute = true }); } catch { }
+        if (e.ClickCount >= 2)
+        {
+            try { Process.Start(new ProcessStartInfo(_vm.WebUrl) { UseShellExecute = true }); } catch { }
+            return;
+        }
+        try
+        {
+            Clipboard.SetText(_vm.WebUrl);
+            _vm.ShowInfo($"Indirizzo copiato: {_vm.WebUrl}");
+        }
+        catch { /* appunti occupati da un altro programma */ }
     }
 
     void RestorePlacement()

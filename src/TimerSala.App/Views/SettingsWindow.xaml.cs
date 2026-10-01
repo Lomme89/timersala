@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Media;
 using TimerSala.App.ViewModels;
 using TimerSala.Core.Storage;
+using TimerSala.Core.Web;
 using TimerSala.Core.Wol;
 
 namespace TimerSala.App.Views;
@@ -80,6 +81,19 @@ public partial class SettingsWindow : Window
         RemoteEnabled.IsChecked = s.RemoteControlEnabled;
         RemotePin.Text = s.RemotePin;
         WebEnabled.IsChecked = s.WebServerEnabled;
+
+        var addresses = new List<Option<string>>
+        {
+            new("auto", $"Automatico (consigliato) — {NetworkInfo.ResolveHost("auto")}"),
+            new("hostname", $"Nome del PC — {Environment.MachineName}"),
+        };
+        addresses.AddRange(NetworkInfo.Addresses().Select(a => new Option<string>(a.Ip, $"{a.Ip} — {a.Adapter}{(a.IsVirtual ? " (virtuale)" : "")}")));
+        AddressBox.ItemsSource = addresses;
+        AddressBox.SelectedItem = addresses.FirstOrDefault(a => a.Value == s.WebAddressMode) ?? addresses[0];
+
+        MonitorBox.ItemsSource = vm.AvailableMonitors;
+        MonitorBox.SelectedItem = vm.SelectedMonitor;
+        ShowTimerWindow.IsChecked = vm.TimerWindowVisible;
         WebPort.Text = s.WebServerPort.ToString();
     }
 
@@ -137,7 +151,10 @@ public partial class SettingsWindow : Window
         if (pin.Length >= 4) s.RemotePin = pin;
         s.WebServerEnabled = WebEnabled.IsChecked == true;
         s.WebServerPort = port;
+        s.WebAddressMode = (AddressBox.SelectedItem as Option<string>)?.Value ?? "auto";
         _vm.ApplySettings(s);
+        if (MonitorBox.SelectedItem is Interop.MonitorInfo monitor) _vm.SelectedMonitor = monitor;
+        _vm.TimerWindowVisible = ShowTimerWindow.IsChecked == true;
         return true;
     }
 
@@ -156,6 +173,8 @@ public partial class SettingsWindow : Window
         MessageBox.Show(this, msg, "Impostazioni", MessageBoxButton.OK, MessageBoxImage.Warning);
         return false;
     }
+
+    void Identify_Click(object sender, RoutedEventArgs e) => IdentifyWindow.ShowAll();
 
     void OpenData_Click(object sender, RoutedEventArgs e)
     {

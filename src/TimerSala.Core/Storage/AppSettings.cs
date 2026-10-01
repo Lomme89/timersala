@@ -80,6 +80,9 @@ public sealed class AppSettings
     public bool WebServerEnabled { get; set; } = true;
     public int WebServerPort { get; set; } = 8090;
 
+    /// <summary>Indirizzo nei collegamenti e nei QR: "auto", "hostname" oppure un IP specifico.</summary>
+    public string WebAddressMode { get; set; } = "auto";
+
     public int WarningSeconds { get; set; } = 60;
     public int CounselSeconds { get; set; } = 60;
 

@@ -43,7 +43,7 @@ Con un solo monitor la finestra completa può essere ingombrante: il pulsante in
 
 ### Schermo del timer
 
-In basso nel controller scegli lo **schermo** (il pulsante accanto mostra il numero su ogni monitor) e spunta **Mostra**. La scelta viene ricordata.
+In Impostazioni → *Schermo* scegli il **monitor** del timer (*Identifica* mostra il numero su ogni schermo) e spunta **Mostra**. La scelta viene ricordata.
 
 - Verde: tempo regolare. Giallo: ultimo minuto (configurabile). Rosso con `+`: tempo sforato, lo sfondo diventa rosso scuro.
 - Quando il timer è fermo mostra l'orologio e la prossima parte.
@@ -64,9 +64,9 @@ Sotto i pulsanti del timer c'è la riga dei messaggi: scegli una frase pronta da
 
 ### Timer in rete
 
-In basso nel controller è indicato l'indirizzo (es. `http://192.168.1.20:8090`). Aprilo da qualsiasi dispositivo collegato alla stessa rete: vedrai il timer in tempo reale. *Programma* mostra l'elenco delle parti con i tempi effettivi; *Schermo intero* nasconde la barra del browser. Porta e attivazione si cambiano nelle impostazioni.
+In basso nel controller è indicato l'indirizzo (es. `192.168.1.20:8090`; clic per copiarlo, doppio clic per aprirlo). TimerSala usa la scheda di rete principale e ignora quelle virtuali (VirtualBox, Hyper-V, VPN…); se serve, in Impostazioni → *Rete* puoi scegliere un altro indirizzo o il nome del PC. Aprilo da qualsiasi dispositivo collegato alla stessa rete: vedrai il timer in tempo reale. *Programma* mostra l'elenco delle parti con i tempi effettivi; *Schermo intero* nasconde la barra del browser. Porta e attivazione si cambiano nelle impostazioni.
 
-Il pulsante **QR** accanto all'indirizzo mostra due codici da inquadrare con il telefono:
+Il pulsante **Collega telefono** accanto all'indirizzo mostra due codici da inquadrare con il telefono:
 
 - **Vedi il timer** — apre la pagina in sola visualizzazione.
 - **Controlla il timer** — apre la pagina con il pannello di controllo: il timer resta visibile (sopra sul telefono, a sinistra su tablet e PC) e accanto ci sono avvia/ferma, parte precedente/successiva, ±1 min e due schede: *Programma* (tocca una parte per selezionarla) e *Messaggi* (frasi pronte, testo libero, messaggio attualmente sullo schermo). Questo codice è nascosto finché non premi *Mostra codice di controllo*, perché contiene già il PIN; chi apre l'indirizzo a mano tocca *Controllo* e inserisce il PIN.

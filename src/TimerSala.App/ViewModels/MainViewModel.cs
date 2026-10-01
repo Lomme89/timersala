@@ -426,8 +426,6 @@ public sealed partial class MainViewModel : ObservableObject
     public string NextText { get; set => Set(ref field, value); } = "";
     public string InfoText { get; set => Set(ref field, value); } = "";
 
-    /// <summary>Riga piccola sotto le cifre nella modalità mini.</summary>
-    public string MiniSubText { get; set => Set(ref field, value); } = "";
     public bool IsOvertime { get; set => Set(ref field, value); }
     public bool IsCounselOrManual { get; set => Set(ref field, value); }
 
@@ -497,7 +495,6 @@ public sealed partial class MainViewModel : ObservableObject
             ScreenFooterLeft = Settings.ShowNextPart && s.Mode is TimerMode.Part or TimerMode.Countdown ? NextText : "";
         }
 
-        MiniSubText = string.IsNullOrEmpty(NextText) ? InfoText : NextText;
         IsOvertime = s.Phase == TimerPhase.Overtime;
 
         if (Math.Abs(s.DelaySeconds) < 5)

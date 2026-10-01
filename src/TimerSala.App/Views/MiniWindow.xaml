@@ -63,14 +63,11 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <StackPanel VerticalAlignment="Center" Margin="0,0,8,0">
-                    <Viewbox Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left" Height="64">
-                        <TextBlock Text="{Binding DisplayText}" Foreground="{Binding PhaseBrush}" FontFamily="{StaticResource DigitsFont}"
-                                   FontSize="64" Typography.NumeralAlignment="Tabular" />
-                    </Viewbox>
-                    <TextBlock Text="{Binding MiniSubText}" FontSize="11.5" Foreground="{StaticResource MutedBrush}"
-                               TextTrimming="CharacterEllipsis" Margin="1,1,0,0" ToolTip="{Binding MiniSubText}" />
-                </StackPanel>
+                <Viewbox Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left" VerticalAlignment="Center"
+                         Height="76" Margin="0,0,8,0">
+                    <TextBlock Text="{Binding DisplayText}" Foreground="{Binding PhaseBrush}" FontFamily="{StaticResource DigitsFont}"
+                               FontSize="80" Typography.NumeralAlignment="Tabular" />
+                </Viewbox>
                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
                     <StackPanel Orientation="Horizontal">
                         <Button Style="{StaticResource MiniButton}" Content="&#xE892;" Command="{Binding PreviousCommand}" ToolTip="Parte precedente (←)" />

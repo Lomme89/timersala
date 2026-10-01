@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>TimerSala</title>
+<style>
+  :root {
+    --bg: #000; --fg: #f4f5f7; --muted: #8b919c; --card: #15171c; --line: #262a32;
+    --green: #22c55e; --amber: #fbbf24; --red: #ef4444; --accent: #3b82f6;
+    --font: "Bahnschrift", "Segoe UI Variable Display", "Segoe UI", Roboto, system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); font-family: var(--font); overflow: hidden; }
+  body { display: flex; flex-direction: column; }
+  body.overtime { background: #1d0505; }
+
+  #timer { flex: 1; display: flex; flex-direction: column; min-height: 0; padding: 3vh 4vw 2vh; }
+  .top { display: flex; align-items: center; gap: 1.5vw; min-height: 12vh; }
+  .chip { width: 1.2vmin; min-width: 8px; align-self: stretch; border-radius: 99px; background: var(--muted); }
+  .titles { min-width: 0; flex: 1; }
+  #section { font-size: clamp(14px, 3vmin, 40px); color: var(--muted); text-transform: uppercase; letter-spacing: .08em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #title { font-size: clamp(20px, 6.5vmin, 90px); font-weight: 600; line-height: 1.1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+  .digits-wrap { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 0; position: relative; overflow: hidden; }
+  #digits, #probe { font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; letter-spacing: -.02em; white-space: nowrap; }
+  #digits { font-size: 20vh; color: var(--green); transition: color .3s; }
+  #probe { position: absolute; visibility: hidden; font-size: 100px; }
+  #digits.warning { color: var(--amber); }
+  #digits.overtime { color: var(--red); }
+  #digits.idle { color: var(--fg); }
+  #digits .sec { font-size: .45em; color: var(--muted); margin-left: .05em; }
+
+  .bar { height: 2.2vh; min-height: 10px; background: var(--line); border-radius: 99px; overflow: hidden; }
+  #fill { height: 100%; width: 0; background: var(--green); border-radius: 99px; transition: width .25s linear, background .3s; }
+  .bottom { display: flex; justify-content: space-between; align-items: baseline; margin-top: 2vh; font-size: clamp(14px, 4vmin, 56px); color: var(--muted); gap: 2vw; }
+  #next { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #delay.late { color: var(--red); } #delay.early { color: var(--green); }
+
+  #schedule { display: none; flex: 1; overflow: auto; padding: 16px; }
+  body.show-schedule #schedule { display: block; }
+  body.show-schedule #timer { flex: 0 0 auto; }
+  body.show-schedule #timer .digits-wrap { flex: 0 0 auto; }
+  body.show-schedule .digits-wrap { height: 22vh; }
+  .row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 10px; background: var(--card); margin-bottom: 6px; font-size: 18px; }
+  .row .stripe { width: 6px; align-self: stretch; border-radius: 4px; }
+  .row .t { flex: 1; min-width: 0; }
+  .row .m { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .row .a { font-variant-numeric: tabular-nums; min-width: 56px; text-align: right; color: var(--green); }
+  .row .a.over { color: var(--red); }
+  .row.song { background: transparent; color: var(--muted); font-style: italic; }
+  .row.running { outline: 2px solid var(--green); }
+  .row.selected { outline: 2px solid var(--accent); }
+
+  .tools { position: fixed; right: 12px; top: 12px; display: flex; gap: 8px; opacity: .25; transition: opacity .3s; }
+  .tools:hover, .tools:focus-within { opacity: 1; }
+  .tools button { background: var(--card); color: var(--fg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; font: inherit; font-size: 15px; cursor: pointer; }
+  body.idle .bar { visibility: hidden; }
+  @media (max-width: 700px) { #timer { padding-top: 64px; } }
+  #offline { position: fixed; left: 50%; top: 12px; transform: translateX(-50%); background: var(--red); color: #fff; padding: 8px 16px; border-radius: 99px; display: none; font-size: 16px; }
+  body.offline #offline { display: block; }
+</style>
+</head>
+<body>
+  <div id="offline">Connessione al PC persa… riconnessione</div>
+  <section id="timer">
+    <div class="top">
+      <div class="chip" id="chip"></div>
+      <div class="titles">
+        <div id="section"></div>
+        <div id="title">TimerSala</div>
+      </div>
+    </div>
+    <div class="digits-wrap" id="digitsWrap"><span id="probe">+88:88</span><div id="digits" class="idle">--:--</div></div>
+    <div class="bar"><div id="fill"></div></div>
+    <div class="bottom"><span id="next"></span><span id="delay"></span></div>
+  </section>
+  <section id="schedule"></section>
+  <div class="tools">
+    <button id="btnSchedule" type="button">Programma</button>
+    <button id="btnFull" type="button">Schermo intero</button>
+  </div>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const fmtDelay = s => { const a = Math.abs(s); return (s > 0 ? '+' : '−') + Math.floor(a / 60) + ':' + String(a % 60).padStart(2, '0'); };
+  const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  function render(s) {
+    document.body.classList.toggle('overtime', s.phase === 'overtime');
+    document.body.classList.toggle('idle', s.phase === 'idle');
+    const d = $('digits');
+    d.className = s.phase;
+    if (s.phase === 'idle') {
+      $('section').textContent = s.meeting || '';
+      $('title').textContent = s.showNext && s.next ? 'Prossima: ' + s.next : '';
+      d.innerHTML = s.showClock ? esc(s.clock) : '';
+      $('fill').style.width = '0';
+      $('chip').style.background = 'var(--muted)';
+      $('next').textContent = '';
+    } else {
+      $('section').textContent = s.sectionLabel || (s.mode === 'counsel' ? 'Consiglio' : '');
+      $('title').textContent = s.title;
+      d.textContent = s.display;
+      $('fill').style.width = (s.phase === 'overtime' ? 100 : s.progress * 100) + '%';
+      $('fill').style.background = s.phase === 'overtime' ? 'var(--red)' : s.phase === 'warning' ? 'var(--amber)' : 'var(--green)';
+      $('chip').style.background = s.sectionColor || 'var(--muted)';
+      $('next').textContent = s.next ? 'Dopo: ' + s.next : '';
+    }
+    const dl = $('delay');
+    if (s.showDelay && s.delay !== 0) {
+      dl.textContent = (s.delay > 0 ? 'Ritardo ' : 'Anticipo ') + fmtDelay(s.delay);
+      dl.className = s.delay > 0 ? 'late' : 'early';
+    } else { dl.textContent = s.phase === 'idle' ? '' : s.clock; dl.className = ''; }
+  }
+
+  async function loadSchedule() {
+    if (!document.body.classList.contains('show-schedule')) return;
+    try {
+      const r = await fetch('/api/schedule', { cache: 'no-store' });
+      const m = await r.json();
+      $('schedule').innerHTML = m.parts.map(p =>
+        `<div class="row ${p.song ? 'song' : ''} ${p.running ? 'running' : ''} ${p.selected && !p.running ? 'selected' : ''}">
+           <span class="stripe" style="background:${p.color}"></span>
+           <span class="t">${p.song ? '♪ ' : ''}${esc(p.title)}</span>
+           ${p.song ? '' : `<span class="m">${p.minutes} min</span><span class="a ${p.over ? 'over' : ''}">${p.actual ?? ''}</span>`}
+         </div>`).join('');
+    } catch { }
+  }
+
+  let es;
+  function connect() {
+    es = new EventSource('/api/events');
+    es.onmessage = e => { document.body.classList.remove('offline'); render(JSON.parse(e.data)); };
+    es.onerror = () => { document.body.classList.add('offline'); };
+  }
+  // adatta la dimensione delle cifre allo spazio disponibile (con qualsiasi font)
+  function fit() {
+    const wrap = $('digitsWrap'), probe = $('probe');
+    const w = probe.offsetWidth, h = probe.offsetHeight;
+    if (!w || !h) return;
+    const size = Math.min(wrap.clientWidth * 0.98 / w, wrap.clientHeight * 0.98 / h) * 100;
+    $('digits').style.fontSize = Math.max(16, size) + 'px';
+  }
+  window.addEventListener('resize', fit);
+  document.fonts?.ready.then(fit);
+  fit();
+
+  connect();
+  setInterval(loadSchedule, 2000);
+
+  $('btnSchedule').onclick = () => { document.body.classList.toggle('show-schedule'); fit(); loadSchedule(); };
+  $('btnFull').onclick = () => {
+    if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen?.();
+  };
+
+  // impedisce lo spegnimento dello schermo su tablet e telefoni
+  let lock;
+  async function wake() { try { lock = await navigator.wakeLock?.request('screen'); } catch { } }
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') wake(); });
+  wake();
+})();
+</script>
+</body>
+</html>

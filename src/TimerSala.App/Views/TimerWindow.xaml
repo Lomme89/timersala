@@ -1,0 +1,76 @@
+<Window x:Class="TimerSala.App.Views.TimerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="TimerSala — Schermo"
+        WindowStyle="None" ResizeMode="NoResize" ShowInTaskbar="False" ShowActivated="False"
+        Background="{Binding DisplayBackground}" Foreground="#F4F5F7"
+        FontFamily="{StaticResource UiFont}" Cursor="None"
+        Width="1280" Height="720" UseLayoutRounding="True">
+    <Grid x:Name="Root">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="17*" />
+            <RowDefinition Height="69*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="10*" />
+        </Grid.RowDefinitions>
+
+        <!-- Titolo della parte -->
+        <DockPanel x:Name="Header" VerticalAlignment="Center">
+            <Border x:Name="Chip" DockPanel.Dock="Left" Width="12" CornerRadius="6" Background="{Binding SectionBrush}" Margin="0,0,24,0">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsIdle}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+            </Border>
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock x:Name="SectionTb" Text="{Binding SectionText}" Foreground="#8D94A0" TextTrimming="CharacterEllipsis">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsIdle}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                <TextBlock x:Name="TitleTb" Text="{Binding ScreenTitle}" FontWeight="SemiBold" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+        </DockPanel>
+
+        <!-- Cifre: il segnaposto invisibile mantiene costante la scala del Viewbox -->
+        <Viewbox Grid.Row="1" Stretch="Uniform" StretchDirection="Both">
+            <Grid>
+                <TextBlock Text="+88:88" Opacity="0" FontFamily="{StaticResource DigitsFont}" FontSize="200" Typography.NumeralAlignment="Tabular" />
+                <TextBlock Text="{Binding ScreenDigits}" Foreground="{Binding PhaseBrush}" FontFamily="{StaticResource DigitsFont}" FontSize="200"
+                           HorizontalAlignment="Center" Typography.NumeralAlignment="Tabular" />
+            </Grid>
+        </Viewbox>
+
+        <!-- Barra di avanzamento -->
+        <Grid x:Name="BarHost" Grid.Row="2">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsIdle}" Value="True">
+                            <Setter Property="Visibility" Value="Hidden" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <ProgressBar x:Name="Bar" Style="{StaticResource SlimProgress}" Value="{Binding Progress, Mode=OneWay}" Foreground="{Binding PhaseBrush}" />
+        </Grid>
+
+        <!-- Piè di pagina -->
+        <DockPanel x:Name="Footer" Grid.Row="3" VerticalAlignment="Center" LastChildFill="True">
+            <TextBlock x:Name="FooterRight" DockPanel.Dock="Right" Text="{Binding ScreenFooterRight}" Foreground="#8D94A0"
+                       FontFamily="{StaticResource DigitsFont}" Margin="24,0,0,0" />
+            <TextBlock x:Name="FooterLeft" Text="{Binding ScreenFooterLeft}" Foreground="#8D94A0" TextTrimming="CharacterEllipsis" />
+        </DockPanel>
+    </Grid>
+</Window>

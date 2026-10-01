@@ -1,0 +1,71 @@
+<Window x:Class="TimerSala.App.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Impostazioni" Width="520" SizeToContent="Height" ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        Background="{StaticResource BgBrush}" Foreground="{StaticResource TextBrush}" FontFamily="{StaticResource UiFont}">
+    <Window.Resources>
+        <Style TargetType="TextBlock" x:Key="Label">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0,0,12,0" />
+        </Style>
+        <Style TargetType="TextBlock" x:Key="Group">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+            <Setter Property="Margin" Value="0,16,0,8" />
+        </Style>
+    </Window.Resources>
+    <StackPanel Margin="20">
+        <TextBlock Text="SCHEMI DA WOL.JW.ORG" Style="{StaticResource Group}" Margin="0,0,0,8" />
+        <Grid Margin="0,0,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="170" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Lingua della guida" Style="{StaticResource Label}" />
+            <ComboBox x:Name="LanguageBox" Grid.Column="1" />
+        </Grid>
+        <CheckBox x:Name="AutoDownload" Content="Scarica automaticamente le settimane non ancora salvate" />
+
+        <TextBlock Text="TIMER" Style="{StaticResource Group}" />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="170" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock Text="Avviso giallo (secondi)" Style="{StaticResource Label}" ToolTip="Il timer diventa giallo quando mancano questi secondi" />
+            <TextBox x:Name="WarningSeconds" Grid.Column="1" Width="90" HorizontalAlignment="Left" />
+            <TextBlock Grid.Row="1" Text="Consiglio (secondi)" Style="{StaticResource Label}" Margin="0,8,12,0" />
+            <TextBox x:Name="CounselSeconds" Grid.Row="1" Grid.Column="1" Width="90" HorizontalAlignment="Left" Margin="0,8,0,0" />
+        </Grid>
+
+        <TextBlock Text="SCHERMO DEL TIMER" Style="{StaticResource Group}" />
+        <CheckBox x:Name="ShowClock" Content="Mostra l'orologio quando il timer è fermo" Margin="0,0,0,6" />
+        <CheckBox x:Name="ShowNext" Content="Mostra la prossima parte quando il timer è fermo" Margin="0,0,0,6" />
+        <CheckBox x:Name="ShowDelay" Content="Mostra il ritardo accumulato sullo schermo" />
+
+        <TextBlock Text="RETE" Style="{StaticResource Group}" />
+        <CheckBox x:Name="WebEnabled" Content="Server web attivo (timer visibile da altri dispositivi in rete)" Margin="0,0,0,8" />
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Porta" Style="{StaticResource Label}" Width="170" />
+            <TextBox x:Name="WebPort" Width="90" />
+        </StackPanel>
+
+        <TextBlock Text="CONTROLLER" Style="{StaticResource Group}" />
+        <CheckBox x:Name="TopmostBox" Content="Finestra di controllo sempre in primo piano" />
+
+        <DockPanel Margin="0,24,0,0">
+            <Button Style="{StaticResource FlatButton}" Content="Cartella dati" Click="OpenData_Click" ToolTip="Apre la cartella con impostazioni, schemi salvati e diagnostica" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Style="{StaticResource FlatButton}" Content="Annulla" IsCancel="True" Width="100" Margin="0,0,8,0" />
+                <Button Style="{StaticResource FlatButton}" Content="Salva" IsDefault="True" Width="100" Click="Save_Click"
+                        Background="{StaticResource AccentBrush}" BorderThickness="0" Foreground="White" />
+            </StackPanel>
+        </DockPanel>
+    </StackPanel>
+</Window>

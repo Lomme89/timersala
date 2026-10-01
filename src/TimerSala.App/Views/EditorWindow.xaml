@@ -1,0 +1,66 @@
+<Window x:Class="TimerSala.App.Views.EditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Modifica schema" Language="it-IT" Width="820" Height="640" MinWidth="640" MinHeight="420"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        Background="{StaticResource BgBrush}" Foreground="{StaticResource TextBrush}" FontFamily="{StaticResource UiFont}">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel>
+            <TextBlock Text="{Binding Heading}" FontSize="18" FontWeight="SemiBold" />
+            <TextBlock Style="{StaticResource Caption}" Margin="0,4,0,0" TextWrapping="Wrap"
+                       Text="Modifica titoli, sezioni e durate. I cantici non sono cronometrati. 'Consiglio' abilita il timer di 1 minuto dopo la parte." />
+        </StackPanel>
+
+        <DockPanel Grid.Row="1" Margin="0,12,0,8">
+            <TextBlock Text="Titolo adunanza" VerticalAlignment="Center" Margin="0,0,10,0" />
+            <TextBox Text="{Binding MeetingTitle, UpdateSourceTrigger=PropertyChanged}" />
+        </DockPanel>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <DataGrid x:Name="Grid" ItemsSource="{Binding Parts}" SelectedItem="{Binding Selected}" AutoGenerateColumns="False"
+                      CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="False" CanUserReorderColumns="False"
+                      HeadersVisibility="Column" SelectionMode="Single" GridLinesVisibility="Horizontal"
+                      CellEditEnding="Grid_CellEditEnding">
+                <DataGrid.Columns>
+                    <DataGridComboBoxColumn x:Name="SectionColumn" Header="Sezione" Width="190"
+                                            SelectedValueBinding="{Binding Section}" SelectedValuePath="Value" DisplayMemberPath="Label" />
+                    <DataGridTextColumn Header="Titolo" Width="*" Binding="{Binding Title, UpdateSourceTrigger=PropertyChanged}" />
+                    <DataGridTextColumn Header="Minuti" Width="70" Binding="{Binding Minutes, UpdateSourceTrigger=LostFocus}" />
+                    <DataGridCheckBoxColumn Header="Cantico" Width="70" Binding="{Binding IsSong, UpdateSourceTrigger=PropertyChanged}" />
+                    <DataGridCheckBoxColumn Header="Consiglio" Width="80" Binding="{Binding HasCounsel, UpdateSourceTrigger=PropertyChanged}" />
+                </DataGrid.Columns>
+            </DataGrid>
+            <StackPanel Grid.Column="1" Margin="10,0,0,0" Width="150">
+                <Button Style="{StaticResource FlatButton}" Content="+ Parte" Command="{Binding AddPartCommand}" Margin="0,0,0,6" />
+                <Button Style="{StaticResource FlatButton}" Content="+ Cantico" Command="{Binding AddSongCommand}" Margin="0,0,0,6" />
+                <Button Style="{StaticResource FlatButton}" Content="Elimina" Command="{Binding RemoveCommand}" Margin="0,0,0,16" />
+                <Button Style="{StaticResource FlatButton}" Content="▲ Su" Command="{Binding MoveUpCommand}" Margin="0,0,0,6" />
+                <Button Style="{StaticResource FlatButton}" Content="▼ Giù" Command="{Binding MoveDownCommand}" Margin="0,0,0,16" />
+                <Button Style="{StaticResource FlatButton}" Content="Ripristina scaricato" Command="{Binding RestoreDownloadedCommand}" Margin="0,0,0,6"
+                        ToolTip="Torna allo schema scaricato da wol.jw.org (o al modello se non scaricato)" />
+                <Button Style="{StaticResource FlatButton}" Content="Modello standard" Command="{Binding UseTemplateCommand}"
+                        ToolTip="Schema standard senza titoli specifici" />
+            </StackPanel>
+        </Grid>
+
+        <DockPanel Grid.Row="3" Margin="0,12,0,0">
+            <TextBlock Text="{Binding TotalText}" Style="{StaticResource Caption}" VerticalAlignment="Center" FontSize="13" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Style="{StaticResource FlatButton}" Content="Annulla" IsCancel="True" Width="110" Margin="0,0,8,0" />
+                <Button Style="{StaticResource FlatButton}" Content="Salva" IsDefault="True" Width="110" Click="Save_Click"
+                        Background="{StaticResource AccentBrush}" BorderThickness="0" Foreground="White" />
+            </StackPanel>
+        </DockPanel>
+    </Grid>
+</Window>

@@ -24,6 +24,7 @@ public partial class SettingsWindow : Window
     public SettingsWindow(MainViewModel vm)
     {
         InitializeComponent();
+        WindowSizing.FitToScreen(this);
         _vm = vm;
         var s = vm.Settings;
 

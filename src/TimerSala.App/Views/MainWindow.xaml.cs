@@ -25,6 +25,7 @@ public partial class MainWindow : Window
         vm.DisplayTargetChanged += (_, _) => Dispatcher.BeginInvoke(UpdateTimerWindow);
 
         RestorePlacement();
+        WindowSizing.FitToScreen(this);
         Topmost = vm.Settings.ControllerTopmost;
 
         vm.MiniModeChanged += (_, _) => ApplyMiniMode();

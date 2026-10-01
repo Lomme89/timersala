@@ -81,6 +81,12 @@ Tema scuro o chiaro, carattere, layout classico, clessidra o solo cifre. Puoi na
 </tr>
 </table>
 
+## 🎛️ Il programma
+
+<p align="center">
+  <img src="docs/images/programma.png" alt="Controller, modalità mini, editor dello schema e impostazioni" width="100%">
+</p>
+
 ## 🖼️ Lo schermo del timer
 
 <p align="center">
@@ -152,4 +158,4 @@ La GitHub Action **Build** esegue i test e crea `TimerSala.exe` a ogni push. Per
 
 </details>
 
-<p align="center"><sub>Le immagini dello schermo del timer e del telefono sono catturate dalla pagina web di TimerSala, che ha lo stesso aspetto dello schermo del timer.</sub></p>
+<p align="center"><sub>Le immagini dello schermo del timer e del telefono sono catturate dalla pagina web di TimerSala, identica allo schermo del timer.</sub></p>

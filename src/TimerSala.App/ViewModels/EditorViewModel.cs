@@ -83,10 +83,10 @@ public sealed class EditorViewModel : ObservableObject
 
     public ObservableCollection<EditablePart> Parts { get; } = [];
 
-    public IReadOnlyList<SectionOption> Sections { get; } =
-        Enum.GetValues<PartSection>().Select(s => new SectionOption(s, SectionInfo.Label(s))).ToList();
+    /// <summary>Solo le sezioni pertinenti all'adunanza (più quelle già usate dalle parti).</summary>
+    public IReadOnlyList<SectionOption> Sections { get; private set; } = [];
 
-    public IReadOnlyList<int> QuickMinutes { get; } = [1, 2, 3, 4, 5, 6, 10, 15, 30, 60];
+    public IReadOnlyList<int> QuickMinutes { get; }
 
     public string MeetingTitle { get; set => Set(ref field, value); }
 
@@ -104,6 +104,7 @@ public sealed class EditorViewModel : ObservableObject
     {
         _main = main;
         _kind = main.Kind;
+        QuickMinutes = _kind == MeetingKind.Midweek ? [1, 3, 4, 5, 10, 15, 30] : [5, 10, 15, 30, 45, 60];
         var m = main.CurrentMeeting;
         MeetingTitle = m.Title;
         Heading = _kind == MeetingKind.Midweek ? "Adunanza infrasettimanale" : "Adunanza del fine settimana";
@@ -126,6 +127,13 @@ public sealed class EditorViewModel : ObservableObject
 
     void Load(Meeting m)
     {
+        PartSection[] relevant = _kind == MeetingKind.Midweek
+            ? [PartSection.Opening, PartSection.Treasures, PartSection.Ministry, PartSection.Living, PartSection.Closing, PartSection.Other]
+            : [PartSection.Opening, PartSection.PublicTalk, PartSection.Watchtower, PartSection.Closing, PartSection.Other];
+        Sections = Enum.GetValues<PartSection>()
+            .Where(s => relevant.Contains(s) || m.Parts.Any(p => p.Section == s))
+            .Select(s => new SectionOption(s, SectionInfo.Label(s))).ToList();
+        OnPropertyChanged(nameof(Sections));
         Parts.Clear();
         foreach (var p in m.Parts) Parts.Add(EditablePart.From(p));
         Selected = Parts.FirstOrDefault(p => !p.IsSong) ?? Parts.FirstOrDefault();
@@ -159,6 +167,15 @@ public sealed class EditorViewModel : ObservableObject
     public ICommand IncreaseCommand => field ??= new RelayCommand(() => { if (Selected is { } p) p.Minutes = Math.Floor(p.Minutes) + 1; });
     public ICommand DecreaseCommand => field ??= new RelayCommand(() => { if (Selected is { } p) p.Minutes = Math.Max(1, Math.Ceiling(p.Minutes) - 1); });
     public ICommand SetMinutesCommand => field ??= new RelayCommand(v => { if (Selected is { } p && v is int m) { p.Minutes = m; p.IsSong = false; } });
+    public ICommand SetTimedCommand => field ??= new RelayCommand(() =>
+    {
+        if (Selected is not { } p) return;
+        p.IsSong = false;
+        if (p.Minutes <= 0) p.Minutes = 5;
+    });
+
+    public ICommand SetSongCommand => field ??= new RelayCommand(() => { if (Selected is { } p) p.IsSong = true; });
+
     public ICommand RestoreDownloadedCommand => field ??= new RelayCommand(RestoreDownloaded);
     public ICommand UseTemplateCommand => field ??= new RelayCommand(UseTemplate);
 

@@ -25,24 +25,21 @@ Timer per le adunanze di congregazione, per Windows 10/11. Fa quello che fa Only
 | Avvia / ferma la parte selezionata | `Spazio` o `Invio` |
 | Parte successiva / precedente | `→` `↓` / `←` `↑` |
 | Aggiungi / togli un minuto | `+` / `−` |
-| Timer del consiglio (1 min) | `C` |
 | Modifica lo schema | `E` |
-| Countdown fino all'inizio | `I` |
 | Modalità mini / completa | `M` |
 
 - Fai clic su una parte dell'elenco per selezionarla. Quando fermi il timer, il tempo effettivo viene registrato (verde in orario, rosso se sforato) e si passa alla parte successiva.
 - Se fermi una parte per errore, riavviala: il conteggio riprende da dove era. Per azzerarla usa il tasto destro sulla parte.
 - In alto vedi l'ora e il **ritardo/anticipo** accumulato sull'adunanza.
-- Dopo le parti degli studenti il pulsante **Consiglio** si illumina.
 - `◀ ▶` cambiano settimana; clic sulla data per tornare alla settimana corrente; il pulsante di download riscarica lo schema da wol.jw.org.
 
 ### Orari e countdown prima dell'inizio
 
-Nelle impostazioni (scheda *Adunanze*) indichi giorno e ora di inizio dell'infrasettimanale e del fine settimana. All'avvio TimerSala propone l'adunanza di oggi (o la prossima) e, qualche minuto prima dell'inizio (5 per impostazione), lo schermo mostra **"L'adunanza inizia tra 04:59"** con la prima parte. Il countdown sparisce all'orario di inizio o appena avvii la prima parte. Con il pulsante **Countdown** (o il tasto `I`) lo mostri prima, a mano. Nel controller trovi anche l'orario di inizio e la **fine prevista** (che tiene conto del ritardo).
+Nelle impostazioni (scheda *Adunanze*) indichi giorno e ora di inizio dell'infrasettimanale e del fine settimana. All'avvio TimerSala propone l'adunanza di oggi (o la prossima) e, qualche minuto prima dell'inizio (5 per impostazione), lo schermo mostra **"L'adunanza inizia tra 04:59"** con la prima parte. Il countdown sparisce all'orario di inizio o appena avvii la prima parte. Nel controller trovi anche l'orario di inizio e la **fine prevista** (che tiene conto del ritardo).
 
 ### Modalità mini
 
-Con un solo monitor la finestra completa può essere ingombrante: il pulsante in alto (o il tasto `M`) la riduce a una piccola finestra sempre in primo piano con il timer, il titolo della parte, avvia/ferma, parte precedente/successiva, ±1 min, Consiglio e Countdown. Si sposta trascinandola dalla barra in alto; il pulsante in alto a destra riapre la finestra completa. TimerSala ricorda la modalità e la posizione.
+Con un solo monitor la finestra completa può essere ingombrante: il pulsante in alto (o il tasto `M`) la riduce a una piccola finestra sempre in primo piano con il timer, il titolo della parte, avvia/ferma, parte precedente/successiva e ±1 min. Si sposta trascinandola dalla barra in alto; il pulsante in alto a destra riapre la finestra completa. TimerSala ricorda la modalità e la posizione.
 
 ### Schermo del timer
 
@@ -67,7 +64,7 @@ In basso nel controller è indicato l'indirizzo (es. `http://192.168.1.20:8090`)
 
 ## Impostazioni e dati
 
-Impostazioni (ingranaggio), divise in schede: *Adunanze* (orari, durata, countdown, lingua della guida), *Timer* (preavviso giallo, durata del consiglio, controller in primo piano), *Schermo* (stile del timer) e *Rete* (server web e porta).
+Impostazioni (ingranaggio), divise in schede: *Adunanze* (orari, durata, countdown, lingua della guida), *Timer* (preavviso giallo, controller in primo piano), *Schermo* (stile del timer) e *Rete* (server web e porta).
 
 I dati sono in `%AppData%\TimerSala`:
 

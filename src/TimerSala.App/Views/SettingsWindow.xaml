@@ -71,7 +71,7 @@
                             <TextBlock Text="Compare (minuti prima)" Style="{StaticResource Label}" Width="170" />
                             <TextBox x:Name="CountdownMinutes" Width="80" />
                         </StackPanel>
-                        <TextBlock Style="{StaticResource Hint}" Text="0 = solo manuale (pulsante Countdown o tasto I). Sparisce da solo all'orario di inizio o quando avvii la prima parte." />
+                        <TextBlock Style="{StaticResource Hint}" Text="Compare da solo prima dell'inizio e sparisce all'orario di inizio o quando avvii la prima parte. 0 = disattivato." />
 
                         <TextBlock Text="SCHEMI DA WOL.JW.ORG" Style="{StaticResource Group}" />
                         <Grid Margin="0,0,0,8">
@@ -95,14 +95,8 @@
                             <ColumnDefinition Width="200" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
                         <TextBlock Text="Avviso giallo (secondi)" Style="{StaticResource Label}" ToolTip="Il timer diventa giallo quando mancano questi secondi" />
                         <TextBox x:Name="WarningSeconds" Grid.Column="1" Width="90" HorizontalAlignment="Left" />
-                        <TextBlock Grid.Row="1" Text="Consiglio (secondi)" Style="{StaticResource Label}" Margin="0,8,12,0" />
-                        <TextBox x:Name="CounselSeconds" Grid.Row="1" Grid.Column="1" Width="90" HorizontalAlignment="Left" Margin="0,8,0,0" />
                     </Grid>
                     <TextBlock Text="CONTROLLER" Style="{StaticResource Group}" />
                     <CheckBox x:Name="TopmostBox" Content="Finestra di controllo sempre in primo piano" />

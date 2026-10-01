@@ -8,8 +8,7 @@
     <AssemblyName>TimerSala</AssemblyName>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Assets\timersala.ico</ApplicationIcon>
-    <!-- ThemeMode (tema Fluent di Windows 11) è ancora marcato come sperimentale -->
-    <NoWarn>$(NoWarn);WPF0001</NoWarn>
+    
     <IncludePackageReferencesDuringMarkupCompilation>true</IncludePackageReferencesDuringMarkupCompilation>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">

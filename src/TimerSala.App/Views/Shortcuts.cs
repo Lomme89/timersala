@@ -34,12 +34,6 @@ static class Shortcuts
             case Key.OemMinus:
                 vm.RemoveMinuteCommand.Execute(null);
                 break;
-            case Key.C:
-                vm.CounselCommand.Execute(null);
-                break;
-            case Key.I:
-                vm.ToggleCountdownCommand.Execute(null);
-                break;
             case Key.M:
                 vm.ToggleMiniCommand.Execute(null);
                 break;

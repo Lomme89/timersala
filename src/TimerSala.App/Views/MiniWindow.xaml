@@ -60,35 +60,9 @@
             </StackPanel>
         </Grid>
 
-        <UniformGrid Grid.Row="3" Columns="4">
+        <UniformGrid Grid.Row="3" Columns="2">
             <Button Style="{StaticResource FlatButton}" Padding="4,5" FontSize="12" Content="−1 min" Command="{Binding RemoveMinuteCommand}" Margin="0,0,3,0" />
-            <Button Style="{StaticResource FlatButton}" Padding="4,5" FontSize="12" Content="+1 min" Command="{Binding AddMinuteCommand}" Margin="3,0" />
-            <Button Padding="4,5" FontSize="12" Content="Consiglio" Command="{Binding CounselCommand}" Margin="3,0">
-                <Button.Style>
-                    <Style TargetType="Button" BasedOn="{StaticResource FlatButton}">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding CanCounsel}" Value="True">
-                                <Setter Property="Background" Value="#33FBBF24" />
-                                <Setter Property="BorderBrush" Value="{StaticResource AmberBrush}" />
-                                <Setter Property="Foreground" Value="{StaticResource AmberBrush}" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Button.Style>
-            </Button>
-            <Button Padding="4,5" FontSize="12" Content="Countdown" Command="{Binding ToggleCountdownCommand}" Margin="3,0,0,0"
-                    ToolTip="Mostra il conto alla rovescia fino all'inizio dell'adunanza (I)">
-                <Button.Style>
-                    <Style TargetType="Button" BasedOn="{StaticResource FlatButton}">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsCountdown}" Value="True">
-                                <Setter Property="BorderBrush" Value="{StaticResource GreenBrush}" />
-                                <Setter Property="Foreground" Value="{StaticResource GreenBrush}" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Button.Style>
-            </Button>
+            <Button Style="{StaticResource FlatButton}" Padding="4,5" FontSize="12" Content="+1 min" Command="{Binding AddMinuteCommand}" Margin="3,0,0,0" />
         </UniformGrid>
     </Grid>
 </Window>

@@ -28,7 +28,6 @@ public sealed partial class MainViewModel : ObservableObject
     readonly TimerWebServer _web;
     readonly DispatcherTimer _tick;
     CancellationTokenSource? _downloadCts;
-    int _lastStoppedIndex = -1;
 
     public AppSettings Settings { get; private set; }
     public MeetingTimer Timer { get; } = new();
@@ -141,7 +140,6 @@ public sealed partial class MainViewModel : ObservableObject
     {
         Timer.LoadMeeting(CurrentMeeting);
         UpdateMeetingStart();
-        _lastStoppedIndex = -1;
         RebuildParts();
         UpdateWeekTexts();
         OnPropertyChanged(nameof(OverseerVisit));
@@ -171,20 +169,6 @@ public sealed partial class MainViewModel : ObservableObject
         if (midAhead && (!wkdAhead || mid < wkd)) return MeetingKind.Midweek;
         if (wkdAhead) return MeetingKind.Weekend;
         return mid > wkd ? MeetingKind.Midweek : MeetingKind.Weekend;
-    }
-
-    public ICommand ToggleCountdownCommand => field ??= new RelayCommand(ToggleCountdown);
-
-    void ToggleCountdown()
-    {
-        if (Timer.IsRunning) return;
-        if (Timer.MeetingStart is not { } start || start <= DateTimeOffset.Now)
-        {
-            ShowStatus($"L'orario di inizio ({Timer.MeetingStart:ddd dd/MM HH:mm}) è già passato. Controlla gli orari nelle impostazioni.", error: true);
-            return;
-        }
-        Timer.ForceCountdown = !Timer.ForceCountdown;
-        RefreshDisplay();
     }
 
     // ───────────── Modalità mini ─────────────
@@ -320,17 +304,7 @@ public sealed partial class MainViewModel : ObservableObject
 
     void ToggleStart()
     {
-        if (Timer.IsRunning)
-        {
-            int running = Timer.Mode == TimerMode.Part ? Timer.RunningIndex : -1;
-            Timer.Stop();
-            _lastStoppedIndex = running;
-        }
-        else
-        {
-            Timer.Start();
-            _lastStoppedIndex = -1;
-        }
+        Timer.Toggle();
         RefreshDisplay();
     }
 
@@ -360,16 +334,6 @@ public sealed partial class MainViewModel : ObservableObject
             _store.SaveWeek(Week);
             UpdateWeekTexts();
         }
-        RefreshDisplay();
-    }
-
-    public ICommand CounselCommand => field ??= new RelayCommand(Counsel);
-
-
-    void Counsel()
-    {
-        Timer.StartCounsel();
-        _lastStoppedIndex = -1;
         RefreshDisplay();
     }
 
@@ -424,7 +388,6 @@ public sealed partial class MainViewModel : ObservableObject
     public Brush DelayBrush { get; set => Set(ref field, value); } = Muted;
     public string NextText { get; set => Set(ref field, value); } = "";
     public string InfoText { get; set => Set(ref field, value); } = "";
-    public bool CanCounsel { get; set => Set(ref field, value); }
     public bool IsCounselOrManual { get; set => Set(ref field, value); }
 
     // proprietà dello schermo del timer (dipendono dalle impostazioni)
@@ -512,9 +475,6 @@ public sealed partial class MainViewModel : ObservableObject
             var end = start.AddMinutes(Settings.MeetingLengthMinutes).AddSeconds(Math.Max(0, s.DelaySeconds));
             ScheduleText = $"Inizio {start:HH:mm} · fine prevista {end:HH:mm}";
         }
-
-        CanCounsel = !s.IsRunning && _lastStoppedIndex >= 0 && _lastStoppedIndex < CurrentMeeting.Parts.Count
-                     && CurrentMeeting.Parts[_lastStoppedIndex].HasCounsel;
 
         RefreshScreenStyle();
     }

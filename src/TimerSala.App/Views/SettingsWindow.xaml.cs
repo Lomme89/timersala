@@ -44,7 +44,6 @@ public partial class SettingsWindow : Window
         AutoDownload.IsChecked = s.AutoDownload;
 
         WarningSeconds.Text = s.WarningSeconds.ToString();
-        CounselSeconds.Text = s.CounselSeconds.ToString();
         TopmostBox.IsChecked = s.ControllerTopmost;
 
         var themes = new List<Option<DisplayTheme>> { new(DisplayTheme.Dark, "Scuro (consigliato in sala)"), new(DisplayTheme.Light, "Chiaro") };
@@ -89,8 +88,6 @@ public partial class SettingsWindow : Window
             return Error("Conto alla rovescia: inserisci i minuti (tra 0 e 60).");
         if (!int.TryParse(WarningSeconds.Text, out var warn) || warn < 0 || warn > 600)
             return Error("Avviso giallo: inserisci un numero di secondi tra 0 e 600.");
-        if (!int.TryParse(CounselSeconds.Text, out var counsel) || counsel < 10 || counsel > 600)
-            return Error("Consiglio: inserisci un numero di secondi tra 10 e 600.");
         if (!int.TryParse(WebPort.Text, out var port) || port < 1024 || port > 65535)
             return Error("Porta: inserisci un numero tra 1024 e 65535.");
 
@@ -106,7 +103,6 @@ public partial class SettingsWindow : Window
         s.AutoDownload = AutoDownload.IsChecked == true;
 
         s.WarningSeconds = warn;
-        s.CounselSeconds = counsel;
         s.ControllerTopmost = TopmostBox.IsChecked == true;
 
         s.DisplayTheme = ((Option<DisplayTheme>)ThemeBox.SelectedItem).Value;

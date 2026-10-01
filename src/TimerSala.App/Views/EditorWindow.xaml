@@ -15,7 +15,7 @@
         <StackPanel>
             <TextBlock Text="{Binding Heading}" FontSize="18" FontWeight="SemiBold" />
             <TextBlock Style="{StaticResource Caption}" Margin="0,4,0,0" TextWrapping="Wrap"
-                       Text="Modifica titoli, sezioni e durate. I cantici non sono cronometrati. 'Consiglio' abilita il timer di 1 minuto dopo la parte." />
+                       Text="Modifica titoli, sezioni e durate. I cantici non sono cronometrati." />
         </StackPanel>
 
         <DockPanel Grid.Row="1" Margin="0,12,0,8">
@@ -38,7 +38,6 @@
                     <DataGridTextColumn Header="Titolo" Width="*" Binding="{Binding Title, UpdateSourceTrigger=PropertyChanged}" />
                     <DataGridTextColumn Header="Minuti" Width="70" Binding="{Binding Minutes, UpdateSourceTrigger=LostFocus}" />
                     <DataGridCheckBoxColumn Header="Cantico" Width="70" Binding="{Binding IsSong, UpdateSourceTrigger=PropertyChanged}" />
-                    <DataGridCheckBoxColumn Header="Consiglio" Width="80" Binding="{Binding HasCounsel, UpdateSourceTrigger=PropertyChanged}" />
                 </DataGrid.Columns>
             </DataGrid>
             <StackPanel Grid.Column="1" Margin="10,0,0,0" Width="150">

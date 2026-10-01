@@ -1,3 +1,4 @@
+using System.IO;
 using System.Windows;
 using System.Windows.Threading;
 using TimerSala.App.ViewModels;
@@ -30,10 +31,25 @@ public partial class App : Application
         base.OnExit(e);
     }
 
+    static void LogError(Exception ex)
+    {
+        try
+        {
+            var dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TimerSala", "diagnostica");
+            Directory.CreateDirectory(dir);
+            File.AppendAllText(Path.Combine(dir, "errori.log"), $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {ex}\n\n");
+        }
+        catch { }
+    }
+
     void OnUnhandled(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
         // durante l'adunanza il programma non deve chiudersi per un errore imprevisto
-        MessageBox.Show($"Si è verificato un errore:\n{e.Exception.Message}", "TimerSala", MessageBoxButton.OK, MessageBoxImage.Warning);
+        var messages = new List<string>();
+        for (Exception? ex = e.Exception; ex is not null; ex = ex.InnerException)
+            messages.Add(ex.Message);
+        LogError(e.Exception);
+        MessageBox.Show($"Si è verificato un errore:\n{string.Join("\n", messages)}", "TimerSala", MessageBoxButton.OK, MessageBoxImage.Warning);
         e.Handled = true;
     }
 }

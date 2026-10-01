@@ -103,14 +103,14 @@ public partial class MainWindow : Window
             _vm.SelectPartCommand.Execute(item);
     }
 
-    void ResetPart_Click(object sender, RoutedEventArgs e)
+    // il tasto destro seleziona la parte prima di aprire il menu
+    void PartsList_RightClick(object sender, MouseButtonEventArgs e)
     {
-        if (sender is MenuItem { DataContext: PartItemViewModel item })
-        {
+        if (e.OriginalSource is FrameworkElement { DataContext: PartItemViewModel item })
             _vm.SelectPartCommand.Execute(item);
-            _vm.ResetSelectedCommand.Execute(null);
-        }
     }
+
+    void ResetPart_Click(object sender, RoutedEventArgs e) => _vm.ResetSelectedCommand.Execute(null);
 
     void ResetAll_Click(object sender, RoutedEventArgs e) => _vm.ResetAllCommand.Execute(null);
 

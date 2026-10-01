@@ -79,4 +79,4 @@ dotnet test tests/TimerSala.Tests
 dotnet publish src/TimerSala.App -c Release -r win-x64 -o publish
 ```
 
-La GitHub Action `Build` esegue i test e produce `TimerSala.exe` a ogni push; creando un tag `v1.0.0` l'eseguibile viene allegato a una release.
+La GitHub Action `Build` esegue i test e produce `TimerSala.exe` a ogni push. Per pubblicare una release: Actions → Build → *Run workflow* indicando la versione (es. `v1.1.0`), oppure crea un tag `v…`.

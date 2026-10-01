@@ -45,6 +45,17 @@ public static class DarkTitleBar
         catch (EntryPointNotFoundException) { }
     }
 
+    /// <summary>Colore del bordo della finestra (Windows 11); null = colore normale.</summary>
+    public static void SetBorder(Window window, System.Windows.Media.Color? color)
+    {
+        var hwnd = new WindowInteropHelper(window).Handle;
+        if (hwnd == IntPtr.Zero) return;
+        int value = color is { } c ? c.R | (c.G << 8) | (c.B << 16) : Border;
+        try { DwmSetWindowAttribute(hwnd, DWMWA_BORDER_COLOR, ref value, sizeof(int)); }
+        catch (DllNotFoundException) { }
+        catch (EntryPointNotFoundException) { }
+    }
+
     [DllImport("dwmapi.dll")]
     static extern int DwmSetWindowAttribute(IntPtr hwnd, int attribute, ref int value, int size);
 }

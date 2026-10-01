@@ -5,94 +5,134 @@
         WindowStyle="None" ResizeMode="NoResize" Topmost="True" ShowInTaskbar="True"
         Background="{StaticResource BgBrush}" Foreground="{StaticResource TextBrush}"
         FontFamily="{StaticResource UiFont}" Icon="/Assets/timersala.ico"
-        BorderBrush="{StaticResource LineBrush}" BorderThickness="1"
         UseLayoutRounding="True" TextOptions.TextFormattingMode="Display">
-    <Grid Margin="10,6,10,10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <Style x:Key="MiniButton" TargetType="Button" BasedOn="{StaticResource IconButton}">
+            <Setter Property="Width" Value="36" />
+            <Setter Property="Height" Value="38" />
+            <Setter Property="FontSize" Value="15" />
+        </Style>
+        <Style x:Key="TinyButton" TargetType="Button" BasedOn="{StaticResource FlatButton}">
+            <Setter Property="Width" Value="62" />
+            <Setter Property="Height" Value="24" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="#C9CED6" />
+        </Style>
+    </Window.Resources>
 
-        <!-- barra superiore: si trascina per spostare la finestra -->
-        <DockPanel x:Name="DragBar" Background="Transparent" MouseLeftButtonDown="DragBar_MouseDown">
-            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                <Button Style="{StaticResource GhostIconButton}" Width="28" Height="26" FontSize="12" Content="&#xE740;"
+    <!-- cornice: diventa rossa allo sforamento -->
+    <Border x:Name="Frame" BorderThickness="1">
+        <Border.Style>
+            <Style TargetType="Border">
+                <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
+                <Setter Property="Background" Value="{StaticResource BgBrush}" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsOvertime}" Value="True">
+                        <Setter Property="BorderBrush" Value="{StaticResource RedBrush}" />
+                        <Setter Property="BorderThickness" Value="2" />
+                        <Setter Property="Background" Value="#1A0B0D" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Border.Style>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- barra superiore: titolo della parte, ora, finestra completa (si trascina per spostare) -->
+            <DockPanel x:Name="DragBar" Background="Transparent" MouseLeftButtonDown="DragBar_MouseDown" Margin="12,7,6,0">
+                <Button DockPanel.Dock="Right" Style="{StaticResource GhostIconButton}" Width="26" Height="24" FontSize="11" Content="&#xE740;"
                         Command="{Binding ToggleMiniCommand}" ToolTip="Torna alla finestra completa (M)" />
-            </StackPanel>
-            <Border Width="8" Height="8" CornerRadius="4" Background="{Binding SectionBrush}" Margin="0,0,6,0" VerticalAlignment="Center" />
-            <TextBlock Text="{Binding ClockText}" FontFamily="{StaticResource DigitsFont}" FontSize="13" VerticalAlignment="Center" />
-            <TextBlock Text="{Binding DelayText}" Foreground="{Binding DelayBrush}" FontSize="12" Margin="10,0,0,0" VerticalAlignment="Center" />
-        </DockPanel>
+                <TextBlock DockPanel.Dock="Right" Text="{Binding ClockText}" FontFamily="{StaticResource DigitsFont}" FontSize="13"
+                           Foreground="#6B7280" VerticalAlignment="Center" Margin="8,0,6,0" />
+                <Ellipse Width="8" Height="8" Fill="{Binding SectionBrush}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                <TextBlock Text="{Binding TitleText}" FontSize="13" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
+                           VerticalAlignment="Center" ToolTip="{Binding TitleText}" />
+            </DockPanel>
 
-        <TextBlock Grid.Row="1" Text="{Binding TitleText}" FontSize="13" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
-                   ToolTip="{Binding TitleText}" Margin="0,2,0,0" />
+            <!-- tempo grande e comandi -->
+            <Grid Grid.Row="1" Margin="14,0,12,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel VerticalAlignment="Center" Margin="0,0,8,0">
+                    <Viewbox Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left" Height="64">
+                        <TextBlock Text="{Binding DisplayText}" Foreground="{Binding PhaseBrush}" FontFamily="{StaticResource DigitsFont}"
+                                   FontSize="64" Typography.NumeralAlignment="Tabular" />
+                    </Viewbox>
+                    <TextBlock Text="{Binding MiniSubText}" FontSize="11.5" Foreground="{StaticResource MutedBrush}"
+                               TextTrimming="CharacterEllipsis" Margin="1,1,0,0" ToolTip="{Binding MiniSubText}" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <Button Style="{StaticResource MiniButton}" Content="&#xE892;" Command="{Binding PreviousCommand}" ToolTip="Parte precedente (←)" />
+                        <Button Height="38" Width="54" Margin="6,0" Command="{Binding ToggleStartCommand}" ToolTip="Avvia / ferma (Spazio)">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource FlatButton}">
+                                    <Setter Property="Background" Value="#16A34A" />
+                                    <Setter Property="BorderThickness" Value="0" />
+                                    <Setter Property="Foreground" Value="White" />
+                                    <Setter Property="Padding" Value="0" />
+                                    <Setter Property="FontFamily" Value="{StaticResource IconFont}" />
+                                    <Setter Property="FontSize" Value="18" />
+                                    <Setter Property="Content" Value="&#xE768;" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                                            <Setter Property="Background" Value="#DC2626" />
+                                            <Setter Property="Content" Value="&#xE71A;" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button Style="{StaticResource MiniButton}" Content="&#xE893;" Command="{Binding NextCommand}" ToolTip="Parte successiva (→)" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,6,0,0">
+                        <Button Style="{StaticResource TinyButton}" Content="−1" Command="{Binding RemoveMinuteCommand}" Margin="0,0,6,0" ToolTip="Un minuto in meno (−)" />
+                        <Button Style="{StaticResource TinyButton}" Content="+1" Command="{Binding AddMinuteCommand}" ToolTip="Un minuto in più (+)" />
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
 
-        <Grid Grid.Row="2" Margin="0,2,0,6">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="{Binding DisplayText}" Foreground="{Binding PhaseBrush}" FontFamily="{StaticResource DigitsFont}"
-                       FontSize="46" VerticalAlignment="Center" Typography.NumeralAlignment="Tabular" />
-            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                <Button Style="{StaticResource IconButton}" Content="&#xE892;" Command="{Binding PreviousCommand}" ToolTip="Parte precedente" />
-                <Button Height="44" Width="64" Margin="6,0" Command="{Binding ToggleStartCommand}" ToolTip="Avvia / ferma (Spazio)">
-                    <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource FlatButton}">
-                            <Setter Property="Background" Value="#16A34A" />
-                            <Setter Property="BorderThickness" Value="0" />
-                            <Setter Property="Foreground" Value="White" />
-                            <Setter Property="FontFamily" Value="{StaticResource IconFont}" />
-                            <Setter Property="FontSize" Value="20" />
-                            <Setter Property="Content" Value="&#xE768;" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsRunning}" Value="True">
-                                    <Setter Property="Background" Value="#DC2626" />
-                                    <Setter Property="Content" Value="&#xE71A;" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                </Button>
-                <Button Style="{StaticResource IconButton}" Content="&#xE893;" Command="{Binding NextCommand}" ToolTip="Parte successiva" />
-            </StackPanel>
+            <!-- messaggio all'oratore (se abilitato) -->
+            <Grid Grid.Row="2" Margin="12,0,12,10" Visibility="{Binding MessagesEnabled, Converter={StaticResource BoolToVis}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <ComboBox IsEditable="True" ItemsSource="{Binding MessagePresets}" FontSize="12" MinHeight="28"
+                          Text="{Binding MessageText, UpdateSourceTrigger=PropertyChanged}" KeyDown="Message_KeyDown"
+                          ToolTip="Messaggio per l'oratore (Invio per mostrarlo)" />
+                <Button Grid.Column="1" Style="{StaticResource IconButton}" Width="30" Height="28" FontSize="13" Content="&#xE724;" Margin="4,0,0,0"
+                        Command="{Binding SendMessageCommand}" ToolTip="Mostra il messaggio" />
+                <Button Grid.Column="2" Style="{StaticResource IconButton}" Width="30" Height="28" FontSize="13" Content="&#xE711;" Margin="4,0,0,0"
+                        Command="{Binding ClearMessageCommand}" ToolTip="Togli il messaggio"
+                        Visibility="{Binding HasMessage, Converter={StaticResource BoolToVis}}" />
+            </Grid>
+
+            <!-- avanzamento lungo il bordo inferiore -->
+            <Grid Grid.Row="3" Height="4">
+                <Border Background="{StaticResource CardHoverBrush}" />
+                <ProgressBar Value="{Binding Progress, Mode=OneWay}" Minimum="0" Maximum="1" Foreground="{Binding PhaseBrush}" Height="4">
+                    <ProgressBar.Template>
+                        <ControlTemplate TargetType="ProgressBar">
+                            <Grid>
+                                <Border x:Name="PART_Track" />
+                                <Border x:Name="PART_Indicator" HorizontalAlignment="Left" Background="{TemplateBinding Foreground}" />
+                            </Grid>
+                        </ControlTemplate>
+                    </ProgressBar.Template>
+                </ProgressBar>
+            </Grid>
         </Grid>
-
-        <UniformGrid Grid.Row="3" Columns="2">
-            <Button Style="{StaticResource FlatButton}" Padding="4,5" FontSize="12" Content="−1 min" Command="{Binding RemoveMinuteCommand}" Margin="0,0,3,0" />
-            <Button Style="{StaticResource FlatButton}" Padding="4,5" FontSize="12" Content="+1 min" Command="{Binding AddMinuteCommand}" Margin="3,0,0,0" />
-        </UniformGrid>
-        <Grid Grid.Row="4" Margin="0,6,0,0">
-            <Grid.Visibility>
-                <Binding Path="MessagesEnabled">
-                    <Binding.Converter>
-                        <BooleanToVisibilityConverter />
-                    </Binding.Converter>
-                </Binding>
-            </Grid.Visibility>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <ComboBox IsEditable="True" ItemsSource="{Binding MessagePresets}" FontSize="12" MinHeight="28"
-                      Text="{Binding MessageText, UpdateSourceTrigger=PropertyChanged}" KeyDown="Message_KeyDown"
-                      ToolTip="Messaggio per l'oratore (Invio per mostrarlo)" />
-            <Button Grid.Column="1" Style="{StaticResource IconButton}" Width="30" Height="28" FontSize="13" Content="&#xE724;" Margin="4,0,0,0"
-                    Command="{Binding SendMessageCommand}" ToolTip="Mostra il messaggio" />
-            <Button Grid.Column="2" Style="{StaticResource IconButton}" Width="30" Height="28" FontSize="13" Content="&#xE711;" Margin="4,0,0,0"
-                    Command="{Binding ClearMessageCommand}" ToolTip="Togli il messaggio">
-                <Button.Visibility>
-                    <Binding Path="HasMessage">
-                        <Binding.Converter>
-                            <BooleanToVisibilityConverter />
-                        </Binding.Converter>
-                    </Binding>
-                </Button.Visibility>
-            </Button>
-        </Grid>
-    </Grid>
+    </Border>
 </Window>

@@ -16,6 +16,10 @@ public partial class MiniWindow : Window
         DataContext = vm;
         PreviewKeyDown += (_, e) => Shortcuts.Handle(vm, e);
 
+        // allo sforamento anche il bordo di sistema della finestra (Windows 11) diventa rosso
+        vm.PropertyChanged += OnViewModelChanged;
+        Closed += (_, _) => vm.PropertyChanged -= OnViewModelChanged;
+
         if (vm.Settings.MiniLeft is { } l && vm.Settings.MiniTop is { } t &&
             l >= SystemParameters.VirtualScreenLeft && t >= SystemParameters.VirtualScreenTop &&
             l < SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth - 80 &&
@@ -35,6 +39,12 @@ public partial class MiniWindow : Window
             _vm.Settings.MiniLeft = Left;
             _vm.Settings.MiniTop = Top;
         };
+    }
+
+    void OnViewModelChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(MainViewModel.IsOvertime))
+            Interop.DarkTitleBar.SetBorder(this, _vm.IsOvertime ? System.Windows.Media.Color.FromRgb(0xEF, 0x44, 0x44) : null);
     }
 
     void Message_KeyDown(object sender, KeyEventArgs e)

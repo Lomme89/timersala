@@ -41,7 +41,7 @@ Cifre a tutto schermo sul monitor che scegli, verde → giallo → rosso. Su un 
 <td valign="top">
 
 **🎛️ Controller compatto**<br>
-Una finestra stretta per il banco dell'acustica, oppure la **modalità mini** sempre in primo piano per chi ha un solo monitor.
+Una finestra stretta per il banco dell'acustica, oppure la **modalità mini** sempre in primo piano: cifre grandi, barra di avanzamento e bordo rosso allo sforamento.
 
 </td>
 <td valign="top">

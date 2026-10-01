@@ -37,6 +37,13 @@ public partial class MiniWindow : Window
         };
     }
 
+    void Message_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Enter) return;
+        _vm.SendMessageCommand.Execute(null);
+        e.Handled = true;
+    }
+
     void DragBar_MouseDown(object sender, MouseButtonEventArgs e)
     {
         if (e.ButtonState == MouseButtonState.Pressed) DragMove();

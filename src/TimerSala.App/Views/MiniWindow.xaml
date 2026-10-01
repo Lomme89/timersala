@@ -13,6 +13,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!-- barra superiore: si trascina per spostare la finestra -->
@@ -64,5 +65,27 @@
             <Button Style="{StaticResource FlatButton}" Padding="4,5" FontSize="12" Content="−1 min" Command="{Binding RemoveMinuteCommand}" Margin="0,0,3,0" />
             <Button Style="{StaticResource FlatButton}" Padding="4,5" FontSize="12" Content="+1 min" Command="{Binding AddMinuteCommand}" Margin="3,0,0,0" />
         </UniformGrid>
+        <Grid Grid.Row="4" Margin="0,6,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <ComboBox IsEditable="True" ItemsSource="{Binding MessagePresets}" FontSize="12" MinHeight="28"
+                      Text="{Binding MessageText, UpdateSourceTrigger=PropertyChanged}" KeyDown="Message_KeyDown"
+                      ToolTip="Messaggio per l'oratore (Invio per mostrarlo)" />
+            <Button Grid.Column="1" Style="{StaticResource IconButton}" Width="30" Height="28" FontSize="13" Content="&#xE724;" Margin="4,0,0,0"
+                    Command="{Binding SendMessageCommand}" ToolTip="Mostra il messaggio" />
+            <Button Grid.Column="2" Style="{StaticResource IconButton}" Width="30" Height="28" FontSize="13" Content="&#xE711;" Margin="4,0,0,0"
+                    Command="{Binding ClearMessageCommand}" ToolTip="Togli il messaggio">
+                <Button.Visibility>
+                    <Binding Path="HasMessage">
+                        <Binding.Converter>
+                            <BooleanToVisibilityConverter />
+                        </Binding.Converter>
+                    </Binding>
+                </Button.Visibility>
+            </Button>
+        </Grid>
     </Grid>
 </Window>

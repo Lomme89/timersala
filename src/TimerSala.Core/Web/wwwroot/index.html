@@ -72,6 +72,30 @@
   .tools button { background: var(--card); color: var(--fg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; font: inherit; font-size: 15px; cursor: pointer; }
   body.idle .bar { visibility: hidden; }
   @media (max-width: 700px) { #timer { padding-top: 64px; } }
+  #msg { display: none; margin: 1.5vh 4vw 0; padding: 1.6vh 3vw; border-radius: 1.5vh; background: var(--amber); color: #111;
+         font-weight: 700; font-size: clamp(18px, 7vmin, 110px); text-align: center; line-height: 1.15; }
+  body.has-msg #msg { display: block; }
+  #ctrl { display: none; flex: 0 0 auto; background: var(--card); border-top: 1px solid var(--line); padding: 12px 12px calc(12px + env(safe-area-inset-bottom)); }
+  body.control #ctrl { display: block; }
+  #ctrl .crow { display: flex; gap: 8px; margin-bottom: 8px; }
+  #ctrl button { flex: 1; font: inherit; font-size: 18px; padding: 14px 8px; border-radius: 12px; border: 1px solid var(--line);
+                 background: var(--bg); color: var(--fg); cursor: pointer; touch-action: manipulation; }
+  #ctrl button:active { opacity: .7; }
+  #ctrl #cToggle { flex: 2; font-weight: 700; background: #16a34a; border: 0; color: #fff; }
+  #ctrl #cToggle.stop { background: #dc2626; }
+  #ctrl .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  #ctrl .chips button { flex: 0 0 auto; font-size: 15px; padding: 10px 12px; }
+  #ctrl input { flex: 3; min-width: 0; font: inherit; font-size: 16px; padding: 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); }
+  #ctrlErr { color: var(--red); font-size: 14px; min-height: 1em; }
+  #pinBox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.7); z-index: 10; align-items: center; justify-content: center; }
+  body.ask-pin #pinBox { display: flex; }
+  #pinBox form { background: var(--card); padding: 24px; border-radius: 16px; width: min(90vw, 340px); display: flex; flex-direction: column; gap: 12px; }
+  #pinBox input { font: inherit; font-size: 28px; text-align: center; letter-spacing: .3em; padding: 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); }
+  #pinBox button { font: inherit; font-size: 18px; padding: 12px; border-radius: 12px; border: 0; background: var(--accent); color: #fff; }
+  #pinBox .cancel { background: transparent; color: var(--muted); }
+  body.control .row.selectable { cursor: pointer; }
+  #btnControl { display: none; }
+  body.can-control #btnControl { display: inline-block; }
   #offline { position: fixed; left: 50%; top: 12px; transform: translateX(-50%); background: var(--red); color: #fff; padding: 8px 16px; border-radius: 99px; display: none; font-size: 16px; }
   body.offline #offline { display: block; }
 </style>
@@ -89,10 +113,39 @@
     </div>
     <div class="digits-wrap" id="digitsWrap"><span id="probe">+88:88</span><div id="digits" class="idle">--:--</div></div>
     <div class="bar"><div id="fill"></div></div>
+    <div id="msg"></div>
     <div class="bottom"><span id="next"></span><span id="delay"></span></div>
   </section>
   <section id="schedule"></section>
+  <section id="ctrl">
+    <div class="crow">
+      <button id="cPrev" type="button" aria-label="Parte precedente">⏮</button>
+      <button id="cToggle" type="button">AVVIA</button>
+      <button id="cNext" type="button" aria-label="Parte successiva">⏭</button>
+    </div>
+    <div class="crow">
+      <button id="cMinus" type="button">−1 min</button>
+      <button id="cPlus" type="button">+1 min</button>
+    </div>
+    <div class="chips" id="cPresets"></div>
+    <div class="crow">
+      <input id="cText" type="text" maxlength="120" placeholder="Messaggio per l'oratore" enterkeyhint="send">
+      <button id="cSend" type="button">Invia</button>
+      <button id="cClear" type="button">Togli</button>
+    </div>
+    <div id="ctrlErr"></div>
+  </section>
+  <div id="pinBox">
+    <form id="pinForm">
+      <div>Inserisci il PIN mostrato su TimerSala</div>
+      <input id="pinInput" type="password" inputmode="numeric" autocomplete="off" maxlength="12">
+      <div id="pinErr" style="color:var(--red);min-height:1em"></div>
+      <button type="submit">Entra</button>
+      <button type="button" class="cancel" id="pinCancel">Annulla</button>
+    </form>
+  </div>
   <div class="tools">
+    <button id="btnControl" type="button">Controllo</button>
     <button id="btnSchedule" type="button">Programma</button>
     <button id="btnFull" type="button">Schermo intero</button>
   </div>
@@ -103,6 +156,7 @@
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
   let lastFont = null;
+  let lastHasMsg = false;
   function applyStyle(st) {
     if (!st) return;
     const b = document.body.classList;
@@ -146,6 +200,12 @@
       $('chip').style.background = s.sectionColor || 'var(--muted)';
       $('next').textContent = s.style?.showNext === false ? '' : s.mode === 'countdown' ? (s.next ? 'Prima parte: ' + s.next : '') : (s.next ? 'Dopo: ' + s.next : '');
     }
+    document.body.classList.toggle('has-msg', !!s.message);
+    $('msg').textContent = s.message || '';
+    const t = $('cToggle');
+    t.textContent = s.running ? 'FERMA' : 'AVVIA';
+    t.classList.toggle('stop', s.running);
+    if (!!s.message !== lastHasMsg) { lastHasMsg = !!s.message; fit(); }
     const dl = $('delay');
     if (s.showDelay && s.delay !== 0) {
       dl.textContent = (s.delay > 0 ? 'Ritardo ' : 'Anticipo ') + fmtDelay(s.delay);
@@ -158,8 +218,8 @@
     try {
       const r = await fetch('/api/schedule', { cache: 'no-store' });
       const m = await r.json();
-      $('schedule').innerHTML = m.parts.map(p =>
-        `<div class="row ${p.song ? 'song' : ''} ${p.running ? 'running' : ''} ${p.selected && !p.running ? 'selected' : ''}">
+      $('schedule').innerHTML = m.parts.map((p, i) =>
+        `<div class="row ${p.song ? 'song' : 'selectable'} ${p.running ? 'running' : ''} ${p.selected && !p.running ? 'selected' : ''}" data-i="${i}">
            <span class="stripe" style="background:${p.color}"></span>
            <span class="t">${p.song ? '♪ ' : ''}${esc(p.title)}</span>
            ${p.song ? '' : `<span class="m">${p.minutes} min</span><span class="a ${p.over ? 'over' : ''}">${p.actual ?? ''}</span>`}
@@ -187,6 +247,81 @@
 
   connect();
   setInterval(loadSchedule, 2000);
+
+  // ── controllo remoto ──
+  let pin = null;
+  try { pin = localStorage.getItem('timersala-pin'); } catch { }
+  const params = new URLSearchParams(location.search);
+  if (params.get('pin')) {
+    pin = params.get('pin');
+    try { localStorage.setItem('timersala-pin', pin); } catch { }
+    history.replaceState(null, '', location.pathname);
+  }
+
+  async function send(action, value) {
+    $('ctrlErr').textContent = '';
+    try {
+      const r = await fetch('/api/control', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin, action, value: value == null ? null : String(value) }) });
+      if (r.status === 403 || r.status === 429) {
+        const e = await r.json().catch(() => ({}));
+        if (r.status === 403 && e.error === 'PIN errato.') { pin = null; try { localStorage.removeItem('timersala-pin'); } catch { } askPin(); }
+        $('ctrlErr').textContent = e.error || 'Non autorizzato';
+        $('pinErr').textContent = e.error || '';
+        return false;
+      }
+      if (!r.ok) { $('ctrlErr').textContent = 'Errore ' + r.status; return false; }
+      loadSchedule();
+      return true;
+    } catch { $('ctrlErr').textContent = 'PC non raggiungibile'; return false; }
+  }
+
+  function askPin() { $('pinErr').textContent = ''; $('pinInput').value = ''; document.body.classList.add('ask-pin'); setTimeout(() => $('pinInput').focus(), 50); }
+
+  async function openControl() {
+    if (!pin) { askPin(); return; }
+    if (await send('check')) { document.body.classList.add('control'); document.body.classList.remove('ask-pin'); fit(); }
+  }
+
+  $('pinForm').onsubmit = async e => {
+    e.preventDefault();
+    pin = $('pinInput').value.trim();
+    if (await send('check')) {
+      try { localStorage.setItem('timersala-pin', pin); } catch { }
+      document.body.classList.remove('ask-pin');
+      document.body.classList.add('control');
+      fit();
+    }
+  };
+  $('pinCancel').onclick = () => document.body.classList.remove('ask-pin');
+  $('btnControl').onclick = () => {
+    if (document.body.classList.contains('control')) { document.body.classList.remove('control'); fit(); }
+    else openControl();
+  };
+  $('cToggle').onclick = () => send('toggle');
+  $('cPrev').onclick = () => send('previous');
+  $('cNext').onclick = () => send('next');
+  $('cPlus').onclick = () => send('plus');
+  $('cMinus').onclick = () => send('minus');
+  $('cSend').onclick = () => { const v = $('cText').value.trim(); if (v) send('message', v).then(ok => { if (ok) $('cText').value = ''; }); };
+  $('cText').onkeydown = e => { if (e.key === 'Enter') $('cSend').onclick(); };
+  $('cClear').onclick = () => send('clearMessage');
+  $('schedule').onclick = e => {
+    const row = e.target.closest('.row.selectable');
+    if (row && document.body.classList.contains('control')) send('select', row.dataset.i);
+  };
+
+  fetch('/api/config', { cache: 'no-store' }).then(r => r.json()).then(c => {
+    if (!c.control) return;
+    document.body.classList.add('can-control');
+    $('cPresets').innerHTML = '';
+    for (const p of c.presets) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.textContent = p; b.onclick = () => send('message', p);
+      $('cPresets').appendChild(b);
+    }
+    if (params.has('controllo') || params.get('pin')) openControl();
+  }).catch(() => { });
 
   $('btnSchedule').onclick = () => { document.body.classList.toggle('show-schedule'); fit(); loadSchedule(); };
   $('btnFull').onclick = () => {

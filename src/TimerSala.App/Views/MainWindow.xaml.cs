@@ -130,6 +130,23 @@ public partial class MainWindow : Window
             Topmost = _vm.Settings.ControllerTopmost;
     }
 
+    void Qr_Click(object sender, RoutedEventArgs e)
+    {
+        if (_vm.WebUrl is null)
+        {
+            MessageBox.Show(this, "Il server web non è attivo. Attivalo in Impostazioni → Rete.", "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+        new QrWindow(_vm) { Owner = this }.ShowDialog();
+    }
+
+    void MessageInput_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Enter) return;
+        _vm.SendMessageCommand.Execute(null);
+        e.Handled = true;
+    }
+
     void Identify_Click(object sender, RoutedEventArgs e) => IdentifyWindow.ShowAll();
 
     void WebLink_Click(object sender, RoutedEventArgs e)

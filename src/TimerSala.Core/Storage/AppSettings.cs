@@ -41,6 +41,16 @@ public sealed class AppSettings
     public bool ShowClockWhileRunning { get; set; } = true;
     public bool FlashOnOvertime { get; set; } = true;
 
+    // ── Messaggi all'oratore ──
+    public List<string> MessagePresets { get; set; } = ["Concludi", "Ultimo minuto", "Più forte", "Avvicinati al microfono", "Tempo scaduto"];
+
+    /// <summary>Per quanti secondi resta il messaggio (0 = finché non viene tolto).</summary>
+    public int MessageSeconds { get; set; } = 15;
+
+    // ── Controllo remoto dalla pagina web ──
+    public bool RemoteControlEnabled { get; set; } = true;
+    public string RemotePin { get; set; } = Random.Shared.Next(1000, 10000).ToString();
+
     // ── Modalità mini ──
     public bool MiniMode { get; set; }
     public double? MiniLeft { get; set; }

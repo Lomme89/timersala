@@ -58,13 +58,24 @@ Attiva **Sorvegliante**: nell'infrasettimanale lo studio biblico di congregazion
 
 Pulsante matita (o tasto `E`): puoi cambiare titoli, sezioni, minuti, aggiungere o togliere parti e cantici, spostarle. Le modifiche valgono per quella settimana e vengono salvate. *Ripristina scaricato* torna allo schema di wol.jw.org.
 
+### Messaggi all'oratore
+
+Sotto i pulsanti del timer c'è la riga dei messaggi: scegli una frase pronta dall'elenco (o scrivine una) e premi `Invio` o il pulsante di invio. Il messaggio compare in una fascia gialla grande in basso sullo schermo del timer (e nella pagina web) per 15 secondi, oppure finché non lo togli con ✕. Le frasi pronte e la durata si cambiano in Impostazioni → *Messaggi*. La riga dei messaggi c'è anche nella modalità mini.
+
 ### Timer in rete
 
 In basso nel controller è indicato l'indirizzo (es. `http://192.168.1.20:8090`). Aprilo da qualsiasi dispositivo collegato alla stessa rete: vedrai il timer in tempo reale. *Programma* mostra l'elenco delle parti con i tempi effettivi; *Schermo intero* nasconde la barra del browser. Porta e attivazione si cambiano nelle impostazioni.
 
+Il pulsante **QR** accanto all'indirizzo mostra due codici da inquadrare con il telefono:
+
+- **Vedi il timer** — apre la pagina in sola visualizzazione.
+- **Controlla il timer** — apre la pagina con il pannello di controllo: avvia/ferma, parte precedente/successiva, ±1 min, frasi pronte e messaggi liberi. Nella vista *Programma* si tocca una parte per selezionarla. Il codice contiene già il PIN; chi apre l'indirizzo a mano tocca *Controllo* e inserisce il PIN.
+
+Il PIN (generato al primo avvio) si vede e si cambia in Impostazioni → *Rete*, dove si può anche disattivare il controllo remoto. Dopo 5 PIN errati il controllo si blocca per un minuto.
+
 ## Impostazioni e dati
 
-Impostazioni (ingranaggio), divise in schede: *Adunanze* (orari, durata, countdown, lingua della guida), *Timer* (preavviso giallo, controller in primo piano), *Schermo* (stile del timer) e *Rete* (server web e porta).
+Impostazioni (ingranaggio), divise in schede: *Adunanze* (orari, durata, countdown, lingua della guida), *Timer* (preavviso giallo, controller in primo piano), *Schermo* (stile del timer), *Messaggi* (frasi pronte e durata) e *Rete* (server web, porta, controllo remoto e PIN).
 
 I dati sono in `%AppData%\TimerSala`:
 

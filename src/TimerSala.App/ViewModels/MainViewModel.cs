@@ -31,6 +31,7 @@ public sealed partial class MainViewModel : ObservableObject
 
     public AppSettings Settings { get; private set; }
     public MeetingTimer Timer { get; } = new();
+    public MessageBoard Messages { get; } = new();
     public ObservableCollection<PartItemViewModel> Parts { get; } = [];
     public ObservableCollection<MonitorInfo> AvailableMonitors { get; } = [];
 
@@ -45,7 +46,10 @@ public sealed partial class MainViewModel : ObservableObject
         _store = store;
         Settings = store.LoadSettings();
         _wol = new WolClient { DiagnosticsFolder = store.DiagnosticsFolder };
-        _web = new TimerWebServer(Timer, () => DisplayOptions.From(Settings));
+        _web = new TimerWebServer(Timer, () => DisplayOptions.From(Settings), Messages,
+            () => new RemoteConfig(Settings.RemoteControlEnabled, Settings.RemotePin, Settings.MessagePresets),
+            (action, value) => Application.Current.Dispatcher.InvokeAsync(() => ExecuteRemote(action, value)).Task);
+        Messages.Changed += (_, _) => Application.Current.Dispatcher.BeginInvoke(RefreshDisplay);
         ApplyTimerSettings();
 
         Timer.StateChanged += (_, _) => Application.Current.Dispatcher.BeginInvoke(RefreshParts);
@@ -477,6 +481,7 @@ public sealed partial class MainViewModel : ObservableObject
         }
 
         RefreshScreenStyle();
+        RefreshMessage();
     }
 
     // ───────────── Stile dello schermo del timer ─────────────
@@ -624,6 +629,61 @@ public sealed partial class MainViewModel : ObservableObject
     // true mentre lo schermo viene scelto automaticamente (non va salvato come preferenza)
     bool _selectedMonitorSilent;
 
+    // ───────────── Messaggi all'oratore ─────────────
+
+    public string MessageText { get; set => Set(ref field, value); } = "";
+    public string? ScreenMessage { get; set => Set(ref field, value); }
+    public bool HasMessage { get; set => Set(ref field, value); }
+    public string MessageInfo { get; set => Set(ref field, value); } = "";
+    public IReadOnlyList<string> MessagePresets => Settings.MessagePresets;
+
+    public ICommand SendMessageCommand => field ??= new RelayCommand(p => ShowMessage(p as string ?? MessageText));
+    public ICommand ClearMessageCommand => field ??= new RelayCommand(() => Messages.Clear());
+
+    public void ShowMessage(string? text)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return;
+        Messages.Show(text, Settings.MessageSeconds > 0 ? TimeSpan.FromSeconds(Settings.MessageSeconds) : null);
+        MessageText = "";
+    }
+
+    void RefreshMessage()
+    {
+        var current = Messages.Current;
+        ScreenMessage = current;
+        HasMessage = current is not null;
+        MessageInfo = current is null ? ""
+            : Messages.SecondsLeft is { } left ? $"Sullo schermo: «{current}» ({Math.Ceiling(left):0} s)"
+            : $"Sullo schermo: «{current}»";
+    }
+
+    // ───────────── Controllo remoto ─────────────
+
+    void ExecuteRemote(string action, string? value)
+    {
+        switch (action)
+        {
+            case RemoteActions.Toggle: ToggleStart(); break;
+            case RemoteActions.Next: Timer.SelectNext(); break;
+            case RemoteActions.Previous: Timer.SelectPrevious(); break;
+            case RemoteActions.AddMinute: Adjust(+60); break;
+            case RemoteActions.RemoveMinute: Adjust(-60); break;
+            case RemoteActions.Select when int.TryParse(value, out var i): Timer.Select(i); break;
+            case RemoteActions.Message: ShowMessage(value); break;
+            case RemoteActions.ClearMessage: Messages.Clear(); break;
+        }
+        RefreshDisplay();
+    }
+
+    public string? ControlUrl => WebUrl is null || !Settings.RemoteControlEnabled ? null : $"{WebUrl}/?pin={Uri.EscapeDataString(Settings.RemotePin)}";
+
+    public void RegeneratePin()
+    {
+        Settings.RemotePin = Random.Shared.Next(1000, 10000).ToString();
+        SaveSettings();
+        OnPropertyChanged(nameof(ControlUrl));
+    }
+
     // ───────────── Server web ─────────────
 
     public string? WebUrl { get; set => Set(ref field, value); }
@@ -643,6 +703,7 @@ public sealed partial class MainViewModel : ObservableObject
             await _web.StartAsync(Settings.WebServerPort);
             var ip = TimerWebServer.LocalAddresses().FirstOrDefault() ?? "localhost";
             WebUrl = $"http://{ip}:{Settings.WebServerPort}";
+            OnPropertyChanged(nameof(ControlUrl));
             WebStatus = WebUrl;
         }
         catch (Exception ex)
@@ -659,6 +720,8 @@ public sealed partial class MainViewModel : ObservableObject
     {
         bool webChanged = settings.WebServerEnabled != Settings.WebServerEnabled || settings.WebServerPort != Settings.WebServerPort;
         Settings = settings;
+        OnPropertyChanged(nameof(MessagePresets));
+        OnPropertyChanged(nameof(ControlUrl));
         ApplyTimerSettings();
         UpdateMeetingStart();
         SaveSettings();

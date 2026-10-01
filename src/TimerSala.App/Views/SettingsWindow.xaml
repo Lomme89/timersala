@@ -146,6 +146,24 @@
                 </ScrollViewer>
             </TabItem>
 
+            <!-- MESSAGGI -->
+            <TabItem Header="Messaggi">
+                <DockPanel Margin="12">
+                    <StackPanel DockPanel.Dock="Top">
+                        <TextBlock Text="Frasi pronte per l'oratore, una per riga:" Margin="0,0,0,8" />
+                    </StackPanel>
+                    <StackPanel DockPanel.Dock="Bottom" Margin="0,10,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Durata sullo schermo (secondi)" Style="{StaticResource Label}" Width="210" />
+                            <TextBox x:Name="MessageSeconds" Width="80" />
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource Hint}" Text="0 = il messaggio resta finché non lo togli. Puoi sempre scrivere un messaggio diverso nel controller." />
+                    </StackPanel>
+                    <TextBox x:Name="Presets" AcceptsReturn="True" TextWrapping="Wrap" VerticalContentAlignment="Top"
+                             VerticalScrollBarVisibility="Auto" MinHeight="140" />
+                </DockPanel>
+            </TabItem>
+
             <!-- RETE -->
             <TabItem Header="Rete">
                 <StackPanel Margin="12">
@@ -155,6 +173,14 @@
                         <TextBox x:Name="WebPort" Width="90" />
                     </StackPanel>
                     <TextBlock Style="{StaticResource Hint}" Text="Se gli altri dispositivi non si collegano, controlla che Windows Firewall consenta TimerSala sulle reti private." />
+
+                    <TextBlock Text="CONTROLLO REMOTO" Style="{StaticResource Group}" />
+                    <CheckBox x:Name="RemoteEnabled" Content="Consenti di controllare il timer dalla pagina web (con PIN)" Margin="0,0,0,8" />
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="PIN" Style="{StaticResource Label}" Width="170" />
+                        <TextBox x:Name="RemotePin" Width="90" />
+                    </StackPanel>
+                    <TextBlock Style="{StaticResource Hint}" Text="Il PIN serve sul telefono per avviare, fermare, cambiare parte e inviare messaggi. Dopo 5 tentativi errati il controllo si blocca per un minuto. Il pulsante QR nel controller mostra un codice che contiene già il PIN." />
                 </StackPanel>
             </TabItem>
         </TabControl>

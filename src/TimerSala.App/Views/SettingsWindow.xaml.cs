@@ -74,6 +74,10 @@ public partial class SettingsWindow : Window
         ShowClock.IsChecked = s.ShowClockWhenIdle;
         ShowNext.IsChecked = s.ShowNextPartWhenIdle;
 
+        Presets.Text = string.Join(Environment.NewLine, s.MessagePresets);
+        MessageSeconds.Text = s.MessageSeconds.ToString();
+        RemoteEnabled.IsChecked = s.RemoteControlEnabled;
+        RemotePin.Text = s.RemotePin;
         WebEnabled.IsChecked = s.WebServerEnabled;
         WebPort.Text = s.WebServerPort.ToString();
     }
@@ -90,6 +94,12 @@ public partial class SettingsWindow : Window
             return Error("Avviso giallo: inserisci un numero di secondi tra 0 e 600.");
         if (!int.TryParse(WebPort.Text, out var port) || port < 1024 || port > 65535)
             return Error("Porta: inserisci un numero tra 1024 e 65535.");
+
+        if (!int.TryParse(MessageSeconds.Text, out var msgSeconds) || msgSeconds < 0 || msgSeconds > 600)
+            return Error("Messaggi: inserisci la durata in secondi (tra 0 e 600).");
+        var pin = RemotePin.Text.Trim();
+        if (RemoteEnabled.IsChecked == true && (pin.Length < 4 || pin.Length > 12 || !pin.All(char.IsDigit)))
+            return Error("PIN: usa da 4 a 12 cifre.");
 
         // copia: le impostazioni correnti cambiano solo se tutto è valido
         var s = JsonSerializer.Deserialize<AppSettings>(JsonSerializer.Serialize(_vm.Settings))!;
@@ -119,6 +129,10 @@ public partial class SettingsWindow : Window
         s.ShowClockWhenIdle = ShowClock.IsChecked == true;
         s.ShowNextPartWhenIdle = ShowNext.IsChecked == true;
 
+        s.MessagePresets = Presets.Text.Split('\n').Select(l => l.Trim()).Where(l => l.Length > 0).Take(20).ToList();
+        s.MessageSeconds = msgSeconds;
+        s.RemoteControlEnabled = RemoteEnabled.IsChecked == true;
+        if (pin.Length >= 4) s.RemotePin = pin;
         s.WebServerEnabled = WebEnabled.IsChecked == true;
         s.WebServerPort = port;
         _vm.ApplySettings(s);

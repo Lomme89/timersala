@@ -1,0 +1,42 @@
+<Window x:Class="TimerSala.App.Views.QrWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Collega un dispositivo" SizeToContent="WidthAndHeight" ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        Background="{StaticResource BgBrush}" Foreground="{StaticResource TextBrush}" FontFamily="{StaticResource UiFont}">
+    <StackPanel Margin="20">
+        <TextBlock Text="Inquadra il codice con la fotocamera del telefono (stessa rete Wi-Fi del PC)." Style="{StaticResource Caption}" FontSize="13" Margin="0,0,0,16" />
+        <StackPanel Orientation="Horizontal">
+            <Border Style="{StaticResource Card}" Width="280" Margin="0,0,12,0">
+                <StackPanel>
+                    <TextBlock Text="Vedi il timer" FontSize="16" FontWeight="SemiBold" />
+                    <TextBlock Text="Solo visualizzazione" Style="{StaticResource Caption}" Margin="0,2,0,10" />
+                    <Border Background="White" CornerRadius="8" Padding="6" HorizontalAlignment="Center">
+                        <Image x:Name="ViewQr" Width="220" Height="220" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+                    </Border>
+                    <TextBlock x:Name="ViewUrl" Margin="0,10,0,0" FontSize="13" TextWrapping="Wrap" HorizontalAlignment="Center" />
+                </StackPanel>
+            </Border>
+            <Border x:Name="ControlCard" Style="{StaticResource Card}" Width="280">
+                <StackPanel>
+                    <TextBlock Text="Controlla il timer" FontSize="16" FontWeight="SemiBold" />
+                    <TextBlock Text="Avvia, ferma, cambia parte, messaggi" Style="{StaticResource Caption}" Margin="0,2,0,10" />
+                    <Border Background="White" CornerRadius="8" Padding="6" HorizontalAlignment="Center">
+                        <Image x:Name="ControlQr" Width="220" Height="220" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+                    </Border>
+                    <TextBlock Margin="0,10,0,0" FontSize="13" HorizontalAlignment="Center">
+                        <Run Text="PIN: " /><Run x:Name="PinRun" FontWeight="Bold" FontSize="18" />
+                    </TextBlock>
+                    <TextBlock Text="Il codice contiene già il PIN: mostralo solo a chi deve controllare il timer." Style="{StaticResource Caption}"
+                               TextWrapping="Wrap" TextAlignment="Center" Margin="0,6,0,0" />
+                    <Button Style="{StaticResource FlatButton}" Content="Nuovo PIN" Margin="0,10,0,0" HorizontalAlignment="Center" Click="NewPin_Click"
+                            ToolTip="Genera un nuovo PIN: i dispositivi collegati dovranno inserirlo di nuovo" />
+                </StackPanel>
+            </Border>
+            <Border x:Name="ControlOff" Style="{StaticResource Card}" Width="280" Visibility="Collapsed">
+                <TextBlock Text="Il controllo remoto è disattivato. Puoi attivarlo in Impostazioni → Rete." TextWrapping="Wrap" VerticalAlignment="Center" />
+            </Border>
+        </StackPanel>
+        <Button Style="{StaticResource FlatButton}" Content="Chiudi" IsCancel="True" IsDefault="True" Width="100" HorizontalAlignment="Right" Margin="0,16,0,0" />
+    </StackPanel>
+</Window>

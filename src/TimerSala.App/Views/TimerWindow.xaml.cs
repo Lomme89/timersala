@@ -42,6 +42,11 @@ public partial class TimerWindow : Window
         Chip.Width = Math.Max(6, h * 0.012);
         Bar.Height = Track.Height = Math.Max(8, h * 0.025);
 
+        MsgText.FontSize = h * 0.08;
+        MsgText.MaxHeight = MsgText.FontSize * 1.3 * 2;
+        MsgBanner.Padding = new Thickness(h * 0.03, h * 0.02, h * 0.03, h * 0.02);
+        MsgBanner.Margin = new Thickness(margin * 1.2, 0, margin * 1.2, margin * 0.6);
+
         // in "Solo cifre" le cifre occupano tutto lo schermo
         bool full = DataContext is MainViewModel { ShowScreenHeader: false };
         HeaderRow.Height = new GridLength(full ? 0 : 17, GridUnitType.Star);

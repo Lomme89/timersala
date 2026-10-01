@@ -56,7 +56,7 @@ Attiva **Sorvegliante**: nell'infrasettimanale lo studio biblico di congregazion
 
 ### Modificare un'adunanza
 
-Pulsante matita (o tasto `E`): puoi cambiare titoli, sezioni, minuti, aggiungere o togliere parti e cantici, spostarle. Le modifiche valgono per quella settimana e vengono salvate. *Ripristina scaricato* torna allo schema di wol.jw.org.
+Pulsante matita (o tasto `E`). A sinistra l'elenco delle parti: trascinale per cambiarne l'ordine (o usa ↑↓, `Alt+↑/↓`), `Canc` elimina; *Parte* e *Cantico* ne aggiungono una dopo quella selezionata. A destra modifichi la parte selezionata: titolo, tipo (parte cronometrata o cantico), durata con −/+ o con i pulsanti rapidi, sezione (pulsanti colorati) e note. In alto vedi il totale dei minuti. Le modifiche valgono per quella settimana e vengono salvate con *Salva*. *Ripristina scaricato* torna allo schema di wol.jw.org.
 
 ### Messaggi all'oratore
 

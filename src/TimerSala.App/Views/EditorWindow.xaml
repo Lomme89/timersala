@@ -1,63 +1,268 @@
 <Window x:Class="TimerSala.App.Views.EditorWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Modifica schema" Language="it-IT" Width="820" Height="640" MinWidth="640" MinHeight="420"
+        xmlns:vm="clr-namespace:TimerSala.App.ViewModels"
+        Title="Modifica schema" Language="it-IT" Width="920" Height="660" MinWidth="760" MinHeight="520"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
         Background="{StaticResource BgBrush}" Foreground="{StaticResource TextBrush}" FontFamily="{StaticResource UiFont}">
-    <Grid Margin="16">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,16,0,6" />
+        </Style>
+
+        <!-- riga dell'elenco delle parti -->
+        <DataTemplate x:Key="PartRow" DataType="{x:Type vm:EditablePart}">
+            <Grid Margin="0,1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="4" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="&#xE76F;" FontFamily="{StaticResource IconFont}" FontSize="12" Foreground="{StaticResource MutedBrush}"
+                           VerticalAlignment="Center" Margin="0,0,6,0" Opacity="0.6" ToolTip="Trascina per spostare" Cursor="SizeAll" />
+                <Border Grid.Column="1" Background="{Binding SectionBrush}" CornerRadius="2" />
+                <TextBlock x:Name="T" Grid.Column="2" Text="{Binding DisplayTitle}" Margin="10,0,8,0" FontSize="14"
+                           TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Foreground="{StaticResource TextBrush}" />
+                <Border Grid.Column="3" Background="{StaticResource BgBrush}" CornerRadius="10" Padding="8,2" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding DurationText}" FontFamily="{StaticResource DigitsFont}" FontSize="13" Foreground="{StaticResource MutedBrush}" />
+                </Border>
+            </Grid>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsSong}" Value="True">
+                    <Setter TargetName="T" Property="Foreground" Value="{StaticResource MutedBrush}" />
+                    <Setter TargetName="T" Property="FontStyle" Value="Italic" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <Style x:Key="PartItem" TargetType="ListBoxItem">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="Bd" Background="Transparent" BorderBrush="Transparent" BorderThickness="1" CornerRadius="8" Padding="8,8" Margin="0,1">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource CardHoverBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#2A3B5C" />
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- pulsanti colorati delle sezioni -->
+        <Style x:Key="SectionChip" TargetType="ListBoxItem">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="Bd" CornerRadius="16" Padding="12,6" Margin="0,0,6,6" BorderThickness="1"
+                                BorderBrush="{StaticResource LineBrush}" Background="{StaticResource BgBrush}">
+                            <StackPanel Orientation="Horizontal">
+                                <Ellipse Width="9" Height="9" Fill="{Binding Brush}" VerticalAlignment="Center" Margin="0,0,7,0" />
+                                <TextBlock Text="{Binding Label}" FontSize="13" />
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#3A404B" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{Binding Brush}" />
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource CardHoverBrush}" />
+                                <Setter Property="FontWeight" Value="SemiBold" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="MinuteChip" TargetType="Button" BasedOn="{StaticResource FlatButton}">
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Width" Value="46" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="Margin" Value="0,0,6,6" />
+            <Setter Property="FontFamily" Value="{StaticResource DigitsFont}" />
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="18">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <StackPanel>
-            <TextBlock Text="{Binding Heading}" FontSize="18" FontWeight="SemiBold" />
-            <TextBlock Style="{StaticResource Caption}" Margin="0,4,0,0" TextWrapping="Wrap"
-                       Text="Modifica titoli, sezioni e durate. I cantici non sono cronometrati." />
-        </StackPanel>
-
-        <DockPanel Grid.Row="1" Margin="0,12,0,8">
-            <TextBlock Text="Titolo adunanza" VerticalAlignment="Center" Margin="0,0,10,0" />
-            <TextBox Text="{Binding MeetingTitle, UpdateSourceTrigger=PropertyChanged}" />
+        <!-- intestazione -->
+        <DockPanel Margin="0,0,0,14">
+            <Border DockPanel.Dock="Right" Background="{StaticResource CardBrush}" CornerRadius="16" Padding="14,6" VerticalAlignment="Center">
+                <TextBlock Text="{Binding TotalText}" FontSize="13" />
+            </Border>
+            <StackPanel>
+                <TextBlock Text="{Binding Heading}" FontSize="20" FontWeight="SemiBold" />
+                <TextBlock Text="{Binding WeekText}" Style="{StaticResource Caption}" FontSize="13" Margin="0,2,0,0" />
+            </StackPanel>
         </DockPanel>
 
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="5*" />
+                <ColumnDefinition Width="14" />
+                <ColumnDefinition Width="6*" />
             </Grid.ColumnDefinitions>
-            <DataGrid x:Name="Grid" ItemsSource="{Binding Parts}" SelectedItem="{Binding Selected}" AutoGenerateColumns="False"
-                      CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="False" CanUserReorderColumns="False"
-                      HeadersVisibility="Column" SelectionMode="Single" GridLinesVisibility="Horizontal"
-                      CellEditEnding="Grid_CellEditEnding">
-                <DataGrid.Columns>
-                    <DataGridComboBoxColumn x:Name="SectionColumn" Header="Sezione" Width="190"
-                                            SelectedValueBinding="{Binding Section}" SelectedValuePath="Value" DisplayMemberPath="Label" />
-                    <DataGridTextColumn Header="Titolo" Width="*" Binding="{Binding Title, UpdateSourceTrigger=PropertyChanged}" />
-                    <DataGridTextColumn Header="Minuti" Width="70" Binding="{Binding Minutes, UpdateSourceTrigger=LostFocus}" />
-                    <DataGridCheckBoxColumn Header="Cantico" Width="70" Binding="{Binding IsSong, UpdateSourceTrigger=PropertyChanged}" />
-                </DataGrid.Columns>
-            </DataGrid>
-            <StackPanel Grid.Column="1" Margin="10,0,0,0" Width="150">
-                <Button Style="{StaticResource FlatButton}" Content="+ Parte" Command="{Binding AddPartCommand}" Margin="0,0,0,6" />
-                <Button Style="{StaticResource FlatButton}" Content="+ Cantico" Command="{Binding AddSongCommand}" Margin="0,0,0,6" />
-                <Button Style="{StaticResource FlatButton}" Content="Elimina" Command="{Binding RemoveCommand}" Margin="0,0,0,16" />
-                <Button Style="{StaticResource FlatButton}" Content="▲ Su" Command="{Binding MoveUpCommand}" Margin="0,0,0,6" />
-                <Button Style="{StaticResource FlatButton}" Content="▼ Giù" Command="{Binding MoveDownCommand}" Margin="0,0,0,16" />
-                <Button Style="{StaticResource FlatButton}" Content="Ripristina scaricato" Command="{Binding RestoreDownloadedCommand}" Margin="0,0,0,6"
+
+            <!-- elenco -->
+            <Border Style="{StaticResource Card}" Padding="8">
+                <DockPanel>
+                    <Grid DockPanel.Dock="Bottom" Margin="0,8,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Button Style="{StaticResource FlatButton}" Command="{Binding AddPartCommand}" Margin="0,0,4,0" ToolTip="Aggiungi una parte dopo quella selezionata">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE710;" FontFamily="{StaticResource IconFont}" FontSize="12" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                <TextBlock Text="Parte" />
+                            </StackPanel>
+                        </Button>
+                        <Button Grid.Column="1" Style="{StaticResource FlatButton}" Command="{Binding AddSongCommand}" Margin="4,0" ToolTip="Aggiungi un cantico dopo la parte selezionata">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE8D6;" FontFamily="{StaticResource IconFont}" FontSize="12" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                <TextBlock Text="Cantico" />
+                            </StackPanel>
+                        </Button>
+                        <Button Grid.Column="2" Style="{StaticResource IconButton}" Content="&#xE70E;" Command="{Binding MoveUpCommand}" Margin="4,0" ToolTip="Sposta su (Alt+↑)" />
+                        <Button Grid.Column="3" Style="{StaticResource IconButton}" Content="&#xE70D;" Command="{Binding MoveDownCommand}" ToolTip="Sposta giù (Alt+↓)" />
+                    </Grid>
+                    <ListBox x:Name="PartsList" ItemsSource="{Binding Parts}" SelectedItem="{Binding Selected}" ItemTemplate="{StaticResource PartRow}"
+                             ItemContainerStyle="{StaticResource PartItem}" AllowDrop="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             PreviewMouseLeftButtonDown="List_PreviewMouseDown" PreviewMouseMove="List_PreviewMouseMove" Drop="List_Drop"
+                             DragOver="List_DragOver" PreviewKeyDown="List_PreviewKeyDown" />
+                </DockPanel>
+            </Border>
+
+            <!-- dettaglio -->
+            <Border Grid.Column="2" Style="{StaticResource Card}" Padding="20,8,20,16">
+                <Grid>
+                    <TextBlock Text="Seleziona una parte a sinistra o aggiungine una nuova." FontSize="14"
+                               HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource Caption}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HasSelection}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Visibility="{Binding HasSelection, Converter={StaticResource BoolToVis}}">
+                        <StackPanel DataContext="{Binding Selected}">
+                            <TextBlock Text="TITOLO" Style="{StaticResource FieldLabel}" />
+                            <TextBox x:Name="TitleBox" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" FontSize="16" Padding="8,7" />
+
+                            <TextBlock Text="TIPO" Style="{StaticResource FieldLabel}" />
+                            <Border Background="{StaticResource BgBrush}" CornerRadius="8" HorizontalAlignment="Left">
+                                <StackPanel Orientation="Horizontal">
+                                    <RadioButton Style="{StaticResource SegmentButton}" Content="Parte cronometrata" IsChecked="{Binding IsTimed}" GroupName="kind" />
+                                    <RadioButton Style="{StaticResource SegmentButton}" Content="Cantico (senza timer)" IsChecked="{Binding IsSong}" GroupName="kind" />
+                                </StackPanel>
+                            </Border>
+
+                            <StackPanel Visibility="{Binding IsTimed, Converter={StaticResource BoolToVis}}">
+                                <TextBlock Text="DURATA" Style="{StaticResource FieldLabel}" />
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Style="{StaticResource IconButton}" Content="&#xE738;" Width="44" Height="44"
+                                            Command="{Binding DataContext.DecreaseCommand, RelativeSource={RelativeSource AncestorType=Window}}" ToolTip="Un minuto in meno" />
+                                    <TextBox Text="{Binding Minutes, StringFormat={}{0:0.##}}" Width="84" Margin="8,0" FontSize="24"
+                                             FontFamily="{StaticResource DigitsFont}" HorizontalContentAlignment="Center" Padding="4,4" />
+                                    <Button Style="{StaticResource IconButton}" Content="&#xE710;" Width="44" Height="44"
+                                            Command="{Binding DataContext.IncreaseCommand, RelativeSource={RelativeSource AncestorType=Window}}" ToolTip="Un minuto in più" />
+                                    <TextBlock Text="minuti" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="{StaticResource MutedBrush}" />
+                                </StackPanel>
+                                <ItemsControl ItemsSource="{Binding DataContext.QuickMinutes, RelativeSource={RelativeSource AncestorType=Window}}" Margin="0,10,0,0">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Style="{StaticResource MinuteChip}" Content="{Binding}" CommandParameter="{Binding}"
+                                                    Command="{Binding DataContext.SetMinutesCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+
+                            <TextBlock Text="SEZIONE" Style="{StaticResource FieldLabel}" />
+                            <ListBox ItemsSource="{Binding DataContext.Sections, RelativeSource={RelativeSource AncestorType=Window}}"
+                                     SelectedValuePath="Value" SelectedValue="{Binding Section}" ItemContainerStyle="{StaticResource SectionChip}"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                <ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel />
+                                    </ItemsPanelTemplate>
+                                </ListBox.ItemsPanel>
+                            </ListBox>
+
+                            <TextBlock Text="NOTE (FACOLTATIVE)" Style="{StaticResource FieldLabel}" />
+                            <TextBox Text="{Binding Detail, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="False" TextWrapping="Wrap"
+                                     ToolTip="Es. scrittura o lezione; compare sotto il titolo nel controller" />
+
+                            <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                                <Button Style="{StaticResource FlatButton}" Command="{Binding DataContext.DuplicateCommand, RelativeSource={RelativeSource AncestorType=Window}}" Margin="0,0,8,0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="&#xE8C8;" FontFamily="{StaticResource IconFont}" FontSize="12" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                        <TextBlock Text="Duplica" />
+                                    </StackPanel>
+                                </Button>
+                                <Button Style="{StaticResource FlatButton}" Foreground="{StaticResource RedBrush}"
+                                        Command="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType=Window}}" ToolTip="Elimina (Canc)">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="&#xE74D;" FontFamily="{StaticResource IconFont}" FontSize="12" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                        <TextBlock Text="Elimina" />
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- piè di pagina -->
+        <DockPanel Grid.Row="2" Margin="0,14,0,0">
+            <StackPanel Orientation="Horizontal">
+                <Button Style="{StaticResource FlatButton}" Content="Ripristina scaricato" Command="{Binding RestoreDownloadedCommand}" Margin="0,0,8,0"
                         ToolTip="Torna allo schema scaricato da wol.jw.org (o al modello se non scaricato)" />
                 <Button Style="{StaticResource FlatButton}" Content="Modello standard" Command="{Binding UseTemplateCommand}"
                         ToolTip="Schema standard senza titoli specifici" />
             </StackPanel>
-        </Grid>
-
-        <DockPanel Grid.Row="3" Margin="0,12,0,0">
-            <TextBlock Text="{Binding TotalText}" Style="{StaticResource Caption}" VerticalAlignment="Center" FontSize="13" />
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Style="{StaticResource FlatButton}" Content="Annulla" IsCancel="True" Width="110" Margin="0,0,8,0" />
-                <Button Style="{StaticResource FlatButton}" Content="Salva" IsDefault="True" Width="110" Click="Save_Click"
+                <Button Style="{StaticResource FlatButton}" Content="Salva" Width="110" Click="Save_Click"
                         Background="{StaticResource AccentBrush}" BorderThickness="0" Foreground="White" />
             </StackPanel>
         </DockPanel>

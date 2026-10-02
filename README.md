@@ -84,7 +84,7 @@ Tema scuro o chiaro, carattere, layout classico, clessidra o solo cifre. Puoi na
 ## 🎛️ Il programma
 
 <p align="center">
-  <img src="docs/images/programma-v2.png" alt="Controller, modalità mini, editor dello schema e impostazioni" width="100%">
+  <img src="docs/images/programma-v3.png" alt="Controller, modalità mini, editor dello schema e impostazioni" width="100%">
 </p>
 
 ## 🖼️ Lo schermo del timer

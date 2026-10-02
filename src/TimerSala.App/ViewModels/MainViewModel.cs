@@ -45,6 +45,12 @@ public sealed partial class MainViewModel : ObservableObject
     {
         _store = store;
         Settings = store.LoadSettings();
+        var session = store.LoadSession();
+        if (session is { Timer.HasProgress: true } && DateTimeOffset.UtcNow - session.Timer.SavedAt < TimeSpan.FromHours(3)
+            && !IsMeetingFinished(store, session))
+            PendingRestore = session;
+        else
+            _sessionReady = true;
         _wol = new WolClient { DiagnosticsFolder = store.DiagnosticsFolder };
         _web = new TimerWebServer(Timer, () => DisplayOptions.From(Settings), Messages,
             () => new RemoteConfig(Settings.RemoteControlEnabled, Settings.RemotePin, Settings.MessagePresets, Settings.MessagesEnabled),
@@ -65,7 +71,12 @@ public sealed partial class MainViewModel : ObservableObject
         LoadWeek(today);
 
         _tick = new DispatcherTimer(DispatcherPriority.Render) { Interval = TimeSpan.FromMilliseconds(100) };
-        _tick.Tick += (_, _) => RefreshDisplay();
+        _tick.Tick += (_, _) =>
+        {
+            RefreshDisplay();
+            // mentre il timer corre, salva lo stato ogni 5 secondi
+            if (Timer.IsRunning && ++_ticksSinceSave >= 50) SaveSession();
+        };
         _tick.Start();
         RefreshDisplay();
     }
@@ -137,6 +148,24 @@ public sealed partial class MainViewModel : ObservableObject
             _ = DownloadAsync(silent: true);
     }
 
+    void UpdateAdaptiveParts()
+    {
+        var parts = CurrentMeeting.Parts;
+        var indices = new List<int>();
+        if (Kind == MeetingKind.Midweek && Settings.AdaptiveStudy)
+        {
+            int i = parts.FindIndex(p => p.IsTimed && p.Title.Contains("Studio biblico", StringComparison.OrdinalIgnoreCase));
+            if (i < 0) i = parts.FindLastIndex(p => p.IsTimed && p.Section == PartSection.Living && p.DurationSeconds >= 25 * 60);
+            if (i >= 0) indices.Add(i);
+        }
+        if (Kind == MeetingKind.Weekend && Settings.AdaptiveWatchtower)
+        {
+            int i = parts.FindIndex(p => p.IsTimed && p.Section == PartSection.Watchtower);
+            if (i >= 0) indices.Add(i);
+        }
+        Timer.SetAdaptiveParts(indices);
+    }
+
     void UpdateMeetingStart() =>
         Timer.MeetingStart = new DateTimeOffset(Settings.StartOf(Kind, Week.WeekStart));
 
@@ -144,6 +173,7 @@ public sealed partial class MainViewModel : ObservableObject
     {
         Timer.LoadMeeting(CurrentMeeting);
         UpdateMeetingStart();
+        UpdateAdaptiveParts();
         RebuildParts();
         UpdateWeekTexts();
         OnPropertyChanged(nameof(OverseerVisit));
@@ -596,6 +626,7 @@ public sealed partial class MainViewModel : ObservableObject
 
     void RefreshParts()
     {
+        SaveSession();
         int selected = Timer.SelectedIndex;
         int running = Timer.Mode == TimerMode.Part ? Timer.RunningIndex : -1;
         foreach (var p in Parts)
@@ -605,6 +636,7 @@ public sealed partial class MainViewModel : ObservableObject
             var actual = Timer.ActualFor(p.Index);
             p.ActualText = actual is { } a ? TimerSnapshot.FormatDuration(a.TotalSeconds) : null;
             p.IsOver = actual is { } b && b.TotalSeconds >= p.Part.DurationSeconds + 1;
+            p.AdaptedSeconds = actual is null ? Timer.AdaptedTargetFor(p.Index) : null;
             p.RefreshDuration();
         }
         RefreshDisplay();
@@ -722,6 +754,71 @@ public sealed partial class MainViewModel : ObservableObject
         OnPropertyChanged(nameof(ControlUrl));
     }
 
+    // ───────────── Ripristino dopo un riavvio ─────────────
+
+    /// <summary>Adunanza rimasta in corso alla chiusura precedente (da proporre all'avvio).</summary>
+    public SessionState? PendingRestore { get; private set; }
+
+    bool _sessionReady;
+    int _ticksSinceSave;
+
+    void SaveSession()
+    {
+        if (!_sessionReady) return;
+        _ticksSinceSave = 0;
+        var timer = Timer.ExportState();
+        if (timer.HasProgress)
+            _store.SaveSession(new SessionState { WeekStart = Week.WeekStart, Kind = Kind, Timer = timer });
+        else
+            _store.ClearSession();
+    }
+
+    /// <summary>L'adunanza salvata era già finita (ultima parte cronometrata e timer fermo).</summary>
+    static bool IsMeetingFinished(DataStore store, SessionState s)
+    {
+        if (s.Timer.Running) return false;
+        var parts = store.LoadWeek(s.WeekStart)?.Get(s.Kind).Parts;
+        if (parts is null) return false;
+        int last = parts.FindLastIndex(p => p.IsTimed);
+        return last >= 0 && s.Timer.ActualSeconds.ContainsKey(last);
+    }
+
+    public enum RestoreChoice { CountDowntime, ResumeAsWas, StartOver }
+
+    public void Restore(RestoreChoice choice)
+    {
+        var session = PendingRestore;
+        PendingRestore = null;
+        _sessionReady = true;
+        if (session is null || choice == RestoreChoice.StartOver)
+        {
+            _store.ClearSession();
+            return;
+        }
+        Kind = session.Kind;
+        OnPropertyChanged(nameof(IsMidweek));
+        OnPropertyChanged(nameof(IsWeekend));
+        LoadWeek(session.WeekStart);
+        Timer.ImportState(session.Timer, countDowntime: choice == RestoreChoice.CountDowntime);
+        RefreshParts();
+        ShowStatus("Adunanza ripristinata.");
+    }
+
+    /// <summary>Descrizione per la finestra di ripristino.</summary>
+    public string DescribeRestore(SessionState s)
+    {
+        var week = _store.LoadWeek(s.WeekStart);
+        var meeting = week?.Get(s.Kind);
+        int index = s.Timer.Running ? s.Timer.RunningIndex : s.Timer.SelectedIndex;
+        string part = meeting is not null && index >= 0 && index < meeting.Parts.Count ? meeting.Parts[index].Title : "";
+        string kind = s.Kind == MeetingKind.Midweek ? "adunanza infrasettimanale" : "adunanza del fine settimana";
+        var ago = DateTimeOffset.UtcNow - s.Timer.SavedAt;
+        string when = ago.TotalMinutes < 1 ? "meno di un minuto fa" : $"{(int)ago.TotalMinutes} minuti fa";
+        return s.Timer.Running
+            ? $"TimerSala si è chiuso {when} durante l'{kind}, mentre era in corso «{part}»."
+            : $"TimerSala si è chiuso {when} durante l'{kind} ({s.Timer.ActualSeconds.Count} parti già cronometrate).";
+    }
+
     // ───────────── Server web ─────────────
 
     public string? WebUrl { get; set => Set(ref field, value); }
@@ -779,6 +876,7 @@ public sealed partial class MainViewModel : ObservableObject
         OnPropertyChanged(nameof(ControlUrl));
         ApplyTimerSettings();
         UpdateMeetingStart();
+        UpdateAdaptiveParts();
         SaveSettings();
         if (webChanged) _ = StartWebServerAsync();
         else UpdateWebUrl();

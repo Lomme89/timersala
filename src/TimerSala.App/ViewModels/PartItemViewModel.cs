@@ -18,7 +18,16 @@ public sealed partial class PartItemViewModel(MeetingPart part, int index) : Obs
     public bool HasCounsel => Part.HasCounsel;
     public Brush SectionBrush => BrushCache.Get(SectionInfo.Color(Part.Section));
 
-    public string DurationText => Part.IsSong ? "" : FormatMinutes(Part.DurationSeconds);
+    public string DurationText => Part.IsSong ? "" : AdaptedSeconds is { } a ? FormatMinutes(a) : FormatMinutes(Part.DurationSeconds);
+
+    /// <summary>Durata adattata (studio adattivo), se diversa da quella prevista.</summary>
+    public int? AdaptedSeconds
+    {
+        get;
+        set { if (Set(ref field, value)) { OnPropertyChanged(nameof(DurationText)); OnPropertyChanged(nameof(IsAdapted)); } }
+    }
+
+    public bool IsAdapted => AdaptedSeconds is not null;
 
     public string? ActualText { get; set => Set(ref field, value); }
     public bool IsOver { get; set => Set(ref field, value); }

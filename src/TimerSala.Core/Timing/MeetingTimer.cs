@@ -20,6 +20,8 @@ public sealed class MeetingTimer
     int _runningIndex = -1;
     DateTimeOffset? _startedAt;
     TimeSpan _carried;            // tempo già trascorso prima dell'ultimo avvio (ripresa)
+    readonly HashSet<int> _adaptive = [];
+    readonly Dictionary<int, int> _adaptedTargets = [];   // durata adattata fissata all'avvio della parte
     int _targetSeconds;
     string _manualTitle = "";
 
@@ -83,7 +85,11 @@ public sealed class MeetingTimer
         {
             _meeting = meeting;
             StopInternal(record: false);
-            if (!keepProgress) _actual.Clear();
+            if (!keepProgress)
+            {
+                _actual.Clear();
+                _adaptedTargets.Clear();
+            }
             _selected = FirstTimedFrom(0);
         }
         Raise();
@@ -125,7 +131,8 @@ public sealed class MeetingTimer
             var part = _meeting.Parts[_selected];
             _mode = TimerMode.Part;
             _runningIndex = _selected;
-            _targetSeconds = part.DurationSeconds;
+            _targetSeconds = TargetForUnlocked(_selected);
+            if (_adaptive.Contains(_selected)) _adaptedTargets[_selected] = _targetSeconds;
             _carried = _actual.TryGetValue(_selected, out var t) ? t : TimeSpan.Zero;
             _startedAt = _clock.GetUtcNow();
             _forceCountdown = false;
@@ -201,6 +208,7 @@ public sealed class MeetingTimer
         {
             if (_startedAt is not null && _runningIndex == _selected && _mode == TimerMode.Part) return;
             _actual.Remove(_selected);
+            _adaptedTargets.Remove(_selected);
         }
         Raise();
     }
@@ -211,6 +219,7 @@ public sealed class MeetingTimer
         {
             StopInternal(record: false);
             _actual.Clear();
+            _adaptedTargets.Clear();
             _selected = FirstTimedFrom(0);
         }
         Raise();
@@ -238,6 +247,120 @@ public sealed class MeetingTimer
         for (int i = start; i < _meeting.Parts.Count; i++)
             if (_meeting.Parts[i].IsTimed) return i;
         return -1;
+    }
+
+    // ───── durate adattive (studio biblico / Torre di Guardia) ─────
+
+    /// <summary>Parti la cui durata si adatta al ritardo accumulato per finire in orario.</summary>
+    public void SetAdaptiveParts(IEnumerable<int> indices)
+    {
+        lock (_lock)
+        {
+            _adaptive.Clear();
+            foreach (var i in indices) _adaptive.Add(i);
+        }
+        Raise();
+    }
+
+    /// <summary>Durata adattata della parte, o null se non è adattiva o coincide con quella prevista.</summary>
+    public int? AdaptedTargetFor(int index)
+    {
+        lock (_lock)
+        {
+            if (!_adaptive.Contains(index) || index < 0 || index >= _meeting.Parts.Count) return null;
+            int target = TargetForUnlocked(index);
+            return target == _meeting.Parts[index].DurationSeconds ? null : target;
+        }
+    }
+
+    /// <summary>
+    /// Calcola la durata adattata: la parte si accorcia per recuperare il ritardo accumulato
+    /// (mai più della metà), ma non si allunga mai oltre la durata prevista.
+    /// </summary>
+    public static int Adapt(int plannedSeconds, int delaySeconds)
+    {
+        int target = plannedSeconds - Math.Max(0, delaySeconds);
+        target = Math.Clamp(target, plannedSeconds / 2, plannedSeconds);
+        return (int)(Math.Round(target / 15.0) * 15); // a passi di 15 secondi
+    }
+
+    int TargetForUnlocked(int index)
+    {
+        int planned = _meeting.Parts[index].DurationSeconds;
+        if (!_adaptive.Contains(index)) return planned;
+        if (_adaptedTargets.TryGetValue(index, out var fixedTarget)) return fixedTarget;
+        return Adapt(planned, RecordedDelayUnlocked());
+    }
+
+    int RecordedDelayUnlocked()
+    {
+        int delay = 0;
+        foreach (var (idx, t) in _actual)
+            if (idx < _meeting.Parts.Count)
+                delay += (int)Math.Round(t.TotalSeconds) - _meeting.Parts[idx].DurationSeconds;
+        return delay;
+    }
+
+    // ───── salvataggio e ripristino ─────
+
+    public TimerState ExportState()
+    {
+        lock (_lock)
+        {
+            var state = new TimerState
+            {
+                SelectedIndex = _selected,
+                ActualSeconds = _actual.ToDictionary(kv => kv.Key, kv => kv.Value.TotalSeconds),
+                AdaptedTargets = new Dictionary<int, int>(_adaptedTargets),
+                SavedAt = _clock.GetUtcNow(),
+            };
+            if (_startedAt is not null && _mode == TimerMode.Part)
+            {
+                state.Running = true;
+                state.RunningIndex = _runningIndex;
+                state.StartedAtUtc = _startedAt;
+                state.CarriedSeconds = _carried.TotalSeconds;
+                state.TargetSeconds = _targetSeconds;
+            }
+            return state;
+        }
+    }
+
+    /// <summary>
+    /// Ripristina uno stato salvato. Con <paramref name="countDowntime"/> il tempo in cui il programma è rimasto
+    /// chiuso viene conteggiato (l'adunanza è andata avanti); altrimenti il timer riparte da dove era.
+    /// </summary>
+    public void ImportState(TimerState state, bool countDowntime)
+    {
+        lock (_lock)
+        {
+            StopInternal(record: false);
+            _actual.Clear();
+            foreach (var (i, sec) in state.ActualSeconds)
+                if (i >= 0 && i < _meeting.Parts.Count) _actual[i] = TimeSpan.FromSeconds(sec);
+            _adaptedTargets.Clear();
+            foreach (var (i, t) in state.AdaptedTargets) _adaptedTargets[i] = t;
+            if (state.SelectedIndex >= 0 && state.SelectedIndex < _meeting.Parts.Count) _selected = state.SelectedIndex;
+
+            if (state.Running && state.StartedAtUtc is { } started && state.RunningIndex >= 0 && state.RunningIndex < _meeting.Parts.Count)
+            {
+                _mode = TimerMode.Part;
+                _runningIndex = state.RunningIndex;
+                _selected = state.RunningIndex;
+                _targetSeconds = state.TargetSeconds;
+                if (countDowntime)
+                {
+                    _carried = TimeSpan.FromSeconds(state.CarriedSeconds);
+                    _startedAt = started;
+                }
+                else
+                {
+                    _carried = TimeSpan.FromSeconds(state.CarriedSeconds) + (state.SavedAt - started);
+                    _startedAt = _clock.GetUtcNow();
+                }
+            }
+        }
+        Raise();
     }
 
     public TimerSnapshot GetSnapshot()
@@ -282,7 +405,7 @@ public sealed class MeetingTimer
                     Phase = TimerPhase.Idle,
                     Mode = TimerMode.Part,
                     Title = _selected >= 0 ? _meeting.Parts[_selected].Title : "",
-                    TargetSeconds = _selected >= 0 ? _meeting.Parts[_selected].DurationSeconds : 0,
+                    TargetSeconds = _selected >= 0 ? TargetForUnlocked(_selected) : 0,
                     NextTitle = _selected >= 0 ? _meeting.Parts[_selected].Title : null,
                     MeetingTitle = _meeting.Title,
                     DelaySeconds = delay,

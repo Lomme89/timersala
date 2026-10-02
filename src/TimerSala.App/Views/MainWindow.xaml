@@ -29,7 +29,7 @@
                         <TextBlock Text="{Binding Detail}" Style="{StaticResource Caption}" TextTrimming="CharacterEllipsis"
                                    Visibility="{Binding HasDetail, Converter={StaticResource BoolToVis}}" ToolTip="{Binding Detail}" />
                     </StackPanel>
-                    <TextBlock Grid.Column="2" Text="{Binding DurationText}" Foreground="{StaticResource MutedBrush}"
+                    <TextBlock x:Name="Duration" Grid.Column="2" Text="{Binding DurationText}" Foreground="{StaticResource MutedBrush}"
                                VerticalAlignment="Center" FontFamily="{StaticResource DigitsFont}" FontSize="14" />
                     <TextBlock x:Name="Actual" Grid.Column="3" Text="{Binding ActualText}" Foreground="{StaticResource GreenBrush}"
                                HorizontalAlignment="Right" VerticalAlignment="Center" FontFamily="{StaticResource DigitsFont}" FontSize="14" />
@@ -45,6 +45,10 @@
                 </DataTrigger>
                 <DataTrigger Binding="{Binding IsOver}" Value="True">
                     <Setter TargetName="Actual" Property="Foreground" Value="{StaticResource RedBrush}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsAdapted}" Value="True">
+                    <Setter TargetName="Duration" Property="Foreground" Value="#F59E0B" />
+                    <Setter TargetName="Duration" Property="ToolTip" Value="Durata adattata per recuperare il ritardo" />
                 </DataTrigger>
                 <DataTrigger Binding="{Binding IsSelected}" Value="True">
                     <Setter TargetName="Row" Property="Background" Value="{StaticResource CardHoverBrush}" />

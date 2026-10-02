@@ -3,6 +3,13 @@ using TimerSala.Core.Models;
 
 namespace TimerSala.Core.Storage;
 
+public sealed class SessionState
+{
+    public DateOnly WeekStart { get; set; }
+    public MeetingKind Kind { get; set; }
+    public Timing.TimerState Timer { get; set; } = new();
+}
+
 /// <summary>Salvataggio di impostazioni e schemi in %AppData%\TimerSala.</summary>
 public sealed class DataStore
 {
@@ -33,6 +40,21 @@ public sealed class DataStore
     public WeekSchedule? LoadWeek(DateOnly monday) => Read<WeekSchedule>(WeekPath(WeekMath.MondayOf(monday)));
 
     public void SaveWeek(WeekSchedule week) => Write(WeekPath(week.WeekStart), week);
+
+    string SessionPath => Path.Combine(Root, "adunanza-in-corso.json");
+
+    /// <summary>Stato dell'adunanza in corso, per riprendere dopo un riavvio.</summary>
+    public SessionState? LoadSession() => Read<SessionState>(SessionPath);
+
+    public void SaveSession(SessionState state)
+    {
+        try { Write(SessionPath, state); } catch (IOException) { /* il salvataggio riproverà al prossimo giro */ }
+    }
+
+    public void ClearSession()
+    {
+        try { if (File.Exists(SessionPath)) File.Delete(SessionPath); } catch (IOException) { }
+    }
 
     public void DeleteWeek(DateOnly monday)
     {

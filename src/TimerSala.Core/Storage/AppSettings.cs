@@ -26,6 +26,12 @@ public sealed class AppSettings
     public TimeOnly WeekendTime { get; set; } = new(10, 0);
     public int MeetingLengthMinutes { get; set; } = 105;
 
+    /// <summary>Lo studio biblico di congregazione si adatta al ritardo accumulato.</summary>
+    public bool AdaptiveStudy { get; set; }
+
+    /// <summary>Lo studio Torre di Guardia si adatta al ritardo accumulato.</summary>
+    public bool AdaptiveWatchtower { get; set; }
+
     /// <summary>Minuti prima dell'inizio in cui compare il conto alla rovescia (0 = mai).</summary>
     public int CountdownMinutes { get; set; } = 5;
 

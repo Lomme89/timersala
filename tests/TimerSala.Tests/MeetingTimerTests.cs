@@ -167,3 +167,71 @@ public class CountdownTests
         Assert.Equal(new DateTime(2026, 10, 11, 10, 0, 0), s.StartOf(MeetingKind.Weekend, new DateOnly(2026, 10, 5)));
     }
 }
+
+public class AdaptiveAndRestoreTests
+{
+    static (MeetingTimer, FakeClock, int cbs) Create()
+    {
+        var clock = new FakeClock(new DateTimeOffset(2026, 10, 7, 19, 0, 0, TimeSpan.Zero));
+        var t = new MeetingTimer(clock);
+        var m = MeetingTemplates.DefaultMidweek();
+        t.LoadMeeting(m);
+        int cbs = m.Parts.FindIndex(p => p.Title.Contains("Studio biblico"));
+        return (t, clock, cbs);
+    }
+
+    [Fact]
+    public void Adaptive_study_absorbs_accumulated_delay()
+    {
+        var (t, clock, cbs) = Create();
+        t.SetAdaptiveParts([cbs]);
+        t.Select(1); t.Start(); clock.Advance(TimeSpan.FromMinutes(13)); t.Stop(); // +3 min di ritardo
+
+        Assert.Equal(27 * 60, t.AdaptedTargetFor(cbs));
+        t.Select(cbs);
+        Assert.Equal("27:00", t.GetSnapshot().Display);
+        t.Start();
+        Assert.Equal("27:00", t.GetSnapshot().Display);
+        clock.Advance(TimeSpan.FromMinutes(27));
+        t.Stop();
+        Assert.Equal(0, t.GetSnapshot().DelaySeconds); // l'adunanza torna in orario
+    }
+
+    [Fact]
+    public void Adaptive_limits_and_rounding()
+    {
+        Assert.Equal(15 * 60, MeetingTimer.Adapt(30 * 60, 40 * 60));   // al massimo metà
+        Assert.Equal(30 * 60, MeetingTimer.Adapt(30 * 60, -20 * 60));  // in anticipo: mai più lunga del previsto
+        Assert.Equal(1800 - 75, MeetingTimer.Adapt(1800, 70));          // arrotondato a 15 s
+    }
+
+    [Fact]
+    public void Non_adaptive_parts_keep_planned_duration()
+    {
+        var (t, clock, cbs) = Create();
+        t.Select(1); t.Start(); clock.Advance(TimeSpan.FromMinutes(13)); t.Stop();
+        Assert.Null(t.AdaptedTargetFor(cbs));
+    }
+
+    [Fact]
+    public void Restore_counting_downtime_or_not()
+    {
+        var (t, clock, _) = Create();
+        t.Select(1); t.Start(); clock.Advance(TimeSpan.FromMinutes(4)); t.Stop();
+        t.Select(2); t.Start(); clock.Advance(TimeSpan.FromMinutes(2));
+        var saved = t.ExportState();
+
+        clock.Advance(TimeSpan.FromMinutes(3)); // programma chiuso per 3 minuti
+
+        var a = new MeetingTimer(clock); a.LoadMeeting(MeetingTemplates.DefaultMidweek());
+        a.ImportState(saved, countDowntime: true);
+        Assert.True(a.IsRunning);
+        Assert.Equal(2, a.RunningIndex);
+        Assert.Equal("05:00", a.GetSnapshot().Display);           // 10 - (2 + 3)
+        Assert.Equal(TimeSpan.FromMinutes(4), a.ActualFor(1));
+
+        var b = new MeetingTimer(clock); b.LoadMeeting(MeetingTemplates.DefaultMidweek());
+        b.ImportState(saved, countDowntime: false);
+        Assert.Equal("08:00", b.GetSnapshot().Display);           // riparte da dove era
+    }
+}

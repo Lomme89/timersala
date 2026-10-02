@@ -38,6 +38,8 @@ public partial class SettingsWindow : Window
         WeekendTime.Text = s.WeekendTime.ToString("HH:mm");
         MeetingLength.Text = s.MeetingLengthMinutes.ToString();
         CountdownMinutes.Text = s.CountdownMinutes.ToString();
+        AdaptiveStudy.IsChecked = s.AdaptiveStudy;
+        AdaptiveWatchtower.IsChecked = s.AdaptiveWatchtower;
 
         var langs = WolLanguage.Presets.ToList();
         if (!langs.Contains(s.Language)) langs.Add(s.Language);
@@ -125,6 +127,8 @@ public partial class SettingsWindow : Window
         s.WeekendTime = wkTime;
         s.MeetingLengthMinutes = length;
         s.CountdownMinutes = countdown;
+        s.AdaptiveStudy = AdaptiveStudy.IsChecked == true;
+        s.AdaptiveWatchtower = AdaptiveWatchtower.IsChecked == true;
         if (LanguageBox.SelectedItem is WolLanguage lang) s.Language = lang;
         s.AutoDownload = AutoDownload.IsChecked == true;
 

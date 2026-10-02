@@ -66,6 +66,11 @@
                         </StackPanel>
                         <TextBlock Style="{StaticResource Hint}" Text="Serve per calcolare la fine prevista. All'avvio viene proposta l'adunanza di oggi o la prossima." />
 
+                        <TextBlock Text="DURATE ADATTIVE" Style="{StaticResource Group}" />
+                        <CheckBox x:Name="AdaptiveStudy" Content="Studio biblico di congregazione adattivo" />
+                        <CheckBox x:Name="AdaptiveWatchtower" Content="Studio Torre di Guardia adattivo" />
+                        <TextBlock Style="{StaticResource Hint}" Text="Se l'adunanza è in ritardo, lo studio si accorcia (al massimo della metà) per finire in orario. Non si allunga mai oltre il tempo previsto. La durata adattata appare in arancione nell'elenco." />
+
                         <TextBlock Text="CONTO ALLA ROVESCIA PRIMA DELL'INIZIO" Style="{StaticResource Group}" />
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Compare (minuti prima)" Style="{StaticResource Label}" Width="170" />

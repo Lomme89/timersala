@@ -33,6 +33,7 @@ public partial class MainWindow : Window
         {
             UpdateTimerWindow();
             ApplyMiniMode();
+            OfferRestore();
         };
         LocationChanged += (_, _) => UpdateTopmostOfDisplay();
         SystemEvents.DisplaySettingsChanged += OnDisplaySettingsChanged;
@@ -56,6 +57,15 @@ public partial class MainWindow : Window
         _timerWindow.PlaceOnMonitor();
         UpdateTopmostOfDisplay();
         if (_vm.IsMiniMode) _mini?.Activate(); else Activate();
+    }
+
+    /// <summary>Se l'adunanza era in corso quando il programma si è chiuso, propone di riprenderla.</summary>
+    void OfferRestore()
+    {
+        if (_vm.PendingRestore is not { } session) return;
+        var owner = _vm.IsMiniMode && _mini is not null ? (Window)_mini : this;
+        var dlg = new RestoreWindow(_vm.DescribeRestore(session)) { Owner = owner };
+        _vm.Restore(dlg.ShowDialog() == true ? dlg.Choice : MainViewModel.RestoreChoice.StartOver);
     }
 
     void ApplyMiniMode()

@@ -43,6 +43,25 @@ Tre passi alla prima apertura: schermo della sala (con «Identifica»), orari de
 ### Backup della configurazione
 Esporta e importa in un unico file impostazioni, schemi modificati a mano e messaggi pronti: per cambiare PC o configurare un'altra sala allo stesso modo. Con i profili per congregazione, si può esportare anche un solo profilo.
 
+### Controllo remoto più chiaro
+- **Avvisi delle azioni remote**: quando qualcuno avvia, ferma, cambia parte o manda un messaggio dal telefono, il controller lo mostra per un attimo («Fermato dal telefono»).
+- **Chi è collegato**: «2 telefoni collegati · 1 con il controllo».
+- **Blocca i comandi remoti**: interruttore al volo nel controller, senza passare dalle impostazioni.
+
+### Collegamento più semplice
+- **Cartoncino da stampare**: PDF con il QR per seguire il timer e due righe di istruzioni, da lasciare al leggio o all'acustica.
+- **Avviso se l'indirizzo cambia**: se l'indirizzo del PC è diverso dall'ultima volta, avvisare che i QR stampati non valgono più e suggerire il nome del PC.
+
+### Parti con video
+- Icona 🎬 nell'elenco del controller per le parti che nello schema di wol contengono un video, per ricordarsi di prepararlo in JW Library.
+- Nell'editor il segno si aggiunge o si toglie a mano (per esempio per una parte locale).
+
+### Guida dentro il programma
+Pulsante «?» con una guida rapida: funzioni principali e scorciatoie, con le immagini del README.
+
+### Sito: versione e novità
+Numero dell'ultima versione accanto al pulsante Scarica e pagina «Novità» generata da CHANGELOG.md.
+
 ## Scartate (e perché)
 - Ritmo dello studio a paragrafi: il conduttore può dedicare più tempo ai paragrafi più utili alla congregazione.
 - Allarme «microfono chiuso»: c'è già un fratello dedicato all'audio e il riscontro è evidente.

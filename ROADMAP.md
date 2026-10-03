@@ -17,6 +17,18 @@ Per spiegare il programma al volo a un nuovo fratello dell'acustica senza toccar
 - Schermo del timer e pagina web restano separati (o mostrano chiaramente «PROVA»): niente rischi in sala.
 - Tempi, ritardi e messaggi non vengono salvati; alla chiusura si torna esattamente com'era.
 
+### Profili per più congregazioni nella stessa sala
+Molte Sale del Regno sono condivise da due o tre congregazioni, a volte di lingue diverse.
+- Un profilo per congregazione: nome, orari delle adunanze, lingua del download da wol, stile dello schermo, messaggi pronti.
+- Il programma sceglie da solo il profilo in base al giorno e all'ora; il nome della congregazione è ben visibile nel controller.
+- Cambio manuale con un clic; schemi e impostazioni di ogni profilo restano separati.
+
+### Settimane speciali
+Le settimane che oggi vanno sistemate a mano, con un clic (o in automatico se wol lo indica), come per la visita del sorvegliante.
+- Settimana dell'assemblea: nessuna adunanza; schermo e pagina web mostrano un avviso al posto del countdown.
+- Commemorazione: schema dedicato con il suo orario; se cade in un giorno feriale, l'infrasettimanale di quella settimana non c'è.
+- Discorso speciale: riconosciuto dallo schema di wol quando presente.
+
 ## Scartate (e perché)
 - Ritmo dello studio a paragrafi: il conduttore può dedicare più tempo ai paragrafi più utili alla congregazione.
 - Allarme «microfono chiuso»: c'è già un fratello dedicato all'audio e il riscontro è evidente.

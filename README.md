@@ -134,6 +134,12 @@ Avvia di nuovo = parti subito. **Esc** annulla l'attesa o, nei primi secondi, un
   <img src="docs/images/stili.png" alt="Stati e stili del timer: tempo regolare, ultimo minuto, sforamento con messaggio, clessidra, tema chiaro, countdown" width="100%">
 </p>
 
+**Countdown d'inizio:** è la schermata che vede tutta la sala, quindi ha uno stile suo, che non si confonde con le parti. Si sceglie in *Impostazioni → Schermo*, con il pulsante **Prova** per vederlo subito.
+
+<p align="center">
+  <img src="docs/images/countdown.png" alt="Stili del countdown d'inizio: marea, anello, blocchi, orologio, quadrante, a parole" width="100%">
+</p>
+
 ## 📱 Controllo dal telefono
 
 <p align="center">

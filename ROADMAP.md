@@ -67,6 +67,15 @@ Se le durate dello schema superano la durata dell'adunanza impostata, l'editor l
 «Lo schema dura 108 minuti: 3 minuti oltre, finirà alle 20:48». Aggiornato mentre si modificano le parti; anche un piccolo segno
 nel controller sulla settimana interessata.
 
+### Taratura automatica dell'avvio con la voce
+Pulsante «Taratura» nella scheda Voce: 5 secondi di sala in silenzio, poi qualche secondo di voce al microfono;
+la soglia viene impostata a metà strada tra i due livelli (con margine). Si rifà in un attimo se cambia l'impianto.
+
+### Segnala un problema o lascia un suggerimento
+Pulsante nel programma (e link nella guida) che prepara una segnalazione con versione, sistema, impostazioni principali
+(senza PIN) ed errori recenti da `diagnostica\errori.log`, e apre la pagina per inviarla su GitHub. Due modalità:
+«Qualcosa non funziona» e «Ho un'idea».
+
 ## Scartate (e perché)
 - Ritmo dello studio a paragrafi: il conduttore può dedicare più tempo ai paragrafi più utili alla congregazione.
 - Allarme «microfono chiuso»: c'è già un fratello dedicato all'audio e il riscontro è evidente.

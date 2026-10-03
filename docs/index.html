@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TimerSala — il timer per le adunanze di congregazione</title>
+<meta name="description" content="TimerSala è il timer per le adunanze di congregazione per Windows: schemi da wol.jw.org, schermo leggibile a 20 metri, controllo dal telefono, messaggi all'oratore. Gratuito, senza installazione.">
+<meta name="theme-color" content="#0b0d10">
+<meta property="og:title" content="TimerSala — il timer per le adunanze">
+<meta property="og:description" content="Chiaro da lontano, semplice da usare. Schemi da wol.jw.org, multi-schermo, controllo dal telefono.">
+<meta property="og:image" content="images/hero.png">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/png" href="images/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0b0d10; --bg2: #0f1115; --card: #15171c; --card2: #1b1e24; --line: #262a32; --line2: #333944;
+  --fg: #eef0f3; --muted: #9aa1ad; --dim: #6b7280;
+  --green: #22c55e; --amber: #fbbf24; --red: #ef4444; --blue: #3b82f6; --teal: #3d8fa3; --gold: #d4a017; --wine: #c0413a;
+  --digits: "Barlow", "Bahnschrift", "Segoe UI", system-ui, sans-serif;
+  --ui: "Inter", "Segoe UI", system-ui, sans-serif;
+  --radius: 18px;
+  --ease: cubic-bezier(.2, .8, .2, 1);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+html, body { overflow-x: clip; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--ui); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+.wrap { width: min(1180px, 100% - 40px); margin-inline: auto; }
+.mono { font-family: var(--digits); font-variant-numeric: tabular-nums; }
+
+/* ── sfondo animato ── */
+.aurora { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; contain: strict; }
+.aurora i { position: absolute; width: 60vmax; height: 60vmax; border-radius: 50%; filter: blur(90px); opacity: .18; animation: drift 26s ease-in-out infinite alternate; }
+.aurora i:nth-child(1) { background: var(--green); left: -15vmax; top: -20vmax; }
+.aurora i:nth-child(2) { background: var(--blue); right: -20vmax; top: 10vmax; animation-duration: 32s; opacity: .12; }
+.aurora i:nth-child(3) { background: var(--teal); left: 20vmax; bottom: -30vmax; animation-duration: 38s; opacity: .10; }
+@keyframes drift { to { transform: translate(8vmax, 6vmax) scale(1.12); } }
+.grain { position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: .5;
+  background-image: radial-gradient(rgba(255,255,255,.035) 1px, transparent 1px); background-size: 3px 3px; }
+
+/* ── barra di navigazione ── */
+nav { position: sticky; top: 0; z-index: 50; transition: background .3s, border-color .3s, backdrop-filter .3s; border-bottom: 1px solid transparent; }
+nav.scrolled { background: rgba(11,13,16,.72); backdrop-filter: blur(14px) saturate(1.4); -webkit-backdrop-filter: blur(14px) saturate(1.4); border-color: var(--line); }
+nav .wrap { display: flex; align-items: center; gap: 28px; height: 68px; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--digits); font-weight: 700; font-size: 22px; letter-spacing: -.3px; }
+.brand img { width: 30px; height: 30px; border-radius: 8px; }
+.links { display: flex; gap: 22px; margin-left: auto; font-size: 15px; color: var(--muted); }
+.links a:hover { color: var(--fg); }
+.btn { display: inline-flex; align-items: center; gap: 10px; padding: 12px 20px; border-radius: 12px; font: 600 15px var(--ui); border: 1px solid var(--line2);
+  background: var(--card); color: var(--fg); cursor: pointer; transition: transform .15s var(--ease), background .2s, border-color .2s, box-shadow .2s; }
+.btn:hover { transform: translateY(-2px); border-color: #4a5160; }
+.btn:active { transform: translateY(0) scale(.97); }
+.btn.primary { background: linear-gradient(180deg, #2fd56b, #16a34a); border-color: transparent; color: #04140a; box-shadow: 0 10px 30px -8px rgba(34,197,94,.55); }
+.btn.primary:hover { box-shadow: 0 16px 40px -8px rgba(34,197,94,.7); }
+.btn svg { width: 18px; height: 18px; }
+nav .btn { padding: 9px 16px; font-size: 14px; }
+
+/* ── hero ── */
+.hero { padding: 72px 0 40px; }
+.hero .wrap { display: grid; grid-template-columns: 1.05fr 1fr; gap: 56px; align-items: center; }
+.eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 99px; background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.3);
+  color: #7ee2a3; font-size: 13px; font-weight: 600; }
+.eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 0 rgba(34,197,94,.7); animation: ping 2s infinite; }
+@keyframes ping { 70% { box-shadow: 0 0 0 8px rgba(34,197,94,0); } 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); } }
+h1 { font-family: var(--digits); font-weight: 700; font-size: clamp(42px, 5.8vw, 80px); text-wrap: balance; line-height: .98; letter-spacing: -1.5px; margin: 22px 0 18px; }
+h1 .grad { background: linear-gradient(90deg, var(--green), #8be9a8 40%, var(--amber) 75%, var(--red)); -webkit-background-clip: text; background-clip: text; color: transparent;
+  background-size: 200% auto; animation: shine 8s linear infinite; }
+@keyframes shine { to { background-position: 200% center; } }
+.lead { font-size: clamp(17px, 1.6vw, 20px); color: var(--muted); max-width: 540px; margin: 0 0 30px; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.meta { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 26px; color: var(--dim); font-size: 14px; }
+.meta span { display: inline-flex; align-items: center; gap: 7px; }
+.meta svg { width: 16px; height: 16px; color: var(--green); }
+
+/* monitor del timer (hero) */
+.monitor { position: relative; perspective: 1400px; }
+.screen { position: relative; aspect-ratio: 16 / 9; border-radius: 16px; background: #000; overflow: hidden; border: 12px solid #05060a;
+  box-shadow: 0 0 0 1px var(--line2), 0 50px 100px -30px rgba(0,0,0,.9), 0 0 120px -20px var(--glow, rgba(34,197,94,.35));
+  transform: rotateY(-10deg) rotateX(4deg); transition: box-shadow .6s, transform .8s var(--ease); }
+.monitor:hover .screen { transform: rotateY(-4deg) rotateX(2deg); }
+.stand { width: 26%; height: 34px; margin: -2px auto 0; background: linear-gradient(#15171c, #0b0c0f); clip-path: polygon(30% 0, 70% 0, 82% 100%, 18% 100%); }
+.stand + .base { width: 40%; height: 8px; margin: 0 auto; border-radius: 6px; background: #15171c; }
+
+/* componente "schermo del timer" (hero e demo) */
+.tscreen { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 5% 6% 4.5%; container-type: inline-size; color: #f4f5f7;
+  background: var(--sbg, #000); transition: background .5s ease; font-family: var(--digits); }
+.tscreen.light { --sbg: #fff; color: #111827; }
+.tscreen.over { --sbg: #1d0505; }
+.tscreen.light.over { --sbg: #fde2e2; }
+.ts-top { display: flex; gap: 2.4cqw; align-items: stretch; min-height: 15cqw; transition: opacity .3s; }
+.ts-chip { width: 1cqw; border-radius: 99px; background: var(--teal); transition: background .4s; }
+.ts-sec { font: 600 2.4cqw/1.2 var(--ui); letter-spacing: .1em; color: #8d94a0; text-transform: uppercase; }
+.ts-title { font-size: 5.4cqw; font-weight: 600; line-height: 1.08; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ts-digits { flex: 1; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 25cqw; line-height: 1; letter-spacing: -.02em;
+  font-variant-numeric: tabular-nums; color: var(--phase, var(--green)); transition: color .5s ease, font-size .4s var(--ease); position: relative; z-index: 1; }
+.tscreen.light .ts-digits { --g: #15803d; --a: #b45309; --r: #b91c1c; }
+.ts-bar { height: 1.8cqw; border-radius: 99px; background: rgba(140,148,160,.2); overflow: hidden; transition: opacity .3s; }
+.ts-fill { height: 100%; width: 0; border-radius: 99px; background: var(--phase, var(--green)); transition: width .3s linear, background .5s; }
+.ts-foot { display: flex; justify-content: space-between; margin-top: 2cqw; font: 500 2.9cqw var(--ui); color: #8d94a0; transition: opacity .3s; }
+.ts-msg { position: absolute; left: 6%; right: 6%; bottom: 5%; z-index: 3; padding: 2.2cqw; border-radius: 1.6cqw; background: #fbbf24; color: #111;
+  text-align: center; font: 700 5.6cqw/1.1 var(--digits); transform: translateY(140%); opacity: 0; transition: transform .45s cubic-bezier(.2,1.4,.4,1), opacity .3s; }
+.ts-msg.show { transform: none; opacity: 1; }
+.ts-hg { position: absolute; left: 0; top: 0; bottom: 0; width: 100%; background: var(--phase, var(--green)); opacity: 0; transform-origin: left;
+  transition: transform .3s linear, opacity .4s, background .5s; z-index: 0; }
+.tscreen.hourglass .ts-hg { opacity: .45; }
+.tscreen.hourglass .ts-digits { color: inherit; }
+.tscreen.hourglass .ts-bar { opacity: 0; }
+.tscreen.digitsonly .ts-top, .tscreen.digitsonly .ts-foot, .tscreen.digitsonly .ts-bar { opacity: 0; height: 0; min-height: 0; margin: 0; overflow: hidden; }
+.tscreen.digitsonly .ts-digits { font-size: 31cqw; }
+.tscreen.flash .ts-digits { animation: blink 1s ease-in-out infinite; }
+@keyframes blink { 50% { opacity: .35; } }
+
+/* ── nastro di punti chiave ── */
+.ribbon { padding: 34px 0 10px; }
+.ribbon ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.ribbon li { display: flex; align-items: center; gap: 12px; padding: 16px 18px; border-radius: 14px; background: rgba(21,23,28,.6); border: 1px solid var(--line); font-weight: 600; font-size: 15px; }
+.ribbon li small { display: block; color: var(--dim); font-weight: 500; font-size: 13px; }
+.ico { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; background: rgba(34,197,94,.12); color: var(--green); flex: none; }
+.ico svg { width: 20px; height: 20px; }
+
+/* ── sezioni ── */
+section { padding: 96px 0; }
+.kicker { color: var(--green); font-weight: 700; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; }
+h2 { text-wrap: balance; font-family: var(--digits); font-size: clamp(34px, 4.4vw, 56px); line-height: 1.02; letter-spacing: -.8px; margin: 12px 0 16px; }
+.sub { color: var(--muted); font-size: 18px; max-width: 640px; margin: 0; }
+.center { text-align: center; }
+.center .sub { margin-inline: auto; }
+
+/* demo interattiva */
+.demo { margin-top: 48px; display: grid; grid-template-columns: 1.6fr 1fr; gap: 28px; align-items: start; }
+.demo .screen { transform: none; border-width: 10px; }
+.panel { background: rgba(21,23,28,.75); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; backdrop-filter: blur(8px); }
+.panel h4 { margin: 0 0 10px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+.panel .group + .group { margin-top: 22px; }
+.seg { display: flex; padding: 4px; gap: 4px; border-radius: 12px; background: var(--bg); border: 1px solid var(--line); }
+.seg button { flex: 1; padding: 9px 6px; border: 0; border-radius: 9px; background: transparent; color: var(--muted); font: 600 13px var(--ui); cursor: pointer; transition: background .2s, color .2s; }
+.seg button.on { background: var(--card2); color: var(--fg); box-shadow: 0 1px 0 rgba(255,255,255,.05) inset; }
+.ctrls { display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 8px; }
+.ctrls button, .chips button { border: 1px solid var(--line2); background: var(--bg); color: var(--fg); border-radius: 11px; padding: 11px; font: 600 14px var(--ui); cursor: pointer;
+  transition: transform .12s, background .2s, border-color .2s; }
+.ctrls button:active, .chips button:active { transform: scale(.95); }
+.ctrls .go { background: #16a34a; border-color: #16a34a; color: #fff; }
+.ctrls .go.stop { background: #dc2626; border-color: #dc2626; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips button { border-radius: 99px; padding: 8px 14px; font-weight: 500; }
+.chips button.msg { border-color: rgba(251,191,36,.45); color: #fcd34d; }
+.hint { color: var(--dim); font-size: 13px; margin: 10px 0 0; }
+
+/* griglia funzionalità */
+.features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 52px; }
+.feat { position: relative; padding: 26px; border-radius: var(--radius); background: linear-gradient(180deg, rgba(27,30,36,.8), rgba(21,23,28,.8)); border: 1px solid var(--line);
+  overflow: hidden; transition: transform .35s var(--ease), border-color .3s; }
+.feat::before { content: ""; position: absolute; inset: 0; background: radial-gradient(400px circle at var(--mx, 50%) var(--my, 0%), rgba(34,197,94,.14), transparent 45%);
+  opacity: 0; transition: opacity .3s; pointer-events: none; }
+.feat:hover { transform: translateY(-4px); border-color: #3a4150; }
+.feat:hover::before { opacity: 1; }
+.feat h3 { margin: 16px 0 8px; font-size: 19px; }
+.feat p { margin: 0; color: var(--muted); font-size: 15px; }
+.feat.wide { grid-column: span 2; }
+.feat .ico { width: 44px; height: 44px; border-radius: 12px; }
+.feat .ico svg { width: 22px; height: 22px; }
+.feat.c-amber .ico { background: rgba(251,191,36,.12); color: var(--amber); }
+.feat.c-blue .ico { background: rgba(59,130,246,.14); color: #7aa7f7; }
+.feat.c-red .ico { background: rgba(239,68,68,.12); color: #f87171; }
+.feat.c-teal .ico { background: rgba(61,143,163,.18); color: #6cc3d8; }
+
+/* mini elenco animato (wol.jw.org) */
+.sched { margin-top: 18px; display: grid; gap: 6px; }
+.sched div { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 10px; background: rgba(11,13,16,.6); border: 1px solid var(--line); font-size: 14px;
+  opacity: 0; transform: translateX(-12px); transition: opacity .5s, transform .5s var(--ease); }
+.sched div i { width: 4px; align-self: stretch; border-radius: 4px; }
+.sched div span { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sched div b { font-family: var(--digits); color: var(--muted); font-weight: 600; }
+.in .sched div { opacity: 1; transform: none; }
+
+/* sezione telefono */
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+.split.rev > :first-child { order: 2; }
+.steps { list-style: none; padding: 0; margin: 28px 0 0; display: grid; gap: 14px; }
+.steps li { display: flex; gap: 14px; align-items: flex-start; }
+.steps .n { flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--card2); border: 1px solid var(--line2);
+  font: 700 14px var(--digits); color: var(--green); }
+.steps b { display: block; }
+.steps span { color: var(--muted); font-size: 15px; }
+.float { animation: float 7s ease-in-out infinite; filter: drop-shadow(0 40px 60px rgba(0,0,0,.6)); }
+@keyframes float { 50% { transform: translateY(-14px); } }
+
+/* galleria */
+.shots { margin-top: 48px; display: grid; gap: 22px; }
+.shot { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); background: var(--bg2); }
+.shot img { width: 100%; }
+.shot figcaption { padding: 14px 18px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); }
+.tabs { display: inline-flex; gap: 4px; padding: 4px; border-radius: 12px; background: var(--card); border: 1px solid var(--line); margin-top: 28px; }
+.tabs button { border: 0; background: transparent; color: var(--muted); font: 600 14px var(--ui); padding: 9px 16px; border-radius: 9px; cursor: pointer; transition: .2s; }
+.tabs button.on { background: var(--card2); color: var(--fg); }
+.tabpane { display: none; animation: fade .5s var(--ease); }
+.tabpane.on { display: block; }
+@keyframes fade { from { opacity: 0; transform: translateY(10px); } }
+
+/* come iniziare */
+.how { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 48px; counter-reset: s; }
+.how > div { padding: 28px; border-radius: var(--radius); background: rgba(21,23,28,.7); border: 1px solid var(--line); position: relative; }
+.how > div::before { counter-increment: s; content: counter(s); font: 700 64px/1 var(--digits); color: rgba(34,197,94,.18); position: absolute; right: 20px; top: 14px; }
+.how h3 { margin: 0 0 8px; font-size: 19px; }
+.how p { margin: 0; color: var(--muted); font-size: 15px; }
+
+/* FAQ */
+.faq { max-width: 820px; margin: 44px auto 0; display: grid; gap: 10px; }
+.faq details { border: 1px solid var(--line); border-radius: 14px; background: rgba(21,23,28,.6); padding: 0 20px; transition: background .2s; }
+.faq details[open] { background: rgba(27,30,36,.85); }
+.faq summary { cursor: pointer; list-style: none; padding: 18px 0; font-weight: 600; display: flex; justify-content: space-between; gap: 16px; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; font: 400 24px/1 var(--ui); color: var(--muted); transition: transform .25s; }
+.faq details[open] summary::after { transform: rotate(45deg); }
+.faq p { margin: 0 0 18px; color: var(--muted); }
+
+/* call to action finale */
+.final { text-align: center; padding: 70px 24px; border-radius: 28px; border: 1px solid rgba(34,197,94,.25);
+  background: radial-gradient(600px 300px at 50% 0%, rgba(34,197,94,.22), transparent 70%), var(--bg2); }
+.final h2 { margin-top: 0; }
+footer { padding: 40px 0 56px; color: var(--dim); font-size: 14px; }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; }
+footer a:hover { color: var(--fg); }
+
+/* comparsa allo scorrimento */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity .8s var(--ease), transform .8s var(--ease); transition-delay: var(--d, 0s); }
+.reveal.in { opacity: 1; transform: none; }
+
+/* responsive */
+@media (max-width: 980px) {
+  .hero .wrap, .split, .demo { grid-template-columns: 1fr; }
+  .split.rev > :first-child { order: 0; }
+  .features { grid-template-columns: 1fr 1fr; }
+  .feat.wide { grid-column: span 2; }
+  .ribbon ul { grid-template-columns: 1fr 1fr; }
+  .links { display: none; }
+  nav .btn { margin-left: auto; }
+  .hero { padding-top: 40px; }
+  .screen { transform: none; }
+}
+@media (max-width: 640px) {
+  section { padding: 72px 0; }
+  .features, .how { grid-template-columns: 1fr; }
+  .feat.wide { grid-column: auto; }
+  .ribbon ul { grid-template-columns: 1fr; }
+  .screen { border-width: 7px; border-radius: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .reveal { opacity: 1; transform: none; }
+  .sched div { opacity: 1; transform: none; }
+}
+</style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+<div class="grain" aria-hidden="true"></div>
+
+<svg style="display:none" aria-hidden="true">
+  <symbol id="i-dl" viewBox="0 0 24 24"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18h10.5a4 4 0 0 0 .5-7.97A6 6 0 0 0 6.2 9.6 4.2 4.2 0 0 0 7 18Z M12 10v6m0 0-2.5-2.5M12 16l2.5-2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M11 18.5h2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-msg" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4V5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4Z M13.5 6.5l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-mini" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="12" y="10" width="7" height="4" rx="1" fill="currentColor"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 9v4l2.5 2.5M10 2.5h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-restore" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-windows" viewBox="0 0 24 24"><path d="M3 5.5 10.5 4.4v7.1H3V5.5Zm8.5-1.2L21 3v8.5h-9.5V4.3ZM3 12.5h7.5v7.1L3 18.5v-6Zm8.5 0H21V21l-9.5-1.3v-7.2Z" fill="currentColor"/></symbol>
+  <symbol id="i-gift" viewBox="0 0 24 24"><path d="M4 11h16v9H4zM3 7h18v4H3zM12 7v13M12 7c-2-3.5-6-3-5 0M12 7c2-3.5 6-3 5 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 3 5 13.5h6L10 21l8-10.5h-6L13 3Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-lang" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 12h18M12 3c2.8 3 2.8 15 0 18M12 3c-2.8 3-2.8 15 0 18" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+</svg>
+
+<nav id="nav">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="images/icon.png" alt="">TimerSala</a>
+    <div class="links">
+      <a href="#prova">Prova</a>
+      <a href="#funzioni">Funzionalità</a>
+      <a href="#telefono">Telefono</a>
+      <a href="#schermate">Schermate</a>
+      <a href="#faq">Domande</a>
+    </div>
+    <a class="btn primary" href="https://github.com/Lomme89/timersala/releases/latest/download/TimerSala.exe"><svg><use href="#i-dl"/></svg>Scarica</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow reveal"><span class="dot"></span>Per Windows 10 e 11 · gratuito</span>
+      <h1 class="reveal" style="--d:.08s">Il timer per le&nbsp;adunanze, <span class="grad">fatto bene.</span></h1>
+      <p class="lead reveal" style="--d:.16s">Lo schema della settimana arriva da solo da wol.jw.org, il timer va sullo schermo che scegli, leggibile anche dal fondo della sala. E chi vuole lo segue, o lo comanda, dal telefono.</p>
+      <div class="cta reveal" style="--d:.24s">
+        <a class="btn primary" href="https://github.com/Lomme89/timersala/releases/latest/download/TimerSala.exe"><svg><use href="#i-dl"/></svg>Scarica TimerSala.exe</a>
+        <a class="btn" href="#prova">Provalo qui sotto</a>
+      </div>
+      <div class="meta reveal" style="--d:.32s">
+        <span><svg><use href="#i-check"/></svg>Nessuna installazione</span>
+        <span><svg><use href="#i-check"/></svg>Un solo file</span>
+        <span><svg><use href="#i-check"/></svg>In italiano</span>
+      </div>
+    </div>
+    <div class="monitor reveal" style="--d:.2s" aria-label="Anteprima animata dello schermo del timer">
+      <div class="screen" id="heroScreen">
+        <div class="tscreen" id="heroTs">
+          <div class="ts-hg"></div>
+          <div class="ts-top"><div class="ts-chip"></div><div style="min-width:0">
+            <div class="ts-sec">Tesori della Parola di Dio</div>
+            <div class="ts-title">2. Gemme spirituali</div></div></div>
+          <div class="ts-digits mono">10:00</div>
+          <div class="ts-bar"><div class="ts-fill"></div></div>
+          <div class="ts-foot"><span>Dopo: 3. Lettura biblica</span><span class="ts-clock">19:42</span></div>
+          <div class="ts-msg">Concludi</div>
+        </div>
+      </div>
+      <div class="stand"></div><div class="base"></div>
+    </div>
+  </div>
+</header>
+
+<div class="ribbon">
+  <div class="wrap">
+    <ul>
+      <li class="reveal"><span class="ico"><svg><use href="#i-gift"/></svg></span><div>Gratuito<small>Nessun account, nessun costo</small></div></li>
+      <li class="reveal" style="--d:.08s"><span class="ico"><svg><use href="#i-bolt"/></svg></span><div>Pronto in un minuto<small>Scarichi, apri, funziona</small></div></li>
+      <li class="reveal" style="--d:.16s"><span class="ico"><svg><use href="#i-windows"/></svg></span><div>Windows 10 e 11<small>Nativo, leggero, veloce</small></div></li>
+      <li class="reveal" style="--d:.24s"><span class="ico"><svg><use href="#i-lang"/></svg></span><div>Funziona anche offline<small>Gli schemi restano salvati</small></div></li>
+    </ul>
+  </div>
+</div>
+
+<section id="prova">
+  <div class="wrap">
+    <div class="center reveal">
+      <span class="kicker">Provalo subito</span>
+      <h2>Lo schermo che vede l'oratore</h2>
+      <p class="sub">Questa è una copia funzionante dello schermo del timer. Avvialo, cambia stile, manda un messaggio: in sala funziona esattamente così.</p>
+    </div>
+    <div class="demo">
+      <div class="reveal">
+        <div class="screen" id="demoScreen">
+          <div class="tscreen" id="demoTs">
+            <div class="ts-hg"></div>
+            <div class="ts-top"><div class="ts-chip" style="background:var(--teal)"></div><div style="min-width:0">
+              <div class="ts-sec">Tesori della Parola di Dio</div>
+              <div class="ts-title">3. Lettura biblica</div></div></div>
+            <div class="ts-digits mono">04:00</div>
+            <div class="ts-bar"><div class="ts-fill"></div></div>
+            <div class="ts-foot"><span>Dopo: 4. Iniziare una conversazione</span><span class="ts-clock">19:42</span></div>
+            <div class="ts-msg"></div>
+          </div>
+        </div>
+      </div>
+      <div class="panel reveal" style="--d:.1s">
+        <div class="group">
+          <h4>Timer</h4>
+          <div class="ctrls">
+            <button type="button" data-act="minus">−1 min</button>
+            <button type="button" class="go" data-act="toggle">▶ Avvia</button>
+            <button type="button" data-act="plus">+1 min</button>
+          </div>
+          <div class="chips" style="margin-top:10px">
+            <button type="button" data-jump="45">Vai all'ultimo minuto</button>
+            <button type="button" data-jump="-8">Vai allo sforamento</button>
+          </div>
+        </div>
+        <div class="group">
+          <h4>Layout</h4>
+          <div class="seg" data-seg="layout">
+            <button type="button" class="on" data-v="classic">Classico</button>
+            <button type="button" data-v="hourglass">Clessidra</button>
+            <button type="button" data-v="digitsonly">Solo cifre</button>
+          </div>
+        </div>
+        <div class="group">
+          <h4>Tema</h4>
+          <div class="seg" data-seg="theme">
+            <button type="button" class="on" data-v="dark">Scuro</button>
+            <button type="button" data-v="light">Chiaro</button>
+          </div>
+        </div>
+        <div class="group">
+          <h4>Messaggio all'oratore</h4>
+          <div class="chips">
+            <button type="button" class="msg" data-msg="Concludi">Concludi</button>
+            <button type="button" class="msg" data-msg="Più forte">Più forte</button>
+            <button type="button" class="msg" data-msg="Ultimo minuto">Ultimo minuto</button>
+            <button type="button" data-msg="">Togli</button>
+          </div>
+          <p class="hint">Sul monitor in sala le cifre occupano circa il 70% dell'altezza: su un 22" sono alte circa 10 cm.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="funzioni">
+  <div class="wrap">
+    <div class="reveal">
+      <span class="kicker">Funzionalità</span>
+      <h2>Tutto quello che serve.<br>Niente di più.</h2>
+      <p class="sub">Pensato per chi sta all'acustica: pochi clic durante l'adunanza, nessuna sorpresa.</p>
+    </div>
+    <div class="features" id="featGrid">
+      <article class="feat wide reveal" id="schedFeat">
+        <span class="ico"><svg><use href="#i-cloud"/></svg></span>
+        <h3>Schemi automatici da wol.jw.org</h3>
+        <p>Parti, durate e cantici dell'infrasettimanale e lo studio Torre di Guardia arrivano da soli. Puoi scaricare in un colpo tutte le settimane già pubblicate: quelle che hai modificato a mano restano come le hai lasciate.</p>
+        <div class="sched">
+          <div style="transition-delay:.05s"><i style="background:var(--teal)"></i><span>1. Continuiamo ad aiutarci gli uni gli altri</span><b>10′</b></div>
+          <div style="transition-delay:.15s"><i style="background:var(--teal)"></i><span>2. Gemme spirituali</span><b>10′</b></div>
+          <div style="transition-delay:.25s"><i style="background:var(--gold)"></i><span>4. Iniziare una conversazione</span><b>3′</b></div>
+          <div style="transition-delay:.35s"><i style="background:var(--wine)"></i><span>8. Studio biblico di congregazione</span><b>30′</b></div>
+        </div>
+      </article>
+      <article class="feat reveal" style="--d:.08s">
+        <span class="ico"><svg><use href="#i-eye"/></svg></span>
+        <h3>Leggibile a 20 metri</h3>
+        <p>Cifre enormi sul monitor che scegli, verde, poi giallo nell'ultimo minuto, poi rosso. Tema scuro o chiaro, layout classico, clessidra o solo cifre.</p>
+      </article>
+      <article class="feat c-blue reveal">
+        <span class="ico"><svg><use href="#i-phone"/></svg></span>
+        <h3>Dal telefono</h3>
+        <p>Il timer in tempo reale su qualsiasi dispositivo della rete. Con un QR e un PIN lo comandi anche: avvio, parti, minuti, messaggi.</p>
+      </article>
+      <article class="feat c-amber reveal" style="--d:.08s">
+        <span class="ico"><svg><use href="#i-msg"/></svg></span>
+        <h3>Messaggi all'oratore</h3>
+        <p>"Concludi", "Più forte"… in una fascia gialla ben visibile. Frasi pronte personalizzabili, oppure testo libero. Se non servono, si spengono.</p>
+      </article>
+      <article class="feat reveal" style="--d:.16s">
+        <span class="ico"><svg><use href="#i-mini"/></svg></span>
+        <h3>Modalità mini</h3>
+        <p>Un solo monitor? Una finestrella sempre in primo piano con il tempo grande, i comandi essenziali e il bordo che diventa rosso allo sforamento.</p>
+      </article>
+      <article class="feat c-teal reveal">
+        <span class="ico"><svg><use href="#i-edit"/></svg></span>
+        <h3>Tutto modificabile</h3>
+        <p>Editor con trascinamento, durate rapide e sezioni colorate. Un pulsante adatta la settimana della visita del sorvegliante.</p>
+      </article>
+      <article class="feat c-amber reveal" style="--d:.08s">
+        <span class="ico"><svg><use href="#i-clock"/></svg></span>
+        <h3>Countdown e studio adattivo</h3>
+        <p>Qualche minuto prima dell'inizio lo schermo mostra «L'adunanza inizia tra…». Se sei in ritardo, lo studio può accorciarsi da solo per finire in orario.</p>
+      </article>
+      <article class="feat c-red reveal" style="--d:.16s">
+        <span class="ico"><svg><use href="#i-restore"/></svg></span>
+        <h3>Si riprende dopo un imprevisto</h3>
+        <p>Se il PC si riavvia durante l'adunanza, alla riapertura TimerSala riparte dalla parte in corso, con i tempi giusti.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="telefono">
+  <div class="wrap split">
+    <div class="reveal">
+      <span class="kicker">In rete</span>
+      <h2>Il timer in tasca a chi serve</h2>
+      <p class="sub">Il presidente sul podio, l'addetto in fondo alla sala, il tablet sul leggio: tutti vedono lo stesso timer, in tempo reale.</p>
+      <ol class="steps">
+        <li><span class="n">1</span><div><b>Premi «Collega telefono»</b><span>Il controller mostra un codice QR.</span></div></li>
+        <li><span class="n">2</span><div><b>Inquadralo con la fotocamera</b><span>Basta essere sulla stessa rete Wi‑Fi del PC.</span></div></li>
+        <li><span class="n">3</span><div><b>Guarda o comanda</b><span>Il codice di controllo, protetto da PIN, aggiunge avvio, parti e messaggi.</span></div></li>
+      </ol>
+    </div>
+    <div class="reveal" style="--d:.1s"><img class="float" src="images/telefono.png" alt="Controllo del timer dal telefono: comandi, programma e messaggi" loading="lazy"></div>
+  </div>
+</section>
+
+<section id="schermate">
+  <div class="wrap">
+    <div class="center reveal">
+      <span class="kicker">Schermate</span>
+      <h2>Fatto per essere usato</h2>
+      <p class="sub">Un controller compatto per il banco dell'acustica, un editor chiaro, impostazioni ordinate.</p>
+      <div class="tabs" role="tablist">
+        <button type="button" class="on" data-tab="t1">Il programma</button>
+        <button type="button" data-tab="t2">Stili dello schermo</button>
+        <button type="button" data-tab="t3">Impostazioni</button>
+      </div>
+    </div>
+    <div class="shots reveal">
+      <figure class="shot tabpane on" id="t1"><img src="images/programma-v4.png" alt="Controller, modalità mini, editor e impostazioni" loading="lazy"><figcaption>Controller, modalità mini, editor dello schema e impostazioni.</figcaption></figure>
+      <figure class="shot tabpane" id="t2"><img src="images/stili.png" alt="Stati e stili del timer" loading="lazy"><figcaption>Tempo regolare, ultimo minuto, sforamento con messaggio, clessidra, tema chiaro, countdown.</figcaption></figure>
+      <figure class="shot tabpane" id="t3"><img src="images/impostazioni.png" alt="Le quattro schede delle impostazioni" loading="lazy"><figcaption>Adunanze, Schermo, Messaggi e Rete.</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section id="inizia">
+  <div class="wrap">
+    <div class="center reveal">
+      <span class="kicker">Per iniziare</span>
+      <h2>Tre passi, e sei pronto</h2>
+    </div>
+    <div class="how">
+      <div class="reveal"><h3>Scarica</h3><p>Un solo file, <b>TimerSala.exe</b>. Niente installazione: copialo dove vuoi e avvialo.</p></div>
+      <div class="reveal" style="--d:.08s"><h3>Consenti la rete</h3><p>Alla prima apertura Windows chiede il permesso per le reti private: serve per vedere il timer dagli altri dispositivi.</p></div>
+      <div class="reveal" style="--d:.16s"><h3>Scegli lo schermo</h3><p>Nelle impostazioni indica il monitor del timer e gli orari delle adunanze. Lo schema si scarica da solo.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="center reveal">
+      <span class="kicker">Domande</span>
+      <h2>Domande frequenti</h2>
+    </div>
+    <div class="faq">
+      <details class="reveal"><summary>Costa qualcosa? Serve un account?</summary><p>No. TimerSala è gratuito, non chiede registrazioni e non invia dati a nessuno: tutto resta sul tuo PC.</p></details>
+      <details class="reveal"><summary>Windows dice «PC protetto». È normale?</summary><p>Sì: l'eseguibile non è firmato digitalmente. Fai clic su <i>Ulteriori informazioni → Esegui comunque</i>. Succede solo la prima volta.</p></details>
+      <details class="reveal"><summary>E se in sala non c'è internet?</summary><p>Scarica in anticipo tutte le prossime settimane con un clic: gli schemi restano salvati e il timer funziona senza connessione. Il controllo dal telefono usa solo la rete locale.</p></details>
+      <details class="reveal"><summary>Posso cambiare lo schema scaricato?</summary><p>Certo: titoli, durate, ordine, cantici. C'è anche un pulsante per la settimana della visita del sorvegliante. Le settimane modificate a mano non vengono sovrascritte dai download successivi.</p></details>
+      <details class="reveal"><summary>Ho un solo monitor: posso usarlo lo stesso?</summary><p>Sì. La modalità mini riduce il controller a una finestrella sempre in primo piano, e il timer si può seguire anche da un tablet o da un telefono.</p></details>
+      <details class="reveal"><summary>Chi può comandare il timer dal telefono?</summary><p>Solo chi ha il PIN. Il codice QR di controllo, che lo contiene già, resta nascosto finché non lo mostri. Dopo 5 tentativi errati il controllo si blocca per un minuto.</p></details>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:20px">
+  <div class="wrap">
+    <div class="final reveal">
+      <h2>Pronto per la prossima adunanza?</h2>
+      <p class="sub" style="margin:0 auto 28px">Gratuito, in italiano, senza installazione.</p>
+      <div class="cta" style="justify-content:center">
+        <a class="btn primary" href="https://github.com/Lomme89/timersala/releases/latest/download/TimerSala.exe"><svg><use href="#i-dl"/></svg>Scarica TimerSala.exe</a>
+        <a class="btn" href="https://github.com/Lomme89/timersala">Vedi su GitHub</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="brand" style="font-size:18px"><img src="images/icon.png" alt="" style="width:24px;height:24px">TimerSala</span>
+    <span>Progetto indipendente, non affiliato a jw.org. · <a href="https://github.com/Lomme89/timersala">GitHub</a> · <a href="https://github.com/Lomme89/timersala/releases">Versioni</a></span>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+  // barra di navigazione che si "solidifica" scorrendo
+  const nav = $('#nav');
+  const onScroll = () => nav.classList.toggle('scrolled', scrollY > 10);
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  // comparsa degli elementi allo scorrimento
+  const io = new IntersectionObserver(entries => entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  }), { threshold: .14, rootMargin: '0px 0px -40px 0px' });
+  $$('.reveal').forEach(el => io.observe(el));
+
+  // luce che segue il mouse sulle schede delle funzionalità
+  $$('.feat').forEach(card => card.addEventListener('pointermove', e => {
+    const r = card.getBoundingClientRect();
+    card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+    card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+  }));
+
+  // schede della galleria
+  $$('.tabs button').forEach(b => b.addEventListener('click', () => {
+    $$('.tabs button').forEach(x => x.classList.toggle('on', x === b));
+    $$('.tabpane').forEach(p => p.classList.toggle('on', p.id === b.dataset.tab));
+  }));
+
+  const pad = n => String(n).padStart(2, '0');
+  const fmt = rem => rem >= 0
+    ? `${pad(Math.floor(Math.ceil(rem) / 60))}:${pad(Math.ceil(rem) % 60)}`
+    : `+${pad(Math.floor(Math.floor(-rem) / 60))}:${pad(Math.floor(-rem) % 60)}`;
+  const clock = () => { const d = new Date(); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+
+  /** Un timer che disegna lo stato su uno dei finti schermi. */
+  function makeTimer(root, screen, target, warn = 60) {
+    const t = { target, elapsed: 0, running: false, layout: 'classic', theme: 'dark' };
+    const digits = $('.ts-digits', root), fill = $('.ts-fill', root), hg = $('.ts-hg', root), clk = $('.ts-clock', root);
+    t.render = () => {
+      const rem = t.target - t.elapsed;
+      const phase = rem < 0 ? 'over' : rem <= warn ? 'warn' : 'ok';
+      const light = t.theme === 'light';
+      const col = phase === 'over' ? (light ? '#b91c1c' : 'var(--red)') : phase === 'warn' ? (light ? '#b45309' : 'var(--amber)') : (light ? '#15803d' : 'var(--green)');
+      root.style.setProperty('--phase', col);
+      root.classList.toggle('over', phase === 'over');
+      root.classList.toggle('flash', phase === 'over' && t.running);
+      root.className = root.className.replace(/\b(hourglass|digitsonly|light)\b/g, '').trim();
+      if (t.layout !== 'classic') root.classList.add(t.layout);
+      if (light) root.classList.add('light');
+      digits.textContent = fmt(rem);
+      const progress = Math.min(1, Math.max(0, t.elapsed / t.target));
+      fill.style.width = (phase === 'over' ? 100 : progress * 100) + '%';
+      hg.style.transform = `scaleX(${phase === 'over' ? 1 : 1 - progress})`;
+      if (screen) screen.style.setProperty('--glow', phase === 'over' ? 'rgba(239,68,68,.45)' : phase === 'warn' ? 'rgba(251,191,36,.35)' : 'rgba(34,197,94,.35)');
+      if (clk) clk.textContent = clock();
+    };
+    return t;
+  }
+
+  // ── timer della copertina: scorre più veloce e ricomincia, per mostrare i colori ──
+  const hero = makeTimer($('#heroTs'), $('#heroScreen'), 75, 20);
+  const heroMsg = $('#heroTs .ts-msg');
+  hero.elapsed = 30;
+  let last = performance.now();
+  function heroLoop(now) {
+    const dt = (now - last) / 1000; last = now;
+    hero.elapsed += dt * 2.2;
+    const rem = hero.target - hero.elapsed;
+    heroMsg.classList.toggle('show', rem < -3 && rem > -14);
+    if (rem < -16) hero.elapsed = 18;
+    hero.render();
+    requestAnimationFrame(heroLoop);
+  }
+  if (reduce) { hero.elapsed = 40; hero.render(); } else requestAnimationFrame(heroLoop);
+
+  // ── demo interattiva ──
+  const demoRoot = $('#demoTs');
+  const demo = makeTimer(demoRoot, $('#demoScreen'), 240, 60);
+  const msg = $('.ts-msg', demoRoot);
+  const goBtn = $('[data-act="toggle"]');
+  demo.render();
+  let lastDemo = performance.now();
+  setInterval(() => {
+    const now = performance.now();
+    if (demo.running) demo.elapsed += (now - lastDemo) / 1000;
+    lastDemo = now;
+    demo.render();
+  }, 100);
+  const setRunning = on => {
+    demo.running = on;
+    goBtn.classList.toggle('stop', on);
+    goBtn.textContent = on ? '■ Ferma' : '▶ Avvia';
+  };
+  $$('[data-act]').forEach(b => b.addEventListener('click', () => {
+    const a = b.dataset.act;
+    if (a === 'toggle') setRunning(!demo.running);
+    if (a === 'plus') demo.target += 60;
+    if (a === 'minus') demo.target = Math.max(60, demo.target - 60);
+    demo.render();
+  }));
+  $$('[data-jump]').forEach(b => b.addEventListener('click', () => {
+    demo.elapsed = demo.target - Number(b.dataset.jump);
+    setRunning(true);
+    demo.render();
+  }));
+  $$('[data-seg]').forEach(seg => seg.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    $$('button', seg).forEach(x => x.classList.toggle('on', x === b));
+    demo[seg.dataset.seg] = b.dataset.v;
+    demo.render();
+  }));
+  $$('[data-msg]').forEach(b => b.addEventListener('click', () => {
+    const text = b.dataset.msg;
+    if (!text) { msg.classList.remove('show'); return; }
+    msg.classList.remove('show');
+    requestAnimationFrame(() => { msg.textContent = text; msg.classList.add('show'); });
+  }));
+})();
+</script>
+</body>
+</html>

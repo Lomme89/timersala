@@ -4,6 +4,7 @@
 
 <p align="center">
   <a href="https://github.com/Lomme89/timersala/releases/latest"><img src="https://img.shields.io/badge/Scarica-TimerSala.exe-22c55e?style=for-the-badge&logo=windows&logoColor=white" alt="Scarica TimerSala.exe"></a>
+  <a href="https://lomme89.github.io/timersala/"><img src="https://img.shields.io/badge/Sito-provalo%20online-3b82f6?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Sito di presentazione"></a>
 </p>
 
 <p align="center">

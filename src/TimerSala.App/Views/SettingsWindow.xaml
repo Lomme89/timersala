@@ -189,7 +189,7 @@
                     <StackPanel Margin="12">
                         <TextBlock Text="AVVIO CON LA VOCE · SPERIMENTALE" Style="{StaticResource Group}" Margin="0,0,0,8" />
                         <CheckBox x:Name="VoiceEnabled" Content="Avvia le parti quando l'oratore inizia a parlare" />
-                        <TextBlock Style="{StaticResource Hint}" Text="Premi Avvia mentre il presidente presenta la parte: il pulsante diventa «In attesa». Dopo una pausa, la prima voce fa partire il timer, contando dall'istante in cui la voce è iniziata. Premi di nuovo Avvia per partire subito; Esc annulla l'attesa o, nei primi secondi, un avvio sbagliato. Dal telefono l'avvio è sempre immediato." />
+                        <TextBlock Style="{StaticResource Hint}" Text="Premi Avvia mentre il presidente presenta la parte: il pulsante diventa «In attesa». Quello che si sente subito dopo la pressione conta come voce del presidente; dopo una pausa intera, la prima voce fa partire il timer, contando dall'istante in cui la voce è iniziata. Premi di nuovo Avvia per partire subito; Esc annulla l'attesa o, nei primi secondi, un avvio sbagliato. Dal telefono l'avvio è sempre immediato." />
 
                         <TextBlock Text="INGRESSO AUDIO" Style="{StaticResource Group}" />
                         <ComboBox x:Name="VoiceDevice" SelectionChanged="VoiceDevice_Changed" />

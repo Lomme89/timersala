@@ -1,5 +1,9 @@
 # Novità
 
+## v1.10.2 — 3 ottobre 2026
+
+- Avvio con la voce: dopo Avvia bisogna sempre aspettare una pausa intera, anche se prima il microfono era muto. Quello che si sente subito dopo la pressione conta come voce del presidente. Prima, con il microfono muto da un po', il timer si metteva subito in ascolto e partiva alla prima parola.
+
 ## v1.10.1 — 3 ottobre 2026
 
 - Avvio con la voce: la pausa si misura sempre da quando premi Avvia. Se premi durante un breve silenzio del presidente, quel silenzio non conta più come parte della pausa. Se premi tardi, quando la pausa è già lunga quanto quella impostata, il timer si mette subito in ascolto.

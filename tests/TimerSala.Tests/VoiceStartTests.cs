@@ -113,10 +113,19 @@ public class VoiceStartTests
     }
 
     [Fact]
-    public void Arming_late_in_a_full_pause_listens_at_once()
+    public void Pressing_after_a_long_silence_still_waits_for_a_full_pause()
     {
-        // si preme quando la pausa dura già 2,5 s: l'oratore parte dopo 1 s
-        var at = new Scene().Speech(2).Silence(3.5).Speech(2).Run(armAt: 4.5);
+        // microfono muto da tempo, si preme e si parla subito: quella voce vale come presidente
+        var scene = new Scene().Silence(5).Speech(1.5).Silence(2.5).Speech(2);
+        var at = scene.Run(armAt: 4.8);
+        Assert.NotNull(at);
+        Assert.InRange(at!.Value, 9 - 0.06, 9 + 0.06); // parte solo dopo la pausa successiva
+    }
+
+    [Fact]
+    public void Pressing_in_silence_and_staying_silent_then_speaking_starts_after_the_pause()
+    {
+        var at = new Scene().Silence(5.5).Speech(2).Run(armAt: 3);
         Assert.NotNull(at);
         Assert.InRange(at!.Value, 5.5 - 0.06, 5.5 + 0.06);
     }

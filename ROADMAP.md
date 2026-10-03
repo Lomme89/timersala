@@ -76,6 +76,13 @@ Pulsante nel programma (e link nella guida) che prepara una segnalazione con ver
 (senza PIN) ed errori recenti da `diagnostica\errori.log`, e apre la pagina per inviarla su GitHub. Due modalità:
 «Qualcosa non funziona» e «Ho un'idea».
 
+### Modalità libera (eventi fuori programma)
+Per i rari eventi in sala oltre alle adunanze (discorso di matrimonio o funerale, adunanza per il servizio, ecc.).
+Usata poche volte l'anno: niente in primo piano, solo una voce in un menu.
+- Chiede titolo e ora d'inizio, poi quante parti ci sono (di solito una) e quanto dura ciascuna.
+- Countdown, schermo e telefono funzionano come sempre; lo schema della settimana non viene toccato.
+- Gli ultimi eventi restano tra i suggerimenti per riusarli.
+
 ## Scartate (e perché)
 - Ritmo dello studio a paragrafi: il conduttore può dedicare più tempo ai paragrafi più utili alla congregazione.
 - Allarme «microfono chiuso»: c'è già un fratello dedicato all'audio e il riscontro è evidente.

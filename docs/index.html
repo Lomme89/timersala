@@ -164,6 +164,38 @@ footer { background: var(--ink); color: #a39e94; font-size: 14px; padding: 28px 
 footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
 footer a { color: var(--paper); }
 
+/* ── avvio con la voce: video ── */
+.voice { background: var(--paper2); }
+.voice-head { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: clamp(20px, 4vw, 60px); align-items: end; }
+.voice-head .lede { margin: 0; }
+.voice .title em { color: var(--go); }
+.vplayer { margin-top: clamp(32px, 5vw, 56px); }
+.vframe { position: relative; border: 2px solid var(--ink); background: var(--paper); aspect-ratio: 16 / 9; }
+.vframe video { display: block; width: 100%; height: 100%; cursor: pointer; }
+.vsound { position: absolute; right: 14px; bottom: 14px; display: inline-flex; align-items: center; gap: 10px; padding: 10px 16px; border-radius: 999px;
+  border: 2px solid var(--ink); background: var(--paper); color: var(--ink); font: 600 15px var(--sans); cursor: pointer; transition: transform .2s var(--ease), background .2s, color .2s; }
+.vsound:hover { transform: translateY(-2px); }
+.vsound svg { width: 20px; height: 20px; }
+.vsound.on { background: var(--ink); color: var(--paper); }
+.vbar { display: flex; gap: 12px; align-items: stretch; margin-top: 14px; }
+.vplay { flex: none; width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--ink); background: var(--ink); color: var(--paper); cursor: pointer; display: grid; place-items: center; padding: 0; }
+.vplay svg { width: 20px; height: 20px; fill: currentColor; }
+.vchapters { list-style: none; margin: 0; padding: 0; flex: 1; min-width: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.vchapters button { width: 100%; height: 100%; min-height: 48px; text-align: left; border: 2px solid var(--ink); background: transparent; color: var(--ink); cursor: pointer;
+  font: 600 13px/1.15 var(--sans); padding: 6px 8px 10px; position: relative; overflow: hidden; display: flex; gap: 6px; align-items: center; }
+.vchapters button b { font: 900 20px/1 var(--sign); }
+.vchapters button span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vchapters button i { position: absolute; left: 0; bottom: 0; height: 4px; width: 0; background: var(--go); }
+.vchapters button.on { background: var(--ink); color: var(--paper); }
+.vdl { display: inline-block; margin-top: 14px; font-weight: 600; font-size: 15px; }
+@media (max-width: 900px) {
+  .voice-head { grid-template-columns: minmax(0, 1fr); }
+  .vchapters button span { display: none; }
+  .vchapters button { justify-content: center; padding: 6px 2px 10px; }
+  .vsound span { display: none; }
+  .vsound { padding: 10px; right: 10px; bottom: 10px; }
+}
+
 /* comparsa allo scorrimento */
 .reveal { opacity: 0; transform: translateY(30px); transition: opacity .9s var(--ease), transform .9s var(--ease); transition-delay: var(--d, 0s); }
 .reveal.in { opacity: 1; transform: none; }
@@ -203,6 +235,7 @@ footer a { color: var(--paper); }
     <a class="logo" href="#"><img src="images/icon.png" alt=""><span>TimerSala</span></a>
     <nav class="nav">
       <a href="#programma">Programma</a>
+      <a href="#voce">Avvio con la voce</a>
       <a href="#schermate">Schermate</a>
       <a href="#telefono">Telefono</a>
       <a href="#domande">Domande</a>
@@ -267,6 +300,35 @@ footer a { color: var(--paper); }
       <div class="band-label reveal"><svg><use href="#i-sheep"/></svg>Vita in sala</div>
       <article class="part reveal"><div class="num">7</div><div><h3>Countdown e studio adattivo</h3><p>Qualche minuto prima dell'inizio lo schermo mostra «L'adunanza inizia tra…». Se sei in ritardo, lo studio può accorciarsi da solo per chiudere in orario: mai allungarsi.</p></div><div class="dur">15 min</div></article>
       <article class="part reveal"><div class="num">8</div><div><h3>Si riprende dopo un imprevisto</h3><p>Se il PC si riavvia nel mezzo dell'adunanza, alla riapertura TimerSala riparte dalla parte in corso con i tempi giusti.</p></div><div class="dur">30 min</div></article>
+    </div>
+  </div>
+</section>
+
+<section class="voice" id="voce">
+  <div class="wrap">
+    <div class="voice-head reveal">
+      <div>
+        <div class="kicker">Novità · sperimentale</div>
+        <h2 class="title">Parte da sola, <em>quando parla l'oratore.</em></h2>
+      </div>
+      <p class="lede">Premi Avvia mentre il presidente presenta la parte. TimerSala ascolta l'audio del mixer e fa partire il tempo alla prima voce dopo la pausa. Ecco come, in mezzo minuto.</p>
+    </div>
+    <div class="vplayer reveal">
+      <div class="vframe">
+        <video id="vvid" poster="video/avvio-con-la-voce.jpg" muted playsinline loop preload="metadata" aria-label="Video: come funziona l'avvio con la voce">
+          <source src="video/avvio-con-la-voce.webm" type="video/webm">
+          <source src="video/avvio-con-la-voce.mp4" type="video/mp4">
+        </video>
+        <button class="vsound" id="vSound" type="button" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4Z" fill="currentColor" stroke="none"/><path id="vSoundWaves" d="M17 9l4 6M21 9l-4 6"/></svg>
+          <span>Attiva l'audio</span>
+        </button>
+      </div>
+      <div class="vbar">
+        <button class="vplay" id="vPlay" type="button" aria-label="Riproduci"><svg viewBox="0 0 24 24"><path id="vPlayIcon" d="M8 5v14l11-7z"/></svg></button>
+        <ol class="vchapters" id="vChapters"></ol>
+      </div>
+      <a class="vdl" href="video/avvio-con-la-voce.mp4" download>Scarica il video (MP4, da mandare su WhatsApp)</a>
     </div>
   </div>
 </section>
@@ -405,6 +467,47 @@ footer a { color: var(--paper); }
   document.fonts?.ready.then(fit);
   draw();
   if (!reduce) setInterval(() => { left--; if (left < -20) left = total; draw(); }, 1000);
+
+  // ── video dell'avvio con la voce: parte muto quando è visibile, capitoli cliccabili ──
+  (() => {
+    const v = document.getElementById('vvid');
+    if (!v) return;
+    const CH = [[0, 'Presenta'], [4.2, 'Avvia'], [7.8, 'Pause brevi'], [11.6, 'La pausa'], [20.6, 'Rumori'], [25, 'Si parte'], [29.6, 'In sala']];
+    const list = document.getElementById('vChapters'), play = document.getElementById('vPlay'), sound = document.getElementById('vSound');
+    const btns = CH.map(([t, k], i) => {
+      const li = document.createElement('li'), b = document.createElement('button');
+      b.type = 'button'; b.innerHTML = `<b>${i + 1}</b><span>${k}</span><i></i>`; b.setAttribute('aria-label', `Capitolo ${i + 1}: ${k}`);
+      b.onclick = () => { v.currentTime = t + (i ? .3 : 0); v.play(); userPaused = false; };
+      li.appendChild(b); list.appendChild(li); return b;
+    });
+    let userPaused = false, raf = 0;
+    const draw = () => {
+      const t = v.currentTime, d = v.duration || 34.4;
+      btns.forEach((b, i) => {
+        const a = CH[i][0], z = i + 1 < CH.length ? CH[i + 1][0] : d;
+        b.classList.toggle('on', t >= a && t < z);
+        b.querySelector('i').style.width = Math.max(0, Math.min(1, (t - a) / (z - a))) * 100 + '%';
+      });
+      if (!v.paused) raf = requestAnimationFrame(draw);
+    };
+    const icon = () => { document.getElementById('vPlayIcon').setAttribute('d', v.paused ? 'M8 5v14l11-7z' : 'M7 5h3v14H7zM14 5h3v14h-3z'); play.setAttribute('aria-label', v.paused ? 'Riproduci' : 'Pausa'); };
+    v.addEventListener('play', () => { icon(); cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); });
+    v.addEventListener('pause', () => { icon(); draw(); });
+    v.addEventListener('seeked', draw);
+    const toggle = () => { if (v.paused) { userPaused = false; v.play(); } else { userPaused = true; v.pause(); } };
+    play.onclick = toggle; v.onclick = toggle;
+    sound.onclick = () => {
+      v.muted = !v.muted;
+      if (!v.muted && v.paused) v.play();
+      sound.classList.toggle('on', !v.muted); sound.setAttribute('aria-pressed', String(!v.muted));
+      sound.querySelector('span').textContent = v.muted ? "Attiva l'audio" : 'Audio attivo';
+      document.getElementById('vSoundWaves').setAttribute('d', v.muted ? 'M17 9l4 6M21 9l-4 6' : 'M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12');
+    };
+    if (!reduce) new IntersectionObserver(es => {
+      if (es[0].isIntersecting) { if (!userPaused) v.play().catch(() => { }); } else v.pause();
+    }, { threshold: .4 }).observe(v);
+    draw();
+  })();
 })();
 </script>
 </body>

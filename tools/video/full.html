@@ -1,0 +1,431 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="fonts.css" rel="stylesheet">
+<style>html,body{margin:0;background:#f1ece3;overflow:hidden}svg{display:block;width:100vw;height:56.25vw}
+.sign{font-family:"Big Shoulders Display";font-weight:900}.serif{font-family:"Instrument Serif"}.sans{font-family:"Instrument Sans";font-weight:700}.sans5{font-family:"Instrument Sans";font-weight:500}</style></head>
+<body><svg id="s" viewBox="0 0 1920 1080"></svg>
+<script src="common.js"></script><script src="rig.js"></script>
+<script>
+// ════════════════ TimerSala · «Avvio con la voce» — 7 capitoli, ogni fotogramma dipende solo da t ════════════════
+const S = document.getElementById('s');
+const RED = '#dc2626', AMBER = '#b45309', GREEN_BTN = '#16a34a';
+const Y = 474, MICX = 520;                           // altezza della linea della voce e punta del microfono
+const pan = x => clamp(x / 1920 * 2 - 1, -1, 1);
+const fmtS = v => v.toFixed(1).replace('.', ',');
+const pad2 = n => String(n).padStart(2, '0');
+const mmss = s => pad2(Math.floor(s / 60)) + ':' + pad2(s % 60);
+const envV = tau => .35 + .65 * Math.abs(Math.sin(tau * 5.1) * Math.sin(tau * 1.7 + .6));
+const waveY = (tau, a = 64) => Y + a * envV(tau) * Math.sin(tau * Math.PI * 2 * 5.5);
+
+// ── elementi ricorrenti ──
+function base(g, dark = false) {
+  el('rect', { width: 1920, height: 1080, fill: dark ? C.ink : C.paper }, g);
+  if (!dark) { el('rect', { x: 0, y: 900, width: 1920, height: 180, fill: C.ink }, g); el('rect', { width: 1920, height: 14, fill: C.ink }, g); }
+}
+function lectern(g) {
+  el('path', { d: 'M 482 580 Q 470 520 500 478', fill: 'none', stroke: C.ink, 'stroke-width': 10, 'stroke-linecap': 'round' }, g);
+  el('rect', { x: 494, y: 452, width: 26, height: 44, rx: 13, fill: C.ink }, g);
+  el('path', { d: 'M 284 590 L 566 590 L 546 900 L 304 900 Z', fill: C.paper2 }, g);
+  el('rect', { x: 268, y: 572, width: 314, height: 26, rx: 4, fill: C.ink }, g);
+}
+function titles(g, kick, html, { dark = false } = {}) {
+  const k = el('text', { x: 90, y: 112, class: 'sans', 'font-size': 26, 'letter-spacing': 6, fill: dark ? C.paper : C.ink }, g); k.textContent = kick;
+  const h = el('text', { x: 86, y: 236, class: 'serif', 'font-size': 104, fill: dark ? C.paper : C.ink }, g); h.innerHTML = html;
+  return t => { const e = eout(prog(t, .2, .75)); h.setAttribute('opacity', e); h.setAttribute('transform', `translate(0 ${(1 - e) * 34})`); k.setAttribute('opacity', eout(prog(t, .1, .5))); };
+}
+function chip(g) {
+  const c = el('g', {}, g);
+  const r = el('rect', { x: 1440, y: 70, width: 390, height: 70, rx: 35 }, c);
+  const tx = el('text', { x: 1635, y: 118, 'text-anchor': 'middle', class: 'sign', 'font-size': 44, fill: '#fff', 'letter-spacing': 1 }, c);
+  const S = { avvia: [GREEN_BTN, '▶  AVVIA'], attesa: [AMBER, '●  IN ATTESA'], ascolto: [C.go, '●  IN ASCOLTO'], ferma: [RED, '■  FERMA'] };
+  return (state, pop = 1) => { r.setAttribute('fill', S[state][0]); tx.textContent = S[state][1]; c.setAttribute('transform', `translate(1635 105) scale(${pop}) translate(-1635 -105)`); };
+}
+// linea della voce che esce dal microfono: penna che avanza, tratti parlati colorati, silenzi piatti
+function voiceLine(g, color) {
+  const speech = el('path', { fill: 'none', stroke: color, 'stroke-width': 14, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, g);
+  const flat = el('path', { fill: 'none', stroke: C.ink, 'stroke-width': 6, 'stroke-linecap': 'round' }, g);
+  const pen = el('circle', { r: 16, fill: C.ink }, g);
+  // talking(tau) → bool; pen0: x della penna a t=0; px: pixel al secondo
+  return (t, talking, pen0 = 760, px = 300, x0 = MICX) => {
+    const penX = pen0 + px * t;
+    let d = '', f = '', inSpeech = null;
+    for (let x = x0; x <= penX; x += 4) {
+      const tau = (x - pen0) / px, on = talking(tau);
+      const fade = clamp((x - x0) / 120);
+      if (on) { d += (inSpeech === true ? ' L ' : ' M ') + x.toFixed(1) + ' ' + (Y + (waveY(tau) - Y) * fade).toFixed(1); }
+      else { f += (inSpeech === false ? ' L ' : ' M ') + x.toFixed(1) + ' ' + Y; }
+      inSpeech = on;
+    }
+    speech.setAttribute('d', d.trim()); flat.setAttribute('d', f.trim());
+    const tauP = (penX - pen0) / px, on = talking(tauP);
+    pen.setAttribute('cx', penX); pen.setAttribute('cy', on ? waveY(tauP) : Y); pen.setAttribute('fill', on ? color : C.ink);
+    return penX;
+  };
+}
+function stamp(g, text, color) {
+  const s = el('g', {}, g);
+  const r = el('rect', { x: -10, y: -52, height: 76, rx: 8, fill: 'none', stroke: color, 'stroke-width': 7 }, s);
+  const tx = el('text', { x: 14, y: 10, class: 'sign', 'font-size': 64, fill: color, 'letter-spacing': 2 }, s); tx.textContent = text;
+  return (x, y, k) => {
+    const w = tx.getComputedTextLength?.() || text.length * 32; r.setAttribute('width', w + 48);
+    const sc = k <= 0 ? 0 : 1.6 - .6 * back(k);
+    s.setAttribute('transform', `translate(${x} ${y}) rotate(-6) scale(${sc})`);
+    s.setAttribute('opacity', k <= 0 ? 0 : clamp(k * 3));
+  };
+}
+
+// ── scene ──
+const scenes = [];
+function scene(start, dur, build) { const g = el('g', {}, S); const sc = { start, dur, g, ...build(g) }; scenes.push(sc); return sc; }
+
+// 01 · LA PRESENTAZIONE
+scene(0, 4.2, g => {
+  base(g);
+  // schermo in sala, appeso
+  el('line', { x1: 1250, y1: 0, x2: 1250, y2: 300, stroke: C.ink, 'stroke-width': 4 }, g);
+  el('line', { x1: 1510, y1: 0, x2: 1510, y2: 300, stroke: C.ink, 'stroke-width': 4 }, g);
+  el('rect', { x: 1150, y: 300, width: 460, height: 250, rx: 14, fill: '#0c0c0c' }, g);
+  el('text', { x: 1380, y: 482, 'text-anchor': 'middle', class: 'sign', 'font-size': 170, fill: '#8f8a80' }, g).textContent = '30:00';
+  // oratore seduto in attesa, sedia di profilo
+  const chairG = el('g', {}, g);
+  el('rect', { x: 1660, y: 760, width: 130, height: 20, rx: 6, fill: '#8a7a64' }, chairG);
+  el('rect', { x: 1768, y: 600, width: 20, height: 180, rx: 6, fill: '#8a7a64' }, chairG);
+  el('line', { x1: 1672, y1: 780, x2: 1672, y2: 900, stroke: '#8a7a64', 'stroke-width': 12 }, chairG);
+  el('line', { x1: 1778, y1: 780, x2: 1778, y2: 900, stroke: '#8a7a64', 'stroke-width': 12 }, chairG);
+  const speaker = figure(g, { tie: C.wine });
+  const chairman = figure(g, { tie: C.teal });
+  lectern(g);
+  const waves = el('g', { fill: 'none', 'stroke-linecap': 'round' }, g);
+  const ring = [0, 1, 2, 3, 4].map(() => el('path', { stroke: C.teal, 'stroke-width': 12 }, waves));
+  const ttl = titles(g, '01 — LA PRESENTAZIONE', 'Il presidente <tspan font-style="italic" fill="#2f7f93">presenta la parte.</tspan>');
+  const setChip = chip(g);
+  return {
+    render(t) {
+      ttl(t); setChip('avvia');
+      chairman.set({ x: 410, y: 900, view: 'front', t, talk: 1, gesture: .82 + .18 * Math.sin(t * 2.4) });
+      speaker.set({ x: 1720, y: 900, view: 'side', dir: -1, sit: 1, t });
+      // la voce si propaga dal microfono in archi che si allargano
+      ring.forEach((p, i) => {
+        const k = ((t * .55 + i / 5) % 1), r = 60 + k * 560, a = .7 * (1 - k) * (.4 + .6 * envV(t * 1.3 + i));
+        p.setAttribute('d', `M ${MICX + r * Math.cos(-.5)} ${Y + r * Math.sin(-.5)} A ${r} ${r} 0 0 1 ${MICX + r * Math.cos(.5)} ${Y + r * Math.sin(.5)}`);
+        p.setAttribute('opacity', a); p.setAttribute('stroke-width', 14 - k * 8);
+      });
+    },
+    events: () => [],
+  };
+});
+
+// 02 · AVVIA (primo piano sul controller)
+scene(4.2, 3.6, g => {
+  base(g);
+  const card = el('g', {}, g);
+  el('rect', { x: 430, y: 300, width: 1060, height: 560, rx: 30, fill: '#15171c' }, card);
+  el('text', { x: 500, y: 375, class: 'sans', 'font-size': 30, 'letter-spacing': 3, fill: '#8d94a0' }, card).textContent = 'PRONTO';
+  el('text', { x: 500, y: 432, class: 'sans5', 'font-size': 42, fill: '#f4f5f7' }, card).textContent = 'Discorso pubblico';
+  el('text', { x: 960, y: 618, 'text-anchor': 'middle', class: 'sign', 'font-size': 200, fill: '#f4f5f7' }, card).textContent = '30:00';
+  const btnG = el('g', {}, card);
+  const btn = el('rect', { x: 500, y: 662, width: 920, height: 122, rx: 20 }, btnG);
+  const btnT = el('text', { x: 960, y: 746, 'text-anchor': 'middle', class: 'sign', 'font-size': 70, fill: '#fff', 'letter-spacing': 2 }, btnG);
+  const status = el('text', { x: 500, y: 830, class: 'sans5', 'font-size': 30, fill: '#fbbf24' }, card);
+  const ripple = el('circle', { fill: 'none', stroke: '#fff', 'stroke-width': 8 }, card);
+  const cursor = el('path', { d: 'M 0 0 L 0 74 L 20 56 L 34 88 L 48 82 L 34 50 L 60 50 Z', fill: C.ink, stroke: '#fff', 'stroke-width': 5, 'stroke-linejoin': 'round' }, g);
+  // la voce del presidente continua, sotto
+  const band = el('path', { fill: 'none', stroke: C.teal, 'stroke-width': 8, 'stroke-linecap': 'round' }, g);
+  const bandLbl = el('text', { x: 90, y: 1010, class: 'sans', 'font-size': 26, 'letter-spacing': 5, fill: '#bdb6aa' }, g); bandLbl.textContent = 'IL PRESIDENTE STA ANCORA PARLANDO';
+  const ttl = titles(g, '02 — AVVIA', 'Premi Avvia <tspan font-style="italic" fill="#b45309">mentre parla ancora.</tspan>');
+  const sub = el('text', { x: 90, y: 1062, class: 'serif', 'font-style': 'italic', 'font-size': 0, fill: C.paper }, g);
+  const setChip = chip(g);
+  const PRESS = 1.15;
+  return {
+    render(t) {
+      ttl(t);
+      const pressed = t >= PRESS;
+      const squash = t >= PRESS && t < PRESS + .16 ? 1 - .04 * Math.sin(prog(t, PRESS, PRESS + .16) * Math.PI) : 1;
+      btnG.setAttribute('transform', `translate(960 723) scale(${squash}) translate(-960 -723)`);
+      btn.setAttribute('fill', pressed ? AMBER : GREEN_BTN);
+      btnT.textContent = pressed ? '●  IN ATTESA' : '▶  AVVIA';
+      status.textContent = pressed ? 'In attesa di una pausa…' : '';
+      status.setAttribute('opacity', eout(prog(t, PRESS + .15, PRESS + .5)));
+      const rp = prog(t, PRESS, PRESS + .55);
+      ripple.setAttribute('cx', 1010); ripple.setAttribute('cy', 735); ripple.setAttribute('r', rp > 0 && rp < 1 ? 20 + rp * 240 : 0); ripple.setAttribute('opacity', rp > 0 && rp < 1 ? 1 - rp : 0);
+      const m = eio(prog(t, .35, PRESS - .05));
+      const cx = lerp(1780, 1000, m), cy = lerp(1120, 720, m) + (t >= PRESS && t < PRESS + .12 ? 6 : 0);
+      cursor.setAttribute('transform', `translate(${cx} ${cy})`);
+      setChip(pressed ? 'attesa' : 'avvia', pressed ? back(prog(t, PRESS, PRESS + .35)) * 1 : 1);
+      let d = '';
+      for (let x = 90; x <= 1830; x += 6) { const tau = t + x / 400; d += (d ? ' L ' : 'M ') + x + ' ' + (958 + 26 * envV(tau) * Math.sin(tau * Math.PI * 2 * 3)).toFixed(1); }
+      band.setAttribute('d', d);
+      sub.setAttribute('font-size', 0);
+    },
+    events: () => [{ t: PRESS, k: 'press' }],
+  };
+});
+
+// 03 · LE PAUSE BREVI
+scene(7.8, 3.8, g => {
+  base(g);
+  const chairman = figure(g, { tie: C.teal });
+  lectern(g);
+  const GAP_A = 1.6, GAP_B = 2.2, PEN0 = 640, PX = 300;
+  const ruler = el('rect', { y: 524, height: 44, fill: C.ink }, g);
+  const startTick = el('line', { y1: Y - 70, y2: 568, stroke: C.ink, 'stroke-width': 6 }, g);
+  const line = voiceLine(g, C.teal);
+  const counter = el('text', { y: 760, 'text-anchor': 'middle', class: 'sign', 'font-size': 180, fill: C.gold }, g);
+  const st = stamp(g, 'TROPPO BREVE', C.stop);
+  const ttl = titles(g, '03 — LE PAUSE BREVI', 'Una pausa tra le frasi? <tspan font-style="italic" fill="#e0362b">Non conta.</tspan>');
+  const setChip = chip(g);
+  return {
+    render(t) {
+      ttl(t); setChip('attesa');
+      const talking = tau => tau < GAP_A || tau >= GAP_B;
+      line(t, talking, PEN0, PX);
+      const on = talking(t);
+      chairman.set({ x: 410, y: 900, view: 'front', t, talk: on ? 1 : 0, gesture: on ? .82 + .18 * Math.sin(t * 2.4) : .7 });
+      const ax = PEN0 + PX * GAP_A, gapW = PX * clamp(Math.min(t, GAP_B) - GAP_A, 0, 1);
+      const fadeR = 1 - prog(t, 2.9, 3.3);
+      ruler.setAttribute('x', ax); ruler.setAttribute('width', t > GAP_A ? gapW : 0);
+      ruler.setAttribute('fill', t >= GAP_B ? C.stop : C.ink); ruler.setAttribute('opacity', fadeR);
+      startTick.setAttribute('x1', ax); startTick.setAttribute('x2', ax); startTick.setAttribute('opacity', t > GAP_A ? fadeR : 0);
+      counter.setAttribute('x', ax + 90);
+      counter.textContent = t > GAP_A ? fmtS(Math.min(t, GAP_B) - GAP_A) + ' s' : '';
+      counter.setAttribute('fill', t >= GAP_B ? C.stop : C.gold); counter.setAttribute('opacity', fadeR);
+      st(ax + 290, 700, prog(t, GAP_B + .1, GAP_B + .45));
+    },
+    events() {
+      const ev = [];
+      for (let i = 1; i <= 6; i++) ev.push({ t: GAP_A + i / 10, k: i === 5 ? 'tock' : 'tick', pan: pan(PEN0 + PX * (GAP_A + i / 10)) });
+      ev.push({ t: GAP_B + .1, k: 'stamp' });
+      return ev;
+    },
+  };
+});
+
+// 04 · LA PAUSA (scena già approvata)
+scene(11.6, 9, g => {
+  const STOP = 1.2, HIT = 3.2, PX = 300, PEN0 = 760;
+  const A = el('g', {}, g);
+  base(A);
+  const chairman = figure(A, { tie: C.teal });
+  lectern(A);
+  const line = voiceLine(A, C.teal);
+  const startTick = el('line', { y1: Y - 70, y2: 568, stroke: C.ink, 'stroke-width': 6 }, A);
+  const ruler = el('rect', { y: 524, height: 44, fill: C.ink }, A);
+  const tickEls = [0.5, 1, 1.5, 2].map(v => {
+    const tg = el('g', {}, A);
+    el('line', { x1: 0, y1: 524, x2: 0, y2: v % 1 ? 546 : 568, stroke: C.paper, 'stroke-width': 5 }, tg);
+    el('text', { x: 0, y: 620, 'text-anchor': 'middle', class: 'sans', 'font-size': 32, fill: C.ink }, tg).textContent = String(v).replace('.', ',');
+    return { g: tg, v };
+  });
+  const counter = el('text', { y: 850, 'text-anchor': 'end', class: 'sign', 'font-size': 250, fill: C.gold }, A);
+  const ttl = titles(A, '04 — LA PAUSA', 'Il presidente tace. <tspan font-style="italic" fill="#c4920a">Il silenzio si misura.</tspan>');
+  const setChip = chip(A);
+  const B = el('g', {}, g);
+  el('rect', { width: 1920, height: 1080, fill: C.warn }, B);
+  const bTitle = el('text', { x: 90, y: 640, class: 'sign', 'font-size': 340, fill: C.ink, 'letter-spacing': -2 }, B); bTitle.textContent = 'IN ASCOLTO';
+  const bSub = el('text', { x: 96, y: 780, class: 'serif', 'font-style': 'italic', 'font-size': 78, fill: C.ink }, B); bSub.textContent = 'la prima voce farà partire il timer.';
+  const bKick = el('text', { x: 96, y: 330, class: 'sans', 'font-size': 30, 'letter-spacing': 6, fill: C.ink }, B); bKick.textContent = '2,0 SECONDI DI SILENZIO';
+  const Cg = el('g', {}, g);
+  el('rect', { width: 1920, height: 1080, fill: C.paper }, Cg);
+  el('rect', { width: 1920, height: 14, fill: C.ink }, Cg);
+  el('text', { x: 90, y: 112, class: 'sans', 'font-size': 26, 'letter-spacing': 6, fill: C.ink }, Cg).textContent = '04 — LA PAUSA';
+  el('text', { x: 86, y: 236, class: 'serif', 'font-size': 104, fill: C.ink }, Cg).innerHTML = 'La pausa <tspan font-style="italic" fill="#17a556">si regola.</tspan>';
+  const X0 = 240, STEP = 288, TY = 760, xOf = v => X0 + (v - 1) * STEP;
+  const cRuler = el('rect', { x: X0, y: 470, height: 44, fill: C.ink }, Cg);
+  el('line', { x1: X0, y1: 400, x2: X0, y2: 514, stroke: C.ink, 'stroke-width': 6 }, Cg);
+  const cVal = el('text', { x: 1680, y: 420, 'text-anchor': 'end', class: 'sign', 'font-size': 250, fill: C.ink }, Cg);
+  el('line', { x1: X0, y1: TY, x2: xOf(6), y2: TY, stroke: C.ink, 'stroke-width': 10, 'stroke-linecap': 'round' }, Cg);
+  for (let v = 1; v <= 6; v++) {
+    el('line', { x1: xOf(v), y1: TY - 22, x2: xOf(v), y2: TY + 22, stroke: C.ink, 'stroke-width': 6 }, Cg);
+    el('text', { x: xOf(v), y: TY + 100, 'text-anchor': 'middle', class: 'sign', 'font-size': 64, fill: C.ink }, Cg).textContent = v + ' s';
+  }
+  const knob = el('g', {}, Cg); el('circle', { r: 50, fill: C.ink }, knob); el('circle', { r: 22, fill: C.gold }, knob);
+  el('text', { x: 90, y: 1000, class: 'sans5', 'font-size': 30, fill: '#6e6a62' }, Cg).textContent = 'Impostazioni → Voce · scegli una pausa più lunga di quelle tra una frase e l’altra.';
+  const cB = el('clipPath', { id: 'c4b' }, S), rB = el('rect', { y: 0, height: 1080 }, cB); B.setAttribute('clip-path', 'url(#c4b)');
+  const cC = el('clipPath', { id: 'c4c' }, S), rC = el('rect', { y: 0, height: 1080 }, cC); Cg.setAttribute('clip-path', 'url(#c4c)');
+  const chairK = t => prog(t, 1.55, 3.3);
+  const chairDist = t => { const k = chairK(t); return 700 * (k < .15 ? (k / .15) ** 2 * .075 : .075 + (k - .15) / .85 * .925); };
+  const sliderV = t => t < 5.6 ? 2 : t < 6.4 ? lerp(2, 4, eio(prog(t, 5.6, 6.4))) : t < 6.9 ? 4 : t < 7.7 ? lerp(4, 1.5, eio(prog(t, 6.9, 7.7))) : lerp(1.5, 2, eio(prog(t, 8.0, 8.5)));
+  return {
+    render(t) {
+      ttl(t); setChip('attesa');
+      const penX = line(Math.min(t, HIT + .15), tau => tau < STOP, PEN0, PX);
+      const stopX = PEN0 + PX * STOP, silent = t >= STOP, sil = silent ? Math.min(t, HIT) - STOP : 0, done = t >= HIT;
+      startTick.setAttribute('x1', stopX); startTick.setAttribute('x2', stopX); startTick.setAttribute('opacity', silent ? 1 : 0);
+      ruler.setAttribute('x', stopX); ruler.setAttribute('width', silent ? Math.min(penX, stopX + PX * 2) - stopX : 0); ruler.setAttribute('fill', done ? C.go : C.ink);
+      tickEls.forEach(k => { k.g.setAttribute('transform', `translate(${stopX + k.v * PX} 0)`); k.g.setAttribute('opacity', sil >= k.v ? 1 : 0); });
+      const cx = Math.max(penX + 40, 900), pop = done ? back(prog(t, HIT, HIT + .35)) : 1;
+      counter.textContent = silent ? fmtS(sil) + ' s' : ''; counter.setAttribute('fill', done ? C.go : C.gold);
+      counter.setAttribute('transform', `translate(${cx} 850) scale(${pop}) translate(${-cx} -850)`); counter.setAttribute('x', cx);
+      if (t < 1.55) chairman.set({ x: 410, y: 900, view: 'front', t, talk: t < STOP ? 1 : 0, gesture: t < STOP ? .82 + .18 * Math.sin(t * 2.4) : lerp(.9, 0, prog(t, STOP, 1.5)) });
+      else chairman.set({ x: 410 - chairDist(t), y: 900, view: 'side', dir: -1, walking: clamp(chairK(t) * 6), phase: chairDist(t) / 470 * Math.PI * 2, t });
+      const inB = eio(prog(t, HIT + .2, HIT + .55)); rB.setAttribute('x', 1920 * (1 - inB)); rB.setAttribute('width', 1920 * inB);
+      const tk = back(prog(t, HIT + .4, HIT + .85));
+      bTitle.setAttribute('transform', `translate(${(1 - tk) * 260} 0)`); bTitle.setAttribute('opacity', prog(t, HIT + .4, HIT + .55));
+      bSub.setAttribute('opacity', eout(prog(t, HIT + .75, HIT + 1.1))); bSub.setAttribute('transform', `translate(0 ${(1 - eout(prog(t, HIT + .75, HIT + 1.1))) * 24})`);
+      bKick.setAttribute('opacity', eout(prog(t, HIT + .55, HIT + .8)));
+      const inC = eio(prog(t, 4.8, 5.2)); rC.setAttribute('x', 0); rC.setAttribute('width', 1920 * inC);
+      const v = sliderV(t);
+      knob.setAttribute('transform', `translate(${xOf(v)} ${TY})`); cRuler.setAttribute('width', xOf(v) - X0); cVal.textContent = fmtS(Math.round(v * 2) / 2) + ' s';
+    },
+    events() {
+      const ev = [];
+      for (let i = 1; i <= 20; i++) ev.push({ t: STOP + i / 10, k: i % 5 ? 'tick' : 'tock', pan: pan(Math.min(PEN0 + PX * (STOP + i / 10), 1765)) });
+      ev.push({ t: HIT, k: 'found' }, { t: HIT + .18, k: 'whoosh', from: 1, to: -1 }, { t: HIT + .5, k: 'slam' }, { t: 4.75, k: 'whoosh', from: -1, to: 1 });
+      for (const [a, b] of [[5.6, 6.4], [6.9, 7.7], [8.0, 8.5]]) {
+        ev.push({ t: a, k: 'grab' });
+        let prev = Math.round(sliderV(a) * 4);
+        for (let t = a; t <= b; t += 0.001) { const q = Math.round(sliderV(t) * 4); if (q !== prev) { ev.push({ t, k: 'detent', v: sliderV(t), pan: pan(xOf(sliderV(t))) }); prev = q; } }
+        ev.push({ t: b + .02, k: 'release' });
+      }
+      return ev;
+    },
+  };
+});
+
+// 05 · I RUMORI
+scene(20.6, 4.4, g => {
+  base(g);
+  const speaker = figure(g, { tie: C.wine });
+  lectern(g);
+  const PEN0 = 700, PX = 300, BUMP = 2.3;
+  const flat = el('path', { fill: 'none', stroke: C.ink, 'stroke-width': 6, 'stroke-linecap': 'round' }, g);
+  const spike = el('path', { fill: 'none', stroke: C.stop, 'stroke-width': 12, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, g);
+  const pen = el('circle', { r: 16, fill: C.ink }, g);
+  const st = stamp(g, 'IGNORATO', C.stop);
+  const note = el('text', { class: 'sans5', 'font-size': 32, fill: C.ink }, g);
+  const ttl = titles(g, '05 — I RUMORI', 'Colpi sul microfono? <tspan font-style="italic" fill="#e0362b">Ignorati.</tspan>');
+  const setChip = chip(g);
+  const walkD = t => 640 * eio(prog(t, 0, 1.5));
+  return {
+    render(t) {
+      ttl(t); setChip('ascolto');
+      if (t < 1.55) { const d = walkD(t); speaker.set({ x: -230 + d, y: 900, view: 'side', dir: 1, walking: clamp(Math.min(prog(t, 0, .25), 1 - prog(t, 1.3, 1.5)) * 1), phase: d / 470 * Math.PI * 2, t }); }
+      else speaker.set({ x: 410, y: 900, view: 'front', t, reach: eio(prog(t, 1.9, 2.25)) * (1 - eio(prog(t, 2.55, 2.95))) });
+      const penX = PEN0 + PX * t, bx = PEN0 + PX * BUMP;
+      flat.setAttribute('d', `M ${MICX} ${Y} L ${penX} ${Y}`);
+      pen.setAttribute('cx', penX); pen.setAttribute('cy', Y);
+      spike.setAttribute('d', t >= BUMP ? `M ${bx - 26} ${Y} L ${bx - 8} ${Y - 130} L ${bx + 6} ${Y + 90} L ${bx + 20} ${Y - 40} L ${bx + 32} ${Y}` : '');
+      st(bx + 70, 690, prog(t, BUMP + .2, BUMP + .55));
+      note.setAttribute('x', bx + 76); note.setAttribute('y', 780); note.textContent = '0,1 s: troppo breve per essere una voce';
+      note.setAttribute('opacity', eout(prog(t, BUMP + .55, BUMP + .9)));
+    },
+    events: () => [{ t: BUMP, k: 'bump', pan: pan(500) }, { t: BUMP + .2, k: 'stamp' }],
+  };
+});
+
+// 06 · SI PARTE
+scene(25, 4.6, g => {
+  base(g);
+  const speaker = figure(g, { tie: C.wine });
+  lectern(g);
+  const ONSET = .6, DET = 1.0, PEN0 = 760, PX = 300;
+  const line = voiceLine(g, C.wine);
+  const flag = el('g', {}, g);
+  el('line', { x1: 0, y1: 0, x2: 0, y2: -230, stroke: C.go, 'stroke-width': 8, 'stroke-linecap': 'round' }, flag);
+  el('path', { d: 'M 0 -230 L 380 -230 L 350 -190 L 380 -150 L 0 -150 Z', fill: C.go }, flag);
+  el('text', { x: 22, y: -178, class: 'sans', 'font-size': 32, fill: '#fff' }, flag).textContent = 'qui inizia la voce';
+  const brace = el('g', {}, g);
+  const braceL = el('path', { fill: 'none', stroke: C.ink, 'stroke-width': 5 }, brace);
+  const braceT = el('text', { y: 628, 'text-anchor': 'middle', class: 'sans5', 'font-size': 30, fill: C.ink }, brace);
+  const digits = el('text', { x: 1830, y: 880, 'text-anchor': 'end', class: 'sign', 'font-size': 280, fill: C.go }, g);
+  const ttl = titles(g, '06 — SI PARTE', 'L’oratore parla: <tspan font-style="italic" fill="#17a556">il tempo parte da lì.</tspan>');
+  const setChip = chip(g);
+  return {
+    render(t) {
+      ttl(t);
+      line(t, tau => tau >= ONSET, PEN0, PX);
+      const on = t >= ONSET;
+      speaker.set({ x: 410, y: 900, view: 'front', t, talk: on ? 1 : 0, gesture: on ? lerp(0, 1, prog(t, ONSET, ONSET + .5)) * (.82 + .18 * Math.sin(t * 2.1)) : 0 });
+      const ox = PEN0 + PX * ONSET;
+      const fk = prog(t, ONSET + .1, ONSET + .45);
+      flag.setAttribute('transform', `translate(${ox} ${Y - (1 - eout(fk)) * 80})`); flag.setAttribute('opacity', fk > 0 ? 1 : 0);
+      const dx = PEN0 + PX * DET;
+      braceL.setAttribute('d', `M ${ox} 556 L ${ox} 580 L ${dx} 580 L ${dx} 556`);
+      braceT.setAttribute('x', (ox + dx) / 2 + 40); braceT.textContent = 'riconosciuta in 0,4 s, ma il tempo conta da qui';
+      brace.setAttribute('opacity', eout(prog(t, DET + .1, DET + .4)));
+      const started = t >= DET;
+      setChip(started ? 'ferma' : 'ascolto', started ? back(prog(t, DET, DET + .35)) : 1);
+      const left = 1800 - Math.floor(Math.max(0, t - ONSET));
+      const dk = prog(t, DET + .15, DET + .5);
+      digits.textContent = mmss(left);
+      digits.setAttribute('opacity', dk > 0 ? 1 : 0);
+      digits.setAttribute('transform', `translate(${(1 - back(dk)) * 300} 0)`);
+    },
+    events() {
+      const ev = [{ t: ONSET + .1, k: 'pop' }, { t: DET, k: 'press' }, { t: DET + .2, k: 'slam' }];
+      for (let s = 1; s <= 3; s++) ev.push({ t: ONSET + s, k: 'tock', pan: .6 });
+      return ev;
+    },
+  };
+});
+
+// 07 · IN SALA
+scene(29.6, 4.8, g => {
+  base(g, true);
+  const ONSET_G = 25.6;
+  const digits = el('text', { x: 960, y: 700, 'text-anchor': 'middle', class: 'sign', 'font-size': 520, fill: '#22c55e' }, g);
+  const ttl = titles(g, '07 — IN SALA', 'Il tempo corre. <tspan font-style="italic" fill="#22c55e">Senza altri clic.</tspan>', { dark: true });
+  const end = el('g', {}, g);
+  el('text', { x: 960, y: 830, 'text-anchor': 'middle', class: 'sign', 'font-size': 110, fill: C.paper, 'letter-spacing': 2 }, end).textContent = 'TIMERSALA';
+  el('text', { x: 960, y: 905, 'text-anchor': 'middle', class: 'serif', 'font-style': 'italic', 'font-size': 58, fill: C.warn }, end).textContent = 'Avvio con la voce · sperimentale';
+  el('text', { x: 960, y: 970, 'text-anchor': 'middle', class: 'sans5', 'font-size': 30, fill: '#a39e94' }, end).textContent = 'Impostazioni → Voce';
+  const END = 2.4;
+  return {
+    render(t) {
+      ttl(t);
+      const left = 1800 - Math.floor(29.6 + t - ONSET_G);
+      digits.textContent = mmss(left);
+      const k = eio(prog(t, END, END + .6));
+      digits.setAttribute('transform', `translate(0 ${-k * 110}) translate(960 520) scale(${1 - k * .38}) translate(-960 -520)`);
+      end.setAttribute('opacity', eout(prog(t, END + .3, END + .8)));
+      end.setAttribute('transform', `translate(0 ${(1 - eout(prog(t, END + .3, END + .8))) * 30})`);
+    },
+    events() {
+      const ev = [];
+      const first = Math.ceil(29.6 - ONSET_G) - (29.6 - ONSET_G);
+      for (let s = first; s < 4.8; s += 1) ev.push({ t: s, k: 'tock', pan: 0 });
+      ev.push({ t: END + .3, k: 'found' });
+      return ev;
+    },
+  };
+});
+
+// ── stacchi tra i capitoli: una banda nera con il numero del capitolo che arriva ──
+const wipe = el('g', {}, S);
+el('rect', { width: 1920, height: 1080, fill: C.ink }, wipe);
+const wipeNum = el('text', { x: 960, y: 700, 'text-anchor': 'middle', class: 'sign', 'font-size': 420, fill: C.paper }, wipe);
+const CUTS = scenes.slice(1).map((s, i) => ({ t: s.start, n: i + 2 }));
+const W = .3;
+const DUR = scenes[scenes.length - 1].start + scenes[scenes.length - 1].dur;
+
+function render(t) {
+  for (const sc of scenes) {
+    const on = t >= sc.start && t < sc.start + sc.dur;
+    sc.g.setAttribute('display', on ? 'inline' : 'none');
+    if (on) sc.render(t - sc.start);
+  }
+  let x = 1920;
+  for (const c of CUTS) {
+    if (t >= c.t - W && t < c.t) x = 1920 * (1 - eio(prog(t, c.t - W, c.t)));
+    else if (t >= c.t && t < c.t + W) x = -1920 * eio(prog(t, c.t, c.t + W));
+    if (t >= c.t - W && t < c.t + W) wipeNum.textContent = pad2(c.n);
+  }
+  wipe.setAttribute('transform', `translate(${x} 0)`);
+  wipe.setAttribute('display', x >= 1920 || x <= -1920 ? 'none' : 'inline');
+}
+
+window.render = render; window.DUR = DUR;
+window.CHAPTERS = scenes.map((s, i) => ({ n: i + 1, t: s.start }));
+window.events = () => {
+  const ev = [];
+  scenes.forEach(sc => sc.events().forEach(e => ev.push({ ...e, t: e.t + sc.start })));
+  CUTS.forEach(c => ev.push({ t: c.t - W, k: 'whoosh', from: 1, to: -1 }));
+  // voci in «ostrogoto»: il presidente fino alla pausa breve, poi fino all'inizio della pausa; l'oratore dal suo inizio
+  ev.push({ k: 'speech', who: 'c', text: '#3:26', t: 0.15, cut: 7.8 + 1.6, pan: pan(410) });
+  ev.push({ k: 'speech', who: 'c', text: '#8:9', t: 7.8 + 2.2, cut: 11.6 + 1.2, pan: pan(410) });
+  ev.push({ k: 'speech', who: 's', text: '#21:22', t: 25.6, cut: DUR, pan: pan(410), fadeFrom: 29.6, fadeTo: .45 });
+  return ev;
+};
+const q = new URLSearchParams(location.search);
+if (q.has('t')) render(+q.get('t'));
+else { const t0 = performance.now(); const loop = n => { render(((n - t0) / 1000) % DUR); requestAnimationFrame(loop); }; requestAnimationFrame(loop); }
+</script></body></html>

@@ -101,6 +101,10 @@ Tema scuro o chiaro, carattere, layout classico, clessidra o solo cifre. Puoi na
 Il timer parte da solo quando l'oratore inizia a parlare. All'acustica basta premere Avvia mentre il presidente presenta la parte.
 
 <p align="center">
+  <a href="docs/video/avvio-con-la-voce.mp4"><img src="docs/images/video-voce.png" alt="Guarda il video: come funziona l'avvio con la voce (34 secondi, con audio)" width="100%"></a>
+</p>
+
+<p align="center">
   <img src="docs/images/avvio-voce.png" alt="Avvio con la voce: pronto, in attesa di una pausa, in ascolto, partito con la voce" width="100%">
 </p>
 

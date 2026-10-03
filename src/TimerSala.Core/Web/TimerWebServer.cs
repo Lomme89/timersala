@@ -25,6 +25,7 @@ public sealed record DisplayOptions(bool ShowClockWhenIdle, bool ShowNextPartWhe
     public bool ShowNext { get; init; } = true;
     public bool ShowClock { get; init; } = true;
     public bool Flash { get; init; } = true;
+    public string Countdown { get; init; } = "tide";
 
     public static DisplayOptions From(Storage.AppSettings s) => new(s.ShowClockWhenIdle, s.ShowNextPartWhenIdle, s.ShowDelayOnDisplay)
     {
@@ -38,6 +39,7 @@ public sealed record DisplayOptions(bool ShowClockWhenIdle, bool ShowNextPartWhe
         ShowNext = s.ShowNextPart,
         ShowClock = s.ShowClockWhileRunning,
         Flash = s.FlashOnOvertime,
+        Countdown = s.CountdownStyle.ToString().ToLowerInvariant(),
     };
 }
 
@@ -206,6 +208,8 @@ public sealed class TimerWebServer : IAsyncDisposable
             sectionLabel = s.Section is null ? null : SectionInfo.Label(section),
             sectionColor = s.Section is null ? null : SectionInfo.Color(section),
             display = s.Display,
+            remaining = Math.Round(s.RemainingSeconds, 1),
+            startsAt = s.StartsAt?.ToString("HH:mm"),
             progress = Math.Round(s.Progress, 3),
             target = s.TargetSeconds,
             next = s.NextTitle,
@@ -229,6 +233,7 @@ public sealed class TimerWebServer : IAsyncDisposable
                 showNext = o.ShowNext,
                 showClock = o.ShowClock,
                 flash = o.Flash,
+                countdown = o.Countdown,
             },
         };
     }

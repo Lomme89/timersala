@@ -132,6 +132,23 @@
                             <ComboBox x:Name="FontBox" Grid.Row="2" Grid.Column="1" Margin="0,8,0,0" IsEditable="True" />
                         </Grid>
 
+                        <TextBlock Text="CONTO ALLA ROVESCIA PRIMA DELL'INIZIO" Style="{StaticResource Group}" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ComboBox x:Name="CountdownStyleBox" />
+                            <Button Grid.Column="1" Style="{StaticResource FlatButton}" Margin="8,0,0,0" Click="PreviewCountdown_Click"
+                                    ToolTip="Applica e mostra per 12 secondi il conto alla rovescia sullo schermo del timer">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xE768;" FontFamily="{StaticResource IconFont}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                    <TextBlock Text="Prova" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                        <TextBlock Style="{StaticResource Hint}" Text="È la schermata che vede tutta la sala prima dell'adunanza: gli stili diversi dal classico non usano verde, giallo e rosso, così non sembra una parte." />
+
                         <TextBlock Text="DURANTE IL TIMER" Style="{StaticResource Group}" />
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                             <TextBlock Text="Giallo quando mancano" Style="{StaticResource Label}" />

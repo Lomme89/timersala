@@ -39,6 +39,9 @@ public sealed record TimerSnapshot
     public string? NextTitle { get; init; }
     public string MeetingTitle { get; init; } = "";
 
+    /// <summary>Inizio dell'adunanza (solo nel conto alla rovescia).</summary>
+    public DateTimeOffset? StartsAt { get; init; }
+
     /// <summary>Ritardo accumulato sull'adunanza in secondi (positivo = in ritardo).</summary>
     public int DelaySeconds { get; init; }
 

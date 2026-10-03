@@ -160,6 +160,35 @@ public class CountdownTests
     }
 
     [Fact]
+    public void Countdown_reports_the_start_time()
+    {
+        var (t, clock) = Create();
+        clock.Advance(TimeSpan.FromMinutes(6));
+        Assert.Equal(new DateTimeOffset(2026, 10, 7, 19, 0, 0, TimeSpan.Zero), t.GetSnapshot().StartsAt);
+    }
+
+    [Fact]
+    public void Preview_shows_a_countdown_for_a_while_then_goes_back()
+    {
+        var (t, clock) = Create();
+        clock.Advance(TimeSpan.FromHours(2));                      // adunanza già iniziata: niente countdown vero
+        Assert.Equal(TimerPhase.Idle, t.GetSnapshot().Phase);
+
+        t.PreviewCountdown(TimeSpan.FromSeconds(272), TimeSpan.FromSeconds(12));
+        var s = t.GetSnapshot();
+        Assert.Equal(TimerMode.Countdown, s.Mode);
+        Assert.Equal("04:32", s.Display);
+        Assert.True(t.IsPreviewingCountdown);
+
+        clock.Advance(TimeSpan.FromSeconds(5));
+        Assert.Equal("04:27", t.GetSnapshot().Display);
+
+        clock.Advance(TimeSpan.FromSeconds(8));
+        Assert.Equal(TimerPhase.Idle, t.GetSnapshot().Phase);
+        Assert.False(t.IsPreviewingCountdown);
+    }
+
+    [Fact]
     public void Start_time_is_computed_from_settings()
     {
         var s = new TimerSala.Core.Storage.AppSettings { MidweekDay = DayOfWeek.Thursday, MidweekTime = new TimeOnly(19, 30) };

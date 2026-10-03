@@ -1,6 +1,7 @@
 <Window x:Class="TimerSala.App.Views.TimerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:v="clr-namespace:TimerSala.App.Views"
         Title="TimerSala — Schermo"
         WindowStyle="None" ResizeMode="NoResize" ShowInTaskbar="False" ShowActivated="False"
         Background="Black" Foreground="{Binding ScreenForeground}"
@@ -112,6 +113,118 @@
                 <TextBlock x:Name="FooterRight" DockPanel.Dock="Right" Text="{Binding ScreenFooterRight}" Foreground="{Binding ScreenMuted}" Margin="24,0,0,0" />
                 <TextBlock x:Name="FooterLeft" Text="{Binding ScreenFooterLeft}" Foreground="{Binding ScreenMuted}" TextTrimming="CharacterEllipsis" />
             </DockPanel>
+        </Grid>
+
+        <!-- Conto alla rovescia prima dell'adunanza: stili alternativi (lo stile classico usa il layout normale) -->
+        <Grid x:Name="CountdownScreen" Visibility="{Binding ShowCountdownScreen, Converter={StaticResource BoolToVis}}">
+            <Grid.Resources>
+                <Style TargetType="TextBlock" x:Key="CdLabel">
+                    <Setter Property="FontFamily" Value="Segoe UI Semibold" />
+                    <Setter Property="FontSize" Value="30" />
+                    <Setter Property="HorizontalAlignment" Value="Center" />
+                </Style>
+            </Grid.Resources>
+
+            <!-- Anello -->
+            <Grid Visibility="{Binding CdRing, Converter={StaticResource BoolToVis}}">
+                <Grid.Background>
+                    <RadialGradientBrush Center="0.5,0.3" GradientOrigin="0.5,0.3" RadiusX="1.1" RadiusY="0.9">
+                        <GradientStop Color="#14324D" Offset="0" />
+                        <GradientStop Color="#0A1724" Offset="0.6" />
+                        <GradientStop Color="#060D15" Offset="1" />
+                    </RadialGradientBrush>
+                </Grid.Background>
+                <Viewbox>
+                    <Grid Width="1280" Height="720">
+                        <v:RingArc Width="620" Height="620" Fraction="{Binding CdRemaining}" Stroke="#7FB3D5" Track="#1C3A55" Thickness="16" />
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Style="{StaticResource CdLabel}" Text="INIZIA TRA" Foreground="#7FB3D5" />
+                            <Viewbox Width="470" StretchDirection="DownOnly" Margin="0,-24,0,-18">
+                                <TextBlock Text="{Binding CdDigits}" FontFamily="{Binding ScreenFont}" FontSize="220" Foreground="#E8F1F8"
+                                           Typography.NumeralAlignment="Tabular" />
+                            </Viewbox>
+                            <TextBlock Style="{StaticResource CdLabel}" Text="{Binding CdStartLabel}" Foreground="#5F8FB0" />
+                        </StackPanel>
+                    </Grid>
+                </Viewbox>
+            </Grid>
+
+            <!-- Blocchi dei minuti -->
+            <Grid Visibility="{Binding CdBlocks, Converter={StaticResource BoolToVis}}" Background="#0D0F12">
+                <Viewbox>
+                    <Grid Width="1280" Height="720">
+                        <TextBlock Style="{StaticResource CdLabel}" Text="L'ADUNANZA INIZIA TRA" Foreground="#7FB3D5"
+                                   HorizontalAlignment="Left" VerticalAlignment="Top" Margin="120,70,0,0" />
+                        <TextBlock Text="{Binding CdDigits}" FontFamily="{Binding ScreenFont}" FontSize="430" Foreground="#F1ECE3"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" Typography.NumeralAlignment="Tabular" Margin="0,0,0,30" />
+                        <v:BlockBar Height="30" VerticalAlignment="Bottom" Margin="120,0,120,70" Count="{Binding CdBlockCount}"
+                                    Fraction="{Binding CdRemaining}" OnBrush="#7FB3D5" OffBrush="#2A2D33" />
+                    </Grid>
+                </Viewbox>
+            </Grid>
+
+            <!-- Orologio -->
+            <Grid Visibility="{Binding CdClock, Converter={StaticResource BoolToVis}}" Background="#0B0B0C">
+                <Viewbox>
+                    <Grid Width="1280" Height="720">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Center" FontFamily="{Binding ScreenFont}" Typography.NumeralAlignment="Tabular">
+                                <Run Text="{Binding ClockText, Mode=OneWay}" FontSize="330" Foreground="#F4F5F7" />
+                                <Run Text="{Binding CdClockSeconds, Mode=OneWay}" FontSize="160" Foreground="#55606E" />
+                            </TextBlock>
+                            <TextBlock Text="{Binding CdClockNote}" FontFamily="Segoe UI" FontSize="52" Foreground="#9AA6B3" HorizontalAlignment="Center" Margin="0,4,0,0" />
+                        </StackPanel>
+                    </Grid>
+                </Viewbox>
+            </Grid>
+
+            <!-- Marea -->
+            <Grid Visibility="{Binding CdTide, Converter={StaticResource BoolToVis}}" Background="#071018">
+                <v:TideFill Level="{Binding CdLevel}" Phase="{Binding CdPhase}" Crest="#2C7396">
+                    <v:TideFill.Fill>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="#1D5A78" Offset="0" />
+                            <GradientStop Color="#123A52" Offset="1" />
+                        </LinearGradientBrush>
+                    </v:TideFill.Fill>
+                </v:TideFill>
+                <Viewbox>
+                    <Grid Width="1280" Height="720">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Style="{StaticResource CdLabel}" Text="INIZIA TRA" Foreground="#A8D0E6" />
+                            <TextBlock Text="{Binding CdDigits}" FontFamily="{Binding ScreenFont}" FontSize="360" Foreground="#EAF4FA"
+                                       HorizontalAlignment="Center" Typography.NumeralAlignment="Tabular" Margin="0,-30,0,0" />
+                        </StackPanel>
+                    </Grid>
+                </Viewbox>
+            </Grid>
+
+            <!-- Quadrante -->
+            <Grid Visibility="{Binding CdDial, Converter={StaticResource BoolToVis}}" Background="#0A0E14">
+                <Viewbox>
+                    <Grid Width="1280" Height="720">
+                        <v:TickDial Width="660" Height="660" Lit="{Binding CdDialLit}" OnBrush="#E8F1F8" OffBrush="#253445" />
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="{Binding CdDialBig}" FontFamily="{Binding ScreenFont}" FontSize="300" Foreground="#E8F1F8"
+                                       HorizontalAlignment="Center" Margin="0,-40,0,-30" />
+                            <TextBlock Style="{StaticResource CdLabel}" Text="{Binding CdDialUnit}" Foreground="#7FB3D5" />
+                        </StackPanel>
+                    </Grid>
+                </Viewbox>
+            </Grid>
+
+            <!-- A parole -->
+            <Grid Visibility="{Binding CdWords, Converter={StaticResource BoolToVis}}" Background="#0C0C0D">
+                <Viewbox>
+                    <Grid Width="1280" Height="720">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="si comincia tra" FontFamily="Segoe UI Light" FontSize="110" Foreground="#D9D3C8" HorizontalAlignment="Center" />
+                            <TextBlock Text="{Binding CdWordsBig}" FontFamily="{Binding ScreenFont}" FontSize="230" Foreground="#F4F5F7"
+                                       HorizontalAlignment="Center" Margin="0,-30,0,0" />
+                        </StackPanel>
+                    </Grid>
+                </Viewbox>
+            </Grid>
         </Grid>
 
         <!-- Messaggio per l'oratore -->

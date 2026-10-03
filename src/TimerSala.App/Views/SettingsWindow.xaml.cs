@@ -70,6 +70,18 @@ public partial class SettingsWindow : Window
         };
         LayoutBox.ItemsSource = layouts;
         LayoutBox.SelectedItem = layouts.First(l => l.Value == s.DisplayLayout);
+        var cdStyles = new List<Option<CountdownStyle>>
+        {
+            new(CountdownStyle.Tide, "Marea — lo schermo si riempie fino all'inizio"),
+            new(CountdownStyle.Ring, "Anello — blu notte, l'anello si chiude"),
+            new(CountdownStyle.Blocks, "Blocchi — cifre grandi, un blocco per minuto"),
+            new(CountdownStyle.Clock, "Orologio — l'ora in grande, l'inizio sotto"),
+            new(CountdownStyle.Dial, "Quadrante — minuti al centro, secondi sulle tacche"),
+            new(CountdownStyle.Words, "A parole — «si comincia tra 4 minuti»"),
+            new(CountdownStyle.Classic, "Classico — come una parte"),
+        };
+        CountdownStyleBox.ItemsSource = cdStyles;
+        CountdownStyleBox.SelectedItem = cdStyles.First(c => c.Value == s.CountdownStyle);
 
         var suggested = new[] { "Bahnschrift SemiBold", "Bahnschrift", "Segoe UI Variable Display Semibold", "Segoe UI", "Arial", "Verdana", "Consolas" };
         var installed = Fonts.SystemFontFamilies.Select(f => f.Source).OrderBy(f => f).ToList();
@@ -241,6 +253,7 @@ public partial class SettingsWindow : Window
 
         s.DisplayTheme = ((Option<DisplayTheme>)ThemeBox.SelectedItem).Value;
         s.DisplayLayout = ((Option<DisplayLayout>)LayoutBox.SelectedItem).Value;
+        s.CountdownStyle = ((Option<CountdownStyle>)CountdownStyleBox.SelectedItem).Value;
         s.DisplayFont = string.IsNullOrWhiteSpace(FontBox.Text) ? "Bahnschrift SemiBold" : FontBox.Text.Trim();
         s.ColoredDigits = ColoredDigits.IsChecked == true;
         s.FlashOnOvertime = FlashOvertime.IsChecked == true;
@@ -278,6 +291,15 @@ public partial class SettingsWindow : Window
         TimeOnly.TryParseExact(text.Trim().Replace('.', ':'), ["H:mm", "HH:mm"], It, DateTimeStyles.None, out time);
 
     void Apply_Click(object sender, RoutedEventArgs e) => TryApply();
+
+    void PreviewCountdown_Click(object sender, RoutedEventArgs e)
+    {
+        if (!TryApply()) return;
+        _vm.PreviewCountdown();
+        if (!_vm.TimerWindowVisible)
+            MessageBox.Show(this, "Lo schermo del timer è nascosto: attiva «Mostra il timer su questo schermo» per vedere l'anteprima.",
+                "Impostazioni", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
 
     void Save_Click(object sender, RoutedEventArgs e)
     {

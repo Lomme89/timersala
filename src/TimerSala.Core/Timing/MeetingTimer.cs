@@ -35,6 +35,7 @@ public sealed class MeetingTimer
     DateTimeOffset? _meetingStart;
     int _countdownLeadSeconds = 300;
     bool _forceCountdown;
+    DateTimeOffset? _previewStart, _previewUntil;
 
     /// <summary>Orario di inizio dell'adunanza corrente (per il conto alla rovescia).</summary>
     public DateTimeOffset? MeetingStart
@@ -60,6 +61,23 @@ public sealed class MeetingTimer
             Raise();
         }
     }
+
+    /// <summary>
+    /// Anteprima dello stile: per <paramref name="duration"/> mostra un conto alla rovescia
+    /// come se l'adunanza iniziasse tra <paramref name="startsIn"/>. Non tocca l'orario vero.
+    /// </summary>
+    public void PreviewCountdown(TimeSpan startsIn, TimeSpan duration)
+    {
+        lock (_lock)
+        {
+            var now = _clock.GetUtcNow();
+            _previewStart = now + startsIn;
+            _previewUntil = now + duration;
+        }
+        Raise();
+    }
+
+    public bool IsPreviewingCountdown { get { lock (_lock) return _previewUntil is { } u && _clock.GetUtcNow() < u; } }
 
     /// <summary>Alla fermata seleziona automaticamente la parte successiva.</summary>
     public bool AutoAdvance { get; set; } = true;
@@ -396,8 +414,10 @@ public sealed class MeetingTimer
                 return n >= 0 ? _meeting.Parts[n].Title : null;
             }
 
-            if (_startedAt is null && _meetingStart is { } start && now < start &&
-                (_forceCountdown || (_countdownLeadSeconds > 0 && start - now <= TimeSpan.FromSeconds(_countdownLeadSeconds))))
+            bool preview = _previewUntil is { } until && now < until && _previewStart is not null;
+            var countdownStart = preview ? _previewStart : _meetingStart;
+            if (_startedAt is null && countdownStart is { } start && now < start &&
+                (preview || _forceCountdown || (_countdownLeadSeconds > 0 && start - now <= TimeSpan.FromSeconds(_countdownLeadSeconds))))
             {
                 double remainingToStart = (start - now).TotalSeconds;
                 int target = Math.Max(_countdownLeadSeconds, (int)Math.Ceiling(remainingToStart));
@@ -410,6 +430,7 @@ public sealed class MeetingTimer
                     ElapsedSeconds = target - remainingToStart,
                     NextTitle = _selected >= 0 ? _meeting.Parts[_selected].Title : null,
                     MeetingTitle = _meeting.Title,
+                    StartsAt = TimeZoneInfo.ConvertTime(start, _clock.LocalTimeZone),
                     DelaySeconds = delay,
                     Now = now,
                 };

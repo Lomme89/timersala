@@ -1,5 +1,18 @@
 # Novità
 
+## v1.11.0 — 3 ottobre 2026
+
+**Countdown d'inizio, sette stili a scelta** (*Impostazioni → Schermo*):
+- **Marea** (nuovo predefinito): lo schermo si riempie di blu dal basso fino all'inizio;
+- **Anello**: blu notte, un anello che si chiude;
+- **Blocchi**: cifre grandi e un blocco per ogni minuto;
+- **Orologio**: l'ora attuale in grande, l'inizio sotto;
+- **Quadrante**: i minuti al centro, i secondi sulle tacche;
+- **A parole**: «si comincia tra 5 minuti», i secondi solo nell'ultimo minuto;
+- **Classico**: come prima, uguale a una parte.
+
+Gli stili nuovi non usano verde, giallo e rosso, così il countdown non sembra una parte. Il pulsante **Prova** mostra lo stile scelto per 12 secondi, anche nella pagina web.
+
 ## v1.10.2 — 3 ottobre 2026
 
 - Avvio con la voce: dopo Avvia bisogna sempre aspettare una pausa intera, anche se prima il microfono era muto. Quello che si sente subito dopo la pressione conta come voce del presidente. Prima, con il microfono muto da un po', il timer si metteva subito in ascolto e partiva alla prima parola.

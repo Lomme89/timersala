@@ -569,6 +569,7 @@ public sealed partial class MainViewModel : ObservableObject
         }
 
         RefreshScreenStyle();
+        RefreshCountdown(s);
         RefreshMessage();
     }
 

@@ -17,6 +17,26 @@ public enum DisplayLayout
     DigitsOnly,
 }
 
+/// <summary>Aspetto del conto alla rovescia prima dell'inizio dell'adunanza.</summary>
+[JsonConverter(typeof(JsonStringEnumConverter<CountdownStyle>))]
+public enum CountdownStyle
+{
+    /// <summary>Come una parte: titolo, cifre e barra.</summary>
+    Classic,
+    /// <summary>Blu notte, un anello che si chiude fino all'inizio.</summary>
+    Ring,
+    /// <summary>Cifre grandi e un blocco per ogni minuto.</summary>
+    Blocks,
+    /// <summary>L'ora attuale in grande, l'inizio sotto.</summary>
+    Clock,
+    /// <summary>Lo schermo si riempie dal basso fino all'inizio.</summary>
+    Tide,
+    /// <summary>I minuti al centro, i secondi sulle tacche di un quadrante.</summary>
+    Dial,
+    /// <summary>«Si comincia tra 4 minuti»; i secondi solo nell'ultimo minuto.</summary>
+    Words,
+}
+
 public sealed class AppSettings
 {
     // ── Orari delle adunanze ──
@@ -34,6 +54,8 @@ public sealed class AppSettings
 
     /// <summary>Minuti prima dell'inizio in cui compare il conto alla rovescia (0 = mai).</summary>
     public int CountdownMinutes { get; set; } = 5;
+
+    public CountdownStyle CountdownStyle { get; set; } = CountdownStyle.Tide;
 
     // ── Stile dello schermo del timer ──
     public DisplayTheme DisplayTheme { get; set; } = DisplayTheme.Dark;

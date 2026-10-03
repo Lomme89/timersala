@@ -62,6 +62,45 @@
   body.flash.overtime #digits { animation: pulse 1s ease-in-out infinite; }
   @keyframes pulse { 50% { opacity: .35; } }
 
+  /* ── conto alla rovescia prima dell'adunanza: stili alternativi ── */
+  #cd { position: absolute; inset: 0; display: none; z-index: 2; overflow: hidden; }
+  body.cd-on #cd { display: block; }
+  #cd > div { position: absolute; inset: 0; display: none; }
+  body.show-ring #cd .cd-ring, body.show-blocks #cd .cd-blocks, body.show-clock #cd .cd-clock, body.show-tide #cd .cd-tide, body.show-dial #cd .cd-dial, body.show-words #cd .cd-words { display: block; }
+  .cd-c { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .cd-l { font: 600 clamp(11px, 3.4vmin, 34px) var(--ui); letter-spacing: .22em; }
+  .cd-d { font-weight: 700; font-variant-numeric: tabular-nums; line-height: .95; white-space: nowrap; }
+  .cd-ring { background: radial-gradient(110% 90% at 50% 30%, #14324d 0%, #0a1724 60%, #060d15 100%); color: #e8f1f8; }
+  .cd-ring svg { position: absolute; left: 50%; top: 50%; width: 84vmin; height: 84vmin; transform: translate(-50%, -50%) rotate(-90deg); stroke: none; fill: none; }
+  .cd-ring .cd-d { font-size: 26vmin; }
+  .cd-ring .cd-l { color: #7fb3d5; } .cd-ring .dim { color: #5f8fb0; margin-top: 1vmin; }
+  .cd-blocks { background: #0d0f12; color: #f1ece3; }
+  .cd-blocks .cd-l { position: absolute; left: 9vw; top: 9vh; color: #7fb3d5; }
+  .cd-blocks .cd-d { position: absolute; inset: 0; display: grid; place-items: center; font-size: min(55vh, 30vw); padding-bottom: 4vh; }
+  .cd-blk { position: absolute; left: 9vw; right: 9vw; bottom: 9vh; height: max(10px, 4vh); display: flex; gap: max(6px, 2.4vh); }
+  .cd-blk i { flex: 1; background: #2a2d33; position: relative; overflow: hidden; }
+  .cd-blk i b { position: absolute; left: 0; top: 0; bottom: 0; background: #7fb3d5; }
+  .cd-clock { background: #0b0b0c; color: #f4f5f7; }
+  .cd-clock .cd-d { font-size: min(44vh, 19vw); }
+  .cd-clock .cd-d small { font-size: .48em; color: #55606e; }
+  .cd-note { font: 400 clamp(14px, 6.5vmin, 64px) var(--ui); color: #9aa6b3; margin-top: 1vh; }
+  .cd-tide { background: #071018; color: #eaf4fa; }
+  .tide { position: absolute; left: 0; right: 0; bottom: 0; height: 3%; background: linear-gradient(#1d5a78, #123a52); transition: height 1s linear; }
+  .tide svg { position: absolute; left: 0; bottom: 100%; width: 200%; height: 3vh; fill: #1d5a78; stroke: none; animation: tide 7s linear infinite; margin-bottom: -1px; }
+  @keyframes tide { to { transform: translateX(-50%); } }
+  .cd-tide .cd-d { font-size: min(47vh, 25vw); }
+  .cd-tide .cd-l { color: #a8d0e6; }
+  .cd-dial { background: #0a0e14; color: #e8f1f8; }
+  .cd-dial svg { position: absolute; left: 50%; top: 50%; width: 90vmin; height: 90vmin; transform: translate(-50%, -50%); fill: none; }
+  .cd-dial line { stroke: #253445; stroke-linecap: round; stroke-width: 1.6; }
+  .cd-dial line.major { stroke-width: 2.4; }
+  .cd-dial line.on { stroke: #e8f1f8; }
+  .cd-dial .cd-d { font-size: 40vmin; line-height: .8; }
+  .cd-dial .cd-l { color: #7fb3d5; margin-top: 2vmin; }
+  .cd-words { background: #0c0c0d; color: #f4f5f7; }
+  .cd-words .cd-s { font: 300 min(15vh, 8.6vw) var(--ui); color: #d9d3c8; }
+  .cd-words .cd-d { font-size: min(32vh, 14vw); }
+
   /* ── barra strumenti ── */
   .toolbar { position: fixed; right: 12px; top: 12px; z-index: 5; display: flex; gap: 6px; opacity: .35; transition: opacity .3s; }
   .toolbar:hover, .toolbar:focus-within, body.panel .toolbar { opacity: 1; }
@@ -195,6 +234,20 @@
     <div class="bar"><div id="fill"></div></div>
     <div id="msg"></div>
     <div class="bottom"><span id="next"></span><span id="delay"></span></div>
+    <div id="cd" aria-hidden="true">
+      <div class="cd-ring">
+        <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="47" stroke="#1c3a55" stroke-width="2.4"/><circle id="cdArc" cx="50" cy="50" r="47" stroke="#7fb3d5" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="295.3" stroke-dashoffset="0"/></svg>
+        <div class="cd-c"><div class="cd-l">INIZIA TRA</div><div class="cd-d" data-cd="digits"></div><div class="cd-l dim" data-cd="startLabel"></div></div>
+      </div>
+      <div class="cd-blocks"><div class="cd-l">L'ADUNANZA INIZIA TRA</div><div class="cd-d" data-cd="digits"></div><div class="cd-blk" id="cdBlk"></div></div>
+      <div class="cd-clock"><div class="cd-c"><div class="cd-d"><span data-cd="clock"></span><small data-cd="clockSec"></small></div><div class="cd-note" data-cd="clockNote"></div></div></div>
+      <div class="cd-tide">
+        <div class="tide" id="cdTide"><svg viewBox="0 0 200 10" preserveAspectRatio="none"><path d="M0 6 Q12.5 1 25 6 T50 6 T75 6 T100 6 T125 6 T150 6 T175 6 T200 6 V10 H0 Z"/></svg></div>
+        <div class="cd-c"><div class="cd-l">INIZIA TRA</div><div class="cd-d" data-cd="digits"></div></div>
+      </div>
+      <div class="cd-dial"><svg id="cdDial" viewBox="0 0 100 100"></svg><div class="cd-c"><div class="cd-d" data-cd="dialBig"></div><div class="cd-l" data-cd="dialUnit"></div></div></div>
+      <div class="cd-words"><div class="cd-c"><div class="cd-s">si comincia tra</div><div class="cd-d" data-cd="words"></div></div></div>
+    </div>
   </main>
 
   <aside id="panel">
@@ -290,8 +343,49 @@
 
   // ── stato in tempo reale ──
   let lastHasMsg = false, lastSchedule = '';
+  // ── conto alla rovescia: stili alternativi (stessa logica dello schermo del timer) ──
+  const CD_STYLES = ['ring', 'blocks', 'clock', 'tide', 'dial', 'words'];
+  const dialTicks = [];
+  for (let i = 0; i < 60; i++) {
+    const a = -Math.PI / 2 + i * Math.PI / 30, major = i % 5 === 0, r1 = major ? 42 : 45, r2 = 49;
+    const l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    l.setAttribute('x1', 50 + r1 * Math.cos(a)); l.setAttribute('y1', 50 + r1 * Math.sin(a));
+    l.setAttribute('x2', 50 + r2 * Math.cos(a)); l.setAttribute('y2', 50 + r2 * Math.sin(a));
+    if (major) l.classList.add('major');
+    $('cdDial').appendChild(l); dialTicks.push(l);
+  }
+  let cdBlocks = 0;
+  function renderCountdown(s) {
+    const style = s.style?.countdown || 'classic';
+    const on = s.mode === 'countdown' && CD_STYLES.includes(style);
+    B.toggle('cd-on', on);
+    CD_STYLES.forEach(c => B.toggle('show-' + c, on && style === c));
+    if (!on) return;
+    const rem = Math.max(0, s.remaining ?? 0), secs = Math.ceil(rem - 0.0001), target = s.target || 300;
+    const left = Math.max(0, Math.min(1, rem / target));
+    const words = secs > 60 ? Math.ceil(secs / 60) + ' MINUTI' : secs === 1 ? '1 SECONDO' : secs + ' SECONDI';
+    let dialBig, dialUnit, lit;
+    if (secs > 60) { const m = Math.floor(secs / 60), r = secs % 60, mm = r === 0 ? m - 1 : m; dialBig = mm; dialUnit = mm === 1 ? 'MINUTO' : 'MINUTI'; lit = r === 0 ? 60 : r; }
+    else { dialBig = secs; dialUnit = secs === 1 ? 'SECONDO' : 'SECONDI'; lit = secs; }
+    const v = {
+      digits: Math.floor(secs / 60) + ':' + String(secs % 60).padStart(2, '0'),
+      startLabel: s.startsAt ? 'ALLE ' + s.startsAt : '',
+      clock: s.clock, clockSec: ':' + s.seconds,
+      clockNote: (s.startsAt ? 'si comincia alle ' + s.startsAt + ' · ' : 'si comincia ') + 'tra ' + words.toLowerCase(),
+      dialBig, dialUnit, words,
+    };
+    document.querySelectorAll('[data-cd]').forEach(e => { const t = String(v[e.dataset.cd] ?? ''); if (e.textContent !== t) e.textContent = t; });
+    $('cdArc').setAttribute('stroke-dashoffset', (295.3 * (1 - left)).toFixed(2));
+    $('cdTide').style.height = Math.max(3, (1 - left) * 100) + '%';
+    dialTicks.forEach((l, i) => l.classList.toggle('on', i < lit));
+    const n = Math.max(1, Math.min(10, Math.ceil(target / 60)));
+    if (n !== cdBlocks) { $('cdBlk').innerHTML = '<i><b></b></i>'.repeat(n); cdBlocks = n; }
+    [...$('cdBlk').children].forEach((el, i) => el.firstChild.style.width = Math.max(0, Math.min(1, left * n - i)) * 100 + '%');
+  }
+
   function render(s) {
     applyStyle(s.style);
+    renderCountdown(s);
     B.toggle('overtime', s.phase === 'overtime');
     B.toggle('idle', s.phase === 'idle');
     const hg = $('hg');

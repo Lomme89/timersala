@@ -70,7 +70,7 @@ Editor con trascinamento e un pulsante per la **visita del sorvegliante**. Le se
 <td valign="top">
 
 **⏳ Countdown d'inizio**<br>
-Qualche minuto prima dell'adunanza lo schermo mostra «L'adunanza inizia tra…». Nel controller vedi la fine prevista.
+Qualche minuto prima dell'adunanza lo schermo mostra quanto manca, in uno stile che non si confonde con le parti: marea, anello, blocchi, orologio, quadrante o a parole.
 
 </td>
 <td valign="top">

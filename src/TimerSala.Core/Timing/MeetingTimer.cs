@@ -121,8 +121,11 @@ public sealed class MeetingTimer
         Raise();
     }
 
-    /// <summary>Avvia la parte selezionata (riprende se era già stata cronometrata).</summary>
-    public void Start()
+    /// <summary>
+    /// Avvia la parte selezionata (riprende se era già stata cronometrata).
+    /// <paramref name="startedAt"/> retrodata l'avvio, per esempio all'istante in cui è iniziata la voce.
+    /// </summary>
+    public void Start(DateTimeOffset? startedAt = null)
     {
         lock (_lock)
         {
@@ -134,8 +137,22 @@ public sealed class MeetingTimer
             _targetSeconds = TargetForUnlocked(_selected);
             if (_adaptive.Contains(_selected)) _adaptedTargets[_selected] = _targetSeconds;
             _carried = _actual.TryGetValue(_selected, out var t) ? t : TimeSpan.Zero;
-            _startedAt = _clock.GetUtcNow();
+            var now = _clock.GetUtcNow();
+            _startedAt = startedAt is { } at && at < now ? at : now;
             _forceCountdown = false;
+        }
+        Raise();
+    }
+
+    /// <summary>Annulla l'avvio della parte in corso: si ferma senza registrare il tempo.</summary>
+    public void CancelStart()
+    {
+        lock (_lock)
+        {
+            if (_startedAt is null || _mode != TimerMode.Part) return;
+            int index = _runningIndex;
+            StopInternal(record: false);
+            if (!_actual.ContainsKey(index)) _adaptedTargets.Remove(index);
         }
         Raise();
     }

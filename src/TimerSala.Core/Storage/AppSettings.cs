@@ -58,6 +58,24 @@ public sealed class AppSettings
     public bool RemoteControlEnabled { get; set; } = true;
     public string RemotePin { get; set; } = Random.Shared.Next(1000, 10000).ToString();
 
+    // ── Avvio con la voce (sperimentale) ──
+    public bool VoiceStartEnabled { get; set; }
+
+    /// <summary>Identificativo Windows dell'ingresso audio. Vuoto = ingresso predefinito.</summary>
+    public string? VoiceInputDevice { get; set; }
+
+    /// <summary>Livello minimo della voce, in dBFS.</summary>
+    public double VoiceThresholdDb { get; set; } = -40;
+
+    /// <summary>Silenzio che deve precedere l'inizio della parte.</summary>
+    public double VoicePauseSeconds { get; set; } = 2;
+
+    /// <summary>Durata minima del parlato per avviare la parte.</summary>
+    public double VoiceMinSeconds { get; set; } = 0.4;
+
+    /// <summary>Dopo Ferma, la parte successiva va in attesa della voce (se non c'è un cantico in mezzo).</summary>
+    public bool VoiceAutoArmNext { get; set; }
+
     // ── Modalità mini ──
     public bool MiniMode { get; set; }
     public double? MiniLeft { get; set; }

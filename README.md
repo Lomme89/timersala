@@ -131,6 +131,7 @@ Tema scuro o chiaro, carattere, layout classico, clessidra o solo cifre. Puoi na
 | Un minuto in più / in meno | `+` / `−` |
 | Modifica lo schema | `E` |
 | Modalità mini | `M` |
+| Annulla l'attesa della voce / l'avvio appena fatto | `Esc` |
 | Editor: sposta la parte / elimina | `Alt+↑↓` / `Canc` |
 
 </details>
@@ -139,6 +140,10 @@ Tema scuro o chiaro, carattere, layout classico, clessidra o solo cifre. Puoi na
 <summary><b>📖 Come funziona, in breve</b></summary>
 <br>
 
+- **Avvio con la voce** (sperimentale, *Impostazioni → Voce*):
+  - con Avvia la parte va in attesa e parte da sola quando, dopo una pausa, l'oratore inizia a parlare;
+  - serve un ingresso audio collegato al mixer;
+  - Esc annulla.
 - **Ripristino:** se il PC o il programma si chiudono durante l'adunanza, alla riapertura TimerSala propone di riprendere dalla parte in corso, contando o no il tempo trascorso.
 - **Studio adattivo** (opzionale, *Impostazioni → Adunanze*): se si è in ritardo, lo studio biblico o la Torre di Guardia si accorciano per finire in orario; non si allungano mai.
 - **Tempi:** quando fermi una parte il tempo effettivo viene registrato (verde se in orario, rosso se sforato) e si passa alla successiva. In alto vedi il ritardo o l'anticipo accumulato.

@@ -224,6 +224,7 @@ public partial class MainWindow : Window
             s.ControllerHeight = Height;
         }
         _vm.SaveSettings();
+        _vm.Shutdown();
         SystemEvents.DisplaySettingsChanged -= OnDisplaySettingsChanged;
         _closing = true;
         _timerWindow?.Close();

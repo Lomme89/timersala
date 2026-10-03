@@ -189,16 +189,20 @@
                     <ColumnDefinition Width="56" />
                 </Grid.ColumnDefinitions>
                 <Button Style="{StaticResource IconButton}" Width="50" Height="56" Content="&#xE892;" Command="{Binding PreviousCommand}" ToolTip="Parte precedente (←)" />
-                <Button x:Name="StartButton" Grid.Column="1" Height="56" Margin="6,0" Command="{Binding ToggleStartCommand}"
-                        ToolTip="Avvia / ferma (barra spaziatrice)">
+                <Button x:Name="StartButton" Grid.Column="1" Height="56" Margin="6,0" Command="{Binding ToggleStartCommand}">
                     <Button.Style>
                         <Style TargetType="Button" BasedOn="{StaticResource FlatButton}">
                             <Setter Property="Background" Value="#16A34A" />
                             <Setter Property="BorderThickness" Value="0" />
                             <Setter Property="Foreground" Value="White" />
+                            <Setter Property="ToolTip" Value="Avvia / ferma (barra spaziatrice)" />
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsRunning}" Value="True">
                                     <Setter Property="Background" Value="#DC2626" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsVoiceArmed}" Value="True">
+                                    <Setter Property="Background" Value="#B45309" />
+                                    <Setter Property="ToolTip" Value="In attesa della voce: premi di nuovo per avviare subito, Esc per annullare" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -212,6 +216,9 @@
                                         <DataTrigger Binding="{Binding IsRunning}" Value="True">
                                             <Setter Property="Text" Value="&#xE71A;" />
                                         </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsVoiceArmed}" Value="True">
+                                            <Setter Property="Text" Value="&#xE720;" />
+                                        </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </TextBlock.Style>
@@ -224,6 +231,9 @@
                                         <DataTrigger Binding="{Binding IsRunning}" Value="True">
                                             <Setter Property="Text" Value="FERMA" />
                                         </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsVoiceArmed}" Value="True">
+                                            <Setter Property="Text" Value="IN ATTESA" />
+                                        </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </TextBlock.Style>
@@ -232,6 +242,44 @@
                 </Button>
                 <Button Grid.Column="2" Style="{StaticResource IconButton}" Width="50" Height="56" Content="&#xE893;" Command="{Binding NextCommand}" ToolTip="Parte successiva (→)" HorizontalAlignment="Right" />
             </Grid>
+            <!-- avvio con la voce (sperimentale) -->
+            <Border Margin="0,6,0,0" CornerRadius="8" Padding="10,5" Background="{StaticResource BgBrush}"
+                    Visibility="{Binding VoiceEnabled, Converter={StaticResource BoolToVis}}">
+                <DockPanel>
+                    <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Annulla" Padding="10,2" Margin="8,0,0,0"
+                            Command="{Binding CancelVoiceCommand}" ToolTip="Annulla l'attesa o l'avvio fatto dalla voce (Esc)"
+                            Visibility="{Binding CanCancelVoice, Converter={StaticResource BoolToVis}}" />
+                    <TextBlock DockPanel.Dock="Left" FontFamily="{StaticResource IconFont}" Text="&#xE720;" FontSize="13" VerticalAlignment="Center">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding VoiceHeard}" Value="True">
+                                        <Setter Property="Foreground" Value="#22C55E" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                    <ProgressBar DockPanel.Dock="Left" Style="{StaticResource SlimProgress}" Width="56" Margin="8,0,10,0" VerticalAlignment="Center"
+                                 Minimum="0" Maximum="1" Value="{Binding VoiceLevel, Mode=OneWay}" Foreground="#22C55E" ToolTip="Livello dell'ingresso audio" />
+                    <TextBlock Text="{Binding VoiceStatus}" FontSize="12" VerticalAlignment="Center" TextTrimming="CharacterEllipsis">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsVoiceArmed}" Value="True">
+                                        <Setter Property="Foreground" Value="{StaticResource AmberBrush}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding VoiceError}" Value="True">
+                                        <Setter Property="Foreground" Value="#EF4444" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </DockPanel>
+            </Border>
             <UniformGrid Columns="2" Margin="0,6,0,0">
                 <Button Style="{StaticResource FlatButton}" Content="−1 min" Command="{Binding RemoveMinuteCommand}" Margin="0,0,3,0" ToolTip="Togli un minuto (−)" />
                 <Button Style="{StaticResource FlatButton}" Content="+1 min" Command="{Binding AddMinuteCommand}" Margin="3,0,0,0" ToolTip="Aggiungi un minuto (+)" />

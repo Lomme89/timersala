@@ -73,7 +73,7 @@
                     </Grid.RowDefinitions>
                     <StackPanel Orientation="Horizontal">
                         <Button Style="{StaticResource MiniButton}" Content="&#xE892;" Command="{Binding PreviousCommand}" ToolTip="Parte precedente (←)" />
-                        <Button Height="38" Width="50" Margin="6,0" Command="{Binding ToggleStartCommand}" ToolTip="Avvia / ferma (Spazio)">
+                        <Button Height="38" Width="50" Margin="6,0" Command="{Binding ToggleStartCommand}">
                             <Button.Style>
                                 <Style TargetType="Button" BasedOn="{StaticResource FlatButton}">
                                     <Setter Property="Background" Value="#16A34A" />
@@ -83,10 +83,16 @@
                                     <Setter Property="FontFamily" Value="{StaticResource IconFont}" />
                                     <Setter Property="FontSize" Value="18" />
                                     <Setter Property="Content" Value="&#xE768;" />
+                                    <Setter Property="ToolTip" Value="Avvia / ferma (Spazio)" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsRunning}" Value="True">
                                             <Setter Property="Background" Value="#DC2626" />
                                             <Setter Property="Content" Value="&#xE71A;" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsVoiceArmed}" Value="True">
+                                            <Setter Property="Background" Value="#B45309" />
+                                            <Setter Property="Content" Value="&#xE720;" />
+                                            <Setter Property="ToolTip" Value="In attesa della voce: premi per avviare subito, Esc per annullare" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>

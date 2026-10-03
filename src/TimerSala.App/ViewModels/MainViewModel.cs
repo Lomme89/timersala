@@ -57,6 +57,7 @@ public sealed partial class MainViewModel : ObservableObject
             (action, value) => Application.Current.Dispatcher.InvokeAsync(() => ExecuteRemote(action, value)).Task);
         Messages.Changed += (_, _) => Application.Current.Dispatcher.BeginInvoke(RefreshDisplay);
         ApplyTimerSettings();
+        ApplyVoiceSettings();
 
         Timer.StateChanged += (_, _) => Application.Current.Dispatcher.BeginInvoke(RefreshParts);
 
@@ -74,6 +75,7 @@ public sealed partial class MainViewModel : ObservableObject
         _tick.Tick += (_, _) =>
         {
             RefreshDisplay();
+            TickVoice();
             // mentre il timer corre, salva lo stato ogni 5 secondi
             if (Timer.IsRunning && ++_ticksSinceSave >= 50) SaveSession();
         };
@@ -371,6 +373,24 @@ public sealed partial class MainViewModel : ObservableObject
 
     void ToggleStart()
     {
+        if (Timer.IsRunning)
+        {
+            bool part = Timer.Mode == TimerMode.Part;
+            int stopped = Timer.RunningIndex;
+            Timer.Stop();
+            if (part) AutoArmAfterStop(stopped);
+        }
+        else if (!TryArmOrStartNow())
+        {
+            Timer.Start();
+        }
+        RefreshDisplay();
+    }
+
+    /// <summary>Dal telefono: avvio immediato, senza attesa della voce.</summary>
+    void ToggleStartNow()
+    {
+        if (IsVoiceArmed) Disarm();
         Timer.Toggle();
         RefreshDisplay();
     }
@@ -433,6 +453,7 @@ public sealed partial class MainViewModel : ObservableObject
     void StartManual(string? minutes)
     {
         if (!int.TryParse(minutes, out var m) || m <= 0) return;
+        if (IsVoiceArmed) Disarm();
         Timer.StartManual(TimeSpan.FromMinutes(m), $"Timer {m} min");
         RefreshDisplay();
     }
@@ -733,7 +754,7 @@ public sealed partial class MainViewModel : ObservableObject
     {
         switch (action)
         {
-            case RemoteActions.Toggle: ToggleStart(); break;
+            case RemoteActions.Toggle: ToggleStartNow(); break;
             case RemoteActions.Next: Timer.SelectNext(); break;
             case RemoteActions.Previous: Timer.SelectPrevious(); break;
             case RemoteActions.AddMinute: Adjust(+60); break;
@@ -877,6 +898,7 @@ public sealed partial class MainViewModel : ObservableObject
         ApplyTimerSettings();
         UpdateMeetingStart();
         UpdateAdaptiveParts();
+        ApplyVoiceSettings();
         SaveSettings();
         if (webChanged) _ = StartWebServerAsync();
         else UpdateWebUrl();
@@ -889,6 +911,9 @@ public sealed partial class MainViewModel : ObservableObject
         Timer.CounselSeconds = Settings.CounselSeconds;
         Timer.CountdownLeadSeconds = Settings.CountdownMinutes * 60;
     }
+
+    /// <summary>Alla chiusura: rilascia l'ingresso audio.</summary>
+    public void Shutdown() => DisposeVoice();
 
     public void SaveSettings()
     {

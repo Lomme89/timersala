@@ -34,6 +34,9 @@ static class Shortcuts
             case Key.OemMinus:
                 vm.RemoveMinuteCommand.Execute(null);
                 break;
+            case Key.Escape when vm.CanCancelVoice:
+                vm.CancelVoiceCommand.Execute(null);
+                break;
             case Key.M:
                 vm.ToggleMiniCommand.Execute(null);
                 break;

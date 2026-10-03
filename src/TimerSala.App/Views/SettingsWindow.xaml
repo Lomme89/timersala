@@ -37,7 +37,7 @@
             </StackPanel>
         </DockPanel>
 
-        <TabControl>
+        <TabControl x:Name="Tabs" SelectionChanged="Tabs_SelectionChanged">
             <!-- ADUNANZE -->
             <TabItem Header="Adunanze">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -181,6 +181,78 @@
                     <TextBox x:Name="Presets" AcceptsReturn="True" TextWrapping="Wrap" VerticalContentAlignment="Top"
                              VerticalScrollBarVisibility="Auto" MinHeight="140" />
                 </DockPanel>
+            </TabItem>
+
+            <!-- VOCE -->
+            <TabItem x:Name="VoiceTab" Header="Voce (beta)">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="12">
+                        <TextBlock Text="AVVIO CON LA VOCE · SPERIMENTALE" Style="{StaticResource Group}" Margin="0,0,0,8" />
+                        <CheckBox x:Name="VoiceEnabled" Content="Avvia le parti quando l'oratore inizia a parlare" />
+                        <TextBlock Style="{StaticResource Hint}" Text="Premi Avvia mentre il presidente presenta la parte: il pulsante diventa «In attesa». Dopo una pausa, la prima voce fa partire il timer, contando dall'istante in cui la voce è iniziata. Premi di nuovo Avvia per partire subito; Esc annulla l'attesa o, nei primi secondi, un avvio sbagliato. Dal telefono l'avvio è sempre immediato." />
+
+                        <TextBlock Text="INGRESSO AUDIO" Style="{StaticResource Group}" />
+                        <ComboBox x:Name="VoiceDevice" SelectionChanged="VoiceDevice_Changed" />
+                        <TextBlock Style="{StaticResource Hint}" Text="Scegli l'ingresso che riceve l'audio del mixer (di solito lo stesso usato per Zoom). TimerSala lo ascolta in condivisione, senza disturbare gli altri programmi." />
+
+                        <Border Margin="0,12,0,0" Padding="12,10" CornerRadius="10" Background="{StaticResource CardBrush}">
+                            <StackPanel>
+                                <DockPanel Margin="0,0,0,8">
+                                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                        <Ellipse x:Name="VoiceLamp" Width="10" Height="10" Fill="{StaticResource LineBrush}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                        <TextBlock x:Name="VoiceLampText" Text="Silenzio" FontSize="12" Foreground="{StaticResource MutedBrush}" Width="56" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                    <TextBlock Text="Prova: parla nel microfono" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                </DockPanel>
+                                <Grid Height="16">
+                                    <Border Background="{StaticResource LineBrush}" CornerRadius="4" />
+                                    <Border x:Name="VoiceMeter" HorizontalAlignment="Left" Width="0" CornerRadius="4" Background="#22C55E" />
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition x:Name="ThresholdLeft" Width="0.33*" />
+                                            <ColumnDefinition Width="2" />
+                                            <ColumnDefinition x:Name="ThresholdRight" Width="0.67*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Border Grid.Column="1" Background="{StaticResource AmberBrush}" Margin="0,-3" />
+                                    </Grid>
+                                </Grid>
+                                <TextBlock x:Name="VoiceTestStatus" Style="{StaticResource Hint}" Text="La barra mostra il livello dell'ingresso scelto. Il segno giallo è la soglia." />
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Text="REGOLAZIONI" Style="{StaticResource Group}" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="170" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="64" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="Soglia della voce" Style="{StaticResource Label}" />
+                            <Slider x:Name="VoiceThreshold" Grid.Column="1" Minimum="-60" Maximum="-10" SmallChange="1" LargeChange="5"
+                                    IsSnapToTickEnabled="True" TickFrequency="1" ValueChanged="VoiceSlider_Changed" />
+                            <TextBlock x:Name="VoiceThresholdText" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" />
+
+                            <TextBlock Grid.Row="1" Text="Pausa prima della parte" Style="{StaticResource Label}" Margin="0,12,12,0" />
+                            <Slider x:Name="VoicePause" Grid.Row="1" Grid.Column="1" Margin="0,12,0,0" Minimum="1" Maximum="6" SmallChange="0.5" LargeChange="0.5"
+                                    IsSnapToTickEnabled="True" TickFrequency="0.5" ValueChanged="VoiceSlider_Changed" />
+                            <TextBlock x:Name="VoicePauseText" Grid.Row="1" Grid.Column="2" Margin="0,12,0,0" HorizontalAlignment="Right" VerticalAlignment="Center" />
+
+                            <TextBlock Grid.Row="2" Text="Voce per almeno" Style="{StaticResource Label}" Margin="0,12,12,0" />
+                            <Slider x:Name="VoiceMin" Grid.Row="2" Grid.Column="1" Margin="0,12,0,0" Minimum="0.2" Maximum="1.5" SmallChange="0.1" LargeChange="0.1"
+                                    IsSnapToTickEnabled="True" TickFrequency="0.1" ValueChanged="VoiceSlider_Changed" />
+                            <TextBlock x:Name="VoiceMinText" Grid.Row="2" Grid.Column="2" Margin="0,12,0,0" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                        </Grid>
+                        <TextBlock Style="{StaticResource Hint}" Text="Soglia: con la sala in silenzio la barra deve restare sotto il segno giallo, quando si parla deve superarlo. Pausa: il silenzio che separa la presentazione dall'inizio della parte; deve essere più lungo delle pause tra una frase e l'altra del presidente. Voce per almeno: colpi, tosse e regolazioni del microfono più brevi di così vengono ignorati." />
+
+                        <CheckBox x:Name="VoiceAutoArm" Content="Dopo Ferma, metti in attesa la parte successiva" Margin="0,14,0,0" />
+                        <TextBlock Style="{StaticResource Hint}" Text="Non vale se in mezzo c'è un cantico: dopo il cantico di solito parla prima il presidente." />
+                    </StackPanel>
+                </ScrollViewer>
             </TabItem>
 
             <!-- RETE -->

@@ -3,6 +3,8 @@ using System.Globalization;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Threading;
+using TimerSala.App.Audio;
 using TimerSala.App.ViewModels;
 using TimerSala.Core.Storage;
 using TimerSala.Core.Web;
@@ -20,6 +22,13 @@ public partial class SettingsWindow : Window
     static readonly CultureInfo It = CultureInfo.GetCultureInfo("it-IT");
 
     readonly MainViewModel _vm;
+    readonly bool _ready;
+
+    // prova dell'ingresso audio (scheda Voce)
+    AudioInput? _test;
+    DispatcherTimer? _meterTimer;
+    double _testPeak = -90;
+    bool _testVoice;
 
     public SettingsWindow(MainViewModel vm)
     {
@@ -98,6 +107,101 @@ public partial class SettingsWindow : Window
         MonitorBox.SelectedItem = vm.SelectedMonitor;
         ShowTimerWindow.IsChecked = vm.TimerWindowVisible;
         WebPort.Text = s.WebServerPort.ToString();
+
+        VoiceEnabled.IsChecked = s.VoiceStartEnabled;
+        var devices = new List<Option<string>> { new("", "Predefinito di Windows") };
+        devices.AddRange(AudioInput.Devices().Select(d => new Option<string>(d.Id, d.Name)));
+        VoiceDevice.ItemsSource = devices;
+        VoiceDevice.SelectedItem = devices.FirstOrDefault(d => d.Value == (s.VoiceInputDevice ?? "")) ?? devices[0];
+        VoiceThreshold.Value = s.VoiceThresholdDb;
+        VoicePause.Value = s.VoicePauseSeconds;
+        VoiceMin.Value = s.VoiceMinSeconds;
+        VoiceAutoArm.IsChecked = s.VoiceAutoArmNext;
+        _ready = true;
+        UpdateVoiceTexts();
+    }
+
+    // ───── scheda Voce: prova dell'ingresso ─────
+
+    void Tabs_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+        if (!_ready || e.OriginalSource != Tabs) return;
+        if (VoiceTab.IsSelected) StartTest(); else StopTest();
+    }
+
+    void VoiceDevice_Changed(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+        if (_ready && VoiceTab.IsSelected) StartTest();
+    }
+
+    void VoiceSlider_Changed(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (!_ready) return;
+        if (_test is not null) _test.ThresholdDb = VoiceThreshold.Value;
+        UpdateVoiceTexts();
+    }
+
+    void UpdateVoiceTexts()
+    {
+        VoiceThresholdText.Text = $"{VoiceThreshold.Value:0} dB";
+        VoicePauseText.Text = VoicePause.Value.ToString("0.0", It) + " s";
+        VoiceMinText.Text = VoiceMin.Value.ToString("0.0", It) + " s";
+        double t = MainViewModel.LevelOf(VoiceThreshold.Value);
+        ThresholdLeft.Width = new GridLength(t, GridUnitType.Star);
+        ThresholdRight.Width = new GridLength(1 - t, GridUnitType.Star);
+    }
+
+    void StartTest()
+    {
+        StopTest();
+        var id = (VoiceDevice.SelectedItem as Option<string>)?.Value;
+        _test = new AudioInput { ThresholdDb = VoiceThreshold.Value };
+        _test.Frame += f =>
+        {
+            if (f.LevelDb > _testPeak) _testPeak = f.LevelDb;
+            if (f.IsVoice) _testVoice = true;
+        };
+        try
+        {
+            _test.Start(string.IsNullOrEmpty(id) ? null : id);
+            VoiceTestStatus.Text = $"In ascolto: {_test.DeviceName}. Il segno giallo è la soglia.";
+            VoiceTestStatus.Foreground = (Brush)FindResource("MutedBrush");
+        }
+        catch (Exception ex)
+        {
+            _test.Dispose();
+            _test = null;
+            VoiceTestStatus.Text = "Ingresso non disponibile: " + ex.Message;
+            VoiceTestStatus.Foreground = (Brush)FindResource("RedBrush");
+            return;
+        }
+        _meterTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(60) };
+        _meterTimer.Tick += (_, _) =>
+        {
+            double level = MainViewModel.LevelOf(_testPeak);
+            var track = (FrameworkElement)VoiceMeter.Parent;
+            VoiceMeter.Width = Math.Max(0, track.ActualWidth * level);
+            VoiceLamp.Fill = _testVoice ? (Brush)FindResource("GreenBrush") : (Brush)FindResource("LineBrush");
+            VoiceLampText.Text = _testVoice ? "Voce" : "Silenzio";
+            _testPeak = -90;
+            _testVoice = false;
+        };
+        _meterTimer.Start();
+    }
+
+    void StopTest()
+    {
+        _meterTimer?.Stop();
+        _meterTimer = null;
+        _test?.Dispose();
+        _test = null;
+        VoiceMeter.Width = 0;
+    }
+
+    protected override void OnClosed(EventArgs e)
+    {
+        StopTest();
+        base.OnClosed(e);
     }
 
     bool TryApply()
@@ -157,6 +261,13 @@ public partial class SettingsWindow : Window
         s.WebServerEnabled = WebEnabled.IsChecked == true;
         s.WebServerPort = port;
         s.WebAddressMode = (AddressBox.SelectedItem as Option<string>)?.Value ?? "auto";
+        s.VoiceStartEnabled = VoiceEnabled.IsChecked == true;
+        var device = (VoiceDevice.SelectedItem as Option<string>)?.Value;
+        s.VoiceInputDevice = string.IsNullOrEmpty(device) ? null : device;
+        s.VoiceThresholdDb = VoiceThreshold.Value;
+        s.VoicePauseSeconds = VoicePause.Value;
+        s.VoiceMinSeconds = VoiceMin.Value;
+        s.VoiceAutoArmNext = VoiceAutoArm.IsChecked == true;
         _vm.ApplySettings(s);
         if (MonitorBox.SelectedItem is Interop.MonitorInfo monitor) _vm.SelectedMonitor = monitor;
         _vm.TimerWindowVisible = ShowTimerWindow.IsChecked == true;

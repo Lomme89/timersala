@@ -1,5 +1,18 @@
 # Novità
 
+## v1.10.0 — 3 ottobre 2026
+
+**Avvio con la voce (sperimentale, spento di default)**
+- Premi Avvia mentre il presidente presenta la parte: il pulsante diventa **In attesa**. Dopo una pausa, la prima voce fa partire il timer, contando dall'istante in cui la voce è iniziata.
+- Premi di nuovo Avvia per partire subito. **Esc** annulla l'attesa o, nei primi secondi, un avvio sbagliato (si torna in attesa).
+- Colpi, tosse e regolazioni del microfono vengono ignorati: conta solo il parlato abbastanza lungo e nelle frequenze della voce.
+- Nuova scheda **Impostazioni → Voce**:
+  - scelta dell'ingresso audio, per esempio lo stesso del mixer usato per Zoom;
+  - barra di prova con la soglia;
+  - durata della pausa e della voce regolabili.
+- Opzione per mettere in attesa la parte successiva subito dopo Ferma, quando non c'è un cantico in mezzo.
+- Dal telefono l'avvio resta immediato.
+
 ## v1.9.0 — 3 ottobre 2026
 
 **Pagina web sui tablet**

@@ -133,8 +133,17 @@ section { padding: clamp(70px, 9vw, 130px) 0; }
 .steps li::before { content: counter(s, decimal-leading-zero); font: 900 40px/.9 var(--sign); }
 .steps b { display: block; font-size: 19px; }
 .steps span { opacity: .92; }
-.phone-img { transform: rotate(-2deg); transition: transform .8s var(--ease); filter: drop-shadow(0 30px 40px rgba(0,0,0,.35)); }
-.phone-img:hover { transform: rotate(0); }
+.phones { display: flex; justify-content: center; align-items: flex-start; padding: 10px 0 30px; }
+.phones { gap: 5%; }
+.phone { margin: 0; width: min(270px, 46%); }
+.phone .dev { position: relative; padding: 9px; border-radius: 44px; background: #0b0b0c; transition: transform .8s var(--ease);
+  box-shadow: inset 0 0 0 2px #2c2c2c, 0 50px 70px -30px rgba(0,0,0,.55), 0 14px 28px rgba(0,0,0,.22); }
+.phone img { display: block; width: 100%; aspect-ratio: 390 / 844; border-radius: 35px; }
+.phone figcaption { margin-top: 22px; text-align: center; font: 700 12px/1.3 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: #fff; }
+.phone.p1 { margin-top: 48px; }
+.phone.p1 .dev { transform: rotate(-3deg); }
+.phone.p2 .dev { transform: rotate(3deg); }
+.phones:hover .dev { transform: none; }
 
 /* ── tre passi ── */
 .how { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: clamp(40px, 6vw, 70px); border-top: 2px solid var(--ink); }
@@ -376,7 +385,10 @@ footer a { color: var(--paper); }
         <li><div><b>Guarda, o comanda</b><span>Il codice di controllo, protetto da PIN, aggiunge avvio, parti e messaggi.</span></div></li>
       </ol>
     </div>
-    <div class="reveal" style="--d:.1s"><img class="phone-img" src="images/telefono.png" alt="Controllo del timer dal telefono: comandi, programma e messaggi" loading="lazy"></div>
+    <div class="phones reveal" style="--d:.1s">
+      <figure class="phone p1"><div class="dev"><img src="images/telefono-controllo.png" alt="Dal telefono: timer, comandi e programma della serata" loading="lazy"></div><figcaption>Comandi e programma</figcaption></figure>
+      <figure class="phone p2"><div class="dev"><img src="images/telefono-messaggi.png" alt="Dal telefono: messaggi all'oratore, anche a tutto schermo" loading="lazy"></div><figcaption>Messaggi all'oratore</figcaption></figure>
+    </div>
   </div>
 </section>
 

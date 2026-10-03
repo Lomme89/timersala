@@ -143,7 +143,7 @@ Avvia di nuovo = parti subito. **Esc** annulla l'attesa o, nei primi secondi, un
 ## 📱 Controllo dal telefono
 
 <p align="center">
-  <img src="docs/images/telefono.png" alt="Pagina web di controllo sul telefono: comandi, programma e messaggi" width="85%">
+  <img src="docs/images/telefono-v2.png" alt="Pagina web di controllo sul telefono: comandi, programma e messaggi" width="70%">
 </p>
 
 <p align="center"><sub>Nel controller premi <b>Collega telefono</b> e inquadra il codice QR. Il telefono deve essere sulla stessa rete Wi‑Fi del PC.<br>

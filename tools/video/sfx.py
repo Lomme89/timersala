@@ -111,7 +111,7 @@ def speech(text, who):
     wet = signal.fftconvolve(x, IR_SMALL)[:len(x) + SR // 4]
     y = np.pad(x, (0, len(wet) - len(x))) * 0.85 + wet * 0.25
     fade = int(0.03 * SR); y[:fade] *= np.linspace(0, 1, fade); y[-fade:] *= np.linspace(1, 0, fade)
-    return y * 0.22, len(x) / SR
+    return y * 0.155, len(x) / SR   # voci sotto gli effetti, appena percepibili
 
 # ── suoni d'interfaccia: attacco morbido, frequenze medie, niente transitori secchi ──
 def soft(freq, decay=0.03, gain=0.5, attack=0.004, body=0.0):

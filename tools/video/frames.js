@@ -6,10 +6,10 @@ const { chromium } = require('playwright');
   p.on('pageerror', e => console.log('ERR', e.message));
   await p.goto('file://' + __dirname + '/' + page + '?t=0', { waitUntil: 'networkidle' });
   await p.evaluate(() => document.fonts.ready);
-  const list = times ? times.split(',').map(Number) : Array.from({ length: Math.round(await p.evaluate(() => window.DUR) * fps) }, (_, i) => i / fps);
+  const list = times ? times.split(',').map(Number) : Array.from({ length: Math.round(await p.evaluate(() => window.DUR) * fps) }, (_, i) => i / fps).slice(+(process.env.FROM || 0), process.env.TO ? +process.env.TO : undefined);
   for (let i = 0; i < list.length; i++) {
     await p.evaluate(t => window.render(t), list[i]);
-    await p.screenshot({ path: `${dir}/${times ? 't' + list[i] : 'f' + String(i).padStart(4, '0')}.png` });
+    await p.screenshot({ path: `${dir}/${times ? 't' + list[i] : 'f' + String(i + +(process.env.FROM || 0)).padStart(4, '0')}.png` });
   }
   await b.close();
 })();

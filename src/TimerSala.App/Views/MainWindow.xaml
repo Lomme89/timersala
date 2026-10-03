@@ -297,13 +297,16 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <ComboBox x:Name="MessageInput" IsEditable="True" ItemsSource="{Binding MessagePresets}"
                                   Text="{Binding MessageText, UpdateSourceTrigger=PropertyChanged}" KeyDown="MessageInput_KeyDown"
-                                  ToolTip="Scegli una frase o scrivila e premi Invio" />
+                                  ToolTip="Scegli una frase o scrivila e premi Invio (Ctrl+Invio: a tutto schermo)" />
                         <Button Grid.Column="1" Style="{StaticResource IconButton}" Content="&#xE724;" Margin="6,0,0,0"
                                 Command="{Binding SendMessageCommand}" ToolTip="Mostra il messaggio sullo schermo" />
-                        <Button Grid.Column="2" Style="{StaticResource IconButton}" Content="&#xE711;" Margin="6,0,0,0"
+                        <Button Grid.Column="2" Style="{StaticResource IconButton}" Content="&#xE740;" Margin="6,0,0,0"
+                                Command="{Binding SendMessageFullCommand}" ToolTip="A tutto schermo per qualche secondo, poi nella fascia (Ctrl+Invio)" />
+                        <Button Grid.Column="3" Style="{StaticResource IconButton}" Content="&#xE711;" Margin="6,0,0,0"
                                 Command="{Binding ClearMessageCommand}" ToolTip="Togli il messaggio" />
                     </Grid>
                     <TextBlock Text="{Binding MessageInfo}" Foreground="{StaticResource AmberBrush}" FontSize="12" Margin="2,6,0,0"

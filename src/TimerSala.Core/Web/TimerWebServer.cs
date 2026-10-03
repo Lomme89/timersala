@@ -50,9 +50,9 @@ public sealed record RemoteConfig(bool Enabled, string Pin, IReadOnlyList<string
 public static class RemoteActions
 {
     public const string Toggle = "toggle", Next = "next", Previous = "previous", AddMinute = "plus", RemoveMinute = "minus",
-        Select = "select", Message = "message", ClearMessage = "clearMessage";
+        Select = "select", Message = "message", MessageFull = "messageFull", ClearMessage = "clearMessage";
 
-    public static readonly IReadOnlySet<string> All = new HashSet<string> { Toggle, Next, Previous, AddMinute, RemoveMinute, Select, Message, ClearMessage };
+    public static readonly IReadOnlySet<string> All = new HashSet<string> { Toggle, Next, Previous, AddMinute, RemoveMinute, Select, Message, MessageFull, ClearMessage };
 }
 
 /// <summary>
@@ -152,7 +152,7 @@ public sealed class TimerWebServer : IAsyncDisposable
         if (req.Action == "check") return Results.Json(new { ok = true }, Json);
         if (req.Action is null || !RemoteActions.All.Contains(req.Action))
             return Results.Json(new { error = "Comando sconosciuto." }, Json, statusCode: 400);
-        if (!r.MessagesEnabled && req.Action is RemoteActions.Message or RemoteActions.ClearMessage)
+        if (!r.MessagesEnabled && req.Action is RemoteActions.Message or RemoteActions.MessageFull or RemoteActions.ClearMessage)
             return Results.Json(new { error = "I messaggi all'oratore sono disattivati sul PC." }, Json, statusCode: 400);
 
         await _onCommand(req.Action, req.Value);
@@ -221,6 +221,7 @@ public sealed class TimerWebServer : IAsyncDisposable
             showNext = o.ShowNextPartWhenIdle,
             showDelay = o.ShowDelay,
             message = _messages.Current,
+            messageFull = _messages.IsFullScreen,
             style = new
             {
                 theme = o.Theme,

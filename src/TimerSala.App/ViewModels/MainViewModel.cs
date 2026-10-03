@@ -730,12 +730,18 @@ public sealed partial class MainViewModel : ObservableObject
     public bool MessagesEnabled => Settings.MessagesEnabled;
 
     public ICommand SendMessageCommand => field ??= new RelayCommand(p => ShowMessage(p as string ?? MessageText));
+    public ICommand SendMessageFullCommand => field ??= new RelayCommand(p => ShowMessage(p as string ?? MessageText, fullScreen: true));
+    public bool ScreenMessageFull { get; set => Set(ref field, value); }
+    /// <summary>Fascia gialla in basso: c'è un messaggio e non è a tutto schermo.</summary>
+    public bool ShowMessageBand { get; set => Set(ref field, value); }
     public ICommand ClearMessageCommand => field ??= new RelayCommand(() => Messages.Clear());
 
-    public void ShowMessage(string? text)
+    /// <summary>Mostra un messaggio; <paramref name="fullScreen"/> = prima a tutto schermo, poi nella fascia.</summary>
+    public void ShowMessage(string? text, bool fullScreen = false)
     {
         if (string.IsNullOrWhiteSpace(text) || !Settings.MessagesEnabled) return;
-        Messages.Show(text, Settings.MessageSeconds > 0 ? TimeSpan.FromSeconds(Settings.MessageSeconds) : null);
+        Messages.Show(text, Settings.MessageSeconds > 0 ? TimeSpan.FromSeconds(Settings.MessageSeconds) : null,
+            fullScreen ? TimeSpan.FromSeconds(Math.Max(2, Settings.MessageFullScreenSeconds)) : null);
         MessageText = "";
     }
 
@@ -744,6 +750,8 @@ public sealed partial class MainViewModel : ObservableObject
         var current = Messages.Current;
         ScreenMessage = current;
         HasMessage = current is not null;
+        ScreenMessageFull = current is not null && Messages.IsFullScreen;
+        ShowMessageBand = current is not null && !ScreenMessageFull;
         MessageInfo = current is null ? ""
             : Messages.SecondsLeft is { } left ? $"Sullo schermo: «{current}» ({Math.Ceiling(left):0} s)"
             : $"Sullo schermo: «{current}»";
@@ -762,6 +770,7 @@ public sealed partial class MainViewModel : ObservableObject
             case RemoteActions.RemoveMinute: Adjust(-60); break;
             case RemoteActions.Select when int.TryParse(value, out var i): Timer.Select(i); break;
             case RemoteActions.Message: ShowMessage(value); break;
+            case RemoteActions.MessageFull: ShowMessage(value, fullScreen: true); break;
             case RemoteActions.ClearMessage: Messages.Clear(); break;
         }
         RefreshDisplay();

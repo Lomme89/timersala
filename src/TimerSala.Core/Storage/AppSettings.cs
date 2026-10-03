@@ -76,6 +76,9 @@ public sealed class AppSettings
     /// <summary>Per quanti secondi resta il messaggio (0 = finché non viene tolto).</summary>
     public int MessageSeconds { get; set; } = 15;
 
+    /// <summary>Secondi a tutto schermo per i messaggi inviati «a tutto schermo», poi passano nella fascia.</summary>
+    public int MessageFullScreenSeconds { get; set; } = 6;
+
     // ── Controllo remoto dalla pagina web ──
     public bool RemoteControlEnabled { get; set; } = true;
     public string RemotePin { get; set; } = Random.Shared.Next(1000, 10000).ToString();

@@ -194,6 +194,11 @@
                             <TextBox x:Name="MessageSeconds" Width="80" />
                         </StackPanel>
                         <TextBlock Style="{StaticResource Hint}" Text="0 = il messaggio resta finché non lo togli. Puoi sempre scrivere un messaggio diverso nel controller." />
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                            <TextBlock Text="A tutto schermo per (secondi)" Style="{StaticResource Label}" Width="210" />
+                            <TextBox x:Name="MessageFullSeconds" Width="80" />
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource Hint}" Text="Con il pulsante a tutto schermo (o Ctrl+Invio) il messaggio occupa lo schermo per questi secondi, con il tempo piccolo in un angolo, poi passa nella fascia. Utile per un numero di cantico o il nome di chi ha alzato la mano." />
                     </StackPanel>
                     <TextBox x:Name="Presets" AcceptsReturn="True" TextWrapping="Wrap" VerticalContentAlignment="Top"
                              VerticalScrollBarVisibility="Auto" MinHeight="140" />

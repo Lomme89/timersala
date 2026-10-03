@@ -51,7 +51,17 @@ public partial class TimerWindow : Window
                 // passaggio morbido tra orologio e timer
                 DigitsBox.BeginAnimation(OpacityProperty, new DoubleAnimation(0.15, 1, new Duration(TimeSpan.FromMilliseconds(350))) { EasingFunction = Ease });
                 break;
-            case nameof(MainViewModel.HasMessage) when _vm.HasMessage:
+            case nameof(MainViewModel.ScreenMessageFull) when _vm.ScreenMessageFull:
+            {
+                // entra con un piccolo «colpo»: si allarga appena e si assesta
+                var f = new Duration(TimeSpan.FromMilliseconds(380));
+                var pop = new DoubleAnimation(1.06, 1, f) { EasingFunction = new BackEase { EasingMode = EasingMode.EaseOut, Amplitude = 0.5 } };
+                MsgFullScale.BeginAnimation(ScaleTransform.ScaleXProperty, pop);
+                MsgFullScale.BeginAnimation(ScaleTransform.ScaleYProperty, pop);
+                MsgFull.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(200))));
+                break;
+            }
+            case nameof(MainViewModel.ShowMessageBand) when _vm.ShowMessageBand:
                 // il messaggio entra scorrendo dal basso
                 var d = new Duration(TimeSpan.FromMilliseconds(320));
                 MsgShift.BeginAnimation(TranslateTransform.YProperty, new DoubleAnimation(ActualHeight * 0.15, 0, d) { EasingFunction = new BackEase { EasingMode = EasingMode.EaseOut, Amplitude = 0.4 } });

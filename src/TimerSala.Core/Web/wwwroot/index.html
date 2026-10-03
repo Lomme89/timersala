@@ -101,6 +101,20 @@
   .cd-words .cd-s { font: 300 min(15vh, 8.6vw) var(--ui); color: #d9d3c8; }
   .cd-words .cd-d { font-size: min(32vh, 14vw); }
 
+  /* ── messaggio a tutto schermo ── */
+  #msgFull { position: absolute; inset: 0; z-index: 3; display: none; background: #fbbf24; color: #111; }
+  body.msg-full #msgFull { display: flex; animation: fullIn .38s cubic-bezier(.2,1.3,.4,1); }
+  @keyframes fullIn { from { opacity: 0; transform: scale(1.06); } }
+  #msgFullText { flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; padding: 5vh 5vw 14vh;
+                 font: 700 20vh/1.05 var(--ui); overflow-wrap: anywhere; }
+  #msgFullClock { position: absolute; right: 3vw; bottom: 2.5vh; font-size: 9vh; font-weight: 700; font-variant-numeric: tabular-nums; opacity: .7; }
+  body.msg-full:not(.panel) #msg { display: none !important; }
+  body.panel.msg-full #msgFull { display: none; }   /* col pannello aperto il timer è una striscia: basta la fascia */
+  .fullToggle { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 10px; padding: 8px 12px; border-radius: 99px; border: 1px solid var(--line);
+                background: var(--bg); color: var(--fg); font: 600 14px var(--ui); cursor: pointer; }
+  .fullToggle svg { width: 18px; height: 18px; }
+  .fullToggle[aria-pressed="true"] { background: #fbbf24; border-color: #fbbf24; color: #111; }
+
   /* ── barra strumenti ── */
   .toolbar { position: fixed; right: 12px; top: 12px; z-index: 5; display: flex; gap: 6px; opacity: .35; transition: opacity .3s; }
   .toolbar:hover, .toolbar:focus-within, body.panel .toolbar { opacity: 1; }
@@ -234,6 +248,7 @@
     <div class="bar"><div id="fill"></div></div>
     <div id="msg"></div>
     <div class="bottom"><span id="next"></span><span id="delay"></span></div>
+    <div id="msgFull" aria-live="polite"><div id="msgFullText"><span id="msgFullInner"></span></div><div id="msgFullClock"></div></div>
     <div id="cd" aria-hidden="true">
       <div class="cd-ring">
         <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="47" stroke="#1c3a55" stroke-width="2.4"/><circle id="cdArc" cx="50" cy="50" r="47" stroke="#7fb3d5" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="295.3" stroke-dashoffset="0"/></svg>
@@ -276,6 +291,7 @@
     <section class="card" id="msgCard">
       <h2><svg><use href="#i-msg"/></svg>Messaggio all'oratore</h2>
       <div id="onAir"><span class="txt" id="onAirText"></span><button type="button" id="cClear"><svg><use href="#i-x"/></svg>Togli</button></div>
+      <button type="button" class="fullToggle" id="cFull" aria-pressed="false"><svg><use href="#i-full"/></svg>A tutto schermo</button>
       <div class="chips" id="cPresets"></div>
       <div class="compose">
         <input id="cText" type="text" maxlength="120" placeholder="Scrivi un messaggio…" enterkeyhint="send" autocomplete="off">
@@ -383,9 +399,29 @@
     [...$('cdBlk').children].forEach((el, i) => el.firstChild.style.width = Math.max(0, Math.min(1, left * n - i)) * 100 + '%');
   }
 
+  // il testo a tutto schermo si rimpicciolisce finché non entra
+  let lastFull = '';
+  function fitFull() {
+    const box = $('msgFullText'), inner = $('msgFullInner'), cs = getComputedStyle(box);
+    const h = box.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    const w = box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    let size = 20;
+    box.style.fontSize = size + 'vh';
+    while (size > 3 && (inner.offsetHeight > h || inner.offsetWidth > w)) { size -= .5; box.style.fontSize = size + 'vh'; }
+  }
+  function renderFull(s) {
+    const on = !!(s.messageFull && s.message);
+    B.toggle('msg-full', on);
+    if (!on) { lastFull = ''; return; }
+    $('msgFullClock').textContent = s.phase === 'idle' ? s.clock : s.display;
+    if (s.message !== lastFull) { lastFull = s.message; $('msgFullInner').textContent = s.message; requestAnimationFrame(fitFull); }
+  }
+  addEventListener('resize', () => { if (lastFull) fitFull(); });
+
   function render(s) {
     applyStyle(s.style);
     renderCountdown(s);
+    renderFull(s);
     B.toggle('overtime', s.phase === 'overtime');
     B.toggle('idle', s.phase === 'idle');
     const hg = $('hg');
@@ -530,7 +566,11 @@
   $('cPlus').onclick = () => send('plus');
   $('cMinus').onclick = () => send('minus');
   $('cClear').onclick = () => send('clearMessage');
-  $('cSend').onclick = () => { const v = $('cText').value.trim(); if (v) send('message', v).then(ok => { if (ok) $('cText').value = ''; }); };
+  // «A tutto schermo»: i messaggi inviati occupano lo schermo per qualche secondo, poi passano nella fascia
+  let full = false;
+  $('cFull').onclick = () => { full = !full; $('cFull').setAttribute('aria-pressed', String(full)); };
+  const msgAction = () => full ? 'messageFull' : 'message';
+  $('cSend').onclick = () => { const v = $('cText').value.trim(); if (v) send(msgAction(), v).then(ok => { if (ok) $('cText').value = ''; }); };
   $('cText').onkeydown = e => { if (e.key === 'Enter') $('cSend').onclick(); };
   $('list').onclick = e => {
     const row = e.target.closest('.part:not(.song)');
@@ -544,7 +584,7 @@
     $('cPresets').innerHTML = '';
     for (const p of c.presets) {
       const b = document.createElement('button');
-      b.type = 'button'; b.textContent = p; b.onclick = () => send('message', p);
+      b.type = 'button'; b.textContent = p; b.onclick = () => send(msgAction(), p);
       $('cPresets').appendChild(b);
     }
     if (params.has('controllo') || params.get('pin')) openControl();

@@ -37,6 +37,7 @@ public class RemoteControlTests
                     Received.Add((a, v));
                     if (a == RemoteActions.Toggle) Timer.Toggle();
                     if (a == RemoteActions.Message) Messages.Show(v!, null);
+                    if (a == RemoteActions.MessageFull) Messages.Show(v!, null, TimeSpan.FromSeconds(6));
                     return Task.CompletedTask;
                 });
             int port = FreePort();
@@ -124,6 +125,36 @@ public class RemoteControlTests
         Assert.Equal("Fisso", board.Current);
         board.Clear();
         Assert.Null(board.Current);
+    }
+
+    [Fact]
+    public void Full_screen_message_goes_back_to_the_band()
+    {
+        var clock = new FakeClock(DateTimeOffset.UnixEpoch);
+        var board = new MessageBoard(clock);
+        board.Show("Cantico 151", TimeSpan.FromSeconds(8), TimeSpan.FromSeconds(6));
+        Assert.True(board.IsFullScreen);
+        clock.Advance(TimeSpan.FromSeconds(6));
+        Assert.False(board.IsFullScreen);
+        Assert.Equal("Cantico 151", board.Current);          // resta nella fascia almeno 5 s dopo il tutto schermo
+        clock.Advance(TimeSpan.FromSeconds(4));
+        Assert.Equal("Cantico 151", board.Current);
+        clock.Advance(TimeSpan.FromSeconds(1));
+        Assert.Null(board.Current);
+
+        board.Show("Fratello Rossi", null, TimeSpan.FromSeconds(6));
+        board.Show("Concludi", null);                         // un messaggio normale toglie il tutto schermo
+        Assert.False(board.IsFullScreen);
+    }
+
+    [Fact]
+    public async Task Full_screen_message_from_the_phone_appears_in_state()
+    {
+        await using var f = new Fixture();
+        Assert.Equal(HttpStatusCode.OK, (await f.Send("1234", RemoteActions.MessageFull, "Cantico 151")).StatusCode);
+        using var state = JsonDocument.Parse(await f.Http.GetStringAsync("/api/state"));
+        Assert.Equal("Cantico 151", state.RootElement.GetProperty("message").GetString());
+        Assert.True(state.RootElement.GetProperty("messageFull").GetBoolean());
     }
 
     [Fact]

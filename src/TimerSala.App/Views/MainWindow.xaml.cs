@@ -166,7 +166,8 @@ public partial class MainWindow : Window
     void MessageInput_KeyDown(object sender, KeyEventArgs e)
     {
         if (e.Key != Key.Enter) return;
-        _vm.SendMessageCommand.Execute(null);
+        // Ctrl+Invio: a tutto schermo
+        (Keyboard.Modifiers.HasFlag(ModifierKeys.Control) ? _vm.SendMessageFullCommand : _vm.SendMessageCommand).Execute(null);
         e.Handled = true;
     }
 

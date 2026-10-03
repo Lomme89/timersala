@@ -102,6 +102,7 @@ public partial class SettingsWindow : Window
         MessagesEnabled.IsChecked = s.MessagesEnabled;
         Presets.Text = string.Join(Environment.NewLine, s.MessagePresets);
         MessageSeconds.Text = s.MessageSeconds.ToString();
+        MessageFullSeconds.Text = s.MessageFullScreenSeconds.ToString();
         RemoteEnabled.IsChecked = s.RemoteControlEnabled;
         RemotePin.Text = s.RemotePin;
         WebEnabled.IsChecked = s.WebServerEnabled;
@@ -231,6 +232,8 @@ public partial class SettingsWindow : Window
 
         if (!int.TryParse(MessageSeconds.Text, out var msgSeconds) || msgSeconds < 0 || msgSeconds > 600)
             return Error("Messaggi: inserisci la durata in secondi (tra 0 e 600).");
+        if (!int.TryParse(MessageFullSeconds.Text, out var fullSeconds) || fullSeconds < 2 || fullSeconds > 60)
+            return Error("Messaggi a tutto schermo: inserisci i secondi (tra 2 e 60).");
         var pin = RemotePin.Text.Trim();
         if (RemoteEnabled.IsChecked == true && (pin.Length < 4 || pin.Length > 12 || !pin.All(char.IsDigit)))
             return Error("PIN: usa da 4 a 12 cifre.");
@@ -268,6 +271,7 @@ public partial class SettingsWindow : Window
 
         s.MessagePresets = Presets.Text.Split('\n').Select(l => l.Trim()).Where(l => l.Length > 0).Take(20).ToList();
         s.MessageSeconds = msgSeconds;
+        s.MessageFullScreenSeconds = fullSeconds;
         s.MessagesEnabled = MessagesEnabled.IsChecked == true;
         s.RemoteControlEnabled = RemoteEnabled.IsChecked == true;
         if (pin.Length >= 4) s.RemotePin = pin;

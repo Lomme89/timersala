@@ -50,7 +50,7 @@ public partial class MiniWindow : Window
     void Message_KeyDown(object sender, KeyEventArgs e)
     {
         if (e.Key != Key.Enter) return;
-        _vm.SendMessageCommand.Execute(null);
+        (Keyboard.Modifiers.HasFlag(ModifierKeys.Control) ? _vm.SendMessageFullCommand : _vm.SendMessageCommand).Execute(null);
         e.Handled = true;
     }
 

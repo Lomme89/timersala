@@ -56,7 +56,7 @@ Il timer in tempo reale su qualsiasi dispositivo della rete. Con un codice QR e 
 <td valign="top">
 
 **💬 Messaggi all'oratore**<br>
-"Concludi", "Più forte"… in una fascia gialla ben visibile. Frasi pronte personalizzabili, oppure testo libero.
+"Concludi", "Più forte"… in una fascia gialla ben visibile, oppure **a tutto schermo** per qualche secondo: utile anche per un numero di cantico o il nome di chi ha alzato la mano su Zoom.
 
 </td>
 <td valign="top">

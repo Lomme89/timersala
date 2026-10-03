@@ -227,9 +227,29 @@
             </Grid>
         </Grid>
 
+        <!-- Messaggio a tutto schermo: testo grande quanto possibile, il tempo piccolo in un angolo -->
+        <Grid x:Name="MsgFull" Background="#FBBF24" RenderTransformOrigin="0.5,0.5"
+              Visibility="{Binding ScreenMessageFull, Converter={StaticResource BoolToVis}}">
+            <Grid.RenderTransform>
+                <ScaleTransform x:Name="MsgFullScale" />
+            </Grid.RenderTransform>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="84*" />
+                <RowDefinition Height="16*" />
+            </Grid.RowDefinitions>
+            <Viewbox Margin="60,50,60,0">
+                <TextBlock Text="{Binding ScreenMessage}" Foreground="#111111" FontWeight="Bold" FontSize="160" MaxWidth="1100"
+                           TextAlignment="Center" TextWrapping="Wrap" LineHeight="170" LineStackingStrategy="BlockLineHeight" />
+            </Viewbox>
+            <Viewbox Grid.Row="1" HorizontalAlignment="Right" Margin="0,0,40,24">
+                <TextBlock Text="{Binding ScreenDigits}" FontFamily="{Binding ScreenFont}" Foreground="#111111" Opacity="0.7"
+                           Typography.NumeralAlignment="Tabular" />
+            </Viewbox>
+        </Grid>
+
         <!-- Messaggio per l'oratore -->
         <Border x:Name="MsgBanner" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Background="#FBBF24" CornerRadius="16"
-                Visibility="{Binding HasMessage, Converter={StaticResource BoolToVis}}">
+                Visibility="{Binding ShowMessageBand, Converter={StaticResource BoolToVis}}">
             <Border.RenderTransform>
                 <TranslateTransform x:Name="MsgShift" />
             </Border.RenderTransform>

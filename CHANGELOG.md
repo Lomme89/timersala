@@ -1,5 +1,14 @@
 # Novità
 
+## v1.12.0 — 4 ottobre 2026
+
+**Messaggi a tutto schermo**
+- Un nuovo pulsante accanto a «Mostra», oppure **Ctrl+Invio**, manda il messaggio a tutto schermo:
+  - testo giallo grande quanto possibile, con il tempo piccolo in un angolo;
+  - dopo qualche secondo (6, regolabili in *Impostazioni → Messaggi*) passa nella solita fascia.
+- È utile per richiamare l'oratore, ma anche per mandargli a distanza il numero di un cantico o il nome di chi ha alzato la mano da casa.
+- Dal telefono c'è l'interruttore **A tutto schermo** nel pannello dei messaggi. Vale anche per le frasi pronte.
+
 ## v1.11.0 — 3 ottobre 2026
 
 **Countdown d'inizio, sette stili a scelta** (*Impostazioni → Schermo*):

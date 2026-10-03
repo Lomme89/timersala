@@ -96,6 +96,34 @@ Tema scuro o chiaro, carattere, layout classico, clessidra o solo cifre. Puoi na
 </p>
 </details>
 
+## 🎙️ Avvio con la voce <sup><sub>SPERIMENTALE</sub></sup>
+
+Il timer parte da solo quando l'oratore inizia a parlare. All'acustica basta premere Avvia mentre il presidente presenta la parte.
+
+<p align="center">
+  <img src="docs/images/avvio-voce.png" alt="Avvio con la voce: pronto, in attesa di una pausa, in ascolto, partito con la voce" width="100%">
+</p>
+
+1. **Premi Avvia** mentre il presidente parla: il pulsante diventa arancione, **In attesa**. Quello che si sente subito dopo conta come voce del presidente.
+2. Il programma aspetta una **pausa** (di default 2 s), misurata da quando hai premuto.
+3. Alla **prima voce dopo la pausa** il timer parte, contando dall'istante in cui la voce è iniziata.
+
+Avvia di nuovo = parti subito. **Esc** annulla l'attesa o, nei primi secondi, un avvio sbagliato. Colpi, tosse e regolazioni del microfono vengono ignorati.
+
+<details>
+<summary><b>⚙️ Come attivarlo e regolarlo</b></summary>
+<br>
+<p align="center">
+  <img src="docs/images/impostazioni-voce.png" alt="Impostazioni, scheda Voce: ingresso audio, barra di prova, soglia, pausa e durata minima della voce" width="70%">
+</p>
+
+- In *Impostazioni → Voce* scegli l'ingresso che riceve l'audio del mixer, di solito lo stesso usato per Zoom.
+- **Soglia:** con la sala in silenzio la barra deve restare sotto il segno giallo, quando si parla deve superarlo.
+- **Pausa:** deve essere più lunga delle pause tra una frase e l'altra del presidente.
+- Dal telefono l'avvio resta immediato.
+
+</details>
+
 ## 🖼️ Lo schermo del timer
 
 <p align="center">
@@ -140,10 +168,6 @@ Tema scuro o chiaro, carattere, layout classico, clessidra o solo cifre. Puoi na
 <summary><b>📖 Come funziona, in breve</b></summary>
 <br>
 
-- **Avvio con la voce** (sperimentale, *Impostazioni → Voce*):
-  - con Avvia la parte va in attesa e parte da sola quando, dopo una pausa, l'oratore inizia a parlare;
-  - serve un ingresso audio collegato al mixer;
-  - Esc annulla.
 - **Ripristino:** se il PC o il programma si chiudono durante l'adunanza, alla riapertura TimerSala propone di riprendere dalla parte in corso, contando o no il tempo trascorso.
 - **Studio adattivo** (opzionale, *Impostazioni → Adunanze*): se si è in ritardo, lo studio biblico o la Torre di Guardia si accorciano per finire in orario; non si allungano mai.
 - **Tempi:** quando fermi una parte il tempo effettivo viene registrato (verde se in orario, rosso se sforato) e si passa alla successiva. In alto vedi il ritardo o l'anticipo accumulato.

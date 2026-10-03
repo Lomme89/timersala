@@ -247,7 +247,7 @@
                                     IsSnapToTickEnabled="True" TickFrequency="0.1" ValueChanged="VoiceSlider_Changed" />
                             <TextBlock x:Name="VoiceMinText" Grid.Row="2" Grid.Column="2" Margin="0,12,0,0" HorizontalAlignment="Right" VerticalAlignment="Center" />
                         </Grid>
-                        <TextBlock Style="{StaticResource Hint}" Text="Soglia: con la sala in silenzio la barra deve restare sotto il segno giallo, quando si parla deve superarlo. Pausa: il silenzio che separa la presentazione dall'inizio della parte; deve essere più lungo delle pause tra una frase e l'altra del presidente. Voce per almeno: colpi, tosse e regolazioni del microfono più brevi di così vengono ignorati." />
+                        <TextBlock Style="{StaticResource Hint}" Text="Soglia: con la sala in silenzio la barra deve restare sotto il segno giallo, quando si parla deve superarlo. Pausa: il silenzio che separa la presentazione dall'inizio della parte, misurato da quando premi Avvia; deve essere più lungo delle pause tra una frase e l'altra del presidente. Voce per almeno: colpi, tosse e regolazioni del microfono più brevi di così vengono ignorati." />
 
                         <CheckBox x:Name="VoiceAutoArm" Content="Dopo Ferma, metti in attesa la parte successiva" Margin="0,14,0,0" />
                         <TextBlock Style="{StaticResource Hint}" Text="Non vale se in mezzo c'è un cantico: dopo il cantico di solito parla prima il presidente." />

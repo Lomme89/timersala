@@ -113,12 +113,23 @@ public class VoiceStartTests
     }
 
     [Fact]
-    public void Arming_during_a_pause_counts_the_silence_already_elapsed()
+    public void Arming_late_in_a_full_pause_listens_at_once()
     {
-        // si preme quando la pausa è già iniziata da 2,5 s: l'oratore parte dopo 1 s
+        // si preme quando la pausa dura già 2,5 s: l'oratore parte dopo 1 s
         var at = new Scene().Speech(2).Silence(3.5).Speech(2).Run(armAt: 4.5);
         Assert.NotNull(at);
         Assert.InRange(at!.Value, 5.5 - 0.06, 5.5 + 0.06);
+    }
+
+    [Fact]
+    public void Arming_in_a_brief_silence_of_the_chairman_measures_the_pause_from_the_press()
+    {
+        // il presidente tace 0,5 s, si preme, tace altri 1,7 s (2,2 s in tutto) e riprende a parlare:
+        // dal momento della pressione sono solo 1,7 s, meno della pausa di 2 s
+        var scene = new Scene().Speech(2).Silence(2.2).Speech(2).Silence(3).Speech(2);
+        var at = scene.Run(armAt: 2.5);
+        Assert.NotNull(at);
+        Assert.InRange(at!.Value, 9.2 - 0.06, 9.2 + 0.06); // parte l'oratore, non il presidente
     }
 
     [Fact]

@@ -1,5 +1,9 @@
 # Novità
 
+## v1.10.1 — 3 ottobre 2026
+
+- Avvio con la voce: la pausa si misura sempre da quando premi Avvia. Se premi durante un breve silenzio del presidente, quel silenzio non conta più come parte della pausa. Se premi tardi, quando la pausa è già lunga quanto quella impostata, il timer si mette subito in ascolto.
+
 ## v1.10.0 — 3 ottobre 2026
 
 **Avvio con la voce (sperimentale, spento di default)**

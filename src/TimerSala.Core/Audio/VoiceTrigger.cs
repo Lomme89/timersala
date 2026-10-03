@@ -35,13 +35,25 @@ public sealed class VoiceTrigger
     /// <summary>Durata del silenzio in corso.</summary>
     public TimeSpan Silence { get { lock (_lock) return _silence; } }
 
-    /// <summary>Mette in attesa. Conta anche il silenzio già trascorso prima di premere.</summary>
+    /// <summary>
+    /// Mette in attesa. Il momento in cui si preme vale come parlato: la pausa si misura da qui,
+    /// così un attimo di silenzio del presidente non viene scambiato per l'inizio della pausa.
+    /// Fa eccezione un silenzio già lungo quanto la pausa (si è premuto tardi): allora si ascolta subito.
+    /// </summary>
     public void Arm()
     {
         lock (_lock)
         {
             ResetCandidate();
-            State = _silence >= Pause ? VoiceTriggerState.Listening : VoiceTriggerState.WaitingForPause;
+            if (_silence >= Pause)
+            {
+                State = VoiceTriggerState.Listening;
+            }
+            else
+            {
+                _silence = TimeSpan.Zero;
+                State = VoiceTriggerState.WaitingForPause;
+            }
         }
     }
 

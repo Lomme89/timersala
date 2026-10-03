@@ -62,6 +62,11 @@ Pulsante «?» con una guida rapida: funzioni principali e scorciatoie, con le i
 ### Sito: versione e novità
 Numero dell'ultima versione accanto al pulsante Scarica e pagina «Novità» generata da CHANGELOG.md.
 
+### Avviso di sforamento nell'editor
+Se le durate dello schema superano la durata dell'adunanza impostata, l'editor lo dice chiaramente e di quanto:
+«Lo schema dura 108 minuti: 3 minuti oltre, finirà alle 20:48». Aggiornato mentre si modificano le parti; anche un piccolo segno
+nel controller sulla settimana interessata.
+
 ## Scartate (e perché)
 - Ritmo dello studio a paragrafi: il conduttore può dedicare più tempo ai paragrafi più utili alla congregazione.
 - Allarme «microfono chiuso»: c'è già un fratello dedicato all'audio e il riscontro è evidente.

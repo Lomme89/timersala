@@ -47,4 +47,33 @@ public class WebServerTests
         var line = await reader.ReadLineAsync(cts.Token);
         Assert.StartsWith("data: {", line);
     }
+
+    [Fact]
+    public async Task Serves_manifest_icons_and_wake_video()
+    {
+        await using var server = new TimerWebServer(new MeetingTimer(), () => new DisplayOptions(true, true, false));
+        int port = FreePort();
+        await server.StartAsync(port, localOnly: true);
+        using var http = new HttpClient { BaseAddress = new Uri($"http://127.0.0.1:{port}") };
+
+        using var manifest = JsonDocument.Parse(await http.GetStringAsync("/manifest.webmanifest"));
+        foreach (var icon in manifest.RootElement.GetProperty("icons").EnumerateArray())
+        {
+            using var r = await http.GetAsync(icon.GetProperty("src").GetString());
+            Assert.Equal("image/png", r.Content.Headers.ContentType?.MediaType);
+        }
+
+        foreach (var file in new[] { "/apple-touch-icon.png", "/wake.webm", "/wake.mp4" })
+        {
+            using var r = await http.GetAsync(file);
+            r.EnsureSuccessStatusCode();
+            Assert.True((await r.Content.ReadAsByteArrayAsync()).Length > 1000);
+        }
+
+        // Safari riproduce i video solo con le richieste a intervalli
+        using var req = new HttpRequestMessage(HttpMethod.Get, "/wake.mp4");
+        req.Headers.Range = new System.Net.Http.Headers.RangeHeaderValue(0, 1);
+        using var partial = await http.SendAsync(req);
+        Assert.Equal(System.Net.HttpStatusCode.PartialContent, partial.StatusCode);
+    }
 }

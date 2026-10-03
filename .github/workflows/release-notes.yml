@@ -1,0 +1,25 @@
+name: Note di rilascio
+
+# Riscrive la descrizione di tutte le release già pubblicate con le note di CHANGELOG.md.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  notes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Aggiorna le release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for tag in $(gh release list --limit 100 --json tagName --jq '.[].tagName'); do
+            if .github/scripts/release-notes.sh "$tag" > notes.md; then
+              gh release edit "$tag" --notes-file notes.md
+              echo "Aggiornata $tag"
+            fi
+          done

@@ -108,11 +108,12 @@ Tema scuro o chiaro, carattere, layout classico, clessidra o solo cifre. Puoi na
   <img src="docs/images/telefono.png" alt="Pagina web di controllo sul telefono: comandi, programma e messaggi" width="85%">
 </p>
 
-<p align="center"><sub>Nel controller premi <b>Collega telefono</b> e inquadra il codice QR. Il telefono deve essere sulla stessa rete Wi‑Fi del PC.</sub></p>
+<p align="center"><sub>Nel controller premi <b>Collega telefono</b> e inquadra il codice QR. Il telefono deve essere sulla stessa rete Wi‑Fi del PC.<br>
+  Su un tablet usato come schermo: aggiungi la pagina alla schermata Home, poi attiva <b>schermo sempre acceso</b> e <b>schermo intero</b> dai pulsanti in alto.</sub></p>
 
 ## 🚀 Per iniziare
 
-1. **Scarica** `TimerSala.exe` dall'[ultima versione](https://github.com/Lomme89/timersala/releases/latest) e avvialo. Non serve installare nulla.
+1. **Scarica** `TimerSala.exe` dall'[ultima versione](https://github.com/Lomme89/timersala/releases/latest) e avvialo. Non serve installare nulla. Le novità di ogni versione sono nel [CHANGELOG](CHANGELOG.md).
 2. Alla richiesta di Windows **consenti l'accesso alle reti private**: serve per vedere il timer dagli altri dispositivi.
 3. In **Impostazioni** scegli il monitor del timer e imposta gli orari delle adunanze. Lo schema della settimana si scarica da solo.
 

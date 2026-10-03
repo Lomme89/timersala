@@ -37,6 +37,11 @@ jobs:
           name: TimerSala-win-x64
           path: publish/TimerSala.exe
 
+      - name: Note di rilascio (da CHANGELOG.md)
+        if: startsWith(github.ref, 'refs/tags/v') || inputs.release_tag != ''
+        shell: bash
+        run: .github/scripts/release-notes.sh "${{ inputs.release_tag || github.ref_name }}" > release-notes.md
+
       - name: Release
         if: startsWith(github.ref, 'refs/tags/v') || inputs.release_tag != ''
         uses: softprops/action-gh-release@v2
@@ -44,8 +49,5 @@ jobs:
           tag_name: ${{ inputs.release_tag || github.ref_name }}
           target_commitish: ${{ github.sha }}
           name: TimerSala ${{ inputs.release_tag || github.ref_name }}
-          body: |
-            Scarica **TimerSala.exe** qui sotto e avvialo (Windows 10/11, nessuna installazione necessaria).
-            Al primo avvio consenti l'accesso alla rete privata per il server web.
-            Istruzioni complete nel README.
+          body_path: release-notes.md
           files: publish/TimerSala.exe

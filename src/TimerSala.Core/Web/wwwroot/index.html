@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#000000">
 <title>TimerSala</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TimerSala">
 <link rel="icon" type="image/png" href="data:image/png;base64,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">
 <style>
   :root {
@@ -64,6 +70,11 @@
   .tbtn.on { background: var(--accent); border-color: var(--accent); color: #fff; }
   .tbtn span { white-space: nowrap; }
   #btnControl { display: none; }
+  body.no-full #btnFull { display: none; }
+  #toast { position: fixed; left: 50%; top: 64px; transform: translate(-50%, -12px); background: var(--card); color: var(--fg); border: 1px solid var(--line);
+           padding: 10px 18px; border-radius: 99px; font: 15px var(--ui); z-index: 20; opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; }
+  #toast.show { opacity: 1; transform: translate(-50%, 0); }
+  #wakeVideo { position: fixed; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
   body.can-control #btnControl { display: inline-flex; }
 
   /* ── pannello (programma / controllo) ── */
@@ -160,6 +171,7 @@
     <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></symbol>
     <symbol id="i-remote" viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="3"/><circle cx="12" cy="8" r="2"/><path d="M10 14h.01M14 14h.01M10 17.5h.01M14 17.5h.01"/></symbol>
     <symbol id="i-full" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+    <symbol id="i-wake" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></symbol>
     <symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3 10 14"/><path d="m21 3-7 18-4-7-7-4 18-7z"/></symbol>
     <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
     <symbol id="i-msg" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4V5z"/></symbol>
@@ -169,6 +181,7 @@
 
   <div id="hg"></div>
   <div id="offline">Connessione al PC persa… riconnessione</div>
+  <div id="toast" role="status"></div>
 
   <main id="stage">
     <div class="top">
@@ -223,7 +236,8 @@
   <div class="toolbar">
     <button class="tbtn" id="btnSchedule" type="button"><svg><use href="#i-list"/></svg><span>Programma</span></button>
     <button class="tbtn" id="btnControl" type="button"><svg><use href="#i-remote"/></svg><span>Controllo</span></button>
-    <button class="tbtn" id="btnFull" type="button" aria-label="Schermo intero"><svg><use href="#i-full"/></svg></button>
+    <button class="tbtn" id="btnWake" type="button" aria-label="Schermo sempre acceso" title="Schermo sempre acceso"><svg><use href="#i-wake"/></svg></button>
+    <button class="tbtn" id="btnFull" type="button" aria-label="Schermo intero" title="Schermo intero"><svg><use href="#i-full"/></svg></button>
   </div>
 
   <div id="pinBox">
@@ -356,7 +370,19 @@
   $('btnControl').onclick = () => B.contains('control') ? setPanel(null) : openControl();
   $('tabSchedule').onclick = () => setTab('schedule');
   $('tabMsgs').onclick = () => setTab('msgs');
-  $('btnFull').onclick = () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.();
+
+  // ── schermo intero (manuale: il browser lo concede solo dopo un tocco) ──
+  const root = document.documentElement;
+  const fullEl = () => document.fullscreenElement || document.webkitFullscreenElement;
+  const canFull = !!(root.requestFullscreen || root.webkitRequestFullscreen);
+  B.toggle('no-full', !canFull);   // iPhone: non supportato, si usa «Aggiungi a Home»
+  $('btnFull').onclick = () => {
+    if (fullEl()) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    else (root.requestFullscreen || root.webkitRequestFullscreen).call(root)?.catch?.(() => toast('Schermo intero non disponibile'));
+  };
+  const onFull = () => { $('btnFull').classList.toggle('on', !!fullEl()); requestAnimationFrame(fit); };
+  document.addEventListener('fullscreenchange', onFull);
+  document.addEventListener('webkitfullscreenchange', onFull);
 
   // ── controllo remoto ──
   let pin = null;
@@ -435,10 +461,57 @@
   es.onmessage = e => { B.remove('offline'); render(JSON.parse(e.data)); };
   es.onerror = () => B.add('offline');
 
-  // impedisce lo spegnimento dello schermo su tablet e telefoni
-  async function wake() { try { await navigator.wakeLock?.request('screen'); } catch { } }
-  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') wake(); });
-  wake();
+  // ── schermo sempre acceso (manuale) ──
+  // La Wake Lock API funziona solo in HTTPS; sulla rete locale (HTTP) si ricorre
+  // a un video muto e invisibile in loop, che impedisce lo spegnimento (tecnica di NoSleep.js, MIT).
+  let awake = false, lock = null, video = null;
+  try { awake = localStorage.getItem('timersala-wake') === '1'; } catch { }
+  async function acquire() {
+    if (window.isSecureContext && navigator.wakeLock) {
+      try { lock = await navigator.wakeLock.request('screen'); return true; } catch { }
+    }
+    if (!video) {
+      video = document.createElement('video');
+      video.id = 'wakeVideo';
+      video.muted = true;
+      video.loop = true;
+      video.setAttribute('playsinline', '');
+      video.setAttribute('aria-hidden', 'true');
+      video.innerHTML = '<source src="/wake.webm" type="video/webm"><source src="/wake.mp4" type="video/mp4">';
+      document.body.appendChild(video);
+    }
+    try { await video.play(); return true; } catch { return false; }
+  }
+  function release() {
+    lock?.release().catch(() => { }); lock = null;
+    video?.pause();
+  }
+  function showWake() {
+    $('btnWake').classList.toggle('on', awake);
+    $('btnWake').title = awake ? 'Schermo sempre acceso: attivo' : 'Schermo sempre acceso';
+  }
+  $('btnWake').onclick = async () => {
+    awake = !awake;
+    if (awake && !(await acquire())) { awake = false; toast('Non supportato da questo browser'); }
+    else if (!awake) release();
+    try { localStorage.setItem('timersala-wake', awake ? '1' : '0'); } catch { }
+    showWake();
+    if (awake) toast('Lo schermo resterà acceso');
+    else toast('Lo schermo si spegnerà normalmente');
+  };
+  document.addEventListener('visibilitychange', () => { if (awake && document.visibilityState === 'visible') acquire(); });
+  // se era attivo, riprende al primo tocco (il browser richiede un gesto dell'utente)
+  if (awake) {
+    showWake();
+    acquire().then(ok => { if (!ok) document.addEventListener('pointerdown', () => acquire(), { once: true }); });
+  }
+
+  let toastTimer;
+  function toast(text) {
+    const t = $('toast');
+    t.textContent = text; t.classList.add('show');
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+  }
   fit();
 })();
 </script>

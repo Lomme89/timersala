@@ -100,6 +100,9 @@ public sealed class TimerWebServer : IAsyncDisposable
         var app = builder.Build();
 
         app.MapGet("/", () => Results.Content(ReadResource("wwwroot/index.html"), "text/html; charset=utf-8"));
+        app.MapGet("/manifest.webmanifest", () => Results.Content(ReadResource("wwwroot/manifest.webmanifest"), "application/manifest+json; charset=utf-8"));
+        foreach (var (file, type) in StaticFiles)
+            app.MapGet("/" + file, () => Results.Bytes(ReadResourceBytes("wwwroot/" + file), type, enableRangeProcessing: true));
         app.MapGet("/api/state", () => Results.Json(BuildState(), Json));
         app.MapGet("/api/schedule", () => Results.Json(BuildSchedule(), Json));
         app.MapGet("/api/events", StreamEvents);
@@ -259,6 +262,22 @@ public sealed class TimerWebServer : IAsyncDisposable
             ?? throw new InvalidOperationException($"Risorsa mancante: {name}");
         using var reader = new StreamReader(stream);
         return reader.ReadToEnd();
+    }
+
+    // icone per la schermata Home e video muto che tiene acceso lo schermo dove manca la Wake Lock API
+    static readonly (string File, string Type)[] StaticFiles =
+    [
+        ("icon-192.png", "image/png"), ("icon-512.png", "image/png"), ("apple-touch-icon.png", "image/png"),
+        ("wake.webm", "video/webm"), ("wake.mp4", "video/mp4"),
+    ];
+
+    static byte[] ReadResourceBytes(string name)
+    {
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(name)
+            ?? throw new InvalidOperationException($"Risorsa mancante: {name}");
+        using var buffer = new MemoryStream();
+        stream.CopyTo(buffer);
+        return buffer.ToArray();
     }
 
     public async Task StopAsync()

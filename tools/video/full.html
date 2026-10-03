@@ -282,7 +282,7 @@ scene(20.6, 4.4, g => {
   const spike = el('path', { fill: 'none', stroke: C.stop, 'stroke-width': 12, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, g);
   const pen = el('circle', { r: 16, fill: C.ink }, g);
   const st = stamp(g, 'IGNORATO', C.stop);
-  const note = el('text', { class: 'sans5', 'font-size': 32, fill: C.ink }, g);
+  const note = el('text', { 'text-anchor': 'end', class: 'sans5', 'font-size': 32, fill: C.ink }, g);
   const ttl = titles(g, '05 — I RUMORI', 'Colpi sul microfono? <tspan font-style="italic" fill="#e0362b">Ignorati.</tspan>');
   const setChip = chip(g);
   const walkD = t => 640 * eio(prog(t, 0, 1.5));
@@ -296,7 +296,7 @@ scene(20.6, 4.4, g => {
       pen.setAttribute('cx', penX); pen.setAttribute('cy', Y);
       spike.setAttribute('d', t >= BUMP ? `M ${bx - 26} ${Y} L ${bx - 8} ${Y - 130} L ${bx + 6} ${Y + 90} L ${bx + 20} ${Y - 40} L ${bx + 32} ${Y}` : '');
       st(bx + 70, 690, prog(t, BUMP + .2, BUMP + .55));
-      note.setAttribute('x', bx + 76); note.setAttribute('y', 780); note.textContent = '0,1 s: troppo breve per essere una voce';
+      note.setAttribute('x', 1830); note.setAttribute('y', 790); note.textContent = '0,1 s: troppo breve per essere una voce';
       note.setAttribute('opacity', eout(prog(t, BUMP + .55, BUMP + .9)));
     },
     events: () => [{ t: BUMP, k: 'bump', pan: pan(500) }, { t: BUMP + .2, k: 'stamp' }],

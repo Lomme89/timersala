@@ -83,6 +83,19 @@ Usata poche volte l'anno: niente in primo piano, solo una voce in un menu.
 - Countdown, schermo e telefono funzionano come sempre; lo schema della settimana non viene toccato.
 - Gli ultimi eventi restano tra i suggerimenti per riusarli.
 
+### Controller: spazio a ciò che serve durante l'adunanza
+- **Riquadro della settimana compatto**: a timer avviato si riduce a una riga («Mer 8 ott · Infrasettimanale · fine prevista 20:45»)
+  e si riapre con un clic; lo spazio guadagnato va all'elenco delle parti.
+- **L'elenco segue la parte in corso**: a ogni cambio scorre per tenere visibili la parte attuale e la successiva.
+- **Modifica rapida**: doppio clic su una parte nell'elenco per cambiarne durata o titolo senza aprire l'editor
+  (che resta per riordinare e aggiungere parti).
+
+### Impostazioni più snelle
+- **Anteprima dal vivo** nella scheda Schermo: una piccola copia dello schermo del timer che cambia subito con tema, layout,
+  carattere ed elementi visibili, senza dover premere Applica.
+- **Base e avanzate**: in ogni scheda le opzioni che si toccano una volta sola (porta, indirizzo, regolazioni della voce,
+  elementi da nascondere…) stanno dietro «Mostra opzioni avanzate».
+
 ## Scartate (e perché)
 - Ritmo dello studio a paragrafi: il conduttore può dedicare più tempo ai paragrafi più utili alla congregazione.
 - Allarme «microfono chiuso»: c'è già un fratello dedicato all'audio e il riscontro è evidente.

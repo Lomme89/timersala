@@ -96,6 +96,21 @@ Usata poche volte l'anno: niente in primo piano, solo una voce in un menu.
 - **Base e avanzate**: in ogni scheda le opzioni che si toccano una volta sola (porta, indirizzo, regolazioni della voce,
   elementi da nascondere…) stanno dietro «Mostra opzioni avanzate».
 
+### Avvio con Windows
+Opzione per avviare TimerSala all'accensione del PC, con lo schermo della sala già acceso e lo schema della settimana scaricato.
+
+### Passaggio automatico alla modalità mini
+Opzione: quando si avvia la prima parte dell'adunanza, il controller passa da solo alla modalità mini (sempre in primo piano),
+così resta visibile sopra JW Library e Zoom. Si torna al controller completo come oggi (tasto M o pulsante).
+
+### Note della parte in evidenza
+Le note dell'editor compaiono nel controller sotto il titolo della parte in corso (per esempio «Video alla fine (2:10)»
+o «Intervista: microfono 3»), e come suggerimento nell'elenco.
+
+### Ritocchi di 30 secondi
+Con Maiusc premuto (o clic destro sui pulsanti) i ritocchi di ±1 minuto diventano di ±30 secondi; anche dal telefono
+con una pressione prolungata.
+
 ## Scartate (e perché)
 - Ritmo dello studio a paragrafi: il conduttore può dedicare più tempo ai paragrafi più utili alla congregazione.
 - Allarme «microfono chiuso»: c'è già un fratello dedicato all'audio e il riscontro è evidente.

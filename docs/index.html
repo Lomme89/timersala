@@ -187,13 +187,19 @@ footer a { color: var(--paper); }
 .vchapters button span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .vchapters button i { position: absolute; left: 0; bottom: 0; height: 4px; width: 0; background: var(--go); }
 .vchapters button.on { background: var(--ink); color: var(--paper); }
-.vdl { display: inline-block; margin-top: 14px; font-weight: 600; font-size: 15px; }
+.vactions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 18px; }
+.vactions .pill { font-size: 15px; cursor: pointer; }
+.vactions .pill.ok { background: var(--go); border-color: var(--go); color: #fff; }
+.vnote { font: 600 13px var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-left: 6px; }
 @media (max-width: 900px) {
   .voice-head { grid-template-columns: minmax(0, 1fr); }
   .vchapters button span { display: none; }
   .vchapters button { justify-content: center; padding: 6px 2px 10px; }
   .vsound span { display: none; }
   .vsound { padding: 10px; right: 10px; bottom: 10px; }
+  .vactions { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .vactions .pill { justify-content: center; }
+  .vnote { grid-column: 1 / -1; margin: 2px 0 0; }
 }
 
 /* comparsa allo scorrimento */
@@ -202,6 +208,7 @@ footer a { color: var(--paper); }
 
 @media (max-width: 900px) {
   .nav { display: none; }
+  .wide { display: none; }
   header.top .pill { margin-left: auto; }
   .hero-grid, .split { grid-template-columns: minmax(0, 1fr); }
   .faq { grid-template-columns: minmax(0, 1fr); }
@@ -225,6 +232,7 @@ footer a { color: var(--paper); }
 
 <svg style="display:none" aria-hidden="true">
   <symbol id="i-dl" viewBox="0 0 24 24"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 15V3.5m0 0L7.5 8M12 3.5 16.5 8M5 12.5v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-gem" viewBox="0 0 24 24"><path d="M6 4h12l3 5-9 11L3 9l3-5Zm-3 5h18M9 4l3 16 3-16" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
   <symbol id="i-wheat" viewBox="0 0 24 24"><path d="M12 21V8m0 4c-3 0-4-2-4-4 2 0 4 1 4 4Zm0 0c3 0 4-2 4-4-2 0-4 1-4 4Zm0 4c-3 0-4-2-4-4 2 0 4 1 4 4Zm0 0c3 0 4-2 4-4-2 0-4 1-4 4ZM12 8c-1.5-1-1.5-3 0-5 1.5 2 1.5 4 0 5Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
   <symbol id="i-sheep" viewBox="0 0 24 24"><path d="M7 15c-2 0-3-1.5-3-3s1.2-2.6 2.5-2.8C7 7.5 8.4 6.5 10 6.7 11 5.6 13 5.6 14 6.7c1.6-.2 3 .8 3.5 2.5 1.3.2 2.5 1.3 2.5 2.8s-1 3-3 3H7Zm2 0v4m6-4v4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></symbol>
@@ -240,7 +248,7 @@ footer a { color: var(--paper); }
       <a href="#telefono">Telefono</a>
       <a href="#domande">Domande</a>
     </nav>
-    <a class="pill" href="https://github.com/Lomme89/timersala/releases/latest/download/TimerSala.exe"><svg><use href="#i-dl"/></svg>Scarica</a>
+    <a class="pill" href="https://github.com/Lomme89/timersala/releases/latest/download/TimerSala.exe"><svg><use href="#i-dl"/></svg><span>Scarica<span class="wide"> TimerSala</span></span></a>
   </div>
 </header>
 
@@ -255,7 +263,7 @@ footer a { color: var(--paper); }
       <div class="reveal" style="--d:.18s">
         <p>TimerSala è il timer per le adunanze di congregazione. Lo schema arriva da solo da wol.jw.org, le cifre si leggono dal fondo della sala e chi serve lo segue, o lo comanda, dal telefono.</p>
         <div class="btns">
-          <a class="pill go" href="https://github.com/Lomme89/timersala/releases/latest/download/TimerSala.exe"><svg><use href="#i-dl"/></svg>Scarica TimerSala.exe</a>
+          <a class="pill go" href="https://github.com/Lomme89/timersala/releases/latest/download/TimerSala.exe"><svg><use href="#i-dl"/></svg>Scarica TimerSala</a>
           <a class="pill ghost" href="#programma">Il programma</a>
         </div>
       </div>
@@ -328,7 +336,11 @@ footer a { color: var(--paper); }
         <button class="vplay" id="vPlay" type="button" aria-label="Riproduci"><svg viewBox="0 0 24 24"><path id="vPlayIcon" d="M8 5v14l11-7z"/></svg></button>
         <ol class="vchapters" id="vChapters"></ol>
       </div>
-      <a class="vdl" href="video/avvio-con-la-voce.mp4" download>Scarica il video (MP4, da mandare su WhatsApp)</a>
+      <div class="vactions">
+        <a class="pill ghost" href="video/avvio-con-la-voce.mp4" download="TimerSala - avvio con la voce.mp4"><svg><use href="#i-dl"/></svg><span>Scarica<span class="wide"> il video</span></span></a>
+        <button class="pill" id="vShare" type="button"><svg><use href="#i-share"/></svg><span>Condividi</span></button>
+        <span class="vnote">MP4 · 34 secondi · 2 MB</span>
+      </div>
     </div>
   </div>
 </section>
@@ -406,7 +418,7 @@ footer a { color: var(--paper); }
     <h2 class="huge reveal">Tempo <em>scaduto?</em><br>Scarica.</h2>
     <div class="final-row reveal" style="--d:.1s">
       <p>Gratuito, in italiano, senza installazione. Per Windows 10 e 11.</p>
-      <a class="pill" href="https://github.com/Lomme89/timersala/releases/latest/download/TimerSala.exe"><svg><use href="#i-dl"/></svg>Scarica TimerSala.exe</a>
+      <a class="pill" href="https://github.com/Lomme89/timersala/releases/latest/download/TimerSala.exe"><svg><use href="#i-dl"/></svg>Scarica TimerSala</a>
     </div>
   </div>
 </section>
@@ -502,6 +514,26 @@ footer a { color: var(--paper); }
       sound.classList.toggle('on', !v.muted); sound.setAttribute('aria-pressed', String(!v.muted));
       sound.querySelector('span').textContent = v.muted ? "Attiva l'audio" : 'Audio attivo';
       document.getElementById('vSoundWaves').setAttribute('d', v.muted ? 'M17 9l4 6M21 9l-4 6' : 'M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12');
+    };
+    // condividi: il file video se il dispositivo lo permette (WhatsApp dal telefono), altrimenti il link
+    const share = document.getElementById('vShare');
+    const label = share.querySelector('span');
+    const done = text => { label.textContent = text; share.classList.add('ok'); setTimeout(() => { label.textContent = 'Condividi'; share.classList.remove('ok'); }, 2200); };
+    share.onclick = async () => {
+      const url = location.origin + location.pathname + '#voce';
+      const text = 'TimerSala: il timer che parte quando parla l\u2019oratore.';
+      try {
+        if (navigator.canShare) {
+          const blob = await (await fetch('video/avvio-con-la-voce.mp4')).blob();
+          const file = new File([blob], 'TimerSala - avvio con la voce.mp4', { type: 'video/mp4' });
+          if (navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: 'TimerSala', text }); return; }
+        }
+        if (navigator.share) { await navigator.share({ title: 'TimerSala', text, url }); return; }
+        await navigator.clipboard.writeText(url);
+        done('Link copiato');
+      } catch (e) {
+        if (e?.name !== 'AbortError') { try { await navigator.clipboard.writeText(url); done('Link copiato'); } catch { } }
+      }
     };
     if (!reduce) new IntersectionObserver(es => {
       if (es[0].isIntersecting) { if (!userPaused) v.play().catch(() => { }); } else v.pause();

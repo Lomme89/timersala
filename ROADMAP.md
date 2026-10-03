@@ -29,6 +29,20 @@ Le settimane che oggi vanno sistemate a mano, con un clic (o in automatico se wo
 - Commemorazione: schema dedicato con il suo orario; se cade in un giorno feriale, l'infrasettimanale di quella settimana non c'è.
 - Discorso speciale: riconosciuto dallo schema di wol quando presente.
 
+### Sicurezza in sala (da fare anche prima della 2.0)
+- **Niente standby durante l'adunanza**: con un'adunanza in corso o imminente Windows non deve sospendere il PC né spegnere gli schermi (SetThreadExecutionState).
+- **Monitor scollegato e ricollegato**: se lo schermo della sala sparisce e torna (cavo, TV riaccesa), la finestra del timer torna da sola sullo schermo scelto.
+- **Un solo TimerSala aperto**: una seconda apertura riporta in primo piano quella già aperta invece di avviare un'altra copia (che si contenderebbe il server web).
+
+### Tema chiaro per il controller
+Per le sale in cui l'acustica è in un punto molto luminoso. Scuro, chiaro o automatico (come Windows); lo schermo del timer resta indipendente.
+
+### Primo avvio guidato
+Tre passi alla prima apertura: schermo della sala (con «Identifica»), orari delle adunanze, prova del telefono con il QR. Alla fine propone il collegamento sul desktop.
+
+### Backup della configurazione
+Esporta e importa in un unico file impostazioni, schemi modificati a mano e messaggi pronti: per cambiare PC o configurare un'altra sala allo stesso modo. Con i profili per congregazione, si può esportare anche un solo profilo.
+
 ## Scartate (e perché)
 - Ritmo dello studio a paragrafi: il conduttore può dedicare più tempo ai paragrafi più utili alla congregazione.
 - Allarme «microfono chiuso»: c'è già un fratello dedicato all'audio e il riscontro è evidente.

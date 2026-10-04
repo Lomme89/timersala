@@ -83,12 +83,18 @@ Usata poche volte l'anno: niente in primo piano, solo una voce in un menu.
 - Countdown, schermo e telefono funzionano come sempre; lo schema della settimana non viene toccato.
 - Gli ultimi eventi restano tra i suggerimenti per riusarli.
 
-### Controller: spazio a ciò che serve durante l'adunanza
-- **Riquadro della settimana compatto**: a timer avviato si riduce a una riga («Mer 8 ott · Infrasettimanale · fine prevista 20:45»)
-  e si riapre con un clic; lo spazio guadagnato va all'elenco delle parti.
-- **L'elenco segue la parte in corso**: a ogni cambio scorre per tenere visibili la parte attuale e la successiva.
-- **Modifica rapida**: doppio clic su una parte nell'elenco per cambiarne durata o titolo senza aprire l'editor
-  (che resta per riordinare e aggiungere parti).
+### Controller riorganizzato (nuovo design)
+Mockup approvato: [prima e dopo](docs/roadmap/controller-prima-dopo.png). Stesso stile delle nuove impostazioni.
+- **Intestazione**: ora, etichetta «In orario» / ritardo, icone mini · editor · impostazioni e **icona della rete**
+  (pallino verde; un clic mostra indirizzo e QR). Sparisce la riga «Timer in rete» in fondo.
+- **Settimana in una riga** («Dom 4 ott · Fine settimana · Geremia 38-39»): la freccia apre il riquadro completo con frecce
+  delle settimane, download, infrasettimanale/fine settimana e sorvegliante. Durante l'adunanza resta chiuso.
+- **Riquadro del tempo più ricco**: cifre più grandi; sotto, oltre ad assegnato e trascorso, la parte successiva, l'orario
+  d'inizio e la fine prevista.
+- **Messaggi in una riga**: campo, invio, tutto schermo; si allarga solo quando un messaggio è sullo schermo.
+- **Elenco delle parti più alto**, che segue la parte in corso (evidenziata) e mostra la successiva; colonna del tempo reale.
+  Facoltativo: orario previsto d'inizio di ogni parte.
+- **Modifica rapida**: doppio clic su una parte per cambiarne durata o titolo senza aprire l'editor.
 
 ### Impostazioni riorganizzate (nuovo design)
 Mockup approvato: [Schermo](docs/roadmap/impostazioni-schermo.png) · [Messaggi](docs/roadmap/impostazioni-messaggi.png) · [Adunanze](docs/roadmap/impostazioni-adunanze.png). Stessi colori del programma.

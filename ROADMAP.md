@@ -115,6 +115,8 @@ Mockup approvato: [Schermo](docs/roadmap/impostazioni-schermo.png) · [Messaggi]
 - **Schermo**: anteprima dal vivo a destra; tabella «Cosa mostrare» con colonne *Durante* e *A riposo* al posto delle caselle sparse.
 - **Messaggi**: interruttore generale in cima; frasi pronte come elenco numerato da riordinare trascinando, con ✕ e «Aggiungi».
 - **Adunanze**: giorno + orario per adunanza, durata con la fine prevista calcolata subito, studi adattivi con interruttore.
+  Da integrare anche la sezione «Visita del sorvegliante» (v1.13.0), oggi aggiunta nel layout attuale: elenco delle settimane
+  con ✕ e «Aggiungi», giorno e orario dell'infrasettimanale durante la visita, con gli stessi controlli del resto.
 - Spiegazioni in una riga sotto l'opzione, dettagli in una «i»; opzioni rare dietro «Mostra opzioni avanzate».
 
 ### Avvio con Windows
@@ -123,6 +125,12 @@ Opzione per avviare TimerSala all'accensione del PC, con lo schermo della sala g
 ### Passaggio automatico alla modalità mini
 Opzione: quando si avvia la prima parte dell'adunanza, il controller passa da solo alla modalità mini (sempre in primo piano),
 così resta visibile sopra JW Library e Zoom. Si torna al controller completo come oggi (tasto M o pulsante).
+
+## Fatte
+
+### Visite del sorvegliante pianificate — v1.13.0
+Settimane della visita segnate in anticipo in *Impostazioni → Adunanze*, scaricate già adattate; giorno (e ora facoltativa)
+dell'infrasettimanale durante la visita. Il layout va riallineato al nuovo design delle impostazioni (vedi sopra).
 
 ## Scartate (e perché)
 - Ritmo dello studio a paragrafi: il conduttore può dedicare più tempo ai paragrafi più utili alla congregazione.

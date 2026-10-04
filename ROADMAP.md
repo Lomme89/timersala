@@ -96,6 +96,14 @@ Mockup approvato: [prima e dopo](docs/roadmap/controller-prima-dopo.png). Stesso
   Facoltativo: orario previsto d'inizio di ogni parte.
 - **Modifica rapida**: doppio clic su una parte per cambiarne durata o titolo senza aprire l'editor.
 
+### Modalità mini: ritocchi
+Mockup approvato: [prima e dopo](docs/roadmap/mini-prima-dopo.png). Niente di stravolto: cifre, pulsanti, barra e cornice restano.
+- **Stato della voce nella barra in alto**: durante l'attesa il titolo lascia il posto a «In attesa di una pausa…» (giallo, pallino
+  che pulsa), poi «In ascolto: parte alla prima voce»; quando la parte parte torna il titolo.
+- **Messaggi più puliti**: riga con campo, invio e tutto schermo; il messaggio in onda diventa una pastiglia gialla
+  «Sullo schermo: …» con «Togli», che sparisce quando non c'è nulla in onda.
+- Stessi angoli, icone e colori del nuovo controller.
+
 ### Impostazioni riorganizzate (nuovo design)
 Mockup approvato: [Schermo](docs/roadmap/impostazioni-schermo.png) · [Messaggi](docs/roadmap/impostazioni-messaggi.png) · [Adunanze](docs/roadmap/impostazioni-adunanze.png). Stessi colori del programma.
 - **Barra laterale con icone** al posto delle schede, sette sezioni: Adunanze · Schermo · Countdown · Messaggi · Voce (beta) ·

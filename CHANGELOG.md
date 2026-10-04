@@ -1,5 +1,9 @@
 # Novità
 
+## v1.13.1 — 4 ottobre 2026
+
+- Pagina web aggiunta alla schermata Home (iPad, iPhone): titolo, pulsanti e cifre non finiscono più sotto la barra di stato in alto o sotto l'indicatore Home in basso.
+
 ## v1.13.0 — 4 ottobre 2026
 
 **Visite del sorvegliante pianificate** (*Impostazioni → Adunanze*)

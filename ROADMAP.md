@@ -163,6 +163,16 @@ così resta visibile sopra JW Library e Zoom. Si torna al controller completo co
 - **Avviso giallo per tipo di parte**: soglie diverse per tipo (per esempio studenti e discorsi), espresse in secondi fissi
   come oggi oppure in percentuale della parte.
 
+### Imprevisti durante l'adunanza (dal controller, senza editor)
+Attenzione: nessuna di queste azioni deve potersi attivare per sbaglio durante l'adunanza. Niente trascinamenti o doppi clic
+«nudi»: per esempio un menu della parte (tasto destro o «⋯»), una conferma, e «Annulla» subito disponibile.
+- **Scambiare due parti al volo**, per esempio se un oratore non è ancora pronto.
+- **Parte saltata** con un clic (studente assente): si passa alla successiva e il ritardo ne tiene conto.
+- **Modifica rapida** di durata e titolo, anche per scrivere al momento il tema del discorso pubblico o l'oratore ospite.
+
+### «Cosa c'è di nuovo»
+Al primo avvio dopo un aggiornamento, una piccola finestra con le novità principali prese dal changelog.
+
 ## Più avanti (2.5 o 3.0)
 - **Interfaccia in altre lingue** (inglese, spagnolo, rumeno…), per le sale condivise con gruppi o congregazioni di altra lingua.
   Lo schema da wol si sceglie già per lingua: mancherebbe l'interfaccia.

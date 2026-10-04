@@ -136,6 +136,10 @@ così resta visibile sopra JW Library e Zoom. Si torna al controller completo co
 - **Vibrazione sul telefono** alla pressione di Avvia/Ferma (solo Android: iPhone non la consente dal browser).
 - **Rispetto di «riduci movimento»**: con le animazioni ridotte in Windows o sul telefono, TimerSala le spegne.
 - **Avvisi e conferme uniformi**: stessa posizione, animazione e tono dei testi in tutto il programma.
+- **Avvio senza lampo bianco**: lo schermo della sala parte nero e sfuma; sul proiettore mai un flash o una finestra vuota.
+- **Dispositivi collegati**: piccolo contatore («2 schermi, 1 controllo») accanto a «Timer in rete».
+- **Finestre ricordate**: controller, mini, editor e impostazioni si riaprono dove e grandi come erano, anche con più monitor.
+- **Chiusura protetta**: chiudere durante una parte in corso chiede conferma.
 
 ## Fatte
 

@@ -76,6 +76,7 @@ public sealed partial class MainViewModel : ObservableObject
         {
             RefreshDisplay();
             TickVoice();
+            KeepAwake.Set(ShouldStayAwake());
             // mentre il timer corre, salva lo stato ogni 5 secondi
             if (Timer.IsRunning && ++_ticksSinceSave >= 50) SaveSession();
         };
@@ -743,6 +744,17 @@ public sealed partial class MainViewModel : ObservableObject
             TimerWindowVisible = false;
             _suppressVisibilityEvent = false;
         }
+        // lo schermo della sala è sparito (cavo staccato, TV spenta) e resta solo il principale: il timer si nasconde
+        // invece di coprire il controller, e torna da solo quando lo schermo si ricollega
+        bool disconnected = Settings.TimerMonitor is not null && all.Count > 0
+                            && all.All(m => m.DeviceName != Settings.TimerMonitor) && all.All(m => m.IsPrimary);
+        if (disconnected != TimerScreenDisconnected)
+        {
+            TimerScreenDisconnected = disconnected;
+            ShowStatus(disconnected
+                ? "Schermo della sala non collegato: il timer tornerà da solo quando si ricollega."
+                : "Schermo della sala ricollegato.", error: disconnected);
+        }
         if (SelectedMonitor?.DeviceName != target?.DeviceName || SelectedMonitor?.Bounds != target?.Bounds)
         {
             _selectedMonitorSilent = true;
@@ -751,6 +763,9 @@ public sealed partial class MainViewModel : ObservableObject
         }
         DisplayTargetChanged?.Invoke(this, EventArgs.Empty);
     }
+
+    /// <summary>Lo schermo scelto per la sala non c'è più e resta solo quello principale.</summary>
+    public bool TimerScreenDisconnected { get; private set => Set(ref field, value); }
 
     // true mentre lo schermo viene scelto automaticamente (non va salvato come preferenza)
     bool _selectedMonitorSilent;
@@ -964,7 +979,22 @@ public sealed partial class MainViewModel : ObservableObject
     }
 
     /// <summary>Alla chiusura: rilascia l'ingresso audio.</summary>
-    public void Shutdown() => DisposeVoice();
+    public void Shutdown()
+    {
+        DisposeVoice();
+        KeepAwake.Set(false);
+    }
+
+    /// <summary>Con un'adunanza in corso o imminente il PC e gli schermi restano accesi.</summary>
+    bool ShouldStayAwake()
+    {
+        if (Timer.IsRunning || IsVoiceArmed) return true;
+        if (Timer.MeetingStart is not { } start) return false;
+        var now = DateTimeOffset.Now;
+        var lead = TimeSpan.FromMinutes(Math.Max(30, Settings.CountdownMinutes + 15));
+        var tail = TimeSpan.FromMinutes(Settings.MeetingLengthMinutes + 30);
+        return now >= start - lead && now <= start + tail;
+    }
 
     public void SaveSettings()
     {

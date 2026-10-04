@@ -74,14 +74,10 @@ Mockup approvato: [Schermo](docs/roadmap/impostazioni-schermo.png) · [Messaggi]
 - **Rispetto di «riduci movimento»** (vedi Principi).
 
 ### Sicurezza in sala
-Le prime tre possono uscire prima, in una 1.x, come correzioni.
-- **PC sempre sveglio**: con un'adunanza in corso o imminente niente sospensione, salvaschermo o spegnimento degli schermi.
-- **Monitor staccato e riattaccato**: se il cavo HDMI si scollega o la TV si riaccende, lo schermo della sala torna da solo sul
-  monitor scelto invece di finire su quello principale.
-- **Un solo TimerSala aperto**: una seconda apertura riporta in primo piano quella già aperta (due copie si contenderebbero il server web).
+PC sempre sveglio, schermo ricollegato e una sola copia aperta sono già usciti nella v1.13.2 (vedi «Fatte»).
 - **Annulla dopo Ferma**: per 5 secondi un avviso con «Annulla» per rimediare a una pressione sbagliata. Stesso comportamento
   di Esc per l'avvio con la voce: un solo gesto per «torna indietro».
-- **Chiusura protetta**: chiudere durante una parte in corso chiede conferma.
+- **Chiusura protetta**: oggi chiede conferma col timer in funzione; da estendere al countdown d'inizio e all'attesa della voce.
 - **Porta di rete occupata**: se la porta del timer web è usata da un altro programma, se ne prova un'altra e lo si segnala.
 - **Orologio del PC sbagliato**: avviso se l'ora del PC si discosta di oltre un minuto da quella di internet
   (countdown e fine prevista dipendono da quell'ora).
@@ -211,6 +207,8 @@ Molte Sale del Regno sono condivise da due o tre congregazioni, a volte di lingu
   provare le opzioni gratuite o economiche per i progetti open source (per esempio SignPath Foundation).
 
 ## Fatte
+- **Sicurezza in sala** (v1.13.2): PC e schermi sempre accesi con un'adunanza in corso o imminente; schermo della sala che si
+  nasconde se scollegato e torna da solo quando si ricollega; una sola copia del programma aperta.
 - **Visite del sorvegliante pianificate** (v1.13.0): settimane segnate in anticipo in *Impostazioni → Adunanze*, scaricate già
   adattate; giorno (e ora facoltativa) dell'infrasettimanale durante la visita. Il layout va riallineato al nuovo design delle
   impostazioni e diventerà parte delle «Settimane particolari».

@@ -1,5 +1,11 @@
 # Novità
 
+## v1.13.2 — 4 ottobre 2026
+
+- **PC sempre acceso durante l'adunanza:** da mezz'ora prima dell'inizio fino a mezz'ora dopo la fine prevista, e comunque mentre una parte è in corso, Windows non sospende il PC e non spegne gli schermi. Anche il salvaschermo resta spento.
+- **Schermo della sala ricollegato:** se il cavo si stacca o la TV si spegne, il timer si nasconde invece di finire sopra il controller. Quando lo schermo torna, il timer ci ritorna da solo, anche dopo la sospensione del PC.
+- **Una sola copia aperta:** se apri TimerSala quando è già aperto, viene in primo piano la finestra esistente invece di partire una seconda copia, che avrebbe conteso il timer in rete alla prima.
+
 ## v1.13.1 — 4 ottobre 2026
 
 - Pagina web aggiunta alla schermata Home (iPad, iPhone): titolo, pulsanti e cifre non finiscono più sotto la barra di stato in alto o sotto l'indicatore Home in basso.

@@ -37,16 +37,46 @@ public partial class MainWindow : Window
         };
         LocationChanged += (_, _) => UpdateTopmostOfDisplay();
         SystemEvents.DisplaySettingsChanged += OnDisplaySettingsChanged;
+        SystemEvents.PowerModeChanged += OnPowerModeChanged;
         PreviewKeyDown += OnPreviewKeyDown;
     }
 
-    void OnDisplaySettingsChanged(object? sender, EventArgs e) =>
-        Dispatcher.BeginInvoke(() => _vm.RefreshMonitors());
+    // Windows avvisa del cambio di schermi prima di aver finito di sistemarli (e a volte sposta le finestre dopo):
+    // si ricontrolla subito e poi ancora due volte
+    void OnDisplaySettingsChanged(object? sender, EventArgs e) => Dispatcher.BeginInvoke(() =>
+    {
+        _vm.RefreshMonitors();
+        foreach (var delay in new[] { 1500, 4000 })
+        {
+            var t = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(delay) };
+            t.Tick += (_, _) => { t.Stop(); if (!_closing) _vm.RefreshMonitors(); };
+            t.Start();
+        }
+    });
+
+    void OnPowerModeChanged(object? sender, PowerModeChangedEventArgs e)
+    {
+        if (e.Mode == PowerModes.Resume) OnDisplaySettingsChanged(sender, e);
+    }
+
+    /// <summary>Riporta in primo piano il programma (controller o mini), per esempio se lo si apre una seconda volta.</summary>
+    public void BringToFront()
+    {
+        Window w = _vm.IsMiniMode && _mini is not null ? _mini : this;
+        w.Show();
+        if (w.WindowState == WindowState.Minimized) w.WindowState = WindowState.Normal;
+        w.Activate();
+        // Windows a volte non concede il primo piano: un breve «sempre in primo piano» lo forza
+        bool topmost = w.Topmost;
+        w.Topmost = true;
+        w.Topmost = topmost;
+        w.Focus();
+    }
 
     void UpdateTimerWindow()
     {
         var monitor = _vm.SelectedMonitor;
-        if (!_vm.TimerWindowVisible || monitor is null)
+        if (!_vm.TimerWindowVisible || monitor is null || _vm.TimerScreenDisconnected)
         {
             _timerWindow?.Hide();
             return;
@@ -227,6 +257,7 @@ public partial class MainWindow : Window
         _vm.SaveSettings();
         _vm.Shutdown();
         SystemEvents.DisplaySettingsChanged -= OnDisplaySettingsChanged;
+        SystemEvents.PowerModeChanged -= OnPowerModeChanged;
         _closing = true;
         _timerWindow?.Close();
         _mini?.Close();

@@ -13,9 +13,25 @@ public partial class App : Application
 {
     MainViewModel? _vm;
 
+    // una sola copia per utente: una seconda apertura chiede alla prima di farsi vedere e si chiude
+    const string InstanceName = @"Local\TimerSala.Instance";
+    const string ShowEventName = @"Local\TimerSala.Show";
+    Mutex? _instance;
+    EventWaitHandle? _showEvent;
+
     protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        _instance = new Mutex(true, InstanceName, out bool first);
+        _showEvent = new EventWaitHandle(false, EventResetMode.AutoReset, ShowEventName);
+        if (!first)
+        {
+            _showEvent.Set();
+            _instance.Dispose();
+            _instance = null;
+            Shutdown();
+            return;
+        }
         DispatcherUnhandledException += OnUnhandled;
 
         // tutte le finestre: barra del titolo scura, angoli arrotondati e comparsa in dissolvenza
@@ -26,7 +42,23 @@ public partial class App : Application
         var main = new MainWindow(_vm);
         MainWindow = main;
         main.Show();
+        ListenForSecondInstance(main);
         await _vm.StartWebServerAsync();
+    }
+
+    void ListenForSecondInstance(MainWindow main)
+    {
+        var showEvent = _showEvent!;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                while (showEvent.WaitOne())
+                    Dispatcher.BeginInvoke(main.BringToFront);
+            }
+            catch (ObjectDisposedException) { }
+        }) { IsBackground = true, Name = "TimerSala seconda apertura" };
+        thread.Start();
     }
 
     static void OnWindowLoaded(object sender, RoutedEventArgs e)
@@ -45,6 +77,11 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        if (_instance is not null)
+        {
+            try { _instance.ReleaseMutex(); } catch { }
+            _instance.Dispose();
+        }
         _vm?.SaveSettings();
         try { _vm?.StopWebServerAsync().Wait(TimeSpan.FromSeconds(2)); } catch { }
         base.OnExit(e);

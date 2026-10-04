@@ -157,12 +157,17 @@ così resta visibile sopra JW Library e Zoom. Si torna al controller completo co
 - **Aspetto per dispositivo**: dalla pagina web ogni telefono o tablet sceglie e ricorda il suo aspetto (solo cifre, classico,
   con il programma). Per esempio il tablet sul podio solo cifre, il telefono del presidente il programma.
 - **Preparare lo schema da casa**: esportare la settimana modificata in un file (o mandarla via rete) e aprirla sul PC della sala.
+- **Annulla e ripeti nell'editor** (Ctrl+Z / Ctrl+Y): una parte eliminata o spostata per sbaglio si recupera subito.
+- **Dispositivo fidato**: dopo il primo PIN il telefono resta autorizzato finché non lo si revoca dal PC
+  (elenco dei dispositivi con «Revoca»). Niente PIN a ogni adunanza, sicurezza invariata. Da coordinare con «Collegamento più semplice».
 - **Avviso giallo per tipo di parte**: soglie diverse per tipo (per esempio studenti e discorsi), espresse in secondi fissi
   come oggi oppure in percentuale della parte.
 
 ## Più avanti (2.5 o 3.0)
 - **Interfaccia in altre lingue** (inglese, spagnolo, rumeno…), per le sale condivise con gruppi o congregazioni di altra lingua.
   Lo schema da wol si sceglie già per lingua: mancherebbe l'interfaccia.
+- **Programma firmato digitalmente**, per togliere l'avviso di SmartScreen al primo avvio. Da tentare senza insistere:
+  provare le opzioni gratuite o economiche per i progetti open source (per esempio SignPath Foundation).
 
 ## Fatte
 

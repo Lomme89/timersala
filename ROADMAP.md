@@ -126,6 +126,17 @@ Opzione per avviare TimerSala all'accensione del PC, con lo schermo della sala g
 Opzione: quando si avvia la prima parte dell'adunanza, il controller passa da solo alla modalità mini (sempre in primo piano),
 così resta visibile sopra JW Library e Zoom. Si torna al controller completo come oggi (tasto M o pulsante).
 
+### Movimento e rifiniture
+- **Controller ↔ mini animato**: la finestra si restringe e le cifre restano al loro posto rimpicciolendosi, invece di saltare.
+- **Cambi di colore più leggibili**: al passaggio verde → giallo → rosso un solo leggero «respiro» delle cifre, oltre alla sfumatura.
+- **Annulla dopo Ferma**: per 5 secondi un avviso con «Annulla» per rimediare a una pressione sbagliata.
+- **Elenco delle parti più vivo**: la parte in corso più grande, le passate compresse col tempo effettivo, scorrimento automatico
+  che tiene al centro la parte corrente.
+- **Pulsante Avvia/Ferma**: l'icona passa da ▶ a ■ con un'animazione e il colore sfuma, senza scatti.
+- **Vibrazione sul telefono** alla pressione di Avvia/Ferma (solo Android: iPhone non la consente dal browser).
+- **Rispetto di «riduci movimento»**: con le animazioni ridotte in Windows o sul telefono, TimerSala le spegne.
+- **Avvisi e conferme uniformi**: stessa posizione, animazione e tono dei testi in tutto il programma.
+
 ## Fatte
 
 ### Visite del sorvegliante pianificate — v1.13.0

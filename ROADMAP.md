@@ -141,6 +141,16 @@ così resta visibile sopra JW Library e Zoom. Si torna al controller completo co
 - **Finestre ricordate**: controller, mini, editor e impostazioni si riaprono dove e grandi come erano, anche con più monitor.
 - **Chiusura protetta**: chiudere durante una parte in corso chiede conferma.
 
+### Affidabilità e integrazione con Windows
+- **Monitor staccato e riattaccato**: se il cavo HDMI si scollega o il proiettore si riaccende, lo schermo della sala torna da solo
+  sul monitor giusto invece di finire su quello principale.
+- **PC sempre sveglio**: niente sospensione, salvaschermo o spegnimento dello schermo durante countdown e parti.
+- **Orologio del PC sbagliato**: avviso se l'ora del PC si discosta di oltre un minuto da quella di internet.
+- **Porta di rete occupata**: se la porta del timer web è usata da un altro programma, se ne prova un'altra e lo si segnala.
+- **Avanzamento sull'icona della barra delle applicazioni**: l'icona si riempie in verde, giallo e rosso con la parte in corso.
+- **Menu dell'icona** (tasto destro): mostra/nascondi schermo sala, modalità mini, collega telefono.
+- **Scala dell'interfaccia** in *Impostazioni → Programma* (per esempio 90–150 %), per portatili piccoli o schermi ad alta risoluzione.
+
 ## Fatte
 
 ### Visite del sorvegliante pianificate — v1.13.0

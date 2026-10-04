@@ -90,11 +90,18 @@ Usata poche volte l'anno: niente in primo piano, solo una voce in un menu.
 - **Modifica rapida**: doppio clic su una parte nell'elenco per cambiarne durata o titolo senza aprire l'editor
   (che resta per riordinare e aggiungere parti).
 
-### Impostazioni più snelle
-- **Anteprima dal vivo** nella scheda Schermo: una piccola copia dello schermo del timer che cambia subito con tema, layout,
-  carattere ed elementi visibili, senza dover premere Applica.
-- **Base e avanzate**: in ogni scheda le opzioni che si toccano una volta sola (porta, indirizzo, regolazioni della voce,
-  elementi da nascondere…) stanno dietro «Mostra opzioni avanzate».
+### Impostazioni riorganizzate (nuovo design)
+Mockup approvato: [Schermo](docs/roadmap/impostazioni-schermo.png) · [Messaggi](docs/roadmap/impostazioni-messaggi.png) · [Adunanze](docs/roadmap/impostazioni-adunanze.png). Stessi colori del programma.
+- **Barra laterale con icone** al posto delle schede, sette sezioni: Adunanze · Schermo · Countdown · Messaggi · Voce (beta) ·
+  Rete e telefono · Programma. Il countdown (minuti, stile, Prova) finalmente tutto in un posto; «sempre in primo piano»,
+  cartella dati e versione in Programma (dove andranno anche avvio con Windows, mini automatica, tema chiaro, backup, segnalazioni).
+- **Modifiche applicate subito**: in fondo solo «Fatto» e «Annulla le modifiche» (al posto di Applica / Annulla / Salva).
+- **Controlli adatti al dato**: interruttori per le funzioni (messaggi, voce, server web, controllo remoto), selettori d'orario,
+  numeri con − / +, scelte a pulsanti (tema Scuro/Chiaro, layout con miniature). Niente più errori al salvataggio.
+- **Schermo**: anteprima dal vivo a destra; tabella «Cosa mostrare» con colonne *Durante* e *A riposo* al posto delle caselle sparse.
+- **Messaggi**: interruttore generale in cima; frasi pronte come elenco numerato da riordinare trascinando, con ✕ e «Aggiungi».
+- **Adunanze**: giorno + orario per adunanza, durata con la fine prevista calcolata subito, studi adattivi con interruttore.
+- Spiegazioni in una riga sotto l'opzione, dettagli in una «i»; opzioni rare dietro «Mostra opzioni avanzate».
 
 ### Avvio con Windows
 Opzione per avviare TimerSala all'accensione del PC, con lo schermo della sala già acceso e lo schema della settimana scaricato.

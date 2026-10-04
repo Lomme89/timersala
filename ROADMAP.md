@@ -151,6 +151,19 @@ così resta visibile sopra JW Library e Zoom. Si torna al controller completo co
 - **Menu dell'icona** (tasto destro): mostra/nascondi schermo sala, modalità mini, collega telefono.
 - **Scala dell'interfaccia** in *Impostazioni → Programma* (per esempio 90–150 %), per portatili piccoli o schermi ad alta risoluzione.
 
+### Comandi, dispositivi e preparazione
+- **Telecomando per presentazioni**: i telecomandi USB per PowerPoint (Pagina giù/su) avviano o fermano e tornano indietro,
+  così si comanda il timer lontano dal PC senza telefono.
+- **Aspetto per dispositivo**: dalla pagina web ogni telefono o tablet sceglie e ricorda il suo aspetto (solo cifre, classico,
+  con il programma). Per esempio il tablet sul podio solo cifre, il telefono del presidente il programma.
+- **Preparare lo schema da casa**: esportare la settimana modificata in un file (o mandarla via rete) e aprirla sul PC della sala.
+- **Avviso giallo per tipo di parte**: soglie diverse per tipo (per esempio studenti e discorsi), espresse in secondi fissi
+  come oggi oppure in percentuale della parte.
+
+## Più avanti (2.5 o 3.0)
+- **Interfaccia in altre lingue** (inglese, spagnolo, rumeno…), per le sale condivise con gruppi o congregazioni di altra lingua.
+  Lo schema da wol si sceglie già per lingua: mancherebbe l'interfaccia.
+
 ## Fatte
 
 ### Visite del sorvegliante pianificate — v1.13.0

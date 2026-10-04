@@ -6,6 +6,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using TimerSala.App.Audio;
 using TimerSala.App.ViewModels;
+using TimerSala.Core.Models;
 using TimerSala.Core.Storage;
 using TimerSala.Core.Web;
 using TimerSala.Core.Wol;
@@ -14,7 +15,7 @@ namespace TimerSala.App.Views;
 
 public partial class SettingsWindow : Window
 {
-    sealed record Option<T>(T Value, string Label)
+    public sealed record Option<T>(T Value, string Label)
     {
         public override string ToString() => Label;
     }
@@ -23,6 +24,10 @@ public partial class SettingsWindow : Window
 
     readonly MainViewModel _vm;
     readonly bool _ready;
+
+    // settimane con la visita del sorvegliante (da questa in poi)
+    readonly System.Collections.ObjectModel.ObservableCollection<Option<DateOnly>> _overseerWeeks = [];
+    readonly DateOnly _thisMonday;
 
     // prova dell'ingresso audio (scheda Voce)
     AudioInput? _test;
@@ -44,6 +49,15 @@ public partial class SettingsWindow : Window
         MidweekDay.SelectedItem = days.First(d => d.Value == s.MidweekDay);
         WeekendDay.SelectedItem = days.First(d => d.Value == s.WeekendDay);
         MidweekTime.Text = s.MidweekTime.ToString("HH:mm");
+        var overseerDays = new List<Option<DayOfWeek?>> { new(null, "Stesso giorno") };
+        overseerDays.AddRange(days.Select(d => new Option<DayOfWeek?>(d.Value, d.Label)));
+        OverseerDay.ItemsSource = overseerDays;
+        OverseerDay.SelectedItem = overseerDays.First(d => d.Value == s.OverseerMidweekDay);
+        OverseerTime.Text = s.OverseerMidweekTime?.ToString("HH:mm") ?? "";
+        _thisMonday = WeekMath.MondayOf(DateOnly.FromDateTime(DateTime.Today));
+        foreach (var m in s.OverseerVisits.Where(m => m >= _thisMonday).Order()) _overseerWeeks.Add(WeekOption(m));
+        OverseerList.ItemsSource = _overseerWeeks;
+        RefreshOverseerWeeks();
         WeekendTime.Text = s.WeekendTime.ToString("HH:mm");
         MeetingLength.Text = s.MeetingLengthMinutes.ToString();
         CountdownMinutes.Text = s.CountdownMinutes.ToString();
@@ -221,6 +235,12 @@ public partial class SettingsWindow : Window
     {
         if (!TryTime(MidweekTime.Text, out var midTime) || !TryTime(WeekendTime.Text, out var wkTime))
             return Error("Orari: scrivi l'ora come 19:00.");
+        TimeOnly? overseerTime = null;
+        if (!string.IsNullOrWhiteSpace(OverseerTime.Text))
+        {
+            if (!TryTime(OverseerTime.Text, out var ot)) return Error("Visita del sorvegliante: scrivi l'ora come 19:00, o lasciala vuota.");
+            overseerTime = ot;
+        }
         if (!int.TryParse(MeetingLength.Text, out var length) || length < 30 || length > 300)
             return Error("Durata adunanza: inserisci i minuti (tra 30 e 300).");
         if (!int.TryParse(CountdownMinutes.Text, out var countdown) || countdown < 0 || countdown > 60)
@@ -245,6 +265,10 @@ public partial class SettingsWindow : Window
         s.MidweekTime = midTime;
         s.WeekendTime = wkTime;
         s.MeetingLengthMinutes = length;
+        // le visite passate restano: servono se si riapre una settimana già fatta
+        s.OverseerVisits = s.OverseerVisits.Where(m => m < _thisMonday).Concat(_overseerWeeks.Select(w => w.Value)).Distinct().Order().ToList();
+        s.OverseerMidweekDay = ((Option<DayOfWeek?>)OverseerDay.SelectedItem).Value;
+        s.OverseerMidweekTime = overseerTime;
         s.CountdownMinutes = countdown;
         s.AdaptiveStudy = AdaptiveStudy.IsChecked == true;
         s.AdaptiveWatchtower = AdaptiveWatchtower.IsChecked == true;
@@ -295,6 +319,35 @@ public partial class SettingsWindow : Window
         TimeOnly.TryParseExact(text.Trim().Replace('.', ':'), ["H:mm", "HH:mm"], It, DateTimeStyles.None, out time);
 
     void Apply_Click(object sender, RoutedEventArgs e) => TryApply();
+
+    static Option<DateOnly> WeekOption(DateOnly monday) => new(monday, WeekMath.Label(monday));
+
+    /// <summary>Le prossime 52 settimane non ancora segnate.</summary>
+    void RefreshOverseerWeeks()
+    {
+        var taken = _overseerWeeks.Select(w => w.Value).ToHashSet();
+        var weeks = Enumerable.Range(0, 52).Select(i => _thisMonday.AddDays(7 * i)).Where(m => !taken.Contains(m)).Select(WeekOption).ToList();
+        OverseerWeekBox.ItemsSource = weeks;
+        OverseerWeekBox.SelectedIndex = weeks.Count > 0 ? 0 : -1;
+        OverseerEmpty.Visibility = _overseerWeeks.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    void AddOverseerWeek_Click(object sender, RoutedEventArgs e)
+    {
+        if (OverseerWeekBox.SelectedItem is not Option<DateOnly> week) return;
+        int i = 0;
+        while (i < _overseerWeeks.Count && _overseerWeeks[i].Value < week.Value) i++;
+        _overseerWeeks.Insert(i, week);
+        RefreshOverseerWeeks();
+    }
+
+    void RemoveOverseerWeek_Click(object sender, RoutedEventArgs e)
+    {
+        if (e.OriginalSource is not System.Windows.Controls.Button { Tag: DateOnly monday }) return;
+        var item = _overseerWeeks.FirstOrDefault(w => w.Value == monday);
+        if (item is not null) _overseerWeeks.Remove(item);
+        RefreshOverseerWeeks();
+    }
 
     void PreviewCountdown_Click(object sender, RoutedEventArgs e)
     {

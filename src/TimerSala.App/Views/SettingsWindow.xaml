@@ -66,6 +66,45 @@
                         </StackPanel>
                         <TextBlock Style="{StaticResource Hint}" Text="Serve per calcolare la fine prevista. All'avvio viene proposta l'adunanza di oggi o la prossima." />
 
+                        <TextBlock Text="VISITA DEL SORVEGLIANTE" Style="{StaticResource Group}" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="170" />
+                                <ColumnDefinition Width="240" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Settimana" Style="{StaticResource Label}" />
+                            <ComboBox x:Name="OverseerWeekBox" Grid.Column="1" />
+                            <Button Grid.Column="2" Style="{StaticResource FlatButton}" Content="Aggiungi" Margin="8,0,0,0" Click="AddOverseerWeek_Click" />
+                        </Grid>
+                        <TextBlock x:Name="OverseerEmpty" Style="{StaticResource Hint}" Margin="170,6,0,0" Text="Nessuna visita in programma." />
+                        <ItemsControl x:Name="OverseerList" Margin="170,6,0,0" ButtonBase.Click="RemoveOverseerWeek_Click">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,0,0,4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="240" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding Label}" VerticalAlignment="Center" />
+                                        <Button Grid.Column="1" Style="{StaticResource FlatButton}" Content="✕" Padding="8,2" Margin="8,0,0,0"
+                                                Tag="{Binding Value}" ToolTip="Togli questa settimana" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <Grid Margin="0,8,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="170" />
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="90" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Infrasettimanale" Style="{StaticResource Label}" />
+                            <ComboBox x:Name="OverseerDay" Grid.Column="1" />
+                            <TextBox x:Name="OverseerTime" Grid.Column="2" Margin="8,0,0,0" ToolTip="Ora di inizio durante la visita. Vuoto = stessa ora" />
+                        </Grid>
+                        <TextBlock Style="{StaticResource Hint}" Text="Nelle settimane indicate lo schema viene scaricato già con la visita del sorvegliante e l'adunanza infrasettimanale si sposta nel giorno scelto. Ora vuota = la solita." />
+
                         <TextBlock Text="DURATE ADATTIVE" Style="{StaticResource Group}" />
                         <CheckBox x:Name="AdaptiveStudy" Content="Studio biblico di congregazione adattivo" />
                         <CheckBox x:Name="AdaptiveWatchtower" Content="Studio Torre di Guardia adattivo" />

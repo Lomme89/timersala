@@ -106,13 +106,35 @@ public sealed class AppSettings
     public double? MiniLeft { get; set; }
     public double? MiniTop { get; set; }
 
+    // ── Visita del sorvegliante di circoscrizione ──
+
+    /// <summary>Settimane della visita (il lunedì di ciascuna), pianificabili con mesi di anticipo.</summary>
+    public List<DateOnly> OverseerVisits { get; set; } = [];
+
+    /// <summary>Giorno dell'infrasettimanale durante la visita (null = il solito giorno).</summary>
+    public DayOfWeek? OverseerMidweekDay { get; set; }
+
+    /// <summary>Orario dell'infrasettimanale durante la visita (null = il solito orario).</summary>
+    public TimeOnly? OverseerMidweekTime { get; set; }
+
+    public bool IsOverseerWeek(DateOnly monday) => OverseerVisits.Contains(monday);
+
     public (DayOfWeek Day, TimeOnly Time) ScheduleFor(Models.MeetingKind kind) =>
         kind == Models.MeetingKind.Midweek ? (MidweekDay, MidweekTime) : (WeekendDay, WeekendTime);
+
+    /// <summary>Giorno e ora dell'adunanza in una certa settimana: nella settimana della visita l'infrasettimanale può spostarsi.</summary>
+    public (DayOfWeek Day, TimeOnly Time) ScheduleFor(Models.MeetingKind kind, DateOnly monday)
+    {
+        var (day, time) = ScheduleFor(kind);
+        if (kind == Models.MeetingKind.Midweek && IsOverseerWeek(monday))
+            return (OverseerMidweekDay ?? day, OverseerMidweekTime ?? time);
+        return (day, time);
+    }
 
     /// <summary>Data e ora di inizio dell'adunanza nella settimana che inizia con <paramref name="monday"/>.</summary>
     public DateTime StartOf(Models.MeetingKind kind, DateOnly monday)
     {
-        var (day, time) = ScheduleFor(kind);
+        var (day, time) = ScheduleFor(kind, monday);
         int offset = ((int)day + 6) % 7;
         return monday.AddDays(offset).ToDateTime(time);
     }

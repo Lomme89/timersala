@@ -37,7 +37,8 @@ public static class WeekSync
     /// tranne quelli modificati a mano; la visita del sorvegliante viene riapplicata allo schema nuovo.
     /// </summary>
     public static async Task<SyncResult> DownloadAheadAsync(WolClient wol, DataStore store, WolLanguage lang, DateOnly fromDay,
-        int maxWeeks = 16, IProgress<string>? progress = null, CancellationToken ct = default)
+        int maxWeeks = 16, IProgress<string>? progress = null, CancellationToken ct = default,
+        Func<DateOnly, bool>? isOverseerWeek = null)
     {
         var updated = new List<DateOnly>();
         var kept = new List<DateOnly>();
@@ -59,7 +60,7 @@ public static class WeekSync
             try
             {
                 var week = await wol.FetchWeekAsync(monday, lang, ct);
-                if (existing?.CircuitOverseerVisit == true)
+                if (existing?.CircuitOverseerVisit == true || isOverseerWeek?.Invoke(monday) == true)
                 {
                     week.CircuitOverseerVisit = true;
                     week.Midweek = MeetingTemplates.ApplyOverseerVisit(week.Midweek);

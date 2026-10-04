@@ -1,5 +1,13 @@
 # Novità
 
+## v1.13.0 — 4 ottobre 2026
+
+**Visite del sorvegliante pianificate** (*Impostazioni → Adunanze*)
+- Segna in anticipo le settimane della visita, anche a mesi di distanza. Si tolgono con ✕.
+- Quelle settimane vengono scaricate già adattate alla visita, anche con «Scarica tutte le prossime settimane».
+- Scegli in che giorno si tiene l'infrasettimanale durante la visita (per esempio il martedì) e, se serve, un orario diverso. Countdown d'inizio e fine prevista seguono il giorno scelto.
+- Il pulsante della visita nell'editor aggiorna anche l'elenco, e viceversa. Il sottotitolo della settimana indica «visita del sorvegliante».
+
 ## v1.12.0 — 4 ottobre 2026
 
 **Messaggi a tutto schermo**

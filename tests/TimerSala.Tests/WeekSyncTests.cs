@@ -63,6 +63,46 @@ public class WeekSyncTests : IDisposable
     }
 
     [Fact]
+    public async Task Applies_overseer_visit_to_planned_weeks()
+    {
+        var store = new DataStore(_dir);
+        var planned = new DateOnly(2026, 10, 19);
+        using var wol = new WolClient(new HttpClient(Wol()));
+        var r = await WeekSync.DownloadAheadAsync(wol, store, WolLanguage.Italian, new DateOnly(2026, 10, 5), isOverseerWeek: m => m == planned);
+
+        Assert.Equal(3, r.Updated);
+        var co = store.LoadWeek(planned)!;
+        Assert.True(co.CircuitOverseerVisit);
+        Assert.Contains(co.Midweek.Parts, p => p.Title == MeetingTemplates.OverseerTalkTitle);
+        Assert.False(store.LoadWeek(new DateOnly(2026, 10, 12))!.CircuitOverseerVisit);
+    }
+
+    [Fact]
+    public void Overseer_week_moves_the_midweek_meeting()
+    {
+        var s = new AppSettings
+        {
+            MidweekDay = DayOfWeek.Thursday,
+            MidweekTime = new TimeOnly(19, 0),
+            WeekendDay = DayOfWeek.Sunday,
+            OverseerVisits = [new DateOnly(2026, 10, 19)],
+            OverseerMidweekDay = DayOfWeek.Tuesday,
+        };
+        var normal = new DateOnly(2026, 10, 12);
+        var visit = new DateOnly(2026, 10, 19);
+
+        Assert.Equal((DayOfWeek.Thursday, new TimeOnly(19, 0)), s.ScheduleFor(MeetingKind.Midweek, normal));
+        Assert.Equal((DayOfWeek.Tuesday, new TimeOnly(19, 0)), s.ScheduleFor(MeetingKind.Midweek, visit));
+        Assert.Equal(DayOfWeek.Sunday, s.ScheduleFor(MeetingKind.Weekend, visit).Day);
+
+        s.OverseerMidweekTime = new TimeOnly(18, 30);
+        Assert.Equal((DayOfWeek.Tuesday, new TimeOnly(18, 30)), s.ScheduleFor(MeetingKind.Midweek, visit));
+
+        s.OverseerMidweekDay = null; // stesso giorno
+        Assert.Equal(DayOfWeek.Thursday, s.ScheduleFor(MeetingKind.Midweek, visit).Day);
+    }
+
+    [Fact]
     public async Task Stops_on_network_error()
     {
         var store = new DataStore(_dir);

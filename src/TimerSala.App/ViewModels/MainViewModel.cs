@@ -144,6 +144,7 @@ public sealed partial class MainViewModel : ObservableObject
             Midweek = MeetingTemplates.DefaultMidweek(),
             Weekend = MeetingTemplates.DefaultWeekend(),
         };
+        SyncOverseerWeek();
         ApplyMeeting();
         StatusMessage = null;
         if (saved is null && Settings.AutoDownload)
@@ -187,6 +188,7 @@ public sealed partial class MainViewModel : ObservableObject
         WeekTitle = WeekMath.Label(Week.WeekStart);
         var bits = new List<string>();
         if (!string.IsNullOrWhiteSpace(Week.BibleReading)) bits.Add(Week.BibleReading!);
+        if (Week.CircuitOverseerVisit) bits.Add("visita del sorvegliante");
         if (Week.EditedManually) bits.Add("modificato");
         else if (Week.FetchedAt is { } f) bits.Add($"da wol.jw.org il {f:dd/MM}");
         else bits.Add("schema predefinito");
@@ -254,7 +256,8 @@ public sealed partial class MainViewModel : ObservableObject
         var progress = new Progress<string>(m => ShowStatus(m));
         try
         {
-            var result = await WeekSync.DownloadAheadAsync(_wol, _store, Settings.Language, Week.WeekStart, progress: progress, ct: cts.Token);
+            var result = await WeekSync.DownloadAheadAsync(_wol, _store, Settings.Language, Week.WeekStart, progress: progress, ct: cts.Token,
+                isOverseerWeek: Settings.IsOverseerWeek);
             ShowStatus(result.Summary, error: result.Error is not null || result.Updated == 0);
             // ricarica la settimana visualizzata con lo schema appena scaricato
             if (!Timer.IsRunning && result.UpdatedWeeks.Contains(Week.WeekStart))
@@ -297,7 +300,7 @@ public sealed partial class MainViewModel : ObservableObject
                 _store.SaveWeek(fetched);
                 return;
             }
-            if (Week.CircuitOverseerVisit)
+            if (Week.CircuitOverseerVisit || Settings.IsOverseerWeek(monday))
             {
                 fetched.CircuitOverseerVisit = true;
                 fetched.Midweek = MeetingTemplates.ApplyOverseerVisit(fetched.Midweek);
@@ -319,6 +322,7 @@ public sealed partial class MainViewModel : ObservableObject
         }
     }
 
+    /// <summary>Pulsante «Sorvegliante» del controller: segna o toglie la settimana visualizzata dall'elenco delle visite.</summary>
     void SetOverseerVisit(bool on)
     {
         if (on == Week.CircuitOverseerVisit) return;
@@ -328,6 +332,41 @@ public sealed partial class MainViewModel : ObservableObject
             OnPropertyChanged(nameof(OverseerVisit));
             return;
         }
+        if (!ChangeWeekOverseer(on))
+        {
+            OnPropertyChanged(nameof(OverseerVisit));
+            return;
+        }
+        Settings.OverseerVisits.Remove(Week.WeekStart);
+        if (on) Settings.OverseerVisits.Add(Week.WeekStart);
+        Settings.OverseerVisits.Sort();
+        SaveSettings();
+        ApplyMeeting();
+        ShowStatus(on ? "Visita del sorvegliante: schemi adattati." : "Schema normale ripristinato.");
+    }
+
+    /// <summary>Allinea la settimana visualizzata all'elenco delle visite pianificate nelle impostazioni.</summary>
+    void SyncOverseerWeek()
+    {
+        if (Timer.IsRunning) return;
+        var monday = Week.WeekStart;
+        if (Week.CircuitOverseerVisit && !Settings.IsOverseerWeek(monday) && !_overseerListEdited)
+        {
+            // settimana segnata prima che esistesse l'elenco: la si aggiunge
+            Settings.OverseerVisits.Add(monday);
+            Settings.OverseerVisits.Sort();
+            SaveSettings();
+            return;
+        }
+        bool planned = Settings.IsOverseerWeek(monday);
+        if (planned != Week.CircuitOverseerVisit) ChangeWeekOverseer(planned);
+    }
+
+    bool _overseerListEdited;
+
+    /// <summary>Applica o toglie lo schema della visita alla settimana visualizzata; false se l'utente rinuncia.</summary>
+    bool ChangeWeekOverseer(bool on)
+    {
         if (on)
         {
             Week.Midweek = MeetingTemplates.ApplyOverseerVisit(Week.Midweek);
@@ -336,18 +375,14 @@ public sealed partial class MainViewModel : ObservableObject
         else
         {
             if (Week.EditedManually && !Confirm("Ripristinare lo schema senza la visita del sorvegliante?\nLe modifiche manuali di questa settimana andranno perse."))
-            {
-                OnPropertyChanged(nameof(OverseerVisit));
-                return;
-            }
+                return false;
             Week.Midweek = Week.DownloadedMidweek?.Clone() ?? MeetingTemplates.DefaultMidweek();
             Week.Weekend = Week.DownloadedWeekend?.Clone() ?? MeetingTemplates.DefaultWeekend();
             Week.EditedManually = false;
         }
         Week.CircuitOverseerVisit = on;
         _store.SaveWeek(Week);
-        ApplyMeeting();
-        ShowStatus(on ? "Visita del sorvegliante: schemi adattati." : "Schema normale ripristinato.");
+        return true;
     }
 
     /// <summary>Salva un'adunanza modificata con l'editor.</summary>
@@ -910,6 +945,12 @@ public sealed partial class MainViewModel : ObservableObject
         UpdateAdaptiveParts();
         ApplyVoiceSettings();
         SaveSettings();
+        if (!Timer.IsRunning && settings.IsOverseerWeek(Week.WeekStart) != Week.CircuitOverseerVisit)
+        {
+            _overseerListEdited = true;
+            if (ChangeWeekOverseer(settings.IsOverseerWeek(Week.WeekStart))) ApplyMeeting();
+            _overseerListEdited = false;
+        }
         if (webChanged) _ = StartWebServerAsync();
         else UpdateWebUrl();
         RefreshDisplay();

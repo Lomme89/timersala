@@ -184,7 +184,9 @@ Avvia di nuovo = parti subito. **Esc** annulla l'attesa o, nei primi secondi, un
 - **Download:** il pulsante di download aggiorna la settimana visualizzata oppure scarica tutte le prossime già pubblicate. Gli schemi salvati vengono sovrascritti, tranne quelli modificati a mano.
 - **Visita del sorvegliante:**
   - nell'infrasettimanale lo studio biblico è sostituito dal discorso di servizio (30 min);
-  - nel fine settimana la Torre di Guardia dura 30 min ed è seguita dal discorso di servizio.
+  - nel fine settimana la Torre di Guardia dura 30 min ed è seguita dal discorso di servizio;
+  - in *Impostazioni → Adunanze* puoi segnare in anticipo le settimane della visita: gli schemi vengono scaricati già adattati;
+  - nella stessa sezione scegli in che giorno (ed eventualmente a che ora) si tiene l'infrasettimanale durante la visita, per esempio il martedì. Countdown e fine prevista lo seguono.
 - **Rete:** l'indirizzo usa la scheda di rete principale e ignora quelle virtuali (VirtualBox, Hyper‑V, VPN). In *Impostazioni → Rete* puoi scegliere un altro indirizzo o il nome del PC.
 - **Sicurezza:** il codice QR di controllo contiene il PIN ed è nascosto finché non lo mostri. Dopo 5 PIN errati il controllo si blocca per un minuto.
 - **Dati:** sono in `%AppData%\TimerSala`: impostazioni, uno schema per settimana e la cartella `diagnostica` con l'ultima pagina scaricata. Se il sito cambia struttura e il download non funziona, quella cartella serve a correggere il programma.

@@ -15,7 +15,7 @@ public partial class WelcomeWindow : Window
 
     public WelcomeWindow(MainViewModel main)
     {
-        LastOpenedFrom = Environment.StackTrace;
+        LastOpenedFrom = (LastOpenedFrom is null ? "" : LastOpenedFrom + " → ") + $"aperta con IsFirstRun={main.IsFirstRun}, OnboardingDone={main.Settings.OnboardingDone}";
         InitializeComponent();
         _vm = new WelcomeViewModel(main);
         DataContext = _vm;

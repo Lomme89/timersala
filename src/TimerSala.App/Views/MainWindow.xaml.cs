@@ -39,7 +39,11 @@ public partial class MainWindow : Window
             OfferRestore();
             // la prima volta la configurazione guidata; dopo un aggiornamento le novità (mai nel mezzo di un'adunanza ripresa)
             if (_vm.IsRunning) return;
-            if (_vm.IsFirstRun && !_vm.Settings.OnboardingDone) Dispatcher.BeginInvoke(ShowWelcome, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+            if (_vm.IsFirstRun && !_vm.Settings.OnboardingDone)
+            {
+                WelcomeWindow.LastOpenedFrom = $"pianificata all'apertura: IsFirstRun={_vm.IsFirstRun}, OnboardingDone={_vm.Settings.OnboardingDone}";
+                Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ApplicationIdle, new Action(ShowWelcome));
+            }
             HelpActions.ShowNewsIfUpdated(this, _vm);
         };
         LocationChanged += (_, _) => UpdateTopmostOfDisplay();

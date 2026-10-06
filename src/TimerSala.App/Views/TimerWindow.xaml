@@ -256,5 +256,10 @@
             <TextBlock x:Name="MsgText" Text="{Binding ScreenMessage}" Foreground="#111111" FontWeight="Bold"
                        TextAlignment="Center" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" />
         </Border>
+        <!-- modalità addestramento: impossibile scambiarla per l'adunanza vera -->
+        <Border HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,18" Background="#FBBF24" CornerRadius="30" Padding="26,8"
+                Visibility="{Binding IsTraining, Converter={StaticResource BoolToVis}}">
+            <TextBlock Text="PROVA · ADDESTRAMENTO" Foreground="#111111" FontWeight="Bold" FontSize="26" />
+        </Border>
     </Grid>
 </Window>

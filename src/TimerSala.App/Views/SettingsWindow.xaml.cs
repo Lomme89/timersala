@@ -240,6 +240,16 @@ public partial class SettingsWindow : Window
 
     void Help_Click(object sender, RoutedEventArgs e) => HelpActions.ShowHelp(this, _main);
 
+    void Training_Click(object sender, RoutedEventArgs e)
+    {
+        if (_main.StartTraining() is { } why)
+        {
+            MessageBox.Show(this, why, "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+        Close();
+    }
+
     void Welcome_Click(object sender, RoutedEventArgs e)
     {
         _vm.Flush();

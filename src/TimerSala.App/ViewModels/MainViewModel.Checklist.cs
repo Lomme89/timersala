@@ -69,7 +69,7 @@ public sealed partial class MainViewModel
 
         // nuova adunanza: si ricomincia da capo
         var meeting = Timer.MeetingStart?.DateTime;
-        if (meeting != _checklistFor)
+        if (meeting != _checklistFor && !IsTraining)
         {
             _checklistFor = meeting;
             foreach (var c in Checklist) c.Done = false;

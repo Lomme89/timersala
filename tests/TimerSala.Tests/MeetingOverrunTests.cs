@@ -24,3 +24,20 @@ public class MeetingOverrunTests
         Assert.Equal(105 * 60 + 3 * 60, MeetingPlan.EstimatedSeconds(m));
     }
 }
+
+public class TrainingMeetingTests
+{
+    [Fact]
+    public void Training_meeting_is_ten_times_shorter_and_leaves_the_original_alone()
+    {
+        var original = MeetingTemplates.DefaultMidweek();
+        var training = TrainingMeeting.From(original);
+
+        Assert.Equal(original.Parts.Count, training.Parts.Count);
+        Assert.Equal(60, training.Parts[1].DurationSeconds);        // discorso di 10 minuti → 1 minuto
+        Assert.Equal(15, training.Parts[0].DurationSeconds);        // 1 minuto → minimo 15 secondi
+        Assert.Equal(180, training.Parts[^2].DurationSeconds);      // studio di 30 minuti → 3 minuti
+        Assert.StartsWith("Prova", training.Title);
+        Assert.Equal(600, original.Parts[1].DurationSeconds);
+    }
+}

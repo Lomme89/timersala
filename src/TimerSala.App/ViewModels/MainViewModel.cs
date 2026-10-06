@@ -53,7 +53,7 @@ public sealed partial class MainViewModel : ObservableObject
         else
             _sessionReady = true;
         _wol = new WolClient { DiagnosticsFolder = store.DiagnosticsFolder };
-        _web = new TimerWebServer(Timer, () => DisplayOptions.From(Settings), Messages,
+        _web = new TimerWebServer(Timer, () => DisplayOptions.From(Settings) with { Training = IsTraining }, Messages,
             () => new RemoteConfig(Settings.RemoteControlEnabled, Settings.RemotePin, Settings.MessagePresets, Settings.MessagesEnabled),
             (action, value) => Application.Current.Dispatcher.InvokeAsync(() => ExecuteRemote(action, value)).Task);
         Messages.Changed += (_, _) => Application.Current.Dispatcher.BeginInvoke(RefreshDisplay);
@@ -124,6 +124,12 @@ public sealed partial class MainViewModel : ObservableObject
     void SwitchKind(MeetingKind kind)
     {
         if (kind == Kind) return;
+        if (BlockedByTraining())
+        {
+            OnPropertyChanged(nameof(IsMidweek));
+            OnPropertyChanged(nameof(IsWeekend));
+            return;
+        }
         if (Timer.IsRunning)
         {
             ShowStatus("Ferma il timer prima di cambiare adunanza.", error: true);
@@ -139,6 +145,7 @@ public sealed partial class MainViewModel : ObservableObject
 
     public void LoadWeek(DateOnly anyDay)
     {
+        if (BlockedByTraining()) return;
         if (Timer.IsRunning)
         {
             ShowStatus("Ferma il timer prima di cambiare settimana.", error: true);
@@ -259,7 +266,7 @@ public sealed partial class MainViewModel : ObservableObject
     /// <summary>Scarica tutte le settimane pubblicate a partire da quella visualizzata.</summary>
     async Task DownloadAllAsync()
     {
-        if (IsBusy) return;
+        if (IsBusy || BlockedByTraining()) return;
         _downloadCts?.Cancel();
         var cts = _downloadCts = new CancellationTokenSource();
         IsBusy = true;
@@ -290,6 +297,11 @@ public sealed partial class MainViewModel : ObservableObject
 
     async Task DownloadAsync(bool silent)
     {
+        if (IsTraining)
+        {
+            if (!silent) BlockedByTraining();
+            return;
+        }
         if (!silent && Week.EditedManually &&
             !Confirm("Questa settimana è stata modificata a mano.\nScaricando di nuovo lo schema le modifiche andranno perse. Continuare?"))
             return;
@@ -336,6 +348,11 @@ public sealed partial class MainViewModel : ObservableObject
     void SetOverseerVisit(bool on)
     {
         if (on == Week.CircuitOverseerVisit) return;
+        if (BlockedByTraining())
+        {
+            OnPropertyChanged(nameof(OverseerVisit));
+            return;
+        }
         if (Timer.IsRunning)
         {
             ShowStatus("Ferma il timer prima di modificare l'adunanza.", error: true);
@@ -398,6 +415,7 @@ public sealed partial class MainViewModel : ObservableObject
     /// <summary>Salva un'adunanza modificata con l'editor.</summary>
     public void SaveEditedMeeting(Meeting meeting)
     {
+        if (BlockedByTraining()) return;
         Week.Set(Kind, meeting);
         Week.EditedManually = true;
         _store.SaveWeek(Week);
@@ -407,6 +425,7 @@ public sealed partial class MainViewModel : ObservableObject
 
     public void ResetWeekToDownloaded()
     {
+        if (BlockedByTraining()) return;
         _store.DeleteWeek(Week.WeekStart);
         LoadWeek(Week.WeekStart);
     }
@@ -464,7 +483,7 @@ public sealed partial class MainViewModel : ObservableObject
     {
         bool running = Timer.IsRunning;
         Timer.AdjustTarget(delta);
-        if (!running)
+        if (!running && !IsTraining)
         {
             Week.EditedManually = true;
             _store.SaveWeek(Week);
@@ -869,7 +888,8 @@ public sealed partial class MainViewModel : ObservableObject
 
     void SaveSession()
     {
-        if (!_sessionReady) return;
+        // l'addestramento non deve mai diventare un'adunanza da riprendere
+        if (!_sessionReady || IsTraining) return;
         _ticksSinceSave = 0;
         var timer = Timer.ExportState();
         if (timer.HasProgress)

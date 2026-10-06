@@ -1080,6 +1080,15 @@
                                         </StackPanel>
                                     </DockPanel>
                                 </Border>
+                                <Border Style="{StaticResource Row}">
+                                    <DockPanel>
+                                        <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Inizia" Padding="12,5" Click="Training_Click" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Modalità addestramento" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Per insegnare il programma: l'adunanza della settimana con le parti dieci volte più brevi. Schermo e telefono mostrano «PROVA», niente viene salvato." />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
                             </StackPanel>
                         </Border>
 

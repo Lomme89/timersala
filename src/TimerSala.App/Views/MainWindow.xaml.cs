@@ -279,6 +279,11 @@ public partial class MainWindow : Window
 
     void Edit_Click(object sender, RoutedEventArgs e)
     {
+        if (_vm.IsTraining)
+        {
+            MessageBox.Show(this, "Durante l'addestramento lo schema non si modifica. Esci prima dall'addestramento.", "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
         if (_vm.IsRunning)
         {
             MessageBox.Show(this, "Ferma il timer prima di modificare lo schema.", "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -309,6 +314,17 @@ public partial class MainWindow : Window
     void Qr_Click(object sender, RoutedEventArgs e) => ShowPhoneQr();
 
     void Help_Click(object sender, RoutedEventArgs e) => HelpActions.ShowHelp(this, _vm);
+
+    /// <summary>Entra in addestramento (dalla guida o dalle impostazioni).</summary>
+    public void StartTraining(Window owner)
+    {
+        if (_vm.StartTraining() is { } why)
+        {
+            MessageBox.Show(owner, why, "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+        BringToFront();
+    }
 
     /// <summary>Configurazione guidata (al primo avvio, o da Impostazioni → Programma).</summary>
     public void ShowWelcome() => new WelcomeWindow(_vm) { Owner = this }.ShowDialog();

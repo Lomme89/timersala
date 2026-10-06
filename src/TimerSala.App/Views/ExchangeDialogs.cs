@@ -56,7 +56,8 @@ public static class ExchangeDialogs
 
         if (vm.Import(file) is not { } done)
         {
-            MessageBox.Show(owner, "Ferma il timer prima di importare.", "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(owner, vm.IsTraining ? "Esci prima dall'addestramento." : "Ferma il timer prima di importare.", "TimerSala",
+                MessageBoxButton.OK, MessageBoxImage.Information);
             return false;
         }
         MessageBox.Show(owner, done, "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);

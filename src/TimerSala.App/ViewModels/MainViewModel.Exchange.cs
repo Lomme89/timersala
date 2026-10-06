@@ -12,9 +12,9 @@ public sealed partial class MainViewModel
     /// <summary>Importa un file già letto; restituisce cosa è stato fatto, o null se non si può adesso.</summary>
     public string? Import(ExchangeFile file)
     {
-        if (Timer.IsRunning)
+        if (Timer.IsRunning || BlockedByTraining())
         {
-            ShowStatus("Ferma il timer prima di importare.", error: true);
+            if (Timer.IsRunning) ShowStatus("Ferma il timer prima di importare.", error: true);
             return null;
         }
         int weeks = Exchange.ImportWeeks(_store, file);

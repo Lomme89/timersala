@@ -18,6 +18,25 @@ public class WebServerTests
     }
 
     [Fact]
+    public async Task Training_is_flagged_in_the_state_and_shown_on_the_page()
+    {
+        var timer = new MeetingTimer();
+        timer.LoadMeeting(TrainingMeeting.From(MeetingTemplates.DefaultMidweek()));
+        bool training = true;
+        await using var server = new TimerWebServer(timer, () => new DisplayOptions(true, true, false) { Training = training });
+        int port = FreePort();
+        await server.StartAsync(port, localOnly: true);
+        using var http = new HttpClient { BaseAddress = new Uri($"http://127.0.0.1:{port}") };
+
+        using (var state = JsonDocument.Parse(await http.GetStringAsync("/api/state")))
+            Assert.True(state.RootElement.GetProperty("training").GetBoolean());
+        training = false;
+        using (var state = JsonDocument.Parse(await http.GetStringAsync("/api/state")))
+            Assert.False(state.RootElement.GetProperty("training").GetBoolean());
+        Assert.Contains("PROVA · ADDESTRAMENTO", await http.GetStringAsync("/"));
+    }
+
+    [Fact]
     public async Task Serves_page_state_schedule_and_events()
     {
         var timer = new MeetingTimer();

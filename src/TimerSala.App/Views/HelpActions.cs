@@ -16,10 +16,17 @@ public static class HelpActions
         var w = DocWindow.Help();
         w.Owner = owner;
         w.AddAction("Novità", () => ShowNews(w))
+         .AddAction("Addestramento", () => { w.Close(); StartTraining(owner); })
          .AddAction("Qualcosa non funziona", () => Report(w, vm, isProblem: true))
          .AddAction("Ho un'idea", () => Report(w, vm, isProblem: false))
          .AddAction("Sito", () => Open(SiteUrl));
         w.Show();
+    }
+
+    /// <summary>Modalità addestramento: un'adunanza di prova, veloce, che non lascia tracce.</summary>
+    public static void StartTraining(Window owner)
+    {
+        if (Application.Current.MainWindow is MainWindow main) main.StartTraining(owner);
     }
 
     public static void ShowNews(Window owner)

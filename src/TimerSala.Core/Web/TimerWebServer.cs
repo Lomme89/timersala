@@ -27,6 +27,9 @@ public sealed record DisplayOptions(bool ShowClockWhenIdle, bool ShowNextPartWhe
     public bool Flash { get; init; } = true;
     public string Countdown { get; init; } = "tide";
 
+    /// <summary>Modalità addestramento: la pagina mostra chiaramente «PROVA».</summary>
+    public bool Training { get; init; }
+
     public static DisplayOptions From(Storage.AppSettings s) => new(s.ShowClockWhenIdle, s.ShowNextPartWhenIdle, s.ShowDelayOnDisplay)
     {
         Theme = s.DisplayTheme.ToString().ToLowerInvariant(),
@@ -265,6 +268,7 @@ public sealed class TimerWebServer : IAsyncDisposable
             showDelay = o.ShowDelay,
             message = _messages.Current,
             messageFull = _messages.IsFullScreen,
+            training = o.Training,
             style = new
             {
                 theme = o.Theme,

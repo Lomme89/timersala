@@ -72,6 +72,22 @@ public class WindowsSmokeTests
         Assert.True(vm.IsRunning);
         vm.ToggleStartCommand.Execute(null);
 
+        // addestramento: parti più brevi, poi tutto torna com'era
+        var realDuration = vm.Timer.Meeting.Parts.First(p => p.IsTimed && p.DurationSeconds >= 600).DurationSeconds;
+        Assert.Null(vm.StartTraining());
+        Pump();
+        Assert.True(vm.IsTraining);
+        Assert.True(vm.Timer.Meeting.Parts.All(p => !p.IsTimed || p.DurationSeconds < realDuration));
+        vm.ToggleStartCommand.Execute(null);
+        Pump();
+        vm.ToggleStartCommand.Execute(null);
+        Pump();
+        vm.StopTraining();
+        Pump();
+        Assert.False(vm.IsTraining);
+        Assert.Contains(vm.Timer.Meeting.Parts, p => p.DurationSeconds == realDuration);
+        Assert.False(vm.Timer.IsRunning);
+
         // lista di controllo aperta con il pulsante, una voce spuntata
         vm.ChecklistOpen = true;
         Pump();

@@ -118,6 +118,15 @@
 
         <!-- ═════ Intestazione: ora, ritardo, rete, mini, editor, impostazioni ═════ -->
         <DockPanel Margin="0,0,0,8">
+            <Border DockPanel.Dock="Top" Margin="0,0,0,8" Padding="12,7" CornerRadius="10" Background="#26FBBF24" BorderBrush="{StaticResource AmberBrush}"
+                    BorderThickness="1" Visibility="{Binding IsTraining, Converter={StaticResource BoolToVis}}">
+                <DockPanel>
+                    <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Esci" Padding="14,3" Command="{Binding StopTrainingCommand}" />
+                    <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" FontSize="12.5" Foreground="{StaticResource AmberBrush}">
+                        <Run Text="ADDESTRAMENTO" FontWeight="Bold" /><Run Text="  ·  le parti durano un decimo del solito, niente viene salvato" />
+                    </TextBlock>
+                </DockPanel>
+            </Border>
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
                 <Grid>
                     <ToggleButton x:Name="NetworkButton" Width="34" Height="34" Cursor="Hand" FocusVisualStyle="{x:Null}"

@@ -56,8 +56,12 @@ public sealed partial class MainViewModel
 
     void AfterPartsChanged(bool edited)
     {
-        Week.EditedManually = edited;
-        _store.SaveWeek(Week);
+        // in addestramento si modifica solo la copia di prova
+        if (!IsTraining)
+        {
+            Week.EditedManually = edited;
+            _store.SaveWeek(Week);
+        }
         UpdateAdaptiveParts();
         RebuildParts();
         UpdateWeekTexts();

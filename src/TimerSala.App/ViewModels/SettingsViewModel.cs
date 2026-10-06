@@ -264,7 +264,49 @@ public sealed class SettingsViewModel : ObservableObject
         set => Edit(s => s.DisplayFont = string.IsNullOrWhiteSpace(value) ? "Bahnschrift SemiBold" : value.Trim());
     }
 
-    public int WarningSeconds { get => Draft.WarningSeconds; set => Edit(s => s.WarningSeconds = value); }
+    public int WarningSeconds { get => Draft.WarningSeconds; set => EditWarning(s => s.WarningSeconds = value); }
+
+    // avviso giallo per tipo di parte: secondi fissi o percentuale della parte
+    public bool WarningOthersPercent
+    {
+        get => Draft.WarningPercent;
+        set => EditWarning(s => { s.WarningPercent = value; s.WarningSeconds = value ? 10 : 60; });
+    }
+    public bool WarningOthersSeconds { get => !WarningOthersPercent; set => WarningOthersPercent = !value; }
+    public string WarningOthersUnit => Draft.WarningPercent ? "%" : "s";
+    public int WarningOthersMax => Draft.WarningPercent ? 50 : 600;
+
+    public int WarningStudentsValue { get => Draft.WarningFor(PartCategory.Student).Value; set => EditWarning(s => s.WarningStudents = s.WarningFor(PartCategory.Student) with { Value = value }); }
+    public bool WarningStudentsPercent
+    {
+        get => Draft.WarningFor(PartCategory.Student).Percent;
+        set => EditWarning(s => s.WarningStudents = new PartWarning(value ? 10 : 60, value));
+    }
+    public bool WarningStudentsSeconds { get => !WarningStudentsPercent; set => WarningStudentsPercent = !value; }
+    public string WarningStudentsUnit => WarningStudentsPercent ? "%" : "s";
+    public int WarningStudentsMax => WarningStudentsPercent ? 50 : 600;
+
+    public int WarningTalksValue { get => Draft.WarningFor(PartCategory.Talk).Value; set => EditWarning(s => s.WarningTalks = s.WarningFor(PartCategory.Talk) with { Value = value }); }
+    public bool WarningTalksPercent
+    {
+        get => Draft.WarningFor(PartCategory.Talk).Percent;
+        set => EditWarning(s => s.WarningTalks = new PartWarning(value ? 10 : 60, value));
+    }
+    public bool WarningTalksSeconds { get => !WarningTalksPercent; set => WarningTalksPercent = !value; }
+    public string WarningTalksUnit => WarningTalksPercent ? "%" : "s";
+    public int WarningTalksMax => WarningTalksPercent ? 50 : 600;
+
+    /// <summary>Le soglie si leggono a vicenda (studenti e discorsi partono da quella delle altre parti): si aggiornano tutte.</summary>
+    void EditWarning(Action<AppSettings> change)
+    {
+        if (_loading) return;
+        change(Draft);
+        foreach (var n in new[] { nameof(WarningSeconds), nameof(WarningOthersPercent), nameof(WarningOthersSeconds), nameof(WarningOthersUnit), nameof(WarningOthersMax),
+                     nameof(WarningStudentsValue), nameof(WarningStudentsPercent), nameof(WarningStudentsSeconds), nameof(WarningStudentsUnit), nameof(WarningStudentsMax),
+                     nameof(WarningTalksValue), nameof(WarningTalksPercent), nameof(WarningTalksSeconds), nameof(WarningTalksUnit), nameof(WarningTalksMax) })
+            OnPropertyChanged(n);
+        Changed();
+    }
     public bool ColoredDigits { get => Draft.ColoredDigits; set => Edit(s => s.ColoredDigits = value); }
     public bool FlashOnOvertime { get => Draft.FlashOnOvertime; set => Edit(s => s.FlashOnOvertime = value); }
 
@@ -314,7 +356,8 @@ public sealed class SettingsViewModel : ObservableObject
         var p = MainViewModel.PaletteFor(s.DisplayTheme);
         int remaining = SampleTarget - SampleElapsed;
         bool active = !PreviewIdle;
-        var phase = remaining <= s.WarningSeconds ? p.Amber : p.Green;
+        // l'anteprima mostra un discorso
+        var phase = remaining <= s.WarningFor(PartCategory.Talk).SecondsFor(SampleTarget) ? p.Amber : p.Green;
         var layout = s.DisplayLayout;
         const string clock = "19:16";
 

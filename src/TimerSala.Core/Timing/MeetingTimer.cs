@@ -38,6 +38,12 @@ public sealed class MeetingTimer
     /// <summary>Soglia (secondi rimanenti) sotto la quale il timer diventa giallo.</summary>
     public int WarningSeconds { get; set; } = 60;
 
+    /// <summary>
+    /// Avviso giallo per una parte dello schema (secondi rimanenti, data la parte e la sua durata). Se manca vale
+    /// <see cref="WarningSeconds"/>; non si applica al consiglio e ai timer manuali.
+    /// </summary>
+    public Func<MeetingPart, int, int>? PartWarning { get; set; }
+
     public int CounselSeconds { get; set; } = 60;
 
     DateTimeOffset? _meetingStart;
@@ -628,8 +634,9 @@ public sealed class MeetingTimer
 
             var elapsed = (_carried + (_clock.GetUtcNow() - _startedAt.Value)).TotalSeconds;
             double remaining = _targetSeconds - elapsed;
+            int warning = _mode == TimerMode.Part && PartWarning is { } rule ? rule(_meeting.Parts[_runningIndex], _targetSeconds) : WarningSeconds;
             var phase = remaining < 0 ? TimerPhase.Overtime
-                : remaining <= WarningSeconds ? TimerPhase.Warning
+                : remaining <= warning ? TimerPhase.Warning
                 : TimerPhase.Normal;
 
             if (_mode == TimerMode.Part && remaining < 0) delay += (int)Math.Round(-remaining);

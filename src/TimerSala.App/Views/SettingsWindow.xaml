@@ -498,9 +498,50 @@
                                         <TextBlock Style="{StaticResource PanelTitle}" Text="COLORI" />
                                         <Border Style="{StaticResource FirstRow}">
                                             <DockPanel>
-                                                <v:NumberBox DockPanel.Dock="Right" Width="136" Minimum="0" Maximum="600" Step="15" Unit="s" ZeroText="mai"
+                                                <v:NumberBox DockPanel.Dock="Right" Width="136" Minimum="0" Maximum="{Binding WarningStudentsMax}" Step="5" Unit="{Binding WarningStudentsUnit}" ZeroText="mai"
+                                                             Value="{Binding WarningStudentsValue}" />
+                                                <Border DockPanel.Dock="Right" Style="{StaticResource Segments}" Margin="0,0,8,0" VerticalAlignment="Center">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <RadioButton Style="{StaticResource SegmentButton}" GroupName="WarnStudents" Content="secondi" FontSize="12" IsChecked="{Binding WarningStudentsSeconds}" />
+                                                        <RadioButton Style="{StaticResource SegmentButton}" GroupName="WarnStudents" Content="%" FontSize="12" IsChecked="{Binding WarningStudentsPercent}" />
+                                                    </StackPanel>
+                                                </Border>
+                                                <StackPanel VerticalAlignment="Center">
+                                                    <TextBlock Style="{StaticResource RowLabel}" Text="Giallo: parti degli studenti" />
+                                                    <TextBlock Style="{StaticResource RowHint}" Text="Quanto prima della fine, in secondi o in percentuale della parte" />
+                                                </StackPanel>
+                                            </DockPanel>
+                                        </Border>
+                                        <Border Style="{StaticResource Row}">
+                                            <DockPanel>
+                                                <v:NumberBox DockPanel.Dock="Right" Width="136" Minimum="0" Maximum="{Binding WarningTalksMax}" Step="5" Unit="{Binding WarningTalksUnit}" ZeroText="mai"
+                                                             Value="{Binding WarningTalksValue}" />
+                                                <Border DockPanel.Dock="Right" Style="{StaticResource Segments}" Margin="0,0,8,0" VerticalAlignment="Center">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <RadioButton Style="{StaticResource SegmentButton}" GroupName="WarnTalks" Content="secondi" FontSize="12" IsChecked="{Binding WarningTalksSeconds}" />
+                                                        <RadioButton Style="{StaticResource SegmentButton}" GroupName="WarnTalks" Content="%" FontSize="12" IsChecked="{Binding WarningTalksPercent}" />
+                                                    </StackPanel>
+                                                </Border>
+                                                <StackPanel VerticalAlignment="Center">
+                                                    <TextBlock Style="{StaticResource RowLabel}" Text="Giallo: discorsi" />
+                                                    <TextBlock Style="{StaticResource RowHint}" Text="Discorso pubblico, discorsi dell'infrasettimanale e del sorvegliante" />
+                                                </StackPanel>
+                                            </DockPanel>
+                                        </Border>
+                                        <Border Style="{StaticResource Row}">
+                                            <DockPanel>
+                                                <v:NumberBox DockPanel.Dock="Right" Width="136" Minimum="0" Maximum="{Binding WarningOthersMax}" Step="5" Unit="{Binding WarningOthersUnit}" ZeroText="mai"
                                                              Value="{Binding WarningSeconds}" />
-                                                <TextBlock Style="{StaticResource RowLabel}" Text="Giallo quando mancano" />
+                                                <Border DockPanel.Dock="Right" Style="{StaticResource Segments}" Margin="0,0,8,0" VerticalAlignment="Center">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <RadioButton Style="{StaticResource SegmentButton}" GroupName="WarnOthers" Content="secondi" FontSize="12" IsChecked="{Binding WarningOthersSeconds}" />
+                                                        <RadioButton Style="{StaticResource SegmentButton}" GroupName="WarnOthers" Content="%" FontSize="12" IsChecked="{Binding WarningOthersPercent}" />
+                                                    </StackPanel>
+                                                </Border>
+                                                <StackPanel VerticalAlignment="Center">
+                                                    <TextBlock Style="{StaticResource RowLabel}" Text="Giallo: altre parti" />
+                                                    <TextBlock Style="{StaticResource RowHint}" Text="Anche consiglio e timer manuali" />
+                                                </StackPanel>
                                             </DockPanel>
                                         </Border>
                                         <Border Style="{StaticResource Row}">

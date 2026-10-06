@@ -1086,6 +1086,7 @@ public sealed partial class MainViewModel : ObservableObject
     void ApplyTimerSettings()
     {
         Timer.WarningSeconds = Settings.WarningSeconds;
+        Timer.PartWarning = (part, target) => Settings.WarningFor(PartCategories.Classify(part)).SecondsFor(target);
         Timer.CounselSeconds = Settings.CounselSeconds;
         Timer.CountdownLeadSeconds = Settings.CountdownMinutes * 60;
     }

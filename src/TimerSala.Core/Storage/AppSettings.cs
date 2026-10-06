@@ -177,7 +177,25 @@ public sealed class AppSettings
     /// <summary>Indirizzo nei collegamenti e nei QR: "auto", "hostname" oppure un IP specifico.</summary>
     public string WebAddressMode { get; set; } = "auto";
 
+    /// <summary>Avviso giallo delle «altre parti» (e di consiglio e timer manuali), in secondi o percentuale.</summary>
     public int WarningSeconds { get; set; } = 60;
+    public bool WarningPercent { get; set; }
+
+    /// <summary>Avviso giallo per le parti degli studenti (null = come le altre parti).</summary>
+    public Timing.PartWarning? WarningStudents { get; set; }
+
+    /// <summary>Avviso giallo per i discorsi (null = come le altre parti).</summary>
+    public Timing.PartWarning? WarningTalks { get; set; }
+
+    [JsonIgnore]
+    public Timing.PartWarning WarningOthers => new(WarningSeconds, WarningPercent);
+
+    public Timing.PartWarning WarningFor(Timing.PartCategory category) => category switch
+    {
+        Timing.PartCategory.Student => WarningStudents ?? WarningOthers,
+        Timing.PartCategory.Talk => WarningTalks ?? WarningOthers,
+        _ => WarningOthers,
+    };
     public int CounselSeconds { get; set; } = 60;
 
     public bool AutoDownload { get; set; } = true;

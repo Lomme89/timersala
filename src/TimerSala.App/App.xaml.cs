@@ -22,9 +22,16 @@ public partial class App : Application
     Mutex? _instance;
     EventWaitHandle[] _commandEvents = [];
 
+    /// <summary>
+    /// Per la prova delle finestre: WPF chiama OnStartup appena si crea l'applicazione, anche senza Run();
+    /// la prova costruisce da sé controller e dati, quindi l'avvio vero va saltato.
+    /// </summary>
+    internal static bool SkipStartup;
+
     protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        if (SkipStartup) return;
         _instance = new Mutex(true, InstanceName, out bool first);
         _commandEvents = Commands.Select(c => new EventWaitHandle(false, EventResetMode.AutoReset, CommandEventPrefix + c)).ToArray();
         if (!first)

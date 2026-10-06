@@ -10,12 +10,8 @@ public partial class WelcomeWindow : Window
     readonly WelcomeViewModel _vm;
     bool _finished;
 
-    /// <summary>Da dove è stata aperta l'ultima volta (per la prova delle finestre).</summary>
-    internal static string? LastOpenedFrom;
-
     public WelcomeWindow(MainViewModel main)
     {
-        LastOpenedFrom = (LastOpenedFrom is null ? "" : LastOpenedFrom + " → ") + $"aperta con IsFirstRun={main.IsFirstRun}, OnboardingDone={main.Settings.OnboardingDone}";
         InitializeComponent();
         _vm = new WelcomeViewModel(main);
         DataContext = _vm;

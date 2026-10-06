@@ -61,3 +61,21 @@ public class SpecialWeeksTests
         Assert.Equal("Discorso pubblico", week.Weekend.Parts[1].Title);
     }
 }
+
+public class FreeEventTests
+{
+    [Fact]
+    public void Event_becomes_a_meeting_and_recent_ones_are_remembered_without_duplicates()
+    {
+        var wedding = new FreeEvent("Discorso di matrimonio", [new("Discorso", 30), new("", 0)]);
+        var m = wedding.ToMeeting(MeetingKind.Weekend);
+        Assert.Single(m.Parts);
+        Assert.Equal(1800, m.Parts[0].DurationSeconds);
+
+        var recent = FreeEvent.Remember([], wedding);
+        recent = FreeEvent.Remember(recent, new FreeEvent("Funerale", [new("Discorso", 20)]));
+        recent = FreeEvent.Remember(recent, wedding with { Title = "discorso di matrimonio" });
+        Assert.Equal(2, recent.Count);
+        Assert.Equal("discorso di matrimonio", recent[0].Title);
+    }
+}

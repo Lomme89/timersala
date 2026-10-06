@@ -192,15 +192,15 @@ public sealed partial class MainViewModel : ObservableObject
     void UpdateMeetingStart()
     {
         // nella settimana dell'assemblea non c'è adunanza: niente countdown, e su schermo e telefono lo si dice
-        bool meeting = Settings.HasMeeting(Kind, Week.WeekStart) || IsTraining;
+        bool meeting = Settings.HasMeeting(Kind, Week.WeekStart) || IsTemporaryMeeting;
         Timer.MeetingStart = meeting ? new DateTimeOffset(Settings.StartOf(Kind, Week.WeekStart)) : null;
-        Timer.TitleOverride = IsTraining ? null : SpecialWeeks.NoMeetingNotice(Settings, Week.WeekStart);
+        Timer.TitleOverride = IsTemporaryMeeting ? null : SpecialWeeks.NoMeetingNotice(Settings, Week.WeekStart);
     }
 
     /// <summary>Commemorazione e discorso speciale pianificati: applicati (o tolti) allo schema della settimana.</summary>
     void SyncSpecialWeeks()
     {
-        if (Timer.IsRunning || IsTraining) return;
+        if (Timer.IsRunning || IsTemporaryMeeting) return;
         if (SpecialWeeks.Apply(Week, Settings)) _store.SaveWeek(Week);
     }
 
@@ -314,7 +314,7 @@ public sealed partial class MainViewModel : ObservableObject
 
     async Task DownloadAsync(bool silent)
     {
-        if (IsTraining)
+        if (IsTemporaryMeeting)
         {
             if (!silent) BlockedByTraining();
             return;
@@ -501,7 +501,7 @@ public sealed partial class MainViewModel : ObservableObject
     {
         bool running = Timer.IsRunning;
         Timer.AdjustTarget(delta);
-        if (!running && !IsTraining)
+        if (!running && !IsTemporaryMeeting)
         {
             Week.EditedManually = true;
             _store.SaveWeek(Week);
@@ -941,7 +941,7 @@ public sealed partial class MainViewModel : ObservableObject
     void SaveSession()
     {
         // l'addestramento non deve mai diventare un'adunanza da riprendere
-        if (!_sessionReady || IsTraining) return;
+        if (!_sessionReady || IsTemporaryMeeting) return;
         _ticksSinceSave = 0;
         var timer = Timer.ExportState();
         if (timer.HasProgress)
@@ -1092,7 +1092,7 @@ public sealed partial class MainViewModel : ObservableObject
             if (ChangeWeekOverseer(settings.IsOverseerWeek(Week.WeekStart))) ApplyMeeting();
             _overseerListEdited = false;
         }
-        if (!Timer.IsRunning && !IsTraining && SpecialWeeks.Apply(Week, Settings))
+        if (!Timer.IsRunning && !IsTemporaryMeeting && SpecialWeeks.Apply(Week, Settings))
         {
             _store.SaveWeek(Week);
             ApplyMeeting();

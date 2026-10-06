@@ -139,6 +139,9 @@ public sealed class AppSettings
 
     public bool IsOverseerWeek(DateOnly monday) => OverseerVisits.Contains(monday);
 
+    /// <summary>Ultimi eventi fuori programma (modalità libera), da riusare.</summary>
+    public List<Models.FreeEvent> RecentEvents { get; set; } = [];
+
     // ── Altre settimane particolari ──
 
     /// <summary>Settimane dell'assemblea (il lunedì): nessuna adunanza.</summary>

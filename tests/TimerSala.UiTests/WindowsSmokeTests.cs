@@ -145,6 +145,20 @@ public class WindowsSmokeTests
         Assert.Contains(vm.Timer.Meeting.Parts, p => p.DurationSeconds == realDuration);
         Assert.False(vm.Timer.IsRunning);
 
+        // evento fuori programma: finestra, poi l'evento e il ritorno all'adunanza
+        Stage("evento fuori programma");
+        var ev = new FreeEventWindow(vm) { Owner = main };
+        ev.Show();
+        Pump();
+        ev.Close();
+        Assert.Null(vm.StartFreeEvent(new TimerSala.Core.Models.FreeEvent("Matrimonio", [new("Discorso", 30)]), new TimeOnly(16, 0)));
+        Pump();
+        Assert.Single(vm.Timer.Meeting.Parts);
+        vm.StopFreeEvent();
+        Pump();
+        Assert.False(vm.IsFreeEvent);
+        Assert.Contains(vm.Timer.Meeting.Parts, p => p.DurationSeconds == realDuration);
+
         // lista di controllo aperta con il pulsante, una voce spuntata
         Stage("lista di controllo aperta con il pulsante, una voce spuntata");
         vm.ChecklistOpen = true;

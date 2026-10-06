@@ -57,7 +57,7 @@ public sealed partial class MainViewModel
     void AfterPartsChanged(bool edited)
     {
         // in addestramento si modifica solo la copia di prova
-        if (!IsTraining)
+        if (!IsTemporaryMeeting)
         {
             Week.EditedManually = edited;
             _store.SaveWeek(Week);

@@ -123,6 +123,15 @@
 
         <!-- ═════ Intestazione: ora, ritardo, rete, mini, editor, impostazioni ═════ -->
         <DockPanel Margin="0,0,0,8">
+            <Border DockPanel.Dock="Top" Margin="0,0,0,8" Padding="12,7" CornerRadius="10" Background="#263B82F6" BorderBrush="#603B82F6"
+                    BorderThickness="1" Visibility="{Binding IsFreeEvent, Converter={StaticResource BoolToVis}}">
+                <DockPanel>
+                    <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Torna all'adunanza" Padding="12,3" Command="{Binding StopFreeEventCommand}" />
+                    <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" FontSize="12.5" Foreground="#93C5FD">
+                        <Run Text="EVENTO" FontWeight="Bold" /><Run Text="  ·  " /><Run Text="{Binding FreeEventTitle, Mode=OneWay}" />
+                    </TextBlock>
+                </DockPanel>
+            </Border>
             <Border DockPanel.Dock="Top" Margin="0,0,0,8" Padding="12,7" CornerRadius="10" Background="#26FBBF24" BorderBrush="{StaticResource AmberBrush}"
                     BorderThickness="1" Visibility="{Binding IsTraining, Converter={StaticResource BoolToVis}}">
                 <DockPanel>
@@ -683,6 +692,8 @@
                             <Separator />
                             <MenuItem x:Name="ResetPartItem" Header="Azzera il tempo di questa parte" Click="ResetPart_Click" />
                             <MenuItem x:Name="ResetAllItem" Header="Azzera tutti i tempi" Click="ResetAll_Click" />
+                            <Separator />
+                            <MenuItem Header="Evento fuori programma…" Click="FreeEvent_Click" />
                         </ContextMenu>
                     </ListBox.ContextMenu>
                     <ListBox.ItemContainerStyle>

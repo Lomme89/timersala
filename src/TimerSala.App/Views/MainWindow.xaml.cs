@@ -280,9 +280,10 @@ public partial class MainWindow : Window
 
     void Edit_Click(object sender, RoutedEventArgs e)
     {
-        if (_vm.IsTraining)
+        if (_vm.IsTemporaryMeeting)
         {
-            MessageBox.Show(this, "Durante l'addestramento lo schema non si modifica. Esci prima dall'addestramento.", "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(this, _vm.IsTraining ? "Durante l'addestramento lo schema non si modifica. Esci prima dall'addestramento."
+                : "Durante un evento fuori programma lo schema della settimana non si modifica.", "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
         if (_vm.IsRunning)
@@ -321,6 +322,8 @@ public partial class MainWindow : Window
     }
 
     void Help_Click(object sender, RoutedEventArgs e) => HelpActions.ShowHelp(this, _vm);
+
+    void FreeEvent_Click(object sender, RoutedEventArgs e) => new FreeEventWindow(_vm) { Owner = this }.ShowDialog();
 
     /// <summary>Entra in addestramento (dalla guida o dalle impostazioni).</summary>
     public void StartTraining(Window owner)

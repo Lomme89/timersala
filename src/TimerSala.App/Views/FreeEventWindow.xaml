@@ -1,0 +1,72 @@
+<Window x:Class="TimerSala.App.Views.FreeEventWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:v="clr-namespace:TimerSala.App.Views"
+        Title="Evento fuori programma" Width="560" SizeToContent="Height" ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        Background="{StaticResource BgBrush}" Foreground="{StaticResource TextBrush}" FontFamily="{StaticResource UiFont}">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </Window.Resources>
+    <DockPanel>
+        <Border DockPanel.Dock="Bottom" Padding="20,12" BorderBrush="{StaticResource LineBrush}" BorderThickness="0,1,0,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Style="{StaticResource FlatButton}" Content="Annulla" Width="110" IsCancel="True" Margin="0,0,8,0" />
+                <Button Style="{StaticResource FlatButton}" Content="Inizia" Width="110" IsDefault="True" Click="Start_Click"
+                        Background="{StaticResource AccentBrush}" BorderThickness="0" Foreground="White" />
+            </StackPanel>
+        </Border>
+        <StackPanel Margin="24,20,24,16">
+            <TextBlock Text="Evento fuori programma" FontSize="20" FontWeight="SemiBold" />
+            <TextBlock Style="{StaticResource Caption}" FontSize="13" TextWrapping="Wrap" Margin="0,4,0,14"
+                       Text="Per esempio un discorso di matrimonio o di funerale. Countdown, schermo e telefono funzionano come sempre; lo schema della settimana non viene toccato." />
+
+            <StackPanel Visibility="{Binding HasRecent, Converter={StaticResource BoolToVis}}" Margin="0,0,0,12">
+                <TextBlock Text="RECENTI" Style="{StaticResource Caption}" FontSize="11" FontWeight="SemiBold" Margin="0,0,0,6" />
+                <ItemsControl ItemsSource="{Binding Recent}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Style="{StaticResource FlatButton}" Content="{Binding Title}" Padding="10,3" Margin="0,0,6,6"
+                                    Command="{Binding DataContext.UseRecentCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="12" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="Titolo" Style="{StaticResource Caption}" Margin="0,0,0,4" />
+                    <TextBox x:Name="TitleBox" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" FontSize="15" Padding="6,4" />
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="Inizio" Style="{StaticResource Caption}" Margin="0,0,0,4" />
+                    <v:TimeBox Width="110" Time="{Binding Start}" />
+                </StackPanel>
+            </Grid>
+
+            <TextBlock Text="PARTI" Style="{StaticResource Caption}" FontSize="11" FontWeight="SemiBold" Margin="0,16,0,6" />
+            <ItemsControl ItemsSource="{Binding Rows}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel Margin="0,0,0,6">
+                            <Button DockPanel.Dock="Right" Style="{StaticResource GhostIconButton}" Content="&#xE711;" Width="30" Height="30" FontSize="10"
+                                    Command="{Binding DataContext.RemoveRowCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}"
+                                    ToolTip="Togli la parte" Margin="6,0,0,0" />
+                            <v:NumberBox DockPanel.Dock="Right" Width="136" Minimum="1" Maximum="180" Step="5" Unit="min" Value="{Binding Minutes}" Margin="8,0,0,0" />
+                            <TextBox Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" Padding="6,4" VerticalContentAlignment="Center" />
+                        </DockPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Button Style="{StaticResource FlatButton}" Content="Aggiungi una parte" HorizontalAlignment="Left" Padding="12,4" Command="{Binding AddRowCommand}" />
+        </StackPanel>
+    </DockPanel>
+</Window>

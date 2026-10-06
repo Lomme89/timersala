@@ -21,11 +21,13 @@ public sealed partial class MainViewModel
     public string? StartTraining()
     {
         if (IsTraining) return null;
+        if (IsFreeEvent) return "Torna prima all'adunanza della settimana (fine dell'evento).";
         if (Timer.IsRunning || IsVoiceArmed) return "Ferma il timer prima di iniziare l'addestramento.";
         _beforeTraining = Timer.ExportState();
         ForgetUndo();
         Messages.Clear();
         IsTraining = true;
+        OnPropertyChanged(nameof(IsTemporaryMeeting));
         Timer.LoadMeeting(TrainingMeeting.From(CurrentMeeting));
         // un breve countdown d'inizio, per vedere anche quello
         Timer.MeetingStart = DateTimeOffset.Now.AddSeconds(40);
@@ -47,6 +49,7 @@ public sealed partial class MainViewModel
         if (_beforeTraining is { } state) Timer.ImportState(state, countDowntime: false);
         _beforeTraining = null;
         IsTraining = false;
+        OnPropertyChanged(nameof(IsTemporaryMeeting));
         UpdateMeetingStart();
         UpdateAdaptiveParts();
         RebuildParts();
@@ -58,8 +61,8 @@ public sealed partial class MainViewModel
     /// <summary>Le azioni che toccano schemi e settimane non si fanno durante l'addestramento.</summary>
     bool BlockedByTraining()
     {
-        if (!IsTraining) return false;
-        ShowStatus("Esci prima dall'addestramento.", error: true);
+        if (!IsTemporaryMeeting) return false;
+        ShowStatus(IsTraining ? "Esci prima dall'addestramento." : "Torna prima all'adunanza della settimana (fine dell'evento).", error: true);
         return true;
     }
 }

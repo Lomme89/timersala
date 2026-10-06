@@ -969,6 +969,30 @@
                                 <TextBlock Style="{StaticResource PanelTitle}" Text="CONTROLLER" />
                                 <Border Style="{StaticResource FirstRow}">
                                     <DockPanel>
+                                        <Border DockPanel.Dock="Right" Style="{StaticResource Segments}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <RadioButton Style="{StaticResource SegmentButton}" GroupName="UiTheme" Content="Scuro" MinWidth="78" IsChecked="{Binding ThemeDark}" />
+                                                <RadioButton Style="{StaticResource SegmentButton}" GroupName="UiTheme" Content="Chiaro" MinWidth="78" IsChecked="{Binding ThemeLight}" />
+                                                <RadioButton Style="{StaticResource SegmentButton}" GroupName="UiTheme" Content="Come Windows" MinWidth="78" IsChecked="{Binding ThemeAuto}" />
+                                            </StackPanel>
+                                        </Border>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Tema" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Il chiaro si legge meglio se l'acustica è in un punto molto luminoso. Lo schermo della sala non cambia." />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                                <Border Style="{StaticResource Row}">
+                                    <DockPanel>
+                                        <v:NumberBox DockPanel.Dock="Right" Width="150" Minimum="90" Maximum="150" Step="10" Unit="%" Value="{Binding UiScalePercent}" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Dimensione dell'interfaccia" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Più grande per gli schermi ad alta risoluzione, più piccola per i portatili." />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                                <Border Style="{StaticResource Row}">
+                                    <DockPanel>
                                         <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding ControllerTopmost}" />
                                         <StackPanel VerticalAlignment="Center">
                                             <TextBlock Style="{StaticResource RowLabel}" Text="Sempre in primo piano" />

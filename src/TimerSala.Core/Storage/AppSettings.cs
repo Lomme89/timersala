@@ -37,6 +37,10 @@ public enum CountdownStyle
     Words,
 }
 
+/// <summary>Tema del controller (lo schermo della sala ha il suo).</summary>
+[JsonConverter(typeof(JsonStringEnumConverter<ControllerTheme>))]
+public enum ControllerTheme { Dark, Light, Auto }
+
 /// <summary>Posizione e dimensioni di una finestra, in pixel dello schermo (anche su più monitor).</summary>
 public sealed record WindowBounds(int Left, int Top, int Right, int Bottom, bool Maximized = false);
 
@@ -165,6 +169,12 @@ public sealed class AppSettings
     public bool ShowNextPartWhenIdle { get; set; } = true;
     public bool ShowDelayOnDisplay { get; set; } = false;
     public bool ControllerTopmost { get; set; } = false;
+
+    /// <summary>Tema di controller, mini, editor e impostazioni: scuro, chiaro o come Windows.</summary>
+    public ControllerTheme ControllerTheme { get; set; } = ControllerTheme.Dark;
+
+    /// <summary>Scala dell'interfaccia in percento (90–150).</summary>
+    public int UiScalePercent { get; set; } = 100;
 
     /// <summary>Finestre ricordate: «controller», «mini», «editor», «impostazioni».</summary>
     public Dictionary<string, WindowBounds> Windows { get; set; } = [];

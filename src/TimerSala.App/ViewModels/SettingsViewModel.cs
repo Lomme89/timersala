@@ -460,6 +460,19 @@ public sealed class SettingsViewModel : ObservableObject
 
     public bool ControllerTopmost { get => Draft.ControllerTopmost; set => Edit(s => s.ControllerTopmost = value); }
 
+    public bool ThemeDark { get => Draft.ControllerTheme == ControllerTheme.Dark; set { if (value) SetControllerTheme(ControllerTheme.Dark); } }
+    public bool ThemeLight { get => Draft.ControllerTheme == ControllerTheme.Light; set { if (value) SetControllerTheme(ControllerTheme.Light); } }
+    public bool ThemeAuto { get => Draft.ControllerTheme == ControllerTheme.Auto; set { if (value) SetControllerTheme(ControllerTheme.Auto); } }
+
+    void SetControllerTheme(ControllerTheme theme)
+    {
+        Edit(s => s.ControllerTheme = theme, nameof(ThemeDark));
+        OnPropertyChanged(nameof(ThemeLight));
+        OnPropertyChanged(nameof(ThemeAuto));
+    }
+
+    public int UiScalePercent { get => Draft.UiScalePercent; set => Edit(s => s.UiScalePercent = value); }
+
     /// <summary>Opzioni rare (porta, indirizzo, regolazioni fini della voce).</summary>
     public bool ShowAdvanced { get; set => Set(ref field, value); }
 

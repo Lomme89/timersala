@@ -5,9 +5,16 @@
         <ResourceDictionary Source="Theme.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
+    <!-- colori del tema scuro: UiTheme li cambia al volo per il tema chiaro -->
     <SolidColorBrush x:Key="InputBrush" Color="#111318" />
     <SolidColorBrush x:Key="HoverBorderBrush" Color="#3A404B" />
     <SolidColorBrush x:Key="SelectionBrush" Color="#2A3B5C" />
+    <SolidColorBrush x:Key="SubtleBrush" Color="#14FFFFFF" />
+    <SolidColorBrush x:Key="SoftTextBrush" Color="#C9CED6" />
+    <SolidColorBrush x:Key="DimTextBrush" Color="#6B7280" />
+    <SolidColorBrush x:Key="FocusRingBrush" Color="#93C5FD" />
+    <SolidColorBrush x:Key="OvertimeBgBrush" Color="#1A0B0D" />
+    <SolidColorBrush x:Key="PanelAltBrush" Color="#1D2027" />
 
     <!-- TextBox -->
     <Style TargetType="TextBox">
@@ -273,7 +280,7 @@
         <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
         <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
         <Setter Property="RowBackground" Value="{StaticResource CardBrush}" />
-        <Setter Property="AlternatingRowBackground" Value="#1D2027" />
+        <Setter Property="AlternatingRowBackground" Value="{StaticResource PanelAltBrush}" />
         <Setter Property="HorizontalGridLinesBrush" Value="{StaticResource LineBrush}" />
         <Setter Property="VerticalGridLinesBrush" Value="{StaticResource LineBrush}" />
         <Setter Property="FontSize" Value="14" />
@@ -431,7 +438,7 @@
                 <ControlTemplate TargetType="CheckBox">
                     <Border x:Name="Track" Width="44" Height="24" CornerRadius="12" Background="{StaticResource LineBrush}"
                             BorderBrush="{StaticResource HoverBorderBrush}" BorderThickness="1">
-                        <Ellipse x:Name="Knob" Width="16" Height="16" Fill="#C9CED6" HorizontalAlignment="Left" Margin="3,0,0,0">
+                        <Ellipse x:Name="Knob" Width="16" Height="16" Fill="{StaticResource SoftTextBrush}" HorizontalAlignment="Left" Margin="3,0,0,0">
                             <Ellipse.RenderTransform>
                                 <TranslateTransform x:Name="KnobShift" X="0" />
                             </Ellipse.RenderTransform>
@@ -469,7 +476,7 @@
                             <Setter TargetName="Track" Property="Opacity" Value="0.9" />
                         </Trigger>
                         <Trigger Property="IsKeyboardFocused" Value="True">
-                            <Setter TargetName="Track" Property="BorderBrush" Value="#93C5FD" />
+                            <Setter TargetName="Track" Property="BorderBrush" Value="{StaticResource FocusRingBrush}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="0.4" />
@@ -502,7 +509,7 @@
                             <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
                         </Trigger>
                         <Trigger Property="IsKeyboardFocused" Value="True">
-                            <Setter TargetName="Bd" Property="BorderBrush" Value="#93C5FD" />
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource FocusRingBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -526,7 +533,7 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="#14FFFFFF" />
+                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource SubtleBrush}" />
                             <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
@@ -554,10 +561,10 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="#14FFFFFF" />
+                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource SubtleBrush}" />
                         </Trigger>
                         <Trigger Property="IsKeyboardFocused" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="#14FFFFFF" />
+                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource SubtleBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

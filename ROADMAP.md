@@ -40,7 +40,7 @@ Mockup approvato: [prima e dopo](docs/roadmap/mini-prima-dopo.png). Niente di st
   «Sullo schermo: …» con «Togli», che sparisce quando non c'è nulla in onda.
 - Stessi angoli, icone e colori del nuovo controller.
 
-### Impostazioni riorganizzate (nuovo design) — fatto, tranne tema e scala del controller (sezione Programma)
+### Impostazioni riorganizzate (nuovo design) — fatto
 Mockup approvato: [Schermo](docs/roadmap/impostazioni-schermo.png) · [Messaggi](docs/roadmap/impostazioni-messaggi.png) · [Adunanze](docs/roadmap/impostazioni-adunanze.png). Stessi colori del programma.
 - **Barra laterale con icone** al posto delle schede, sette sezioni: Adunanze · Schermo · Countdown · Messaggi · Voce (beta) ·
   Rete e telefono · Programma.
@@ -59,7 +59,7 @@ Mockup approvato: [Schermo](docs/roadmap/impostazioni-schermo.png) · [Messaggi]
   (tema Scuro/Chiaro, layout con miniature). Niente più errori al salvataggio.
 - Spiegazioni in una riga sotto l'opzione, dettagli in una «i»; opzioni rare dietro «Mostra opzioni avanzate».
 
-### Tema e scala
+### Tema e scala — fatto
 - **Tema chiaro per il controller**, per le acustiche in un punto molto luminoso: scuro, chiaro o automatico (come Windows).
   Lo schermo del timer resta indipendente.
 - **Scala dell'interfaccia** (per esempio 90–150 %), per portatili piccoli o schermi ad alta risoluzione.

@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
 using TimerSala.App.Interop;
+using TimerSala.App.Theming;
 using TimerSala.Core.Models;
 using TimerSala.Core.Storage;
 using TimerSala.Core.Timing;
@@ -539,16 +540,17 @@ public sealed partial class MainViewModel : ObservableObject
         ClockText = s.Now.ToString("HH:mm");
         ClockSeconds = s.Now.ToString("ss");
 
+        // colori del controller: seguono il tema (chiaro o scuro) dell'interfaccia
         PhaseBrush = s.Phase switch
         {
-            TimerPhase.Warning => Amber,
-            TimerPhase.Overtime => Red,
-            TimerPhase.Normal => Green,
-            _ => White,
+            TimerPhase.Warning => UiTheme.Brush("AmberBrush"),
+            TimerPhase.Overtime => UiTheme.Brush("RedBrush"),
+            TimerPhase.Normal => UiTheme.Brush("GreenBrush"),
+            _ => UiTheme.Brush("TextBrush"),
         };
 
         SectionInfo.TryParse(s.Section, out var section);
-        SectionBrush = s.Section is null ? Muted : BrushCache.Get(SectionInfo.Color(section));
+        SectionBrush = s.Section is null ? UiTheme.Brush("MutedBrush") : BrushCache.Get(SectionInfo.Color(section));
 
         if (s.Phase == TimerPhase.Idle)
         {
@@ -592,13 +594,13 @@ public sealed partial class MainViewModel : ObservableObject
         if (Math.Abs(s.DelaySeconds) < 5)
         {
             DelayText = "In orario";
-            DelayBrush = Muted;
+            DelayBrush = UiTheme.Brush("MutedBrush");
         }
         else
         {
             var d = TimerSnapshot.FormatDuration(Math.Abs(s.DelaySeconds));
             DelayText = s.DelaySeconds > 0 ? $"Ritardo +{d}" : $"Anticipo −{d}";
-            DelayBrush = s.DelaySeconds > 0 ? Red : Green;
+            DelayBrush = UiTheme.Brush(s.DelaySeconds > 0 ? "RedBrush" : "GreenBrush");
         }
         ScreenFooterRight = Settings.ShowDelayOnDisplay && Math.Abs(s.DelaySeconds) >= 5 ? DelayText
             : !IsIdle && Settings.ShowClockWhileRunning ? ClockText : "";
@@ -970,6 +972,7 @@ public sealed partial class MainViewModel : ObservableObject
         UpdateMeetingStart();
         UpdateAdaptiveParts();
         ApplyVoiceSettings();
+        UiTheme.Apply(settings);
         SaveSettings();
         if (!Timer.IsRunning && settings.IsOverseerWeek(Week.WeekStart) != Week.CircuitOverseerVisit)
         {

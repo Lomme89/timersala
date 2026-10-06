@@ -39,6 +39,7 @@ public partial class App : Application
 
         var store = new DataStore();
         _vm = new MainViewModel(store);
+        Theming.UiTheme.Apply(_vm.Settings);
         var main = new MainWindow(_vm);
         MainWindow = main;
         main.Show();
@@ -64,6 +65,7 @@ public partial class App : Application
     static void OnWindowLoaded(object sender, RoutedEventArgs e)
     {
         if (sender is not Window w || !ReferenceEquals(e.OriginalSource, w)) return;
+        Theming.UiTheme.OnWindowLoaded(w);
         Interop.DarkTitleBar.Apply(w, roundCorners: w.WindowStyle == WindowStyle.None && w is not TimerWindow);
         if (w is TimerWindow || w.Content is not UIElement content) return;
 

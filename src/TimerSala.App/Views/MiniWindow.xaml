@@ -19,7 +19,7 @@
             <Setter Property="Padding" Value="0" />
             <Setter Property="FontSize" Value="12" />
             <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Foreground" Value="#C9CED6" />
+            <Setter Property="Foreground" Value="{StaticResource SoftTextBrush}" />
         </Style>
     </Window.Resources>
 
@@ -33,7 +33,7 @@
                     <DataTrigger Binding="{Binding IsOvertime}" Value="True">
                         <Setter Property="BorderBrush" Value="{StaticResource RedBrush}" />
                         <Setter Property="BorderThickness" Value="2" />
-                        <Setter Property="Background" Value="#1A0B0D" />
+                        <Setter Property="Background" Value="{StaticResource OvertimeBgBrush}" />
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
@@ -51,7 +51,7 @@
                 <Button DockPanel.Dock="Right" Style="{StaticResource GhostIconButton}" Width="26" Height="24" FontSize="11" Content="&#xE740;"
                         Command="{Binding ToggleMiniCommand}" ToolTip="Torna alla finestra completa (M)" />
                 <TextBlock DockPanel.Dock="Right" Text="{Binding ClockText}" FontFamily="{StaticResource DigitsFont}" FontSize="13"
-                           Foreground="#6B7280" VerticalAlignment="Center" Margin="8,0,6,0" />
+                           Foreground="{StaticResource DimTextBrush}" VerticalAlignment="Center" Margin="8,0,6,0" />
                 <!-- dopo Ferma: «Annulla» al posto del titolo per qualche secondo -->
                 <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Annulla" Padding="8,0" Height="22" FontSize="12"
                         FontWeight="SemiBold" Margin="6,0,0,0" Command="{Binding UndoStopCommand}"

@@ -13,6 +13,10 @@
 - Spiegazioni brevi sotto ogni opzione, i dettagli nella «i»; porta di rete e regolazioni fini della voce dietro «Mostra opzioni avanzate».
 - La versione del programma compare nelle impostazioni.
 
+**Tema e dimensione dell'interfaccia** (*Impostazioni → Programma*)
+- **Tema chiaro** per controller, mini, editor e impostazioni, utile se l'acustica è in un punto molto luminoso: scuro, chiaro o «come Windows» (segue il tema delle app di Windows anche mentre il programma è aperto). Lo schermo della sala resta con il suo tema.
+- **Dimensione dell'interfaccia** dal 90 al 150 %, per portatili piccoli o schermi ad alta risoluzione. Le finestre aperte si adattano subito.
+
 ## v1.14.0 — 6 ottobre 2026
 
 **Sicurezza in sala**

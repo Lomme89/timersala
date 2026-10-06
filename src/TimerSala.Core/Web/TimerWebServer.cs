@@ -321,6 +321,7 @@ public sealed class TimerWebServer : IAsyncDisposable
                 color = SectionInfo.Color(p.Section),
                 minutes = p.DurationSeconds / 60,
                 song = p.IsSong,
+                video = p.HasVideo,
                 actual = _timer.ActualFor(i) is { } t ? TimerSnapshot.FormatDuration(t.TotalSeconds) : null,
                 over = _timer.ActualFor(i) is { } t2 && t2.TotalSeconds > p.DurationSeconds + 0.5,
                 running = i == running,

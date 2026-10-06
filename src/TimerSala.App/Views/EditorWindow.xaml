@@ -259,6 +259,8 @@
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
+                                <CheckBox Content="Contiene un video (da preparare in JW Library)" IsChecked="{Binding HasVideo}" Margin="0,12,0,0"
+                                          Foreground="{StaticResource TextBrush}" />
                             </StackPanel>
 
                             <TextBlock Text="SEZIONE" Style="{StaticResource FieldLabel}" />

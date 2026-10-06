@@ -36,6 +36,9 @@ public sealed class MeetingPart
     /// <summary>Dopo la parte il presidente dà un consiglio (parti degli studenti).</summary>
     public bool HasCounsel { get; set; }
 
+    /// <summary>La parte usa un video (da preparare in JW Library): dallo schema di wol o segnato a mano.</summary>
+    public bool HasVideo { get; set; }
+
     /// <summary>Informazioni aggiuntive (es. scrittura, lezione).</summary>
     public string? Detail { get; set; }
 

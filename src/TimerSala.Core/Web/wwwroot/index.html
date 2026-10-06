@@ -197,6 +197,7 @@
   .part .m { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 14px; }
   .part .a { font-variant-numeric: tabular-nums; min-width: 46px; text-align: right; color: var(--green); font-size: 14px; }
   .part .a.over { color: var(--red); }
+  .part .vid { display: inline-block; font-size: .7em; color: var(--amber); margin-right: 6px; vertical-align: .12em; }
   .part.song { background: transparent; color: var(--muted); font-style: italic; padding: 4px 12px; font-size: 14px; }
   .part.running { border-color: var(--green); background: color-mix(in srgb, var(--green) 12%, var(--card)); }
   .part.selected { border-color: var(--accent); }
@@ -513,7 +514,7 @@
       const html = m.parts.map((p, i) =>
         `<div class="part ${p.song ? 'song' : ''} ${p.running ? 'running' : ''} ${p.selected && !p.running ? 'selected' : ''}" data-i="${i}">
            ${p.song ? '♪' : `<span class="stripe" style="background:${p.color}"></span>`}
-           <span class="t">${esc(p.title)}</span>
+           <span class="t">${p.video ? '<span class="vid" title="Parte con un video">▶</span>' : ''}${esc(p.title)}</span>
            ${p.song ? '' : `<span class="m">${p.minutes}′</span><span class="a ${p.over ? 'over' : ''}">${p.actual ?? ''}</span>`}
          </div>`).join('');
       if (html !== lastSchedule) { $('list').innerHTML = html; lastSchedule = html; }

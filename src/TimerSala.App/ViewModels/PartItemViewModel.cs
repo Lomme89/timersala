@@ -16,6 +16,7 @@ public sealed partial class PartItemViewModel(MeetingPart part, int index) : Obs
     public bool IsSong => Part.IsSong;
     public bool IsTimed => Part.IsTimed;
     public bool HasCounsel => Part.HasCounsel;
+    public bool HasVideo => Part.HasVideo;
     public Brush SectionBrush => BrushCache.Get(SectionInfo.Color(Part.Section));
 
     public string DurationText => Part.IsSong ? "" : AdaptedSeconds is { } a ? FormatMinutes(a) : FormatMinutes(Part.DurationSeconds);

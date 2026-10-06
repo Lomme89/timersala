@@ -34,8 +34,13 @@
                     <TextBlock x:Name="Planned" Grid.Column="1" Text="{Binding PlannedStartText}" Foreground="{StaticResource MutedBrush}" Margin="10,0,0,0"
                                VerticalAlignment="Center" FontFamily="{StaticResource DigitsFont}" FontSize="13" ToolTip="Orario previsto d'inizio" />
                     <StackPanel Grid.Column="2" Margin="6,0,8,0" VerticalAlignment="Center">
-                        <TextBlock x:Name="TitleTb" Text="{Binding Title}" TextTrimming="CharacterEllipsis" FontSize="14" Foreground="{StaticResource TextBrush}"
-                                   ToolTip="{Binding Title}" />
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Left" Text="&#xE714;" FontFamily="{StaticResource IconFont}" FontSize="12" Foreground="{StaticResource AmberBrush}"
+                                       VerticalAlignment="Center" Margin="0,1,6,0" ToolTip="Parte con un video: preparalo in JW Library"
+                                       Visibility="{Binding HasVideo, Converter={StaticResource BoolToVis}}" />
+                            <TextBlock x:Name="TitleTb" Text="{Binding Title}" TextTrimming="CharacterEllipsis" FontSize="14" Foreground="{StaticResource TextBrush}"
+                                       ToolTip="{Binding Title}" />
+                        </DockPanel>
                         <TextBlock x:Name="DetailTb" Text="{Binding Detail}" Style="{StaticResource Caption}" TextTrimming="CharacterEllipsis"
                                    Visibility="{Binding HasDetail, Converter={StaticResource BoolToVis}}" ToolTip="{Binding Detail}" />
                     </StackPanel>

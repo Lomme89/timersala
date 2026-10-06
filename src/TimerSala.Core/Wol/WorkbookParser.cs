@@ -18,6 +18,10 @@ public static partial class WorkbookParser
     [GeneratedRegex(@"^\s*(\d{1,2})\s*[\.\)]\s*(.+)$", RegexOptions.Singleline)]
     private static partial Regex NumberedRx();
 
+    /// <summary>«video», «vídeo», «vidéo» in qualsiasi lingua dello schema.</summary>
+    [GeneratedRegex(@"\bv[ií]d[eé]o", RegexOptions.IgnoreCase)]
+    private static partial Regex VideoRx();
+
     [GeneratedRegex(@"\s+")]
     private static partial Regex SpaceRx();
 
@@ -116,6 +120,10 @@ public static partial class WorkbookParser
                         }
                         if (section == PartSection.Opening) section = PartSection.Treasures;
                         int number = int.Parse(numbered.Groups[1].Value);
+                        // un video nel testo della parte (fino al titolo successivo): «Mostra il VIDEO», «Riproduci il video»…
+                        bool video = false;
+                        for (int j = i + 1; j < blocks.Count && blocks[j].LocalName == "p" && !video; j++)
+                            video = VideoRx().IsMatch(blocks[j].TextContent);
                         meeting.Parts.Add(new MeetingPart
                         {
                             Title = $"{number}. {StripDuration(numbered.Groups[2].Value)}",
@@ -123,6 +131,7 @@ public static partial class WorkbookParser
                             DurationSeconds = (minutes ?? 0) * 60,
                             Detail = string.IsNullOrWhiteSpace(detail) ? null : detail,
                             HasCounsel = section == PartSection.Ministry || (section == PartSection.Treasures && number == 3),
+                            HasVideo = video || VideoRx().IsMatch(numbered.Groups[2].Value),
                         });
                     }
                     else if (minutes is not null)

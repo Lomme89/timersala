@@ -40,6 +40,9 @@ public sealed class EditablePart : ObservableObject
     public string? Detail { get; set => Set(ref field, value); }
     public bool HasCounsel { get; set; }
 
+    /// <summary>La parte usa un video (segno nell'elenco del controller).</summary>
+    public bool HasVideo { get; set => Set(ref field, value); }
+
     public bool IsTimed { get => !IsSong; set => IsSong = !value; }
     public string DisplayTitle => string.IsNullOrWhiteSpace(Title) ? "(senza titolo)" : Title;
     public Brush SectionBrush => BrushCache.Get(SectionInfo.Color(Section));
@@ -52,6 +55,7 @@ public sealed class EditablePart : ObservableObject
         Minutes = Math.Round(p.DurationSeconds / 60.0, 2),
         IsSong = p.IsSong,
         HasCounsel = p.HasCounsel,
+        HasVideo = p.HasVideo,
         Detail = p.Detail,
     };
 
@@ -62,6 +66,7 @@ public sealed class EditablePart : ObservableObject
         Minutes = Minutes,
         IsSong = IsSong,
         HasCounsel = HasCounsel,
+        HasVideo = HasVideo,
         Detail = Detail,
     };
 
@@ -72,6 +77,7 @@ public sealed class EditablePart : ObservableObject
         DurationSeconds = IsSong ? 0 : (int)Math.Round(Math.Max(0, Minutes) * 60),
         IsSong = IsSong,
         HasCounsel = HasCounsel && !IsSong,
+        HasVideo = HasVideo && !IsSong,
         Detail = string.IsNullOrWhiteSpace(Detail) ? null : Detail.Trim(),
     };
 }
@@ -131,7 +137,7 @@ public sealed class EditorViewModel : ObservableObject
         if (e.PropertyName is nameof(EditablePart.Minutes) or nameof(EditablePart.IsSong)) NotifyTotal();
         // le modifiche di fila allo stesso campo (per esempio mentre si scrive) diventano un solo passo da annullare
         if (e.PropertyName is nameof(EditablePart.Title) or nameof(EditablePart.Section) or nameof(EditablePart.Minutes)
-            or nameof(EditablePart.IsSong) or nameof(EditablePart.Detail))
+            or nameof(EditablePart.IsSong) or nameof(EditablePart.Detail) or nameof(EditablePart.HasVideo))
             Track($"{sender?.GetHashCode()}:{e.PropertyName}");
     }
 

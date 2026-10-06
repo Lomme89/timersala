@@ -1,5 +1,28 @@
 # Novità
 
+## v2.3.0-beta.1 — 6 ottobre 2026 (anteprima)
+
+Quarta anteprima: contiene la 2.2 beta e la tappa 2.3 della roadmap (adunanze particolari e rifiniture dei tempi). Si può sempre tornare alla v1.14.0 senza perdere nulla.
+
+**Più congregazioni nella stessa sala**
+- In *Impostazioni → Adunanze → Congregazioni* si aggiunge un'altra congregazione: parte dalle impostazioni di quella attuale, poi ha orari, schemi, stile, frasi pronte e settimane particolari suoi.
+- All'apertura TimerSala sceglie da solo la congregazione dell'adunanza di adesso. Il nome compare in alto nel controller e con un clic si cambia.
+- Schermo della sala, finestre, microfono, telecomando, rete, PIN e telefoni autorizzati restano quelli del PC, uguali per tutte.
+
+**Settimane particolari**, in un unico elenco in *Impostazioni → Adunanze*:
+- **visita del sorvegliante**, come prima;
+- **assemblea**: niente adunanze e niente countdown; schermo e telefono scrivono «Settimana dell'assemblea»;
+- **Commemorazione**, con giorno e ora: prende il posto dell'adunanza di quella parte della settimana, con il suo schema (cantico, discorso, cantico) che si può sistemare nell'editor;
+- **discorso speciale**: il discorso pubblico diventa «Discorso speciale».
+
+**Evento fuori programma**
+- Dal menu della parte (tasto destro): titolo, ora d'inizio e parti, per esempio un discorso di matrimonio o di funerale. Countdown, schermo e telefono funzionano come sempre e lo schema della settimana non viene toccato. «Torna all'adunanza» riporta tutto com'era. Gli ultimi eventi restano come suggerimenti.
+
+**Tempi**
+- **Avviso giallo per tipo di parte** (*Impostazioni → Schermo*): parti degli studenti, discorsi e altre parti, ognuna in secondi fissi o in percentuale della parte. Chi non cambia nulla ha tutto come prima.
+- **Parti con video**: le parti che nello schema di wol hanno un video sono segnate con un'icona nel controller e sul telefono, per ricordarsi di prepararlo in JW Library. Nell'editor il segno si mette o si toglie a mano.
+- **Taratura dell'avvio con la voce** (*Impostazioni → Voce*): 5 secondi di sala in silenzio, poi 5 secondi di voce; la soglia si imposta da sola, a metà strada. Se voce e silenzio sono troppo vicini lo dice invece di impostare una soglia inaffidabile.
+
 ## v2.2.0-beta.1 — 6 ottobre 2026 (anteprima)
 
 Terza anteprima: contiene la 2.1 beta e la tappa 2.2 della roadmap (telefono, rete e comandi). Si può sempre tornare alla v1.14.0 senza perdere nulla.

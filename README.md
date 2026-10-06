@@ -193,6 +193,9 @@ Avvia di nuovo = parti subito. **Esc** annulla l'attesa o, nei primi secondi, un
 - **Lista di controllo:** durante il countdown d'inizio (o con ☑) ricorda microfoni, Zoom, video e schermo; le voci si cambiano in *Impostazioni → Adunanze*. Se lo schema supera la durata dell'adunanza, accanto alla settimana compare di quanti minuti.
 - **Backup e settimane da casa:** in *Impostazioni → Programma* il backup di impostazioni e schemi in un file `.timersala`; dal menu del download si esporta e si importa una sola settimana.
 - **Addestramento:** dalla guida (`F1`) un'adunanza di prova con le parti dieci volte più brevi, segnata «PROVA» su schermo e telefoni. Niente viene salvato.
+- **Più congregazioni:** in *Impostazioni → Adunanze* ogni congregazione della sala ha orari, schemi e stile suoi; all'apertura si sceglie da sola quella dell'adunanza di adesso.
+- **Settimane particolari:** visita del sorvegliante, assemblea (niente adunanze), Commemorazione con il suo orario e discorso speciale, segnate in anticipo.
+- **Evento fuori programma:** dal menu della parte, per un discorso di matrimonio o di funerale, senza toccare lo schema della settimana.
 - **Windows:** apertura all'avvio del PC, passaggio automatico alla mini alla prima parte, avanzamento sull'icona della barra e un menu con il tasto destro sull'icona.
 - **Rete:** l'indirizzo usa la scheda di rete principale e ignora quelle virtuali (VirtualBox, Hyper‑V, VPN). In *Impostazioni → Rete e telefono* puoi scegliere un altro indirizzo o il nome del PC.
 - **Sicurezza:** il codice QR di controllo contiene il PIN ed è nascosto finché non lo mostri. Dopo 5 PIN errati il controllo si blocca per un minuto.

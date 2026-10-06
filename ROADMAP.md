@@ -165,30 +165,32 @@ I telecomandi USB per PowerPoint (Pagina giù/su) comandano il timer lontano dal
 
 ---
 
-## 2.3 · Adunanze particolari e rifiniture dei tempi
+## 2.3 · Adunanze particolari e rifiniture dei tempi — in prova con la v2.3.0-beta.1
 
-### Settimane particolari
+### Settimane particolari — fatto
 Estende l'elenco delle visite del sorvegliante (v1.13.0) a un unico elenco di settimane con un tipo, pianificabili in anticipo:
 - **visita del sorvegliante** (come oggi, con giorno e orario dell'infrasettimanale durante la visita);
 - **assemblea**: nessuna adunanza; schermo e pagina web mostrano un avviso al posto del countdown;
 - **Commemorazione**: schema dedicato con il suo orario; se cade in un giorno feriale, quella settimana non c'è l'infrasettimanale;
-- **discorso speciale**: riconosciuto dallo schema di wol quando presente.
+- **discorso speciale**: segnato a mano (wol non lo indica nello schema del fine settimana); il discorso pubblico diventa
+  «Discorso speciale».
 
-### Modalità libera (eventi fuori programma)
+### Modalità libera (eventi fuori programma) — fatto
 Per i rari eventi in sala oltre alle adunanze (discorso di matrimonio o funerale, adunanza per il servizio, ecc.).
 Usata poche volte l'anno: solo una voce nel menu del controller, niente in primo piano.
 - Chiede titolo e ora d'inizio, poi quante parti ci sono (di solito una) e quanto dura ciascuna.
 - Countdown, schermo e telefono funzionano come sempre; lo schema della settimana non viene toccato.
 - Gli ultimi eventi restano tra i suggerimenti per riusarli.
 
-### Profili per più congregazioni nella stessa sala
+### Profili per più congregazioni nella stessa sala — fatto
 Molte Sale del Regno sono condivise da due o tre congregazioni, a volte di lingue diverse.
 - Un profilo per congregazione: nome, orari, lingua del download da wol, stile dello schermo, frasi pronte, settimane particolari.
 - Il programma sceglie da solo il profilo in base al giorno e all'ora; il nome della congregazione è ben visibile nel controller.
 - Cambio manuale con un clic; schemi e impostazioni di ogni profilo restano separati. Si esporta anche un solo profilo.
-- È la voce più grande della 2.x: tocca impostazioni, schemi e backup. Se pesa troppo può slittare.
+- Fatto così: ogni profilo ha la sua cartella (il primo resta quella di sempre); schermo, finestre, microfono, telecomando,
+  rete, PIN e telefoni autorizzati restano del PC. L'esportazione di un profilo è il backup fatto da quel profilo.
 
-### Tempi
+### Tempi — fatto
 - **Avviso giallo per tipo di parte**: soglie diverse (per esempio studenti e discorsi), in secondi fissi come oggi oppure
   in percentuale della parte.
 - **Parti con video**: icona 🎬 nell'elenco per le parti che nello schema di wol contengono un video, per ricordarsi di prepararlo

@@ -46,7 +46,9 @@ public class WindowsSmokeTests
         store.SaveSettings(new AppSettings { AutoDownload = false, WebServerEnabled = false, VoiceStartEnabled = false, CountdownMinutes = 0 });
 
         // gli indirizzi come /Assets/timersala.ico vanno cercati nel programma, non nel progetto di prova
-        Application.ResourceAssembly = typeof(TimerSala.App.App).Assembly;
+        // (WPF lo fissa all'assembly d'ingresso, qui il runner dei test: si corregge il campo interno)
+        typeof(Application).GetField("_resourceAssembly", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)!
+            .SetValue(null, typeof(TimerSala.App.App).Assembly);
         var app = new TimerSala.App.App();
         app.InitializeComponent();
         Exception? unhandled = null;

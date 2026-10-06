@@ -538,20 +538,33 @@
     history.replaceState(null, '', location.pathname);
   }
 
+  // dispositivo fidato: dopo il primo PIN il PC dà a questo telefono un suo codice, revocabile dal PC
+  let token = null;
+  try { token = localStorage.getItem('timersala-token'); } catch { }
+  function forget() {
+    pin = null; token = null;
+    try { localStorage.removeItem('timersala-pin'); localStorage.removeItem('timersala-token'); } catch { }
+  }
+
   async function send(action, value) {
     $('ctrlErr').textContent = '';
     try {
       const r = await fetch('/api/control', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin, action, value: value == null ? null : String(value) }) });
-      const e = r.ok ? null : await r.json().catch(() => ({}));
-      if (r.status === 403 && e?.error === 'PIN errato.') {
-        pin = null;
-        try { localStorage.removeItem('timersala-pin'); } catch { }
+        body: JSON.stringify({ pin: token ? null : pin, token, action, value: value == null ? null : String(value) }) });
+      const e = await r.json().catch(() => ({}));
+      if (r.status === 403 && e?.code === 'auth') {
+        forget();
+        connect();
         $('pinErr').textContent = e.error;
         askPin();
         return false;
       }
       if (!r.ok) { $('ctrlErr').textContent = e?.error || 'Errore ' + r.status; $('pinErr').textContent = e?.error || ''; return false; }
+      if (e?.token) {
+        token = e.token; pin = null;
+        try { localStorage.setItem('timersala-token', token); localStorage.removeItem('timersala-pin'); } catch { }
+        connect();
+      }
       navigator.vibrate?.(15);
       loadSchedule();
       return true;
@@ -560,14 +573,14 @@
 
   function askPin() { $('pinInput').value = ''; B.add('ask-pin'); setTimeout(() => $('pinInput').focus(), 50); }
   async function openControl() {
-    if (!pin) { $('pinErr').textContent = ''; askPin(); return; }
+    if (!pin && !token) { $('pinErr').textContent = ''; askPin(); return; }
     if (await send('check')) { B.remove('ask-pin'); setPanel('control'); }
   }
   $('pinForm').onsubmit = async e => {
     e.preventDefault();
     pin = $('pinInput').value.trim();
+    token = null;
     if (await send('check')) {
-      try { localStorage.setItem('timersala-pin', pin); } catch { }
       B.remove('ask-pin');
       setPanel('control');
     }
@@ -605,9 +618,15 @@
   }).catch(() => { });
 
   // ── connessione in tempo reale ──
-  const es = new EventSource('/api/events');
-  es.onmessage = e => { B.remove('offline'); render(JSON.parse(e.data)); };
-  es.onerror = () => B.add('offline');
+  // con il codice del dispositivo il PC sa che questa pagina può comandare («1 con il controllo»)
+  let es = null;
+  function connect() {
+    es?.close();
+    es = new EventSource('/api/events' + (token ? '?t=' + encodeURIComponent(token) : ''));
+    es.onmessage = e => { B.remove('offline'); render(JSON.parse(e.data)); };
+    es.onerror = () => B.add('offline');
+  }
+  connect();
 
   // ── schermo sempre acceso (manuale) ──
   // La Wake Lock API funziona solo in HTTPS; sulla rete locale (HTTP) si ricorre

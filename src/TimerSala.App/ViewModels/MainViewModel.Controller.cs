@@ -74,18 +74,21 @@ public sealed partial class MainViewModel
             CardNextTitle = null;
         }
 
-        int devices = _web.ConnectedClients;
-        if (devices != ConnectedDevices || ConnectedDevicesText.Length == 0)
+        int devices = _web.ConnectedClients, controllers = _web.ConnectedControllers;
+        if (devices != ConnectedDevices || controllers != _connectedControllers || ConnectedDevicesText.Length == 0)
         {
             ConnectedDevices = devices;
+            _connectedControllers = controllers;
             ConnectedDevicesText = devices switch
             {
                 0 => "Nessun dispositivo collegato",
                 1 => "1 dispositivo collegato",
                 _ => $"{devices} dispositivi collegati",
-            };
+            } + (controllers > 0 ? $" · {controllers} con il controllo" : "");
         }
     }
+
+    int _connectedControllers;
 
     /// <summary>Orari previsti delle parti, dallo schema.</summary>
     void UpdatePlannedStarts()

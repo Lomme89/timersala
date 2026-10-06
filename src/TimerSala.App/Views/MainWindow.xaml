@@ -220,6 +220,56 @@
                                         <TextBlock Text="Collega un telefono (QR)" FontSize="13" VerticalAlignment="Center" />
                                     </StackPanel>
                                 </Button>
+                                <Button Style="{StaticResource FlatButton}" Margin="0,6,0,0" Padding="12,7" HorizontalAlignment="Stretch" Click="PrintCard_Click"
+                                        Visibility="{Binding WebRunning, Converter={StaticResource BoolToVis}}"
+                                        ToolTip="Un foglio con il codice per seguire il timer (senza PIN), da lasciare al leggio o all'acustica">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="&#xE749;" FontFamily="{StaticResource IconFont}" FontSize="14" VerticalAlignment="Center" Margin="0,0,8,0" />
+                                        <TextBlock Text="Stampa il cartoncino" FontSize="13" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+
+                                <!-- comandi dal telefono: interruttore al volo e dispositivi autorizzati -->
+                                <Border BorderBrush="{StaticResource LineBrush}" BorderThickness="0,1,0,0" Margin="0,12,0,0" Padding="0,10,0,0">
+                                    <StackPanel>
+                                        <DockPanel>
+                                            <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding RemoteCommandsEnabled}" />
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="Comandi dal telefono" FontSize="13" />
+                                                <TextBlock Style="{StaticResource Caption}" FontSize="11.5" TextWrapping="Wrap"
+                                                           Text="Spento: i telefoni vedono il timer ma non lo comandano." />
+                                            </StackPanel>
+                                        </DockPanel>
+                                        <StackPanel Margin="0,10,0,0" Visibility="{Binding HasTrustedDevices, Converter={StaticResource BoolToVis}}">
+                                            <DockPanel Margin="0,0,0,4">
+                                                <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Revoca tutti" Padding="8,2" FontSize="11.5"
+                                                        Command="{Binding RevokeAllDevicesCommand}" />
+                                                <TextBlock Text="AUTORIZZATI SENZA PIN" Style="{StaticResource Caption}" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                            </DockPanel>
+                                            <ItemsControl ItemsSource="{Binding TrustedDevices}" MaxHeight="150">
+                                                <ItemsControl.Template>
+                                                    <ControlTemplate TargetType="ItemsControl">
+                                                        <ScrollViewer VerticalScrollBarVisibility="Auto"><ItemsPresenter /></ScrollViewer>
+                                                    </ControlTemplate>
+                                                </ItemsControl.Template>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <DockPanel Margin="0,3">
+                                                            <Button DockPanel.Dock="Right" Style="{StaticResource GhostIconButton}" Content="&#xE711;" Width="24" Height="24" FontSize="9"
+                                                                    ToolTip="Revoca: per comandare dovrà inserire di nuovo il PIN"
+                                                                    Command="{Binding DataContext.RevokeDeviceCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                                    CommandParameter="{Binding Id}" />
+                                                            <StackPanel>
+                                                                <TextBlock Text="{Binding Name}" FontSize="12.5" Foreground="{StaticResource TextBrush}" />
+                                                                <TextBlock Text="{Binding LastSeenText}" Style="{StaticResource Caption}" FontSize="11" />
+                                                            </StackPanel>
+                                                        </DockPanel>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
                             </StackPanel>
                         </Border>
                     </Popup>

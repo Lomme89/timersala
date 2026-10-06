@@ -55,7 +55,9 @@ public sealed partial class MainViewModel : ObservableObject
         _wol = new WolClient { DiagnosticsFolder = store.DiagnosticsFolder };
         _web = new TimerWebServer(Timer, () => DisplayOptions.From(Settings) with { Training = IsTraining }, Messages,
             () => new RemoteConfig(Settings.RemoteControlEnabled, Settings.RemotePin, Settings.MessagePresets, Settings.MessagesEnabled),
-            (action, value) => Application.Current.Dispatcher.InvokeAsync(() => ExecuteRemote(action, value)).Task);
+            (action, value) => Application.Current.Dispatcher.InvokeAsync(() => ExecuteRemote(action, value)).Task)
+        { Devices = CreateDeviceRegistry() };
+        RefreshTrustedDevices();
         Messages.Changed += (_, _) => Application.Current.Dispatcher.BeginInvoke(RefreshDisplay);
         ApplyTimerSettings();
         ApplyVoiceSettings();
@@ -988,6 +990,23 @@ public sealed partial class MainViewModel : ObservableObject
         WebAddressText = $"{host}:{_web.Port}";
         WebStatus = WebUrl;
         OnPropertyChanged(nameof(ControlUrl));
+        CheckAddressChanged(WebUrl);
+    }
+
+    /// <summary>
+    /// Se l'indirizzo è diverso dall'ultima volta, i codici QR stampati non valgono più: lo si dice, suggerendo il nome
+    /// del PC, che non cambia quando il router assegna un altro indirizzo.
+    /// </summary>
+    void CheckAddressChanged(string url)
+    {
+        var previous = Settings.LastWebAddress;
+        if (previous == url) return;
+        Settings.LastWebAddress = url;
+        SaveSettings();
+        if (previous is null) return;
+        var hint = Settings.WebAddressMode == "hostname" ? "" :
+            " Per evitarlo, in Impostazioni → Rete e telefono scegli il nome del PC: non cambia.";
+        ShowStatus($"L'indirizzo del timer è cambiato (prima {previous.Replace("http://", "")}, ora {url.Replace("http://", "")}): i codici QR stampati non valgono più.{hint}", error: true);
     }
 
     public Task StopWebServerAsync() => _web.StopAsync();
@@ -997,11 +1016,14 @@ public sealed partial class MainViewModel : ObservableObject
     public void ApplySettings(AppSettings settings)
     {
         bool webChanged = settings.WebServerEnabled != Settings.WebServerEnabled || settings.WebServerPort != Settings.WebServerPort;
+        // i dispositivi fidati li gestisce solo il registro (le impostazioni aperte ne hanno una copia vecchia)
+        settings.TrustedDevices = Settings.TrustedDevices;
         Settings = settings;
         OnPropertyChanged(nameof(MessagePresets));
         OnPropertyChanged(nameof(MessagesEnabled));
         if (!settings.MessagesEnabled) Messages.Clear();
         OnPropertyChanged(nameof(ControlUrl));
+        OnPropertyChanged(nameof(RemoteCommandsEnabled));
         ApplyTimerSettings();
         UpdateMeetingStart();
         UpdateAdaptiveParts();

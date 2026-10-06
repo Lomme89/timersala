@@ -100,6 +100,9 @@ public sealed class AppSettings
     public bool RemoteControlEnabled { get; set; } = true;
     public string RemotePin { get; set; } = Random.Shared.Next(1000, 10000).ToString();
 
+    /// <summary>Telefoni e tablet autorizzati al controllo senza PIN (gestiti dal PC, revocabili).</summary>
+    public List<Web.TrustedDevice> TrustedDevices { get; set; } = [];
+
     // ── Avvio con la voce (sperimentale) ──
     public bool VoiceStartEnabled { get; set; }
 
@@ -167,6 +170,9 @@ public sealed class AppSettings
 
     public bool WebServerEnabled { get; set; } = true;
     public int WebServerPort { get; set; } = 8090;
+
+    /// <summary>Ultimo indirizzo del timer in rete (per avvisare se cambia: i QR stampati non varrebbero più).</summary>
+    public string? LastWebAddress { get; set; }
 
     /// <summary>Indirizzo nei collegamenti e nei QR: "auto", "hostname" oppure un IP specifico.</summary>
     public string WebAddressMode { get; set; } = "auto";

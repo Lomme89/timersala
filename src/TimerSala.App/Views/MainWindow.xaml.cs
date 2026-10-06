@@ -314,6 +314,12 @@ public partial class MainWindow : Window
 
     void Qr_Click(object sender, RoutedEventArgs e) => ShowPhoneQr();
 
+    void PrintCard_Click(object sender, RoutedEventArgs e)
+    {
+        NetworkButton.IsChecked = false;
+        if (_vm.WebUrl is { } url) PrintCardWindow.Open(url);
+    }
+
     void Help_Click(object sender, RoutedEventArgs e) => HelpActions.ShowHelp(this, _vm);
 
     /// <summary>Entra in addestramento (dalla guida o dalle impostazioni).</summary>

@@ -82,6 +82,9 @@ public sealed class TimerWebServer : IAsyncDisposable
     public int Port { get; private set; }
     public bool IsRunning => _app is not null;
 
+    /// <summary>Dispositivi fidati: senza, ogni comando richiede il PIN.</summary>
+    public DeviceRegistry? Devices { get; init; }
+
     public TimerWebServer(MeetingTimer timer, Func<DisplayOptions> options, MessageBoard? messages = null,
         Func<RemoteConfig>? remote = null, Func<string, string?, Task>? onCommand = null)
     {
@@ -161,14 +164,19 @@ public sealed class TimerWebServer : IAsyncDisposable
         return app;
     }
 
-    public sealed record ControlRequest(string? Pin, string? Action, string? Value);
+    public sealed record ControlRequest(string? Pin, string? Action, string? Value, string? Token = null);
 
-    async Task<IResult> HandleControl(ControlRequest req)
+    async Task<IResult> HandleControl(ControlRequest req, HttpRequest http)
     {
         var r = _remote();
-        if (!r.Enabled) return Results.Json(new { error = "Controllo remoto disattivato sul PC." }, Json, statusCode: 403);
+        if (!r.Enabled) return Results.Json(new { error = "Controllo remoto disattivato sul PC.", code = "off" }, Json, statusCode: 403);
 
-        lock (_pinLock)
+        // un dispositivo fidato non ha bisogno del PIN
+        var device = Devices?.Validate(req.Token);
+        if (device is null && req.Pin is null && req.Token is not null)
+            return Results.Json(new { error = "Questo dispositivo non è più autorizzato: inserisci il PIN.", code = "auth" }, Json, statusCode: 403);
+
+        if (device is null) lock (_pinLock)
         {
             if (DateTime.UtcNow < _lockedUntil)
                 return Results.Json(new { error = "Troppi tentativi errati: riprova tra un minuto." }, Json, statusCode: 429);
@@ -179,13 +187,18 @@ public sealed class TimerWebServer : IAsyncDisposable
                     _lockedUntil = DateTime.UtcNow.AddMinutes(1);
                     _failures = 0;
                 }
-                return Results.Json(new { error = "PIN errato." }, Json, statusCode: 403);
+                return Results.Json(new { error = "PIN errato.", code = "auth" }, Json, statusCode: 403);
             }
             _failures = 0;
         }
 
-        // "check" verifica solo il PIN (usato dalla pagina all'accesso)
-        if (req.Action == "check") return Results.Json(new { ok = true }, Json);
+        // "check" verifica l'accesso (usato dalla pagina all'apertura); con il PIN giusto il dispositivo diventa fidato
+        if (req.Action == "check")
+        {
+            if (device is null && Devices is not null)
+                return Results.Json(new { ok = true, token = Devices.Register(DeviceRegistry.NameFromUserAgent(http.Headers.UserAgent)) }, Json);
+            return Results.Json(new { ok = true }, Json);
+        }
         if (req.Action is null || !RemoteActions.All.Contains(req.Action))
             return Results.Json(new { error = "Comando sconosciuto." }, Json, statusCode: 400);
         if (!r.MessagesEnabled && req.Action is RemoteActions.Message or RemoteActions.MessageFull or RemoteActions.ClearMessage)
@@ -211,7 +224,10 @@ public sealed class TimerWebServer : IAsyncDisposable
         var ct = ctx.RequestAborted;
         string? last = null;
         var lastSent = DateTime.MinValue;
+        // la pagina di un dispositivo fidato si presenta con il suo codice: conta tra quelli «con il controllo»
+        bool control = Devices?.Validate(ctx.Request.Query["t"]) is not null;
         Interlocked.Increment(ref _clients);
+        if (control) Interlocked.Increment(ref _controllers);
         try
         {
             while (!ct.IsCancellationRequested)
@@ -232,10 +248,14 @@ public sealed class TimerWebServer : IAsyncDisposable
         finally
         {
             Interlocked.Decrement(ref _clients);
+            if (control) Interlocked.Decrement(ref _controllers);
         }
     }
 
-    int _clients;
+    int _clients, _controllers;
+
+    /// <summary>Tra i dispositivi collegati, quelli autorizzati al controllo.</summary>
+    public int ConnectedControllers => Volatile.Read(ref _controllers);
 
     /// <summary>Dispositivi che seguono il timer in questo momento (pagine web aperte).</summary>
     public int ConnectedClients => Volatile.Read(ref _clients);

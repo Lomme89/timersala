@@ -88,6 +88,9 @@ public static class Exchange
         s.MiniMode = current.MiniMode;
         s.VoiceInputDevice = current.VoiceInputDevice;
         s.StartWithWindows = current.StartWithWindows;
+        // i telefoni autorizzati sono quelli che hanno usato questo PC
+        s.TrustedDevices = current.TrustedDevices;
+        s.LastWebAddress = current.LastWebAddress;
         return s;
     }
 

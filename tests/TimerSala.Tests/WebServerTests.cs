@@ -46,6 +46,7 @@ public class WebServerTests
         using var reader = new StreamReader(await resp.Content.ReadAsStreamAsync(cts.Token));
         var line = await reader.ReadLineAsync(cts.Token);
         Assert.StartsWith("data: {", line);
+        Assert.Equal(1, server.ConnectedClients);
     }
 
     [Fact]

@@ -208,6 +208,7 @@ public sealed class TimerWebServer : IAsyncDisposable
         var ct = ctx.RequestAborted;
         string? last = null;
         var lastSent = DateTime.MinValue;
+        Interlocked.Increment(ref _clients);
         try
         {
             while (!ct.IsCancellationRequested)
@@ -225,7 +226,16 @@ public sealed class TimerWebServer : IAsyncDisposable
         }
         catch (OperationCanceledException) { }
         catch (IOException) { }
+        finally
+        {
+            Interlocked.Decrement(ref _clients);
+        }
     }
+
+    int _clients;
+
+    /// <summary>Dispositivi che seguono il timer in questo momento (pagine web aperte).</summary>
+    public int ConnectedClients => Volatile.Read(ref _clients);
 
     public object BuildState()
     {

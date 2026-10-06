@@ -196,6 +196,7 @@ public sealed partial class MainViewModel : ObservableObject
         else if (Week.FetchedAt is { } f) bits.Add($"da wol.jw.org il {f:dd/MM}");
         else bits.Add("schema predefinito");
         WeekSubtitle = string.Join(" · ", bits);
+        UpdateMeetingLine();
     }
 
     /// <summary>L'adunanza di oggi, se c'è, altrimenti la prossima della settimana.</summary>
@@ -462,6 +463,7 @@ public sealed partial class MainViewModel : ObservableObject
             Week.EditedManually = true;
             _store.SaveWeek(Week);
             UpdateWeekTexts();
+            UpdatePlannedStarts();
         }
         RefreshDisplay();
     }
@@ -615,6 +617,7 @@ public sealed partial class MainViewModel : ObservableObject
         RefreshCountdown(s);
         RefreshMessage();
         RefreshUndoStop();
+        RefreshControllerCard(s);
     }
 
     // ───────────── Stile dello schermo del timer ─────────────
@@ -689,6 +692,7 @@ public sealed partial class MainViewModel : ObservableObject
         var m = Timer.Meeting;
         for (int i = 0; i < m.Parts.Count; i++)
             Parts.Add(new PartItemViewModel(m.Parts[i], i));
+        UpdatePlannedStarts();
         RefreshParts();
     }
 
@@ -697,10 +701,13 @@ public sealed partial class MainViewModel : ObservableObject
         SaveSession();
         int selected = Timer.SelectedIndex;
         int running = Timer.Mode == TimerMode.Part ? Timer.RunningIndex : -1;
+        int current = running >= 0 ? running : selected;
         foreach (var p in Parts)
         {
             p.IsSelected = p.Index == selected;
             p.IsRunning = p.Index == running;
+            // le parti già fatte si compattano
+            p.IsPast = current >= 0 && p.Index < current;
             var actual = Timer.ActualFor(p.Index);
             p.ActualText = actual is { } a ? TimerSnapshot.FormatDuration(a.TotalSeconds) : null;
             p.IsOver = actual is { } b && b.TotalSeconds >= p.Part.DurationSeconds + 1;
@@ -971,6 +978,8 @@ public sealed partial class MainViewModel : ObservableObject
         ApplyTimerSettings();
         UpdateMeetingStart();
         UpdateAdaptiveParts();
+        UpdatePlannedStarts();
+        UpdateMeetingLine();
         ApplyVoiceSettings();
         UiTheme.Apply(settings);
         SaveSettings();

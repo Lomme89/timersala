@@ -36,6 +36,7 @@ public partial class MainWindow : Window
             OfferRestore();
         };
         LocationChanged += (_, _) => UpdateTopmostOfDisplay();
+        vm.Timer.StateChanged += (_, _) => Dispatcher.BeginInvoke(CenterCurrentPart, System.Windows.Threading.DispatcherPriority.Background);
         SystemEvents.DisplaySettingsChanged += OnDisplaySettingsChanged;
         SystemEvents.PowerModeChanged += OnPowerModeChanged;
         PreviewKeyDown += OnPreviewKeyDown;
@@ -131,6 +132,32 @@ public partial class MainWindow : Window
         // se il timer è sullo stesso schermo del controller non deve coprirlo
         bool sameScreen = Monitors.DeviceOf(this) == _vm.SelectedMonitor.DeviceName;
         _timerWindow.Topmost = !sameScreen;
+    }
+
+    int _centeredIndex = -1;
+
+    /// <summary>Lo scorrimento tiene al centro la parte in corso (o selezionata) quando cambia.</summary>
+    void CenterCurrentPart()
+    {
+        var current = _vm.Parts.FirstOrDefault(p => p.IsRunning) ?? _vm.Parts.FirstOrDefault(p => p.IsSelected);
+        if (current is null || current.Index == _centeredIndex) return;
+        if (PartsList.ItemContainerGenerator.ContainerFromItem(current) is not FrameworkElement row) return;
+        if (FindScrollViewer(PartsList) is not { } sv || sv.ViewportHeight <= 0) return;
+        _centeredIndex = current.Index;
+        double top = row.TransformToVisual(sv).Transform(new Point(0, 0)).Y + sv.VerticalOffset;
+        double target = top + row.ActualHeight / 2 - sv.ViewportHeight / 2;
+        sv.ScrollToVerticalOffset(Math.Clamp(target, 0, sv.ScrollableHeight));
+    }
+
+    static ScrollViewer? FindScrollViewer(DependencyObject parent)
+    {
+        for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent); i++)
+        {
+            var child = System.Windows.Media.VisualTreeHelper.GetChild(parent, i);
+            if (child is ScrollViewer sv) return sv;
+            if (FindScrollViewer(child) is { } found) return found;
+        }
+        return null;
     }
 
     void OnPreviewKeyDown(object sender, KeyEventArgs e) =>

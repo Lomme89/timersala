@@ -13,6 +13,13 @@
 - Spiegazioni brevi sotto ogni opzione, i dettagli nella «i»; porta di rete e regolazioni fini della voce dietro «Mostra opzioni avanzate».
 - La versione del programma compare nelle impostazioni.
 
+**Controller riorganizzato**
+- **Intestazione:** ora, «In orario» o ritardo in una pastiglia colorata, e le icone di rete, mini, editor e impostazioni. L'icona della rete ha un pallino verde quando il timer in rete è attivo; un clic apre il riquadro con indirizzo, QR e numero di dispositivi collegati. Sparisce la riga «Timer in rete» in fondo.
+- **Settimana in una riga** («Dom 4 ott · Fine settimana · Geremia 38-39»): la freccia apre il riquadro completo con le settimane, il download, infrasettimanale/fine settimana e il sorvegliante. Si chiude da solo quando parte una parte.
+- **Riquadro del tempo più ricco:** cifre più grandi e, sotto, oltre ad assegnato e trascorso, la parte successiva, l'orario d'inizio e la fine prevista.
+- **Messaggi in una riga:** campo, invio e tutto schermo; il messaggio in onda compare in una pastiglia gialla con «Togli».
+- **Programma:** l'elenco è più alto e mostra l'orario previsto d'inizio di ogni parte; la parte in corso è più grande ed evidenziata, quelle già fatte si compattano mostrando il tempo effettivo, e lo scorrimento tiene al centro la parte corrente.
+
 **Tema e dimensione dell'interfaccia** (*Impostazioni → Programma*)
 - **Tema chiaro** per controller, mini, editor e impostazioni, utile se l'acustica è in un punto molto luminoso: scuro, chiaro o «come Windows» (segue il tema delle app di Windows anche mentre il programma è aperto). Lo schermo della sala resta con il suo tema.
 - **Dimensione dell'interfaccia** dal 90 al 150 %, per portatili piccoli o schermi ad alta risoluzione. Le finestre aperte si adattano subito.

@@ -45,3 +45,24 @@ public class TemplatesTests
     [Fact]
     public void Iso_week_number() => Assert.Equal((2026, 41), WeekMath.IsoWeek(new DateOnly(2026, 10, 5)));
 }
+
+public class MeetingPlanTests
+{
+    [Fact]
+    public void Songs_share_the_time_left_over()
+    {
+        var m = new TimerSala.Core.Models.Meeting
+        {
+            Parts =
+            [
+                new() { Title = "Cantico e preghiera", IsSong = true },
+                new() { Title = "Discorso pubblico", DurationSeconds = 30 * 60 },
+                new() { Title = "Cantico 79", IsSong = true },
+                new() { Title = "Studio Torre di Guardia", DurationSeconds = 60 * 60 },
+                new() { Title = "Cantico 84 e preghiera", IsSong = true },
+            ],
+        };
+        var starts = TimerSala.Core.Models.MeetingPlan.PlannedStarts(m, new DateTime(2026, 10, 4, 10, 0, 0), 105);
+        Assert.Equal(["10:00", "10:05", "10:35", "10:40", "11:40"], starts.Select(s => s.ToString("HH:mm")));
+    }
+}

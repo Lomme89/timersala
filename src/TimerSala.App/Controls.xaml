@@ -112,6 +112,7 @@
 
     <Style TargetType="ComboBox">
         <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+        <Setter Property="Padding" Value="6,5" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="MinHeight" Value="32" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
@@ -126,6 +127,7 @@
                                           Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
                                           TextElement.Foreground="{TemplateBinding Foreground}" />
                         <TextBox x:Name="PART_EditableTextBox" Visibility="Hidden" Margin="2,2,28,2" Background="Transparent" BorderThickness="0"
+                                 Padding="{TemplateBinding Padding}"
                                  IsReadOnly="{TemplateBinding IsReadOnly}" VerticalContentAlignment="Center" />
                         <Popup x:Name="PART_Popup" Placement="Bottom" AllowsTransparency="True" Focusable="False"
                                IsOpen="{TemplateBinding IsDropDownOpen}" PopupAnimation="Fade">

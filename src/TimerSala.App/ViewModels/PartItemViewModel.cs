@@ -32,12 +32,18 @@ public sealed partial class PartItemViewModel(MeetingPart part, int index) : Obs
     public string? ActualText { get; set => Set(ref field, value); }
     public bool IsOver { get; set => Set(ref field, value); }
     public bool IsSelected { get; set => Set(ref field, value); }
+
+    /// <summary>Parte prima di quella in corso (o selezionata): nell'elenco si compatta.</summary>
+    public bool IsPast { get; set => Set(ref field, value); }
+
+    /// <summary>Orario previsto d'inizio, secondo lo schema.</summary>
+    public string PlannedStartText { get; set => Set(ref field, value); } = "";
     public bool IsRunning { get; set => Set(ref field, value); }
 
     public void RefreshDuration() => OnPropertyChanged(nameof(DurationText));
 
     static string FormatMinutes(int seconds) =>
-        seconds % 60 == 0 ? $"{seconds / 60} min" : $"{seconds / 60}:{seconds % 60:00}";
+        seconds % 60 == 0 ? $"{seconds / 60}′" : $"{seconds / 60}:{seconds % 60:00}";
 }
 
 static class BrushCache

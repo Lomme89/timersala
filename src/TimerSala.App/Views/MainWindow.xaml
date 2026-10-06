@@ -304,6 +304,14 @@
                     <Border CornerRadius="11" Background="{Binding DelayBrush}" Opacity="0.16" />
                     <TextBlock Text="{Binding DelayText}" Foreground="{Binding DelayBrush}" FontSize="12.5" FontWeight="SemiBold" Margin="10,3" />
                 </Grid>
+                <!-- congregazione (con più profili): un clic per cambiarla -->
+                <Button x:Name="ProfileButton" Style="{StaticResource FlatButton}" Margin="8,0,0,2" Padding="10,2" VerticalAlignment="Center" Click="Profile_Click"
+                        Visibility="{Binding HasProfiles, Converter={StaticResource BoolToVis}}" ToolTip="Congregazione: un clic per cambiarla">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE716;" FontFamily="{StaticResource IconFont}" FontSize="11" VerticalAlignment="Center" Margin="0,0,6,0" />
+                        <TextBlock Text="{Binding ProfileName}" FontSize="12.5" FontWeight="SemiBold" MaxWidth="160" TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                </Button>
             </StackPanel>
         </DockPanel>
 

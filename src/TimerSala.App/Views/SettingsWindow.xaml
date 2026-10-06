@@ -167,6 +167,49 @@
                         <TextBlock Style="{StaticResource PageTitle}" Text="Adunanze" />
                         <TextBlock Style="{StaticResource PageSubtitle}" Text="Orari, schemi e durate. Lo schema della settimana si scarica da solo." />
 
+                        <Border Style="{StaticResource Panel}" Visibility="{Binding Main.HasProfilesCatalog, Converter={StaticResource BoolToVis}}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource PanelTitle}" Text="CONGREGAZIONI" />
+                                <Border Style="{StaticResource FirstRow}">
+                                    <DockPanel>
+                                        <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Rinomina" Padding="12,5" Margin="8,0,0,0" Click="RenameProfile_Click" />
+                                        <TextBox x:Name="ProfileNameBox" DockPanel.Dock="Right" Width="240" Padding="6,4" VerticalContentAlignment="Center" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Questa congregazione" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Orari, schemi, stile, frasi pronte e settimane particolari sono di ogni congregazione." />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                                <Border Style="{StaticResource Row}">
+                                    <DockPanel>
+                                        <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Aggiungi" Padding="12,5" Margin="8,0,0,0" Click="AddProfile_Click" />
+                                        <TextBox x:Name="NewProfileBox" DockPanel.Dock="Right" Width="240" Padding="6,4" VerticalContentAlignment="Center" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Un'altra congregazione nella stessa sala" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Parte dalle impostazioni di questa. All'apertura TimerSala sceglie da solo quella dell'adunanza di adesso; si cambia anche con il nome in alto nel controller." />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                                <ItemsControl ItemsSource="{Binding Main.ProfileList}" Margin="0,8,0,0" ButtonBase.Click="RemoveProfile_Click">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border CornerRadius="16" Background="{StaticResource InputBrush}" BorderBrush="{StaticResource LineBrush}"
+                                                    BorderThickness="1" Padding="12,3,4,3" Margin="0,0,8,6">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontSize="13" />
+                                                    <Button Style="{StaticResource GhostIconButton}" Width="24" Height="24" FontSize="10" Content="&#xE711;" Margin="6,0,0,0"
+                                                            Tag="{Binding}" ToolTip="Togli questa congregazione e i suoi dati" />
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
                         <Border Style="{StaticResource Panel}">
                             <StackPanel>
                                 <TextBlock Style="{StaticResource PanelTitle}" Text="ORARI" />

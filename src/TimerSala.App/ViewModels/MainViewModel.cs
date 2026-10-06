@@ -24,7 +24,7 @@ public sealed partial class MainViewModel : ObservableObject
     static readonly Brush Black = BrushCache.Get("#000000");
     static readonly Brush OvertimeBg = BrushCache.Get("#1D0505");
 
-    readonly DataStore _store;
+    DataStore _store;
     readonly WolClient _wol;
     readonly TimerWebServer _web;
     readonly DispatcherTimer _tick;

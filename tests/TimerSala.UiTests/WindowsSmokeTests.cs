@@ -159,6 +159,18 @@ public class WindowsSmokeTests
         Assert.False(vm.IsFreeEvent);
         Assert.Contains(vm.Timer.Meeting.Parts, p => p.DurationSeconds == realDuration);
 
+        // congregazioni: un secondo profilo, il passaggio e il ritorno
+        Stage("congregazioni");
+        var catalog = new ProfileCatalog(dir);
+        vm.UseProfiles(catalog, catalog.Profiles[0]);
+        var second = vm.AddProfile("Seconda congregazione")!;
+        Assert.True(vm.HasProfiles);
+        Assert.Null(vm.SwitchProfile(second));
+        Pump();
+        Assert.Equal("Seconda congregazione", vm.ProfileName);
+        Assert.Null(vm.SwitchProfile(catalog.Profiles[0]));
+        Pump();
+
         // lista di controllo aperta con il pulsante, una voce spuntata
         Stage("lista di controllo aperta con il pulsante, una voce spuntata");
         vm.ChecklistOpen = true;

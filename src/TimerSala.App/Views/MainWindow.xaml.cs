@@ -323,6 +323,25 @@ public partial class MainWindow : Window
 
     void Help_Click(object sender, RoutedEventArgs e) => HelpActions.ShowHelp(this, _vm);
 
+    void Profile_Click(object sender, RoutedEventArgs e)
+    {
+        var menu = new ContextMenu { PlacementTarget = ProfileButton, Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom };
+        foreach (var p in _vm.ProfileList)
+        {
+            var item = new MenuItem { Header = p.Name, IsCheckable = true, IsChecked = p.Id == _vm.CurrentProfile?.Id };
+            item.Click += (_, _) =>
+            {
+                if (_vm.SwitchProfile(p) is { } why) MessageBox.Show(this, why, "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
+            };
+            menu.Items.Add(item);
+        }
+        menu.Items.Add(new Separator());
+        var manage = new MenuItem { Header = "Gestisci le congregazioni…" };
+        manage.Click += (_, _) => Settings_Click(this, new RoutedEventArgs());
+        menu.Items.Add(manage);
+        menu.IsOpen = true;
+    }
+
     void FreeEvent_Click(object sender, RoutedEventArgs e) => new FreeEventWindow(_vm) { Owner = this }.ShowDialog();
 
     /// <summary>Entra in addestramento (dalla guida o dalle impostazioni).</summary>

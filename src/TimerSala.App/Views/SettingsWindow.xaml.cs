@@ -48,6 +48,7 @@ public partial class SettingsWindow : Window
 
         DataContext = _vm;
         PinBox.Text = _vm.RemotePin;
+        ProfileNameBox.Text = main.ProfileName;
         _ready = true;
         Nav.SelectedIndex = (int)(section ?? _lastSection);
         UpdateVoiceTexts();
@@ -239,6 +240,41 @@ public partial class SettingsWindow : Window
     }
 
     void Help_Click(object sender, RoutedEventArgs e) => HelpActions.ShowHelp(this, _main);
+
+    // ───── Congregazioni ─────
+
+    void RenameProfile_Click(object sender, RoutedEventArgs e)
+    {
+        if (_main.CurrentProfile is { } p && ProfileNameBox.Text.Trim().Length > 0) _main.RenameProfile(p, ProfileNameBox.Text);
+    }
+
+    void AddProfile_Click(object sender, RoutedEventArgs e)
+    {
+        var name = NewProfileBox.Text.Trim();
+        if (name.Length == 0) { NewProfileBox.Focus(); return; }
+        _vm.Flush();
+        if (_main.AddProfile(name) is null) return;
+        NewProfileBox.Text = "";
+        MessageBox.Show(this, $"Aggiunta «{name}». Per passarci usa il nome della congregazione in alto nel controller; lì poi ne imposti orari e schemi.",
+            "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
+
+    void RemoveProfile_Click(object sender, RoutedEventArgs e)
+    {
+        if (e.OriginalSource is not System.Windows.Controls.Button { Tag: Core.Storage.ProfileInfo p }) return;
+        if (p.Id == _main.CurrentProfile?.Id)
+        {
+            MessageBox.Show(this, "È la congregazione in uso: passa prima a un'altra.", "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+        if (p.Id == "")
+        {
+            MessageBox.Show(this, "La prima congregazione non si può togliere.", "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+        if (MessageBox.Show(this, $"Togliere «{p.Name}» con le sue impostazioni e i suoi schemi?", "TimerSala", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            _main.RemoveProfile(p);
+    }
 
     void ClickerAssociate_Click(object sender, RoutedEventArgs e)
     {

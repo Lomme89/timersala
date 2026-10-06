@@ -24,9 +24,12 @@ public sealed class DataStore
     public string DiagnosticsFolder => Path.Combine(Root, "diagnostica");
     string SettingsPath => Path.Combine(Root, "impostazioni.json");
 
+    /// <summary>%AppData%\TimerSala: la cartella dei dati (e del primo profilo).</summary>
+    public static string DefaultRoot => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TimerSala");
+
     public DataStore(string? root = null)
     {
-        Root = root ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TimerSala");
+        Root = root ?? DefaultRoot;
         Directory.CreateDirectory(Root);
         Directory.CreateDirectory(WeeksFolder);
         IsNew = !File.Exists(SettingsPath);

@@ -49,8 +49,12 @@ public partial class App : Application
         // tutte le finestre: barra del titolo scura, angoli arrotondati e comparsa in dissolvenza
         EventManager.RegisterClassHandler(typeof(Window), FrameworkElement.LoadedEvent, new RoutedEventHandler(OnWindowLoaded));
 
-        var store = new DataStore();
+        // congregazioni: si apre quella dell'adunanza di adesso, altrimenti l'ultima usata
+        var catalog = new ProfileCatalog(DataStore.DefaultRoot);
+        var profile = catalog.ChooseFor(DateTime.Now) ?? catalog.LastUsed;
+        var store = catalog.Open(profile);
         _vm = new MainViewModel(store);
+        _vm.UseProfiles(catalog, profile);
         Theming.UiTheme.Apply(_vm.Settings);
         var main = new MainWindow(_vm);
         MainWindow = main;

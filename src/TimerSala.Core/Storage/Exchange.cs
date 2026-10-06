@@ -95,6 +95,28 @@ public static class Exchange
         return s;
     }
 
+    /// <summary>
+    /// Passando a un altro profilo (congregazione) restano quelle di questo PC e quelle della sala, uguali per tutti:
+    /// schermo, finestre, microfono, telecomando, rete e telefoni, aspetto del controller.
+    /// </summary>
+    public static AppSettings ForProfile(AppSettings profile, AppSettings current)
+    {
+        var s = MergeSettings(profile, current);
+        s.WebServerEnabled = current.WebServerEnabled;
+        s.WebServerPort = current.WebServerPort;
+        s.WebAddressMode = current.WebAddressMode;
+        s.RemoteControlEnabled = current.RemoteControlEnabled;
+        s.RemotePin = current.RemotePin;
+        s.ClickerEnabled = current.ClickerEnabled;
+        s.ControllerTheme = current.ControllerTheme;
+        s.UiScalePercent = current.UiScalePercent;
+        s.ControllerTopmost = current.ControllerTopmost;
+        s.AutoMiniOnFirstPart = current.AutoMiniOnFirstPart;
+        s.OnboardingDone = current.OnboardingDone;
+        s.LastSeenVersion = current.LastSeenVersion;
+        return s;
+    }
+
     /// <summary>Salva le settimane del file (sostituendo quelle con la stessa data). Restituisce quante sono.</summary>
     public static int ImportWeeks(DataStore store, ExchangeFile file)
     {

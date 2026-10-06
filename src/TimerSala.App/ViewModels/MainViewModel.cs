@@ -86,6 +86,7 @@ public sealed partial class MainViewModel : ObservableObject
             var snap = Timer.GetSnapshot();
             TickWindows(snap);
             TickChecklist(snap);
+            TickRemoteNotice();
             // mentre il timer corre, salva lo stato ogni 5 secondi
             if (Timer.IsRunning && ++_ticksSinceSave >= 50) SaveSession();
         };
@@ -856,6 +857,7 @@ public sealed partial class MainViewModel : ObservableObject
 
     void ExecuteRemote(string action, string? value)
     {
+        bool wasRunning = Timer.IsRunning;
         switch (action)
         {
             case RemoteActions.Toggle: ToggleStartNow(); break;
@@ -868,7 +870,40 @@ public sealed partial class MainViewModel : ObservableObject
             case RemoteActions.MessageFull: ShowMessage(value, fullScreen: true); break;
             case RemoteActions.ClearMessage: Messages.Clear(); break;
         }
+        ShowRemoteNotice(action, value, wasRunning);
         RefreshDisplay();
+    }
+
+    // ───────────── Avvisi delle azioni dal telefono ─────────────
+
+    public string RemoteNotice { get; private set => Set(ref field, value); } = "";
+    public bool HasRemoteNotice { get; private set => Set(ref field, value); }
+    DateTime _remoteNoticeUntil;
+
+    void ShowRemoteNotice(string action, string? value, bool wasRunning)
+    {
+        string Selected() => Timer.SelectedIndex is var i && i >= 0 && i < Timer.Meeting.Parts.Count ? $"«{Timer.Meeting.Parts[i].Title}»" : "";
+        var text = action switch
+        {
+            // la fermata ha già la sua barra con «Fermato dal telefono» e «Annulla»
+            RemoteActions.Toggle when wasRunning => null,
+            RemoteActions.Toggle => $"Avviata dal telefono: {Selected()}",
+            RemoteActions.Next or RemoteActions.Previous or RemoteActions.Select => $"Dal telefono: scelta {Selected()}",
+            RemoteActions.AddMinute => "Dal telefono: un minuto in più",
+            RemoteActions.RemoveMinute => "Dal telefono: un minuto in meno",
+            RemoteActions.Message or RemoteActions.MessageFull => $"Messaggio dal telefono: «{value}»",
+            RemoteActions.ClearMessage => "Dal telefono: messaggio tolto",
+            _ => null,
+        };
+        if (text is null) return;
+        RemoteNotice = text;
+        HasRemoteNotice = true;
+        _remoteNoticeUntil = DateTime.UtcNow.AddSeconds(5);
+    }
+
+    void TickRemoteNotice()
+    {
+        if (HasRemoteNotice && DateTime.UtcNow >= _remoteNoticeUntil) HasRemoteNotice = false;
     }
 
     public string? ControlUrl => WebUrl is null || !Settings.RemoteControlEnabled ? null : $"{WebUrl}/?pin={Uri.EscapeDataString(Settings.RemotePin)}";

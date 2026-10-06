@@ -533,6 +533,15 @@
                                  Value="{Binding UndoActionFraction, Mode=OneWay}" Foreground="{StaticResource AmberBrush}" Background="Transparent" />
                 </Grid>
             </Border>
+            <!-- azioni arrivate dal telefono: compaiono per qualche secondo, così si sa chi ha fatto cosa -->
+            <Border Margin="0,6,0,0" CornerRadius="8" Background="#1F3B82F6" BorderBrush="#553B82F6" BorderThickness="1" Padding="10,5"
+                    Visibility="{Binding HasRemoteNotice, Converter={StaticResource BoolToVis}}">
+                <DockPanel>
+                    <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE8EA;" FontSize="13" Foreground="#60A5FA" VerticalAlignment="Center" Margin="0,0,8,0" />
+                    <TextBlock Text="{Binding RemoteNotice}" FontSize="12" Foreground="#93C5FD" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                               ToolTip="{Binding RemoteNotice}" />
+                </DockPanel>
+            </Border>
             <!-- avvio con la voce (sperimentale) -->
             <Border Margin="0,6,0,0" CornerRadius="8" Padding="10,5" Background="{StaticResource BgBrush}"
                     Visibility="{Binding VoiceEnabled, Converter={StaticResource BoolToVis}}">

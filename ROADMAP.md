@@ -87,34 +87,36 @@ uniforme (vedi Movimento).
 
 ---
 
-## 2.1 · Preparazione, aiuto e Windows
+## 2.1 · Preparazione, aiuto e Windows — in prova con la v2.1.0-beta.1
 
-### Lista di controllo prima dell'adunanza
+### Lista di controllo prima dell'adunanza — fatto
 Un controllo veloce prima di iniziare, per non dimenticare nulla anche quando all'acustica c'è chi è meno esperto.
 - Compare nel controller durante il countdown d'inizio (o con un pulsante), con voci personalizzabili nelle impostazioni:
   batterie dei microfoni, Zoom avviato con l'audio condiviso, cantici e video scaricati in JW Library, schermo della sala acceso…
 - Si spunta con un clic; si azzera a ogni adunanza.
 - Se all'inizio dell'adunanza manca qualche voce, un avviso discreto (mai bloccante).
 
-### Modalità addestramento
+### Modalità addestramento — fatto
+Realizzata con le durate divise per dieci invece di un orologio accelerato: così «Annulla», l'avvio con la voce e il
+countdown si comportano esattamente come in sala.
 Per spiegare il programma al volo a un nuovo fratello dell'acustica senza toccare l'adunanza vera.
 - Un'adunanza simulata a velocità accelerata (per esempio ×10), con gli stessi comandi del controller.
 - Schermo del timer e pagina web restano separati (o mostrano chiaramente «PROVA»): niente rischi in sala.
 - Tempi, ritardi e messaggi non vengono salvati; alla chiusura si torna esattamente com'era.
 
-### Editor
+### Editor — fatto
 - **Avviso di sforamento**: se le durate superano la durata dell'adunanza, l'editor lo dice e di quanto
   («Lo schema dura 108 minuti: 3 minuti oltre, finirà alle 20:48»), aggiornato mentre si modifica; un piccolo segno anche
   nel controller sulla settimana interessata.
 - **Annulla e ripeti** (Ctrl+Z / Ctrl+Y): una parte eliminata o spostata per sbaglio si recupera subito.
 
-### Esporta e importa
+### Esporta e importa — fatto
 Un solo formato di file per tre usi:
 - **backup completo**: impostazioni, schemi modificati a mano e frasi pronte, per cambiare PC o configurare un'altra sala uguale;
 - **una settimana**: preparare lo schema da casa e aprirlo sul PC della sala (anche mandandolo via rete);
 - **un profilo** di congregazione, quando ci saranno i profili (2.3).
 
-### Primo avvio, aiuto e novità
+### Primo avvio, aiuto e novità — fatto
 - **Primo avvio guidato**: schermo della sala (con «Identifica»), orari delle adunanze, prova del telefono con il QR;
   alla fine propone il collegamento sul desktop.
 - **Guida dentro il programma**: pulsante «?» con funzioni principali e scorciatoie, con le immagini del README.
@@ -124,7 +126,7 @@ Un solo formato di file per tre usi:
   (senza PIN) ed errori recenti da `diagnostica\errori.log`, e apre la pagina su GitHub. Due modalità: «Qualcosa non funziona»
   e «Ho un'idea». Raggiungibile da *Impostazioni → Programma* e dalla guida.
 
-### Windows
+### Windows — fatto
 - **Avvio con Windows**: TimerSala parte all'accensione del PC, con lo schermo della sala acceso e lo schema già scaricato.
 - **Passaggio automatico alla mini**: opzione; all'avvio della prima parte il controller passa alla mini (sempre in primo piano),
   così resta visibile sopra JW Library e Zoom. Si torna al controller come oggi (tasto M o pulsante).

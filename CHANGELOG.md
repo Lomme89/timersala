@@ -1,5 +1,35 @@
 # Novità
 
+## v2.1.0-beta.1 — 6 ottobre 2026 (anteprima)
+
+Seconda anteprima: contiene tutta la 2.0 beta.1 e la tappa 2.1 della roadmap (preparazione, aiuto e Windows). Come prima, si può tornare alla v1.14.0 senza perdere nulla.
+
+**Prima dell'adunanza**
+- **Lista di controllo:** compare nel controller durante il countdown d'inizio, o con il pulsante ☑ in alto. Microfoni, Zoom, video in JW Library, schermo della sala: si spunta con un clic e si azzera a ogni adunanza. Se alla prima parte manca qualcosa, un avviso discreto, mai bloccante. Le voci si cambiano in *Impostazioni → Adunanze*.
+- **Schema troppo lungo:** se le parti, con i cantici, superano la durata dell'adunanza, accanto alla settimana compare «3 min oltre». Nell'editor c'è anche l'orario di fine previsto.
+
+**Editor**
+- **Annulla e Ripeti** (Ctrl+Z e Ctrl+Y, o i pulsanti in basso): una parte eliminata o spostata per sbaglio torna subito. Mentre scrivi un titolo, una parola alla volta.
+
+**Esporta e importa**
+- **Backup** in *Impostazioni → Programma*: impostazioni, frasi pronte e schemi modificati a mano in un solo file `.timersala`, per cambiare PC o preparare un'altra sala uguale. Importandolo, schermo della sala, finestre e microfono restano quelli del PC.
+- **Una settimana:** dal menu del download, «Esporta questa settimana…» la salva in un file da aprire sul PC della sala con «Importa da file…». Chi coordina la prepara con calma a casa.
+
+**Aiuto**
+- **Configurazione guidata** al primo avvio: schermo della sala (con «Identifica»), orari, prova del telefono con il QR e collegamento sul desktop. Si rifà da *Impostazioni → Programma*.
+- **Guida rapida** con il pulsante ? in alto o con F1: le funzioni principali e i tasti.
+- **Cosa c'è di nuovo:** dopo un aggiornamento una finestra mostra le novità della versione, una volta sola.
+- **Segnalazioni:** «Qualcosa non funziona» e «Ho un'idea» aprono GitHub con la segnalazione già preparata: versione, sistema ed errori recenti. Il PIN non viene mai incluso.
+- **Modalità addestramento** (dalla guida o da *Impostazioni → Programma*): l'adunanza della settimana con le parti dieci volte più brevi, per insegnare il programma a un nuovo fratello dell'acustica. Schermo della sala e telefoni mostrano «PROVA · ADDESTRAMENTO», niente viene salvato, e con «Esci» si torna esattamente com'era.
+
+**Windows**
+- **Apri all'avvio di Windows** e **Passa alla mini alla prima parte**, in *Impostazioni → Programma*.
+- **Avanzamento sull'icona della barra delle applicazioni:** si riempie in verde, giallo e rosso con la parte in corso, anche con il controller coperto da Zoom.
+- **Menu dell'icona** (tasto destro sulla barra): mostra o nascondi lo schermo della sala, modalità mini, collega un telefono.
+
+**Sito**
+- Accanto a «Scarica» c'è il numero dell'ultima versione, e c'è la nuova pagina **Novità** con tutte le versioni.
+
 ## v2.0.0-beta.1 — 6 ottobre 2026 (anteprima)
 
 Versione di anteprima della 2.0, da provare in sala per qualche settimana prima del rilascio. Impostazioni, schemi salvati (anche quelli modificati a mano), frasi pronte e visite del sorvegliante della 1.x passano intatti. Se qualcosa non va, si può tornare alla v1.14.0 senza perdere nulla.

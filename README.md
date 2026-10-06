@@ -153,7 +153,7 @@ Avvia di nuovo = parti subito. **Esc** annulla l'attesa o, nei primi secondi, un
 
 1. **Scarica** `TimerSala.exe` dall'[ultima versione](https://github.com/Lomme89/timersala/releases/latest) e avvialo. Non serve installare nulla. Le novità di ogni versione sono nel [CHANGELOG](CHANGELOG.md).
 2. Alla richiesta di Windows **consenti l'accesso alle reti private**: serve per vedere il timer dagli altri dispositivi.
-3. In **Impostazioni** scegli il monitor del timer e imposta gli orari delle adunanze. Lo schema della settimana si scarica da solo.
+3. Al primo avvio la **configurazione guidata** chiede lo schermo della sala e gli orari, e fa provare il telefono. Lo schema della settimana si scarica da solo. Il resto è in **Impostazioni**, e con `F1` c'è la guida rapida.
 
 > [!TIP]
 > Se compare «PC protetto da Windows» fai clic su *Ulteriori informazioni → Esegui comunque*: l'eseguibile non è firmato digitalmente.
@@ -169,8 +169,10 @@ Avvia di nuovo = parti subito. **Esc** annulla l'attesa o, nei primi secondi, un
 | Un minuto in più / in meno | `+` / `−` |
 | Modifica lo schema | `E` |
 | Modalità mini | `M` |
+| Guida rapida | `F1` |
 | Annulla: una fermata sbagliata (per 5 secondi), l'attesa della voce o l'avvio appena fatto | `Esc` |
 | Editor: sposta la parte / elimina | `Alt+↑↓` / `Canc` |
+| Editor: annulla / ripeti | `Ctrl+Z` / `Ctrl+Y` |
 
 </details>
 
@@ -187,6 +189,10 @@ Avvia di nuovo = parti subito. **Esc** annulla l'attesa o, nei primi secondi, un
   - nel fine settimana la Torre di Guardia dura 30 min ed è seguita dal discorso di servizio;
   - in *Impostazioni → Adunanze* puoi segnare in anticipo le settimane della visita: gli schemi vengono scaricati già adattati;
   - nella stessa sezione scegli in che giorno (ed eventualmente a che ora) si tiene l'infrasettimanale durante la visita, per esempio il martedì. Countdown e fine prevista lo seguono.
+- **Lista di controllo:** durante il countdown d'inizio (o con ☑) ricorda microfoni, Zoom, video e schermo; le voci si cambiano in *Impostazioni → Adunanze*. Se lo schema supera la durata dell'adunanza, accanto alla settimana compare di quanti minuti.
+- **Backup e settimane da casa:** in *Impostazioni → Programma* il backup di impostazioni e schemi in un file `.timersala`; dal menu del download si esporta e si importa una sola settimana.
+- **Addestramento:** dalla guida (`F1`) un'adunanza di prova con le parti dieci volte più brevi, segnata «PROVA» su schermo e telefoni. Niente viene salvato.
+- **Windows:** apertura all'avvio del PC, passaggio automatico alla mini alla prima parte, avanzamento sull'icona della barra e un menu con il tasto destro sull'icona.
 - **Rete:** l'indirizzo usa la scheda di rete principale e ignora quelle virtuali (VirtualBox, Hyper‑V, VPN). In *Impostazioni → Rete e telefono* puoi scegliere un altro indirizzo o il nome del PC.
 - **Sicurezza:** il codice QR di controllo contiene il PIN ed è nascosto finché non lo mostri. Dopo 5 PIN errati il controllo si blocca per un minuto.
 - **Dati:** sono in `%AppData%\TimerSala`: impostazioni, uno schema per settimana e la cartella `diagnostica` con l'ultima pagina scaricata. Se il sito cambia struttura e il download non funziona, quella cartella serve a correggere il programma.

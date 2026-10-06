@@ -60,6 +60,7 @@ public sealed partial class MainViewModel : ObservableObject
         ApplyTimerSettings();
         ApplyVoiceSettings();
         ApplyWindowsSettings();
+        ApplyChecklistSettings();
 
         Timer.StateChanged += (_, _) => Application.Current.Dispatcher.BeginInvoke(RefreshParts);
 
@@ -80,7 +81,9 @@ public sealed partial class MainViewModel : ObservableObject
             RefreshDisplay();
             TickVoice();
             KeepAwake.Set(ShouldStayAwake());
-            TickWindows(Timer.GetSnapshot());
+            var snap = Timer.GetSnapshot();
+            TickWindows(snap);
+            TickChecklist(snap);
             // mentre il timer corre, salva lo stato ogni 5 secondi
             if (Timer.IsRunning && ++_ticksSinceSave >= 50) SaveSession();
         };
@@ -986,6 +989,7 @@ public sealed partial class MainViewModel : ObservableObject
         UpdateMeetingLine();
         ApplyVoiceSettings();
         ApplyWindowsSettings();
+        ApplyChecklistSettings();
         UiTheme.Apply(settings);
         SaveSettings();
         if (!Timer.IsRunning && settings.IsOverseerWeek(Week.WeekStart) != Week.CircuitOverseerVisit)

@@ -86,6 +86,16 @@ public sealed class AppSettings
     /// <summary>Secondi a tutto schermo per i messaggi inviati «a tutto schermo», poi passano nella fascia.</summary>
     public int MessageFullScreenSeconds { get; set; } = 6;
 
+    // ── Lista di controllo prima dell'adunanza ──
+    public bool ChecklistEnabled { get; set; } = true;
+    public List<string> ChecklistItems { get; set; } =
+    [
+        "Batterie dei microfoni cariche",
+        "Zoom avviato, con l'audio della sala condiviso",
+        "Cantici e video scaricati in JW Library",
+        "Schermo della sala acceso",
+    ];
+
     // ── Controllo remoto dalla pagina web ──
     public bool RemoteControlEnabled { get; set; } = true;
     public string RemotePin { get; set; } = Random.Shared.Next(1000, 10000).ToString();

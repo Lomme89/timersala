@@ -129,6 +129,7 @@ public sealed class SettingsViewModel : ObservableObject
     {
         _applyTimer.Stop();
         Draft = Clone(_original);
+        _checklistRaw = null;
         Apply(_original);
         _loading = true;
         LoadLists();
@@ -163,6 +164,18 @@ public sealed class SettingsViewModel : ObservableObject
     public WolLanguage Language { get => Draft.Language; set { if (value is not null) Edit(s => s.Language = value); } }
     public bool AutoDownload { get => Draft.AutoDownload; set => Edit(s => s.AutoDownload = value); }
     public bool AdaptiveStudy { get => Draft.AdaptiveStudy; set => Edit(s => s.AdaptiveStudy = value); }
+    public bool ChecklistEnabled { get => Draft.ChecklistEnabled; set => Edit(s => s.ChecklistEnabled = value); }
+
+    /// <summary>Le voci della lista, una per riga.</summary>
+    public string ChecklistText
+    {
+        // il testo scritto resta com'è (righe vuote comprese) finché si scrive: le voci si ricavano a parte
+        get => _checklistRaw ?? string.Join(Environment.NewLine, Draft.ChecklistItems);
+        set { _checklistRaw = value; Edit(s => s.ChecklistItems = value.Split('\n').Select(l => l.Trim()).Where(l => l.Length > 0).Take(12).ToList()); }
+    }
+
+    string? _checklistRaw;
+
     public bool AdaptiveWatchtower { get => Draft.AdaptiveWatchtower; set => Edit(s => s.AdaptiveWatchtower = value); }
 
     // settimane particolari: per ora la visita del sorvegliante

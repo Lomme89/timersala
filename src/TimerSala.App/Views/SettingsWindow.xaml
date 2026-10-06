@@ -308,6 +308,29 @@
                                 </Border>
                             </StackPanel>
                         </Border>
+
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource PanelTitle}" Text="LISTA DI CONTROLLO" />
+                                <Border Style="{StaticResource FirstRow}">
+                                    <DockPanel>
+                                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding ChecklistEnabled}" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Prima di iniziare" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Compare nel controller durante il countdown d'inizio, o con il pulsante ☑ in alto. Si azzera a ogni adunanza e non blocca mai nulla." />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                                <Border Style="{StaticResource Row}" IsEnabled="{Binding ChecklistEnabled}">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource RowLabel}" Text="Voci" />
+                                        <TextBlock Style="{StaticResource RowHint}" Text="Una per riga, al massimo 12." Margin="0,0,0,6" />
+                                        <TextBox Text="{Binding ChecklistText, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap"
+                                                 MinHeight="96" VerticalScrollBarVisibility="Auto" Padding="6,4" />
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
                 </ScrollViewer>
 

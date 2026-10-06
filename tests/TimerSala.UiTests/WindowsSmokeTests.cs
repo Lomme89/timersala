@@ -72,6 +72,14 @@ public class WindowsSmokeTests
         Assert.True(vm.IsRunning);
         vm.ToggleStartCommand.Execute(null);
 
+        // lista di controllo aperta con il pulsante, una voce spuntata
+        vm.ChecklistOpen = true;
+        Pump();
+        Assert.True(vm.ChecklistVisible);
+        vm.Checklist[0].Done = true;
+        Pump();
+        vm.ChecklistOpen = false;
+
         // riquadro della settimana, modalità mini e ritorno
         vm.WeekPanelOpen = true;
         Pump();

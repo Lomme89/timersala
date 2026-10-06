@@ -215,6 +215,8 @@
                         </Border>
                     </Popup>
                 </Grid>
+                <Button Style="{StaticResource HeadButton}" Content="&#xE9D5;" ToolTip="Lista di controllo prima dell'adunanza" Command="{Binding ToggleChecklistCommand}"
+                        Visibility="{Binding HasChecklist, Converter={StaticResource BoolToVis}}" />
                 <Button Style="{StaticResource HeadButton}" Content="&#xE73F;" ToolTip="Modalità mini (M)" Command="{Binding ToggleMiniCommand}" />
                 <Button Style="{StaticResource HeadButton}" Content="&#xE70F;" ToolTip="Modifica schema (E)" Click="Edit_Click" />
                 <Button Style="{StaticResource HeadButton}" Content="&#xE713;" ToolTip="Impostazioni" Click="Settings_Click" />
@@ -557,6 +559,38 @@
         <!-- ═════ Programma ═════ -->
         <Border Grid.Row="4" Style="{StaticResource Card}" Padding="6,10,6,6">
             <DockPanel>
+                <!-- lista di controllo: durante il countdown d'inizio o aperta con il pulsante -->
+                <Border DockPanel.Dock="Top" Margin="4,0,4,10" Padding="12,10" CornerRadius="10" Background="{StaticResource SubtleBrush}"
+                        BorderBrush="{StaticResource LineBrush}" BorderThickness="1" Visibility="{Binding ChecklistVisible, Converter={StaticResource BoolToVis}}">
+                    <StackPanel>
+                        <DockPanel Margin="0,0,0,6">
+                            <Button DockPanel.Dock="Right" Style="{StaticResource GhostIconButton}" Content="&#xE711;" Width="26" Height="26" FontSize="10"
+                                    ToolTip="Chiudi" Command="{Binding ToggleChecklistCommand}" />
+                            <TextBlock DockPanel.Dock="Right" Text="{Binding ChecklistSummary}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,8,0">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ChecklistComplete}" Value="True">
+                                                <Setter Property="Foreground" Value="{StaticResource GreenBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <TextBlock Text="PRIMA DI INIZIARE" Style="{StaticResource Caption}" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        </DockPanel>
+                        <ItemsControl ItemsSource="{Binding Checklist}" Focusable="False">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding Done}" Margin="0,3" Cursor="Hand" Foreground="{StaticResource TextBrush}">
+                                        <TextBlock Text="{Binding Text}" TextWrapping="Wrap" FontSize="13" />
+                                    </CheckBox>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
                 <DockPanel DockPanel.Dock="Top" Margin="10,0,10,6">
                     <TextBlock DockPanel.Dock="Right" Text="PREVISTO · REALE" Style="{StaticResource Caption}" FontSize="11" FontWeight="SemiBold" />
                     <TextBlock Text="PROGRAMMA" Style="{StaticResource Caption}" FontSize="11" FontWeight="SemiBold" />

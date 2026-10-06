@@ -41,7 +41,7 @@ public partial class MainWindow : Window
             if (_vm.IsRunning) return;
             if (_vm.IsFirstRun && !_vm.Settings.OnboardingDone)
             {
-                WelcomeWindow.LastOpenedFrom = $"pianificata all'apertura: IsFirstRun={_vm.IsFirstRun}, OnboardingDone={_vm.Settings.OnboardingDone}";
+                WelcomeWindow.LastOpenedFrom = $"pianificata all'apertura: IsFirstRun={_vm.IsFirstRun}, OnboardingDone={_vm.Settings.OnboardingDone}, dati={_vm.DataFolder}, vm={System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(_vm)}, finestra={System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this)}\n{Environment.StackTrace}";
                 Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ApplicationIdle, new Action(ShowWelcome));
             }
             HelpActions.ShowNewsIfUpdated(this, _vm);

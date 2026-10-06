@@ -27,13 +27,14 @@ public class WindowsSmokeTests
         thread.SetApartmentState(ApartmentState.STA);
         thread.Start();
         if (!thread.Join(TimeSpan.FromMinutes(2)))
-            Assert.Fail($"le finestre non hanno finito in tempo: fermo a «{_stage}»; finestre aperte: {string.Join(" | ", OpenWindows(_nativeThread))}; configurazione guidata aperta da: {WelcomeWindow.LastOpenedFrom}");
+            Assert.Fail($"le finestre non hanno finito in tempo: fermo a «{_stage}»; finestre aperte: {string.Join(" | ", OpenWindows(_nativeThread))}; configurazione guidata aperta da: {WelcomeWindow.LastOpenedFrom}; {_ids}");
         if (failure is not null) throw new Exception("Errore nell'interfaccia: " + failure, failure);
     }
 
     // dove è arrivata la prova, per capire un blocco (per esempio una finestra di messaggio inattesa)
     static volatile string _stage = "inizio";
     static uint _nativeThread;
+    static string _ids = "";
 
     static void Stage(string name) => _stage = name;
 
@@ -110,6 +111,7 @@ public class WindowsSmokeTests
         Assert.True(vm.Settings.OnboardingDone);
         UiTheme.Apply(vm.Settings);
         var main = new MainWindow(vm);
+        _ids = $"prova: dati={vm.DataFolder}, vm={System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(vm)}, finestra={System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(main)}";
         app.MainWindow = main;
         main.Show();
         Pump();

@@ -135,9 +135,9 @@ Un solo formato di file per tre usi:
 
 ---
 
-## 2.2 · Telefono, rete e comandi
+## 2.2 · Telefono, rete e comandi — in prova con la v2.2.0-beta.1
 
-### Controllo remoto più chiaro
+### Controllo remoto più chiaro — fatto
 - **Azioni dal telefono evidenziate**: quando qualcuno avvia, ferma, cambia parte o manda un messaggio dal telefono, il controller
   lo mostra per un attimo («Fermato dal telefono»), con lo stesso sistema di avvisi del resto del programma.
 - **Chi è collegato**, nel riquadro della rete del nuovo controller: «2 schermi · 1 con il controllo».
@@ -145,21 +145,23 @@ Un solo formato di file per tre usi:
 - **Dispositivo fidato**: dopo il primo PIN il telefono resta autorizzato finché non lo si revoca dal PC (elenco nel riquadro
   della rete, con «Revoca»). Niente PIN a ogni adunanza, sicurezza invariata.
 
-### Collegamento più semplice
+### Collegamento più semplice — fatto
 - **Cartoncino da stampare**: PDF con il QR per *seguire* il timer (mai quello col PIN) e due righe di istruzioni, da lasciare
   al leggio o all'acustica.
 - **Avviso se l'indirizzo cambia**: se l'indirizzo del PC è diverso dall'ultima volta, avvisare che i QR stampati non valgono più
   e suggerire il nome del PC.
 
-### Pagina web
+### Pagina web — fatto
 - **Aspetto per dispositivo**: ogni telefono o tablet sceglie e ricorda il suo aspetto (solo cifre, classico, con il programma).
   Per esempio il tablet sul podio solo cifre, il telefono del presidente il programma.
-- **Vibrazione** alla pressione di Avvia/Ferma (solo Android: iPhone non la consente dal browser).
+- **Vibrazione** alla pressione di Avvia/Ferma (solo Android: iPhone non la consente dal browser). C'era già dalla 1.x.
 
-### Telecomando per presentazioni
+### Telecomando per presentazioni — fatto
 I telecomandi USB per PowerPoint (Pagina giù/su) comandano il timer lontano dal PC, senza telefono.
 - Un tasto fa esattamente quello che fa Avvia/Ferma nel controller, compresa l'attesa della voce se attiva.
 - L'altro tasto è «Annulla» (lo stesso gesto di Esc), non «parte precedente»: un colpo per sbaglio si rimedia sempre.
+- Fatto anche: il telecomando si **associa** e da lì funziona con altri programmi in primo piano (Raw Input); se il dispositivo
+  associato si rivela una tastiera (manda lettere) l'associazione si annulla da sola.
 
 ---
 

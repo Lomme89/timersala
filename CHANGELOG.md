@@ -1,5 +1,30 @@
 # Novità
 
+## v2.2.0-beta.1 — 6 ottobre 2026 (anteprima)
+
+Terza anteprima: contiene la 2.1 beta e la tappa 2.2 della roadmap (telefono, rete e comandi). Si può sempre tornare alla v1.14.0 senza perdere nulla.
+
+**Telefoni autorizzati**
+- Dopo il primo PIN il telefono riceve un **codice suo** e non chiede più il PIN, nemmeno se il PIN cambia. Sul PC resta solo un'impronta del codice.
+- Nell'icona della rete c'è l'elenco dei telefoni autorizzati, con l'ultimo uso: **✕** ne revoca uno, «Revoca tutti» li revoca tutti. Un telefono revocato deve reinserire il PIN.
+- Nello stesso riquadro, l'interruttore **Comandi dal telefono** blocca al volo i comandi: i telefoni continuano a vedere il timer.
+- Il riquadro dice anche quanti dispositivi sono collegati e quanti «con il controllo».
+
+**Azioni dal telefono**
+- Quando qualcuno avvia, cambia parte, aggiunge un minuto o manda un messaggio dal telefono, il controller lo mostra per qualche secondo («Avviata dal telefono: …»). La fermata dal telefono ha già la sua barra con «Annulla».
+
+**Collegamento più semplice**
+- **Stampa il cartoncino** (icona della rete): un foglio A4 con due copie da ritagliare, con il QR per *seguire* il timer e due righe di istruzioni. Mai il PIN.
+- Se l'indirizzo del PC cambia rispetto all'ultima volta, un avviso dice che i QR stampati non valgono più e suggerisce di usare il nome del PC, che non cambia.
+
+**Pagina web**
+- **Aspetto per dispositivo** (nuovo pulsante con lo schermo in alto): come lo schermo della sala, solo le cifre, classico, oppure con il programma accanto. Ogni telefono o tablet ricorda il suo.
+- Sul telefono la barra in alto mostra solo le icone, così ci stanno tutte.
+
+**Telecomando per presentazioni**
+- **Pagina giù** («avanti» sui telecomandi) avvia o ferma come il pulsante Avvia, compresa l'attesa della voce. **Pagina su** («indietro») è sempre **Annulla**, mai la parte precedente: un colpo per sbaglio si rimedia. Le frecce continuano a scegliere la parte.
+- In *Impostazioni → Programma* il telecomando si può **associare**: da lì funziona anche con JW Library o Zoom in primo piano. Se per sbaglio si associa una tastiera vera, appena si scrive una lettera l'associazione si annulla da sola.
+
 ## v2.1.0-beta.1 — 6 ottobre 2026 (anteprima)
 
 Seconda anteprima: contiene tutta la 2.0 beta.1 e la tappa 2.1 della roadmap (preparazione, aiuto e Windows). Come prima, si può tornare alla v1.14.0 senza perdere nulla.

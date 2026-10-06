@@ -141,5 +141,5 @@ public static class UiTheme
     static Color Parse(string hex) => (Color)ColorConverter.ConvertFromString(hex);
 
     /// <summary>Pennello del tema corrente (per i colori calcolati nel codice).</summary>
-    public static Brush Brush(string key) => (Brush)Application.Current.Resources[key];
+    public static Brush Brush(string key) => Application.Current?.Resources[key] as Brush ?? Brushes.Transparent;
 }

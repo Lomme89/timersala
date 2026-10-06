@@ -1033,6 +1033,8 @@ public sealed partial class MainViewModel : ObservableObject
     /// <summary>Alla chiusura: rilascia l'ingresso audio.</summary>
     public void Shutdown()
     {
+        // a programma chiuso il display non va più aggiornato (l'applicazione e i suoi colori non ci sono più)
+        _tick.Stop();
         DisposeVoice();
         KeepAwake.Set(false);
     }

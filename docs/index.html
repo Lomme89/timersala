@@ -58,6 +58,8 @@ header.top .wrap { display: flex; align-items: center; gap: 24px; height: 70px; 
 .pill.ghost:hover { background: var(--ink); color: var(--paper); }
 .pill.go { background: var(--go); border-color: var(--go); color: #fff; }
 .pill svg { width: 18px; height: 18px; flex: none; }
+.pill .ver { font-weight: 500; opacity: .75; }
+.pill .ver:empty { display: none; }
 
 /* ── apertura ── */
 .hero { padding: clamp(28px, 5vw, 56px) 0 0; }
@@ -256,6 +258,7 @@ footer a { color: var(--paper); }
       <a href="#schermate">Schermate</a>
       <a href="#telefono">Telefono</a>
       <a href="#domande">Domande</a>
+      <a href="novita.html">Novità</a>
     </nav>
     <a class="pill" href="https://github.com/Lomme89/timersala/releases/latest/download/TimerSala.exe"><svg><use href="#i-dl"/></svg><span>Scarica<span class="wide"> TimerSala</span></span></a>
   </div>
@@ -272,7 +275,7 @@ footer a { color: var(--paper); }
       <div class="reveal" style="--d:.18s">
         <p>TimerSala è il timer per le adunanze di congregazione. Lo schema arriva da solo da wol.jw.org, le cifre si leggono dal fondo della sala e chi serve lo segue, o lo comanda, dal telefono.</p>
         <div class="btns">
-          <a class="pill go" href="https://github.com/Lomme89/timersala/releases/latest/download/TimerSala.exe"><svg><use href="#i-dl"/></svg>Scarica TimerSala</a>
+          <a class="pill go" href="https://github.com/Lomme89/timersala/releases/latest/download/TimerSala.exe"><svg><use href="#i-dl"/></svg>Scarica TimerSala <small class="ver" data-version></small></a>
           <a class="pill ghost" href="#programma">Il programma</a>
         </div>
       </div>
@@ -432,7 +435,7 @@ footer a { color: var(--paper); }
     <h2 class="huge reveal">Tempo <em>scaduto?</em><br>Scarica.</h2>
     <div class="final-row reveal" style="--d:.1s">
       <p>Gratuito, in italiano, senza installazione. Per Windows 10 e 11.</p>
-      <a class="pill" href="https://github.com/Lomme89/timersala/releases/latest/download/TimerSala.exe"><svg><use href="#i-dl"/></svg>Scarica TimerSala</a>
+      <a class="pill" href="https://github.com/Lomme89/timersala/releases/latest/download/TimerSala.exe"><svg><use href="#i-dl"/></svg>Scarica TimerSala <small class="ver" data-version></small></a>
     </div>
   </div>
 </section>
@@ -441,10 +444,11 @@ footer a { color: var(--paper); }
 <footer>
   <div class="wrap">
     <span>TimerSala · progetto indipendente, non affiliato a jw.org.</span>
-    <span><a href="https://github.com/Lomme89/timersala">GitHub</a> · <a href="https://github.com/Lomme89/timersala/releases">Versioni</a></span>
+    <span><a href="https://github.com/Lomme89/timersala">GitHub</a> · <a href="novita.html">Novità</a></span>
   </div>
 </footer>
 
+<script src="versione.js"></script>
 <script>
 (() => {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;

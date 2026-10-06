@@ -238,6 +238,14 @@ public partial class SettingsWindow : Window
         Close();
     }
 
+    void Help_Click(object sender, RoutedEventArgs e) => HelpActions.ShowHelp(this, _main);
+
+    void News_Click(object sender, RoutedEventArgs e) => HelpActions.ShowNews(this);
+
+    void ReportProblem_Click(object sender, RoutedEventArgs e) => HelpActions.Report(this, _main, isProblem: true);
+
+    void ReportIdea_Click(object sender, RoutedEventArgs e) => HelpActions.Report(this, _main, isProblem: false);
+
     void OpenData_Click(object sender, RoutedEventArgs e)
     {
         try { Process.Start(new ProcessStartInfo(_vm.DataFolder) { UseShellExecute = true }); } catch { }

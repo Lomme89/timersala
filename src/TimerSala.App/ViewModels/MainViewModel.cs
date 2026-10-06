@@ -1034,6 +1034,10 @@ public sealed partial class MainViewModel : ObservableObject
     }
 
     public string DataFolder => _store.Root;
+    public string DiagnosticsFolder => _store.DiagnosticsFolder;
+
+    /// <summary>Prima volta su questo PC (nessuna impostazione salvata all'apertura).</summary>
+    public bool IsFirstRun => _store.IsNew;
 
     public void ShowInfo(string message) => ShowStatus(message);
 

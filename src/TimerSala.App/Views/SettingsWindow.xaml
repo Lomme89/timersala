@@ -1046,6 +1046,36 @@
 
                         <Border Style="{StaticResource Panel}">
                             <StackPanel>
+                                <TextBlock Style="{StaticResource PanelTitle}" Text="AIUTO" />
+                                <Border Style="{StaticResource FirstRow}">
+                                    <DockPanel>
+                                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                            <Button Style="{StaticResource FlatButton}" Content="Guida rapida" Padding="12,5" Margin="0,0,8,0" Click="Help_Click" />
+                                            <Button Style="{StaticResource FlatButton}" Content="Novità" Padding="12,5" Click="News_Click" />
+                                        </StackPanel>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Guida e novità" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Anche con il pulsante ? del controller o con F1." />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                                <Border Style="{StaticResource Row}">
+                                    <DockPanel>
+                                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                            <Button Style="{StaticResource FlatButton}" Content="Qualcosa non funziona" Padding="12,5" Margin="0,0,8,0" Click="ReportProblem_Click" />
+                                            <Button Style="{StaticResource FlatButton}" Content="Ho un'idea" Padding="12,5" Click="ReportIdea_Click" />
+                                        </StackPanel>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Segnalazioni" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Su GitHub, già compilate con versione ed errori recenti. Il PIN non viene mai incluso." />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
                                 <TextBlock Style="{StaticResource PanelTitle}" Text="DATI" />
                                 <Border Style="{StaticResource FirstRow}">
                                     <DockPanel>

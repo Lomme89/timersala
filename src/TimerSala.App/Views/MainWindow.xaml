@@ -219,6 +219,7 @@
                         Visibility="{Binding HasChecklist, Converter={StaticResource BoolToVis}}" />
                 <Button Style="{StaticResource HeadButton}" Content="&#xE73F;" ToolTip="Modalità mini (M)" Command="{Binding ToggleMiniCommand}" />
                 <Button Style="{StaticResource HeadButton}" Content="&#xE70F;" ToolTip="Modifica schema (E)" Click="Edit_Click" />
+                <Button Style="{StaticResource HeadButton}" Content="&#xE897;" ToolTip="Guida rapida, novità e segnalazioni (F1)" Click="Help_Click" />
                 <Button Style="{StaticResource HeadButton}" Content="&#xE713;" ToolTip="Impostazioni" Click="Settings_Click" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">

@@ -183,6 +183,12 @@ public sealed class AppSettings
     /// <summary>Tema di controller, mini, editor e impostazioni: scuro, chiaro o come Windows.</summary>
     public ControllerTheme ControllerTheme { get; set; } = ControllerTheme.Dark;
 
+    /// <summary>Ultima versione di cui sono state mostrate le novità.</summary>
+    public string? LastSeenVersion { get; set; }
+
+    /// <summary>Il primo avvio guidato è stato completato (o saltato).</summary>
+    public bool OnboardingDone { get; set; }
+
     /// <summary>TimerSala si apre all'accesso a Windows.</summary>
     public bool StartWithWindows { get; set; }
 

@@ -29,7 +29,11 @@ public sealed class DataStore
         Root = root ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TimerSala");
         Directory.CreateDirectory(Root);
         Directory.CreateDirectory(WeeksFolder);
+        IsNew = !File.Exists(SettingsPath);
     }
+
+    /// <summary>All'apertura non c'erano impostazioni salvate: è la prima volta che TimerSala gira su questo PC.</summary>
+    public bool IsNew { get; }
 
     public AppSettings LoadSettings() => Read<AppSettings>(SettingsPath) ?? new AppSettings();
 

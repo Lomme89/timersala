@@ -29,6 +29,11 @@
     <Resource Include="Assets\timersala.ico" />
   </ItemGroup>
   <ItemGroup>
+    <!-- novità (dal changelog del repository) e guida, lette dentro il programma -->
+    <EmbeddedResource Include="..\..\CHANGELOG.md" LogicalName="CHANGELOG.md" />
+    <EmbeddedResource Include="Assets\guida.md" LogicalName="guida.md" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="NAudio.Wasapi" Version="2.2.1" />
   </ItemGroup>
 </Project>

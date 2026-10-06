@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Novità — TimerSala</title>
+<meta name="description" content="Tutte le versioni di TimerSala, il timer per le adunanze di congregazione, e cosa è cambiato in ognuna.">
+<meta name="theme-color" content="#f1ece3">
+<link rel="icon" type="image/png" href="images/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #f1ece3; --paper2: #e8e1d5; --ink: #141414; --ink2: #34322e; --muted: #6e6a62; --line: rgba(20,20,20,.14);
+  --go: #17a556; --warn: #f2b400; --stop: #e0362b;
+  --sign: "Big Shoulders Display", "Bahnschrift Condensed", "Arial Narrow", sans-serif;
+  --serif: "Instrument Serif", Georgia, serif;
+  --sans: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+  --pad: clamp(16px, 4vw, 56px);
+}
+* { box-sizing: border-box; }
+html, body { overflow-x: clip; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 400 17px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+.wrap { width: min(1100px, 100%); margin-inline: auto; padding-inline: var(--pad); }
+em { font-family: var(--serif); font-style: italic; font-weight: 400; }
+header.top { position: sticky; top: 0; z-index: 10; background: rgba(241,236,227,.9); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line); }
+header.top .wrap { display: flex; align-items: center; gap: 16px; height: 66px; }
+.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.logo img { width: 30px; height: 30px; border-radius: 8px; }
+.logo span { font: 800 24px/1 var(--sign); text-transform: uppercase; }
+.pill { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 999px; background: var(--ink); color: var(--paper);
+  text-decoration: none; font: 600 15px var(--sans); white-space: nowrap; }
+.pill small { opacity: .7; font-weight: 500; }
+h1 { font: 900 clamp(64px, 14vw, 180px)/.85 var(--sign); text-transform: uppercase; margin: clamp(28px, 6vw, 72px) 0 12px; letter-spacing: -.01em; }
+h1 em { display: block; font-size: .36em; text-transform: none; color: var(--go); letter-spacing: 0; line-height: 1.1; margin-top: .2em; }
+.lead { color: var(--muted); max-width: 640px; margin: 0 0 clamp(28px, 5vw, 56px); }
+.rel { display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 1fr); gap: 8px 40px; padding: 28px 0; border-top: 2px solid var(--ink); }
+.rel .tag { font: 800 clamp(34px, 5vw, 52px)/1 var(--sign); }
+.rel .tag small { display: block; font-size: .5em; color: var(--muted); margin-top: 4px; }
+.rel .when { color: var(--muted); font-size: 14px; margin-top: 6px; }
+.badge { display: inline-block; margin-top: 10px; padding: 2px 10px; border-radius: 999px; font: 600 12px var(--sans); letter-spacing: .08em; text-transform: uppercase; }
+.badge.pre { background: var(--warn); color: var(--ink); }
+.badge.now { background: var(--go); color: #fff; }
+.body { min-width: 0; }
+.body h3 { font: 600 17px var(--sans); margin: 18px 0 6px; }
+.body p { margin: 0 0 10px; }
+.body ul { margin: 0 0 12px; padding-left: 20px; }
+.body li { margin: 3px 0; }
+.body code { background: var(--paper2); padding: 1px 5px; border-radius: 4px; font-size: .92em; overflow-wrap: anywhere; }
+.body strong { font-weight: 650; }
+.body em { font-family: inherit; font-style: italic; }
+.more { display: inline-block; margin-top: 8px; font-weight: 600; }
+.state { padding: 40px 0; color: var(--muted); }
+footer { border-top: 1px solid var(--line); margin-top: 40px; padding: 24px 0 40px; font-size: 14px; color: var(--muted); }
+footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+@media (max-width: 720px) {
+  .rel { grid-template-columns: minmax(0, 1fr); }
+  .pill .wide { display: none; }
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="./"><img src="images/icon.png" alt=""><span>TimerSala</span></a>
+    <a class="pill" href="https://github.com/Lomme89/timersala/releases/latest/download/TimerSala.exe">Scarica<span class="wide"> TimerSala</span> <small data-version></small></a>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>Novità<em>versione per versione</em></h1>
+  <p class="lead">Cosa è cambiato in ogni versione di TimerSala. Le <b>anteprime</b> sono versioni di prova: il pulsante Scarica dà sempre l'ultima versione stabile.</p>
+  <div id="list"><p class="state">Carico le versioni…</p></div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>TimerSala · progetto indipendente, non affiliato a jw.org.</span>
+    <span><a href="./">Sito</a> · <a href="https://github.com/Lomme89/timersala/releases">Tutte le versioni su GitHub</a></span>
+  </div>
+</footer>
+
+<script src="versione.js"></script>
+<script>
+(async () => {
+  const list = document.getElementById('list');
+  const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const inline = s => esc(s)
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/`(.+?)`/g, '<code>$1</code>')
+    .replace(/\[(.+?)\]\((https?:[^)]+)\)/g, '<a href="$2">$1</a>');
+
+  // il Markdown semplice del changelog: paragrafi, elenchi a due livelli, titoletti
+  function md(text) {
+    const out = []; let para = [], depth = 0;
+    const flush = () => { if (para.length) { out.push('<p>' + inline(para.join(' ')) + '</p>'); para = []; } };
+    const close = to => { while (depth > to) { out.push('</ul>'); depth--; } };
+    for (const raw of text.replace(/\r/g, '').split('\n')) {
+      const line = raw.trimEnd();
+      const m = line.match(/^(\s*)- (.*)$/);
+      if (!line) { flush(); continue; }
+      if (m) {
+        flush();
+        const lvl = m[1].length >= 2 ? 2 : 1;
+        while (depth < lvl) { out.push('<ul>'); depth++; }
+        close(lvl);
+        out.push('<li>' + inline(m[2]) + '</li>');
+      } else if (/^#{3,}\s/.test(line)) {
+        flush(); close(0); out.push('<h3>' + inline(line.replace(/^#+\s*/, '')) + '</h3>');
+      } else if (depth && /^\s{2,}\S/.test(raw)) {
+        out[out.length - 1] = out[out.length - 1].replace(/<\/li>$/, ' ' + inline(line.trim()) + '</li>');
+      } else { close(0); para.push(line.trim()); }
+    }
+    flush(); close(0);
+    return out.join('');
+  }
+
+  // «v2.0.0-beta.1»: il numero grande, l'anteprima sotto
+  const tagHtml = tag => { const i = tag.indexOf('-'); return i < 0 ? esc(tag) : esc(tag.slice(0, i)) + '<small>' + esc(tag.slice(i + 1)) + '</small>'; };
+
+  try {
+    const res = await fetch('https://api.github.com/repos/Lomme89/timersala/releases?per_page=40');
+    if (!res.ok) throw new Error(res.status);
+    const rels = (await res.json()).filter(r => !r.draft);
+    const latest = rels.find(r => !r.prerelease);
+    const fmt = new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
+    list.innerHTML = rels.map(r => `
+      <article class="rel">
+        <div>
+          <div class="tag">${tagHtml(r.tag_name)}</div>
+          <div class="when">${fmt.format(new Date(r.published_at || r.created_at))}</div>
+          ${r.prerelease ? '<span class="badge pre">Anteprima</span>' : r === latest ? '<span class="badge now">Attuale</span>' : ''}
+        </div>
+        <div class="body">${md(r.body || '')}<a class="more" href="${esc(r.html_url)}">Scarica questa versione →</a></div>
+      </article>`).join('');
+  } catch {
+    list.innerHTML = '<p class="state">Non riesco a leggere le versioni adesso. Le trovi tutte <a href="https://github.com/Lomme89/timersala/releases">su GitHub</a>.</p>';
+  }
+})();
+</script>
+</body>
+</html>

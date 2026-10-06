@@ -37,6 +37,8 @@ public partial class MainWindow : Window
             UpdateTimerWindow();
             ApplyMiniMode();
             OfferRestore();
+            // dopo un aggiornamento le novità, ma non nel mezzo di un'adunanza ripresa
+            if (!_vm.IsRunning) HelpActions.ShowNewsIfUpdated(this, _vm);
         };
         LocationChanged += (_, _) => UpdateTopmostOfDisplay();
         vm.Timer.StateChanged += (_, _) => Dispatcher.BeginInvoke(CenterCurrentPart, System.Windows.Threading.DispatcherPriority.Background);
@@ -187,8 +189,16 @@ public partial class MainWindow : Window
         return null;
     }
 
-    void OnPreviewKeyDown(object sender, KeyEventArgs e) =>
+    void OnPreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.F1)
+        {
+            HelpActions.ShowHelp(this, _vm);
+            e.Handled = true;
+            return;
+        }
         Shortcuts.Handle(_vm, e, () => Edit_Click(this, new RoutedEventArgs()));
+    }
 
     void PartsList_Click(object sender, MouseButtonEventArgs e)
     {
@@ -295,6 +305,8 @@ public partial class MainWindow : Window
     void DownloadAll_Click(object sender, RoutedEventArgs e) => _vm.DownloadAllCommand.Execute(null);
 
     void Qr_Click(object sender, RoutedEventArgs e) => ShowPhoneQr();
+
+    void Help_Click(object sender, RoutedEventArgs e) => HelpActions.ShowHelp(this, _vm);
 
     void ExportWeek_Click(object sender, RoutedEventArgs e) => ExchangeDialogs.ExportWeek(this, _vm);
 

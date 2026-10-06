@@ -121,6 +121,21 @@ public class WindowsSmokeTests
         Pump();
         edit.Close();
 
+        // guida e novità (dal changelog incorporato nel programma)
+        var help = DocWindow.Help();
+        help.Owner = main;
+        help.Show();
+        Pump();
+        Assert.True(help.Body.Children.Count > 10, "la guida è vuota");
+        help.Close();
+        var entries = DocWindow.ChangelogEntries();
+        Assert.True(entries.Count > 10, "il changelog non è incorporato");
+        var news = DocWindow.News(entries.Take(3).ToList(), afterUpdate: true);
+        news.Owner = main;
+        news.Show();
+        Pump();
+        news.Close();
+
         // tema chiaro e interfaccia più grande, poi di nuovo come prima
         UiTheme.Apply(ControllerTheme.Light, 1.3);
         Pump();

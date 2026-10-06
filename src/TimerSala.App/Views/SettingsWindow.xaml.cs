@@ -302,6 +302,49 @@ public partial class SettingsWindow : Window
         ThresholdRight.Width = new GridLength(1 - t, GridUnitType.Star);
     }
 
+    // ───── Voce: taratura automatica ─────
+
+    List<double>? _calibration;
+    DispatcherTimer? _calibrationTimer;
+
+    async void Calibrate_Click(object sender, RoutedEventArgs e)
+    {
+        if (_calibrationTimer is not null) return;
+        if (_test is null) StartTest();
+        if (_test is null) { CalibrateText.Text = "Ingresso non disponibile: scegline un altro."; return; }
+        CalibrateButton.IsEnabled = false;
+        try
+        {
+            var silence = await Collect("Silenzio in sala per 5 secondi…");
+            var voice = await Collect("Ora parla al microfono per 5 secondi, come in una parte…");
+            var result = Core.Audio.VoiceCalibration.Compute(silence, voice);
+            CalibrateText.Text = result.Message;
+            if (result.ThresholdDb is { } db) VoiceThreshold.Value = db;
+        }
+        finally { CalibrateButton.IsEnabled = true; }
+    }
+
+    /// <summary>Raccoglie per 5 secondi i livelli dell'ingresso, con il conto alla rovescia nel testo.</summary>
+    Task<List<double>> Collect(string text)
+    {
+        var done = new TaskCompletionSource<List<double>>();
+        var levels = new List<double>();
+        _calibration = levels;
+        int left = 5;
+        CalibrateText.Text = $"{text} {left}";
+        _calibrationTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+        _calibrationTimer.Tick += (_, _) =>
+        {
+            if (--left > 0) { CalibrateText.Text = $"{text} {left}"; return; }
+            _calibrationTimer!.Stop();
+            _calibrationTimer = null;
+            _calibration = null;
+            lock (levels) done.SetResult([.. levels]);
+        };
+        _calibrationTimer.Start();
+        return done.Task;
+    }
+
     void StartTest()
     {
         StopTest();
@@ -309,6 +352,7 @@ public partial class SettingsWindow : Window
         _test = new AudioInput { ThresholdDb = VoiceThreshold.Value };
         _test.Frame += f =>
         {
+            if (_calibration is { } c) lock (c) c.Add(f.LevelDb);
             if (f.LevelDb > _testPeak) _testPeak = f.LevelDb;
             if (f.IsVoice) _testVoice = true;
         };

@@ -32,7 +32,7 @@ Mockup approvato: [prima e dopo](docs/roadmap/controller-prima-dopo.png). Stesso
   - *Sposta dopo la prossima*: scambia l'ordine se un oratore non è ancora pronto;
   - *Salta*: per esempio uno studente assente; si passa alla successiva e il ritardo ne tiene conto.
 
-### Modalità mini: ritocchi
+### Modalità mini: ritocchi — fatto
 Mockup approvato: [prima e dopo](docs/roadmap/mini-prima-dopo.png). Niente di stravolto: cifre, pulsanti, barra e cornice restano.
 - **Stato della voce nella barra in alto**: durante l'attesa il titolo lascia il posto a «In attesa di una pausa…» (giallo, pallino
   che pulsa), poi «In ascolto: parte alla prima voce»; quando la parte parte torna il titolo.

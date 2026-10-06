@@ -57,13 +57,44 @@
                         FontWeight="SemiBold" Margin="6,0,0,0" Command="{Binding UndoActionCommand}"
                         ToolTip="Annulla l'ultima azione (Esc)"
                         Visibility="{Binding CanUndoAction, Converter={StaticResource BoolToVis}}" />
-                <Ellipse Width="8" Height="8" Fill="{Binding SectionBrush}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                <!-- pallino: colore della sezione; giallo che pulsa mentre la voce è attesa -->
+                <Ellipse Width="8" Height="8" VerticalAlignment="Center" Margin="0,0,8,0">
+                    <Ellipse.Style>
+                        <Style TargetType="Ellipse">
+                            <Setter Property="Fill" Value="{Binding SectionBrush}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsVoiceArmed}" Value="True">
+                                    <Setter Property="Fill" Value="{StaticResource AmberBrush}" />
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard x:Name="VoicePulse">
+                                            <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                                <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0.3" Duration="0:0:0.7">
+                                                    <DoubleAnimation.EasingFunction>
+                                                        <SineEase EasingMode="EaseInOut" />
+                                                    </DoubleAnimation.EasingFunction>
+                                                </DoubleAnimation>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.EnterActions>
+                                    <DataTrigger.ExitActions>
+                                        <StopStoryboard BeginStoryboardName="VoicePulse" />
+                                    </DataTrigger.ExitActions>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Ellipse.Style>
+                </Ellipse>
+                <!-- la barra dice cosa sta succedendo: titolo, attesa della voce o «Annulla» -->
                 <TextBlock FontSize="13" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" VerticalAlignment="Center">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">
                             <Setter Property="Text" Value="{Binding TitleText}" />
                             <Setter Property="ToolTip" Value="{Binding TitleText}" />
                             <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsVoiceArmed}" Value="True">
+                                    <Setter Property="Text" Value="{Binding VoiceStatus}" />
+                                    <Setter Property="Foreground" Value="{StaticResource AmberBrush}" />
+                                </DataTrigger>
                                 <DataTrigger Binding="{Binding CanUndoAction}" Value="True">
                                     <Setter Property="Text" Value="{Binding UndoActionText}" />
                                     <Setter Property="Foreground" Value="{StaticResource AmberBrush}" />
@@ -131,24 +162,62 @@
             </Grid>
 
             <!-- messaggio all'oratore (se abilitato) -->
-            <Grid Grid.Row="2" Margin="12,0,12,10" Visibility="{Binding MessagesEnabled, Converter={StaticResource BoolToVis}}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <ComboBox IsEditable="True" ItemsSource="{Binding MessagePresets}" FontSize="12" MinHeight="28"
-                          Text="{Binding MessageText, UpdateSourceTrigger=PropertyChanged}" KeyDown="Message_KeyDown"
-                          ToolTip="Messaggio per l'oratore (Invio per mostrarlo, Ctrl+Invio a tutto schermo)" />
-                <Button Grid.Column="1" Style="{StaticResource IconButton}" Width="30" Height="28" FontSize="13" Content="&#xE724;" Margin="4,0,0,0"
-                        Command="{Binding SendMessageCommand}" ToolTip="Mostra il messaggio" />
-                <Button Grid.Column="2" Style="{StaticResource IconButton}" Width="30" Height="28" FontSize="13" Content="&#xE740;" Margin="4,0,0,0"
-                        Command="{Binding SendMessageFullCommand}" ToolTip="A tutto schermo per qualche secondo (Ctrl+Invio)" />
-                <Button Grid.Column="3" Style="{StaticResource IconButton}" Width="30" Height="28" FontSize="13" Content="&#xE711;" Margin="4,0,0,0"
-                        Command="{Binding ClearMessageCommand}" ToolTip="Togli il messaggio"
-                        Visibility="{Binding HasMessage, Converter={StaticResource BoolToVis}}" />
-            </Grid>
+            <StackPanel Grid.Row="2" Margin="12,0,12,10" Visibility="{Binding MessagesEnabled, Converter={StaticResource BoolToVis}}">
+                <!-- messaggio in onda: pastiglia gialla con «Togli», sparisce quando non c'è nulla sullo schermo -->
+                <Border CornerRadius="8" Background="#FBBF24" Padding="10,3,3,3" Margin="0,0,0,6"
+                        Visibility="{Binding HasMessage, Converter={StaticResource BoolToVis}}">
+                    <DockPanel>
+                        <Button DockPanel.Dock="Right" Command="{Binding ClearMessageCommand}" Cursor="Hand" ToolTip="Togli il messaggio dallo schermo"
+                                Focusable="False">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="Bd" CornerRadius="6" Background="#26000000" Padding="8,2">
+                                        <TextBlock Foreground="#111111" FontSize="12" FontWeight="SemiBold">
+                                            <Run Text="&#xE711;" FontFamily="{StaticResource IconFont}" FontSize="9" /><Run Text=" Togli" />
+                                        </TextBlock>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="#40000000" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                        <TextBlock Foreground="#111111" FontSize="12.5" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                                   ToolTip="{Binding MessageInfo}">
+                            <Run Text="Sullo schermo: " /><Run Text="{Binding ScreenMessage, Mode=OneWay}" />
+                        </TextBlock>
+                    </DockPanel>
+                </Border>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ComboBox IsEditable="True" ItemsSource="{Binding MessagePresets}" FontSize="12" MinHeight="28"
+                              Text="{Binding MessageText, UpdateSourceTrigger=PropertyChanged}" KeyDown="Message_KeyDown"
+                              ToolTip="Messaggio per l'oratore (Invio per mostrarlo, Ctrl+Invio a tutto schermo)" />
+                    <TextBlock Text="Messaggio…" Foreground="{StaticResource MutedBrush}" FontSize="12" VerticalAlignment="Center" Margin="9,0,0,0"
+                               HorizontalAlignment="Left" IsHitTestVisible="False">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding MessageText}" Value="">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                    <Button Grid.Column="1" Style="{StaticResource IconButton}" Width="30" Height="28" FontSize="13" Content="&#xE724;" Margin="4,0,0,0"
+                            Command="{Binding SendMessageCommand}" ToolTip="Mostra il messaggio (Invio)" />
+                    <Button Grid.Column="2" Style="{StaticResource IconButton}" Width="30" Height="28" FontSize="13" Content="&#xE740;" Margin="4,0,0,0"
+                            Command="{Binding SendMessageFullCommand}" ToolTip="A tutto schermo per qualche secondo (Ctrl+Invio)" />
+                </Grid>
+            </StackPanel>
 
             <!-- avanzamento lungo il bordo inferiore -->
             <Grid Grid.Row="3" Height="4">

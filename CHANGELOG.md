@@ -26,6 +26,10 @@
 - **Salta:** per esempio uno studente assente. Si passa alla successiva e il ritardo ne tiene conto.
 - Sposta e Salta chiedono conferma; dopo ogni azione c'è «Annulla» per 10 secondi (anche con Esc), nella stessa barra di «Annulla» dopo Ferma.
 
+**Modalità mini**
+- La barra in alto dice cosa sta succedendo: durante l'attesa della voce il titolo lascia il posto a «In attesa di una pausa…» (giallo, con il pallino che pulsa), poi «In ascolto: parte alla prima voce»; quando la parte parte torna il titolo.
+- Messaggi più puliti: una riga con campo, invio e tutto schermo; il messaggio in onda diventa una pastiglia gialla «Sullo schermo: …» con «Togli», che sparisce quando non c'è nulla sullo schermo.
+
 **Tema e dimensione dell'interfaccia** (*Impostazioni → Programma*)
 - **Tema chiaro** per controller, mini, editor e impostazioni, utile se l'acustica è in un punto molto luminoso: scuro, chiaro o «come Windows» (segue il tema delle app di Windows anche mentre il programma è aperto). Lo schermo della sala resta con il suo tema.
 - **Dimensione dell'interfaccia** dal 90 al 150 %, per portatili piccoli o schermi ad alta risoluzione. Le finestre aperte si adattano subito.

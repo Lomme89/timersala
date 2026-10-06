@@ -23,6 +23,9 @@
     <ProjectReference Include="..\TimerSala.Core\TimerSala.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="TimerSala.UiTests" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Assets\timersala.ico" />
   </ItemGroup>
   <ItemGroup>

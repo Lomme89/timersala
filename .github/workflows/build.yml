@@ -28,6 +28,9 @@ jobs:
       - name: Test
         run: dotnet test tests/TimerSala.Tests -c Release
 
+      - name: Prova delle finestre (apre controller, mini, impostazioni, editor)
+        run: dotnet test tests/TimerSala.UiTests -c Debug
+
       - name: Numero di versione (solo per le release)
         shell: bash
         run: |

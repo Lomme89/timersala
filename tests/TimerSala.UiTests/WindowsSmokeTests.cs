@@ -20,13 +20,60 @@ public class WindowsSmokeTests
         Exception? failure = null;
         var thread = new Thread(() =>
         {
+            _nativeThread = GetCurrentThreadId();
             try { Run(); }
             catch (Exception ex) { failure = ex; }
         });
         thread.SetApartmentState(ApartmentState.STA);
         thread.Start();
-        Assert.True(thread.Join(TimeSpan.FromMinutes(2)), "le finestre non hanno finito in tempo");
+        if (!thread.Join(TimeSpan.FromMinutes(2)))
+            Assert.Fail($"le finestre non hanno finito in tempo: fermo a «{_stage}»; finestre aperte: {string.Join(" | ", OpenWindows(_nativeThread))}");
         if (failure is not null) throw new Exception("Errore nell'interfaccia: " + failure, failure);
+    }
+
+    // dove è arrivata la prova, per capire un blocco (per esempio una finestra di messaggio inattesa)
+    static volatile string _stage = "inizio";
+    static uint _nativeThread;
+
+    static void Stage(string name) => _stage = name;
+
+    [System.Runtime.InteropServices.DllImport("kernel32.dll")]
+    static extern uint GetCurrentThreadId();
+
+    delegate bool EnumProc(IntPtr hwnd, IntPtr data);
+
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    static extern bool EnumThreadWindows(uint threadId, EnumProc proc, IntPtr data);
+
+    [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
+    static extern int GetWindowText(IntPtr hwnd, System.Text.StringBuilder text, int max);
+
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    static extern bool IsWindowVisible(IntPtr hwnd);
+
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    static extern bool EnumChildWindows(IntPtr parent, EnumProc proc, IntPtr data);
+
+    /// <summary>Titoli (e testi, per le finestre di messaggio) delle finestre visibili del thread della prova.</summary>
+    static List<string> OpenWindows(uint threadId)
+    {
+        var list = new List<string>();
+        EnumThreadWindows(threadId, (h, _) =>
+        {
+            if (!IsWindowVisible(h)) return true;
+            var sb = new System.Text.StringBuilder(512);
+            GetWindowText(h, sb, sb.Capacity);
+            var texts = new List<string>();
+            EnumChildWindows(h, (c, _) =>
+            {
+                var cs = new System.Text.StringBuilder(512);
+                if (GetWindowText(c, cs, cs.Capacity) > 0) texts.Add(cs.ToString());
+                return true;
+            }, IntPtr.Zero);
+            list.Add(sb + (texts.Count > 0 ? " [" + string.Join(" / ", texts) + "]" : ""));
+            return true;
+        }, IntPtr.Zero);
+        return list;
     }
 
     static void Pump(int ms = 300)
@@ -43,12 +90,14 @@ public class WindowsSmokeTests
         var dir = Path.Combine(Path.GetTempPath(), "timersala-ui-" + Guid.NewGuid().ToString("N"));
         // niente rete né microfono durante la prova; impostazioni già salvate, così non è un primo avvio
         // (che aprirebbe la configurazione guidata, una finestra modale)
+        Stage("dati della prova");
         new DataStore(dir).SaveSettings(new AppSettings { AutoDownload = false, WebServerEnabled = false, VoiceStartEnabled = false, CountdownMinutes = 0 });
         var store = new DataStore(dir);
         Assert.False(store.IsNew);
 
         // gli indirizzi come /Assets/timersala.ico vanno cercati nel programma, non nel progetto di prova
         // (WPF lo fissa all'assembly d'ingresso, qui il runner dei test: si corregge il campo interno)
+        Stage("apertura del controller");
         typeof(Application).GetField("_resourceAssembly", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)!
             .SetValue(null, typeof(TimerSala.App.App).Assembly);
         var app = new TimerSala.App.App();
@@ -64,6 +113,7 @@ public class WindowsSmokeTests
         Pump();
 
         // il timer parte e si ferma, con «Annulla»
+        Stage("il timer parte e si ferma, con «Annulla»");
         vm.ToggleStartCommand.Execute(null);
         Pump();
         vm.ToggleStartCommand.Execute(null);
@@ -75,6 +125,7 @@ public class WindowsSmokeTests
         vm.ToggleStartCommand.Execute(null);
 
         // addestramento: parti più brevi, poi tutto torna com'era
+        Stage("addestramento: parti più brevi, poi tutto torna com'era");
         var realDuration = vm.Timer.Meeting.Parts.First(p => p.IsTimed && p.DurationSeconds >= 600).DurationSeconds;
         Assert.Null(vm.StartTraining());
         Pump();
@@ -91,6 +142,7 @@ public class WindowsSmokeTests
         Assert.False(vm.Timer.IsRunning);
 
         // lista di controllo aperta con il pulsante, una voce spuntata
+        Stage("lista di controllo aperta con il pulsante, una voce spuntata");
         vm.ChecklistOpen = true;
         Pump();
         Assert.True(vm.ChecklistVisible);
@@ -99,6 +151,7 @@ public class WindowsSmokeTests
         vm.ChecklistOpen = false;
 
         // riquadro della settimana, modalità mini e ritorno
+        Stage("riquadro della settimana, modalità mini e ritorno");
         vm.WeekPanelOpen = true;
         Pump();
         vm.IsMiniMode = true;
@@ -107,6 +160,7 @@ public class WindowsSmokeTests
         Pump(600);
 
         // impostazioni: tutte le sezioni
+        Stage("impostazioni: tutte le sezioni");
         var settings = new SettingsWindow(vm) { Owner = main };
         settings.Show();
         Pump();
@@ -119,10 +173,12 @@ public class WindowsSmokeTests
         Pump();
 
         // editor e modifica di una parte
+        Stage("editor e modifica di una parte");
         var editor = new EditorWindow(vm) { Owner = main };
         editor.Show();
         Pump();
         // Annulla e Ripeti: una parte eliminata torna, e se ne va di nuovo
+        Stage("Annulla e Ripeti: una parte eliminata torna, e se ne va di nuovo");
         var evm = (EditorViewModel)editor.DataContext;
         int count = evm.Parts.Count;
         evm.RemoveCommand.Execute(null);
@@ -140,6 +196,7 @@ public class WindowsSmokeTests
         edit.Close();
 
         // configurazione guidata: tutti i passi, poi chiusa senza finire
+        Stage("configurazione guidata: tutti i passi, poi chiusa senza finire");
         var welcome = new WelcomeWindow(vm) { Owner = main };
         welcome.Show();
         Pump();
@@ -153,6 +210,7 @@ public class WindowsSmokeTests
         Assert.True(vm.Settings.OnboardingDone);
 
         // guida e novità (dal changelog incorporato nel programma)
+        Stage("guida e novità (dal changelog incorporato nel programma)");
         var help = DocWindow.Help();
         help.Owner = main;
         help.Show();
@@ -168,11 +226,13 @@ public class WindowsSmokeTests
         news.Close();
 
         // tema chiaro e interfaccia più grande, poi di nuovo come prima
+        Stage("tema chiaro e interfaccia più grande, poi di nuovo come prima");
         UiTheme.Apply(ControllerTheme.Light, 1.3);
         Pump();
         UiTheme.Apply(ControllerTheme.Dark, 1.0);
         Pump();
 
+        Stage("chiusura");
         main.Close();
         Pump();
         try { Directory.Delete(dir, recursive: true); } catch { }

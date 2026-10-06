@@ -17,6 +17,7 @@ public partial class EditorWindow : Window
     {
         InitializeComponent();
         WindowSizing.FitToScreen(this);
+        WindowSizing.Remember(this, main, "editor");
         _vm = new EditorViewModel(main);
         DataContext = _vm;
         Closed += (_, _) => Mouse.OverrideCursor = null;

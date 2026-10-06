@@ -39,6 +39,7 @@ public partial class SettingsWindow : Window
     {
         InitializeComponent();
         WindowSizing.FitToScreen(this);
+        WindowSizing.Remember(this, vm, "impostazioni");
         _vm = vm;
         var s = vm.Settings;
 

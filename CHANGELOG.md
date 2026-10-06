@@ -1,5 +1,14 @@
 # Novità
 
+## v1.14.0 — 6 ottobre 2026
+
+**Sicurezza in sala**
+- **Annulla dopo Ferma:** per 5 secondi dopo Ferma compare «Annulla» (anche nella mini, oppure **Esc**). Il timer riprende come se non fosse mai stato fermato, contando anche quei secondi. Vale anche per una fermata dal telefono.
+- **Chiusura protetta:** TimerSala chiede conferma prima di chiudersi anche durante il countdown d'inizio e quando una parte è in attesa della voce, non solo con il timer in funzione.
+- **Porta di rete occupata:** se un altro programma usa la porta del timer in rete, TimerSala prova le successive e dice quale sta usando, invece di lasciare il timer in rete spento.
+- **Orologio del PC sbagliato:** se l'ora del PC si discosta di oltre un minuto da quella di internet, il controller lo segnala: countdown d'inizio e fine prevista dipendono da quell'ora.
+- **Finestre ricordate:** controller, mini, editor e impostazioni si riaprono dove e grandi come erano, anche su un altro monitor. Se quel monitor non è collegato si aprono nella posizione solita.
+
 ## v1.13.2 — 4 ottobre 2026
 
 - **PC sempre acceso durante l'adunanza:** da mezz'ora prima dell'inizio fino a mezz'ora dopo la fine prevista, e comunque mentre una parte è in corso, Windows non sospende il PC e non spegne gli schermi. Anche il salvaschermo resta spento.

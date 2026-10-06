@@ -169,7 +169,7 @@ Avvia di nuovo = parti subito. **Esc** annulla l'attesa o, nei primi secondi, un
 | Un minuto in più / in meno | `+` / `−` |
 | Modifica lo schema | `E` |
 | Modalità mini | `M` |
-| Annulla l'attesa della voce / l'avvio appena fatto | `Esc` |
+| Annulla: una fermata sbagliata (per 5 secondi), l'attesa della voce o l'avvio appena fatto | `Esc` |
 | Editor: sposta la parte / elimina | `Alt+↑↓` / `Canc` |
 
 </details>

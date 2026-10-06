@@ -66,6 +66,7 @@ public sealed partial class MainViewModel : ObservableObject
         TimerWindowVisible = Settings.TimerWindowVisible;
         _suppressVisibilityEvent = false;
         RefreshMonitors();
+        _ = CheckClockAsync();
 
         var today = DateOnly.FromDateTime(DateTime.Today);
         Kind = NextMeetingKind(DateTime.Now);
@@ -413,12 +414,15 @@ public sealed partial class MainViewModel : ObservableObject
         {
             bool part = Timer.Mode == TimerMode.Part;
             int stopped = Timer.RunningIndex;
+            _stoppedFromPhone = false;
             Timer.Stop();
             if (part) AutoArmAfterStop(stopped);
         }
-        else if (!TryArmOrStartNow())
+        else
         {
-            Timer.Start();
+            // un nuovo avvio (o l'attesa della voce) chiude la possibilità di annullare la fermata
+            Timer.ForgetStop();
+            if (!TryArmOrStartNow()) Timer.Start();
         }
         RefreshDisplay();
     }
@@ -427,6 +431,7 @@ public sealed partial class MainViewModel : ObservableObject
     void ToggleStartNow()
     {
         if (IsVoiceArmed) Disarm();
+        _stoppedFromPhone = Timer.IsRunning;
         Timer.Toggle();
         RefreshDisplay();
     }
@@ -607,6 +612,7 @@ public sealed partial class MainViewModel : ObservableObject
         RefreshScreenStyle();
         RefreshCountdown(s);
         RefreshMessage();
+        RefreshUndoStop();
     }
 
     // ───────────── Stile dello schermo del timer ─────────────
@@ -922,9 +928,12 @@ public sealed partial class MainViewModel : ObservableObject
         }
         try
         {
-            await _web.StartAsync(Settings.WebServerPort);
+            await _web.StartAsync(Settings.WebServerPort, alternatives: 10);
             WebRunning = true;
             UpdateWebUrl();
+            if (_web.Port != Settings.WebServerPort)
+                ShowStatus($"La porta {Settings.WebServerPort} è usata da un altro programma: il timer in rete usa la {_web.Port}. " +
+                           "Collegamenti e QR salvati con la porta vecchia non funzionano finché resta così.", error: true);
         }
         catch (Exception ex)
         {
@@ -937,8 +946,8 @@ public sealed partial class MainViewModel : ObservableObject
     {
         if (!WebRunning) return;
         var host = NetworkInfo.ResolveHost(Settings.WebAddressMode);
-        WebUrl = $"http://{host}:{Settings.WebServerPort}";
-        WebAddressText = $"{host}:{Settings.WebServerPort}";
+        WebUrl = $"http://{host}:{_web.Port}";
+        WebAddressText = $"{host}:{_web.Port}";
         WebStatus = WebUrl;
         OnPropertyChanged(nameof(ControlUrl));
     }

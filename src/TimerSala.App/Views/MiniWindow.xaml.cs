@@ -20,7 +20,11 @@ public partial class MiniWindow : Window
         vm.PropertyChanged += OnViewModelChanged;
         Closed += (_, _) => vm.PropertyChanged -= OnViewModelChanged;
 
-        if (vm.Settings.MiniLeft is { } l && vm.Settings.MiniTop is { } t &&
+        if (Interop.WindowPlacement.Restore(this, vm.Settings.Windows.GetValueOrDefault("mini"), keepSize: true))
+        {
+            // posizione ricordata (anche su un altro monitor)
+        }
+        else if (vm.Settings.MiniLeft is { } l && vm.Settings.MiniTop is { } t &&
             l >= SystemParameters.VirtualScreenLeft && t >= SystemParameters.VirtualScreenTop &&
             l < SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth - 80 &&
             t < SystemParameters.VirtualScreenTop + SystemParameters.VirtualScreenHeight - 60)
@@ -36,8 +40,7 @@ public partial class MiniWindow : Window
         }
         LocationChanged += (_, _) =>
         {
-            _vm.Settings.MiniLeft = Left;
-            _vm.Settings.MiniTop = Top;
+            if (Interop.WindowPlacement.Capture(this) is { } bounds) _vm.Settings.Windows["mini"] = bounds;
         };
     }
 

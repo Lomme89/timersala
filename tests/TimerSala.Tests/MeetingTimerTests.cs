@@ -47,6 +47,82 @@ public class MeetingTimerTests
     }
 
     [Fact]
+    public void Undo_stop_resumes_counting_the_seconds_in_between()
+    {
+        var (t, clock) = Create();
+        t.Select(1);
+        t.Start();
+        clock.Advance(TimeSpan.FromMinutes(3));
+        t.Stop();
+        Assert.Equal(2, t.SelectedIndex);
+        Assert.True(t.CanUndoStop);
+
+        clock.Advance(TimeSpan.FromSeconds(4));
+        Assert.True(t.UndoStop());
+
+        Assert.True(t.IsRunning);
+        Assert.Equal(1, t.RunningIndex);
+        Assert.Equal(1, t.SelectedIndex);
+        Assert.Null(t.ActualFor(1));
+        Assert.Equal("06:56", t.GetSnapshot().Display);
+        Assert.False(t.CanUndoStop);
+    }
+
+    [Fact]
+    public void Undo_stop_restores_time_of_a_resumed_part()
+    {
+        var (t, clock) = Create();
+        t.Select(1);
+        t.Start();
+        clock.Advance(TimeSpan.FromMinutes(2));
+        t.Stop();
+        t.Select(1);
+        t.Start();
+        clock.Advance(TimeSpan.FromMinutes(1));
+        t.Stop();
+        Assert.Equal(TimeSpan.FromMinutes(3), t.ActualFor(1));
+
+        t.UndoStop();
+        Assert.Equal(TimeSpan.FromMinutes(2), t.ActualFor(1));
+        clock.Advance(TimeSpan.FromMinutes(1));
+        t.Stop();
+        Assert.Equal(TimeSpan.FromMinutes(4), t.ActualFor(1));
+    }
+
+    [Fact]
+    public void Undo_stop_expires_and_is_lost_after_another_start()
+    {
+        var (t, clock) = Create();
+        t.Select(1);
+        t.Start();
+        t.Stop();
+        clock.Advance(MeetingTimer.UndoStopWindow);
+        Assert.False(t.CanUndoStop);
+        Assert.False(t.UndoStop());
+
+        t.Start();
+        t.Stop();
+        t.Start();
+        Assert.False(t.CanUndoStop);
+        Assert.False(t.UndoStop());
+        Assert.Equal(3, t.RunningIndex);
+    }
+
+    [Fact]
+    public void Undo_stop_works_for_counsel()
+    {
+        var (t, clock) = Create();
+        t.StartCounsel();
+        clock.Advance(TimeSpan.FromSeconds(20));
+        t.Stop();
+        clock.Advance(TimeSpan.FromSeconds(2));
+        t.UndoStop();
+        var s = t.GetSnapshot();
+        Assert.Equal(TimerMode.Counsel, s.Mode);
+        Assert.Equal("00:38", s.Display);
+    }
+
+    [Fact]
     public void Stop_records_time_and_advances_skipping_songs()
     {
         var (t, clock) = Create();

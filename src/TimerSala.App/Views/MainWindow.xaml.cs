@@ -220,6 +220,8 @@ public partial class MainWindow : Window
     void RestorePlacement()
     {
         var s = _vm.Settings;
+        if (WindowPlacement.Restore(this, s.Windows.GetValueOrDefault("controller"))) return;
+        // posizione salvata dalla 1.13 o precedenti
         if (s.ControllerWidth is > 300 and < 4000) Width = s.ControllerWidth.Value;
         if (s.ControllerHeight is > 300 and < 4000) Height = s.ControllerHeight.Value;
         if (s.ControllerLeft is { } l && s.ControllerTop is { } t &&
@@ -239,21 +241,16 @@ public partial class MainWindow : Window
 
     protected override void OnClosing(CancelEventArgs e)
     {
-        if (_vm.IsRunning &&
-            MessageBox.Show(_vm.IsMiniMode && _mini is not null ? _mini : this, "Il timer è in funzione. Chiudere comunque TimerSala?", "TimerSala",
+        if (_vm.CloseWarning() is { } warning &&
+            MessageBox.Show(_vm.IsMiniMode && _mini is not null ? _mini : this, $"{warning}\nChiudere comunque TimerSala?", "TimerSala",
                 MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
         {
             e.Cancel = true;
             return;
         }
         var s = _vm.Settings;
-        if (WindowState == WindowState.Normal && !_vm.IsMiniMode)
-        {
-            s.ControllerLeft = Left;
-            s.ControllerTop = Top;
-            s.ControllerWidth = Width;
-            s.ControllerHeight = Height;
-        }
+        if (WindowPlacement.Capture(this) is { } controller) s.Windows["controller"] = controller;
+        if (_mini is not null && WindowPlacement.Capture(_mini) is { } mini) s.Windows["mini"] = mini;
         _vm.SaveSettings();
         _vm.Shutdown();
         SystemEvents.DisplaySettingsChanged -= OnDisplaySettingsChanged;

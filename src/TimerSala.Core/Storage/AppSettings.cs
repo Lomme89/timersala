@@ -37,6 +37,9 @@ public enum CountdownStyle
     Words,
 }
 
+/// <summary>Posizione e dimensioni di una finestra, in pixel dello schermo (anche su più monitor).</summary>
+public sealed record WindowBounds(int Left, int Top, int Right, int Bottom, bool Maximized = false);
+
 public sealed class AppSettings
 {
     // ── Orari delle adunanze ──
@@ -163,6 +166,10 @@ public sealed class AppSettings
     public bool ShowDelayOnDisplay { get; set; } = false;
     public bool ControllerTopmost { get; set; } = false;
 
+    /// <summary>Finestre ricordate: «controller», «mini», «editor», «impostazioni».</summary>
+    public Dictionary<string, WindowBounds> Windows { get; set; } = [];
+
+    // posizione del controller fino alla 1.13 (letta solo se manca quella in Windows)
     public double? ControllerLeft { get; set; }
     public double? ControllerTop { get; set; }
     public double? ControllerWidth { get; set; }

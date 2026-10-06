@@ -89,9 +89,45 @@ public sealed class TimerWebServer : IAsyncDisposable
         _onCommand = onCommand ?? ((_, _) => Task.CompletedTask);
     }
 
-    public async Task StartAsync(int port, bool localOnly = false)
+    /// <summary>
+    /// Avvia il server sulla porta indicata. Se è occupata da un altro programma prova le
+    /// <paramref name="alternatives"/> porte successive; <see cref="Port"/> dice quale è stata usata.
+    /// </summary>
+    public async Task StartAsync(int port, bool localOnly = false, int alternatives = 0)
     {
         await StopAsync();
+        for (int attempt = 0; ; attempt++)
+        {
+            int p = port + attempt;
+            var app = Build(p, localOnly);
+            try
+            {
+                await app.StartAsync();
+                _app = app;
+                Port = p;
+                return;
+            }
+            catch (Exception ex)
+            {
+                await app.DisposeAsync();
+                if (attempt >= alternatives || p >= IPEndPoint.MaxPort || !IsPortBusy(ex)) throw;
+            }
+        }
+    }
+
+    /// <summary>La porta è usata da un altro programma, o riservata da Windows (Hyper-V, WSL).</summary>
+    static bool IsPortBusy(Exception ex)
+    {
+        for (Exception? e = ex; e is not null; e = e.InnerException)
+        {
+            if (e is Microsoft.AspNetCore.Connections.AddressInUseException) return true;
+            if (e is SocketException { SocketErrorCode: SocketError.AddressAlreadyInUse or SocketError.AccessDenied }) return true;
+        }
+        return false;
+    }
+
+    WebApplication Build(int port, bool localOnly)
+    {
         var builder = WebApplication.CreateSlimBuilder();
         builder.Logging.ClearProviders();
         builder.WebHost.ConfigureKestrel(k =>
@@ -119,10 +155,7 @@ public sealed class TimerWebServer : IAsyncDisposable
             }, Json);
         });
         app.MapPost("/api/control", HandleControl);
-
-        await app.StartAsync();
-        _app = app;
-        Port = port;
+        return app;
     }
 
     public sealed record ControlRequest(string? Pin, string? Action, string? Value);

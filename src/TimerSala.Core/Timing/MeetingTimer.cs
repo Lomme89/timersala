@@ -25,6 +25,14 @@ public sealed class MeetingTimer
     int _targetSeconds;
     string _manualTitle = "";
 
+    // ultima fermata, per «Annulla» nei secondi successivi
+    sealed record StopUndo(TimerMode Mode, int RunningIndex, int Selected, DateTimeOffset StartedAt, TimeSpan Carried,
+        int TargetSeconds, string ManualTitle, TimeSpan? PreviousActual, DateTimeOffset StoppedAt);
+    StopUndo? _lastStop;
+
+    /// <summary>Per quanto tempo dopo Ferma si può annullare la fermata.</summary>
+    public static readonly TimeSpan UndoStopWindow = TimeSpan.FromSeconds(5);
+
     public MeetingTimer(TimeProvider? clock = null) => _clock = clock ?? TimeProvider.System;
 
     /// <summary>Soglia (secondi rimanenti) sotto la quale il timer diventa giallo.</summary>
@@ -103,6 +111,7 @@ public sealed class MeetingTimer
         {
             _meeting = meeting;
             StopInternal(record: false);
+            _lastStop = null;
             if (!keepProgress)
             {
                 _actual.Clear();
@@ -158,6 +167,7 @@ public sealed class MeetingTimer
             var now = _clock.GetUtcNow();
             _startedAt = startedAt is { } at && at < now ? at : now;
             _forceCountdown = false;
+            _lastStop = null;
         }
         Raise();
     }
@@ -170,6 +180,7 @@ public sealed class MeetingTimer
             if (_startedAt is null || _mode != TimerMode.Part) return;
             int index = _runningIndex;
             StopInternal(record: false);
+            _lastStop = null;
             if (!_actual.ContainsKey(index)) _adaptedTargets.Remove(index);
         }
         Raise();
@@ -180,6 +191,7 @@ public sealed class MeetingTimer
         lock (_lock)
         {
             if (_startedAt is not null) StopInternal(record: true);
+            _lastStop = null;
             _mode = TimerMode.Counsel;
             _targetSeconds = CounselSeconds;
             _carried = TimeSpan.Zero;
@@ -194,6 +206,7 @@ public sealed class MeetingTimer
         lock (_lock)
         {
             if (_startedAt is not null) StopInternal(record: true);
+            _lastStop = null;
             _mode = TimerMode.Manual;
             _manualTitle = title;
             _targetSeconds = (int)duration.TotalSeconds;
@@ -207,10 +220,59 @@ public sealed class MeetingTimer
     {
         lock (_lock)
         {
-            if (_startedAt is null) return;
+            if (_startedAt is not { } started) return;
+            var now = _clock.GetUtcNow();
+            TimeSpan? previous = _mode == TimerMode.Part && _actual.TryGetValue(_runningIndex, out var t) ? t : null;
+            _lastStop = new StopUndo(_mode, _runningIndex, _selected, started, _carried, _targetSeconds, _manualTitle, previous, now);
             StopInternal(record: true);
         }
         Raise();
+    }
+
+    /// <summary>Nei secondi dopo Ferma si può annullare la fermata (pressione sbagliata).</summary>
+    public bool CanUndoStop { get { lock (_lock) return CanUndoStopUnlocked(); } }
+
+    /// <summary>Quanto resta per annullare l'ultima fermata, o null se non si può.</summary>
+    public TimeSpan? UndoStopRemaining
+    {
+        get { lock (_lock) return CanUndoStopUnlocked() ? UndoStopWindow - (_clock.GetUtcNow() - _lastStop!.StoppedAt) : null; }
+    }
+
+    bool CanUndoStopUnlocked() =>
+        _lastStop is { } u && _startedAt is null && _clock.GetUtcNow() - u.StoppedAt < UndoStopWindow;
+
+    /// <summary>
+    /// Annulla l'ultima fermata: il timer riprende come se non fosse mai stato fermato,
+    /// contando anche i secondi trascorsi nel frattempo (l'oratore è andato avanti).
+    /// </summary>
+    public bool UndoStop()
+    {
+        lock (_lock)
+        {
+            if (!CanUndoStopUnlocked()) return false;
+            var u = _lastStop!;
+            _lastStop = null;
+            if (u.Mode == TimerMode.Part)
+            {
+                if (u.PreviousActual is { } prev) _actual[u.RunningIndex] = prev;
+                else _actual.Remove(u.RunningIndex);
+            }
+            _mode = u.Mode;
+            _runningIndex = u.RunningIndex;
+            _selected = u.Selected;
+            _startedAt = u.StartedAt;
+            _carried = u.Carried;
+            _targetSeconds = u.TargetSeconds;
+            _manualTitle = u.ManualTitle;
+        }
+        Raise();
+        return true;
+    }
+
+    /// <summary>Rinuncia alla possibilità di annullare l'ultima fermata (è seguita un'altra azione).</summary>
+    public void ForgetStop()
+    {
+        lock (_lock) _lastStop = null;
     }
 
     public void Toggle()
@@ -244,6 +306,7 @@ public sealed class MeetingTimer
             if (_startedAt is not null && _runningIndex == _selected && _mode == TimerMode.Part) return;
             _actual.Remove(_selected);
             _adaptedTargets.Remove(_selected);
+            _lastStop = null;
         }
         Raise();
     }
@@ -253,6 +316,7 @@ public sealed class MeetingTimer
         lock (_lock)
         {
             StopInternal(record: false);
+            _lastStop = null;
             _actual.Clear();
             _adaptedTargets.Clear();
             _selected = FirstTimedFrom(0);
@@ -370,6 +434,7 @@ public sealed class MeetingTimer
         lock (_lock)
         {
             StopInternal(record: false);
+            _lastStop = null;
             _actual.Clear();
             foreach (var (i, sec) in state.ActualSeconds)
                 if (i >= 0 && i < _meeting.Parts.Count) _actual[i] = TimeSpan.FromSeconds(sec);

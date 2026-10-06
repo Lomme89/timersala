@@ -74,14 +74,8 @@ Mockup approvato: [Schermo](docs/roadmap/impostazioni-schermo.png) · [Messaggi]
 - **Rispetto di «riduci movimento»** (vedi Principi).
 
 ### Sicurezza in sala
-PC sempre sveglio, schermo ricollegato e una sola copia aperta sono già usciti nella v1.13.2 (vedi «Fatte»).
-- **Annulla dopo Ferma**: per 5 secondi un avviso con «Annulla» per rimediare a una pressione sbagliata. Stesso comportamento
-  di Esc per l'avvio con la voce: un solo gesto per «torna indietro».
-- **Chiusura protetta**: oggi chiede conferma col timer in funzione; da estendere al countdown d'inizio e all'attesa della voce.
-- **Porta di rete occupata**: se la porta del timer web è usata da un altro programma, se ne prova un'altra e lo si segnala.
-- **Orologio del PC sbagliato**: avviso se l'ora del PC si discosta di oltre un minuto da quella di internet
-  (countdown e fine prevista dipendono da quell'ora).
-- **Finestre ricordate**: controller, mini, editor e impostazioni si riaprono dove e grandi come erano, anche con più monitor.
+Uscita tutta prima della 2.0: v1.13.2 e v1.14.0 (vedi «Fatte»). Nella 2.0 resta da portare «Annulla» nel sistema di avvisi
+uniforme (vedi Movimento).
 
 ### Passaggio dalla 1.x
 - Impostazioni, schemi salvati (anche quelli modificati a mano), frasi pronte e visite del sorvegliante passano intatti.
@@ -207,6 +201,10 @@ Molte Sale del Regno sono condivise da due o tre congregazioni, a volte di lingu
   provare le opzioni gratuite o economiche per i progetti open source (per esempio SignPath Foundation).
 
 ## Fatte
+- **Sicurezza in sala, seconda parte** (v1.14.0): «Annulla» per 5 secondi dopo Ferma (anche con Esc e dal telefono); conferma
+  alla chiusura anche durante il countdown e l'attesa della voce; porta di rete alternativa se quella scelta è occupata;
+  avviso se l'orologio del PC è sbagliato di oltre un minuto; controller, mini, editor e impostazioni ricordano posizione e
+  dimensioni, anche su più monitor.
 - **Sicurezza in sala** (v1.13.2): PC e schermi sempre accesi con un'adunanza in corso o imminente; schermo della sala che si
   nasconde se scollegato e torna da solo quando si ricollega; una sola copia del programma aperta.
 - **Visite del sorvegliante pianificate** (v1.13.0): settimane segnate in anticipo in *Impostazioni → Adunanze*, scaricate già

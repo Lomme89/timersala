@@ -49,6 +49,30 @@ public class WebServerTests
     }
 
     [Fact]
+    public async Task Busy_port_moves_to_the_next_one()
+    {
+        int port = FreePort();
+        var other = new TcpListener(System.Net.IPAddress.Loopback, port);
+        other.Start();
+        try
+        {
+            await using var strict = new TimerWebServer(new MeetingTimer(), () => new DisplayOptions(true, true, false));
+            await Assert.ThrowsAnyAsync<Exception>(() => strict.StartAsync(port, localOnly: true));
+            Assert.False(strict.IsRunning);
+
+            await using var server = new TimerWebServer(new MeetingTimer(), () => new DisplayOptions(true, true, false));
+            await server.StartAsync(port, localOnly: true, alternatives: 10);
+            Assert.True(server.Port > port && server.Port <= port + 10);
+            using var http = new HttpClient { BaseAddress = new Uri($"http://127.0.0.1:{server.Port}") };
+            Assert.Contains("EventSource", await http.GetStringAsync("/"));
+        }
+        finally
+        {
+            other.Stop();
+        }
+    }
+
+    [Fact]
     public async Task Serves_manifest_icons_and_wake_video()
     {
         await using var server = new TimerWebServer(new MeetingTimer(), () => new DisplayOptions(true, true, false));

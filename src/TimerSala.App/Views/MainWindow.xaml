@@ -242,6 +242,22 @@
                 </Button>
                 <Button Grid.Column="2" Style="{StaticResource IconButton}" Width="50" Height="56" Content="&#xE893;" Command="{Binding NextCommand}" ToolTip="Parte successiva (→)" HorizontalAlignment="Right" />
             </Grid>
+            <!-- annulla una fermata sbagliata, nei secondi successivi -->
+            <Border Margin="0,6,0,0" CornerRadius="8" Background="#1FFBBF24" BorderBrush="#55FBBF24" BorderThickness="1" ClipToBounds="True"
+                    Visibility="{Binding CanUndoStop, Converter={StaticResource BoolToVis}}">
+                <Grid>
+                    <DockPanel Margin="10,4,4,6">
+                        <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Annulla" Padding="12,2" FontWeight="SemiBold"
+                                Command="{Binding UndoStopCommand}" ToolTip="Il timer riprende come se non fosse stato fermato (Esc)" />
+                        <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE7A7;" FontSize="13" Foreground="{StaticResource AmberBrush}"
+                                   VerticalAlignment="Center" Margin="0,0,8,0" />
+                        <TextBlock Text="{Binding UndoStopText}" FontSize="12" Foreground="{StaticResource AmberBrush}" VerticalAlignment="Center"
+                                   TextTrimming="CharacterEllipsis" />
+                    </DockPanel>
+                    <ProgressBar Style="{StaticResource SlimProgress}" Height="2" VerticalAlignment="Bottom" Minimum="0" Maximum="1"
+                                 Value="{Binding UndoStopFraction, Mode=OneWay}" Foreground="{StaticResource AmberBrush}" Background="Transparent" />
+                </Grid>
+            </Border>
             <!-- avvio con la voce (sperimentale) -->
             <Border Margin="0,6,0,0" CornerRadius="8" Padding="10,5" Background="{StaticResource BgBrush}"
                     Visibility="{Binding VoiceEnabled, Converter={StaticResource BoolToVis}}">
@@ -394,6 +410,11 @@
                     </StackPanel>
                 </DockPanel>
             </Border>
+            <DockPanel Margin="2,6,0,0" Visibility="{Binding HasClockWarning, Converter={StaticResource BoolToVis}}">
+                <TextBlock DockPanel.Dock="Left" FontFamily="{StaticResource IconFont}" Text="&#xE823;" FontSize="12"
+                           Foreground="{StaticResource AmberBrush}" Margin="0,2,6,0" />
+                <TextBlock Text="{Binding ClockWarning}" TextWrapping="Wrap" FontSize="12" Foreground="{StaticResource AmberBrush}" />
+            </DockPanel>
             <TextBlock x:Name="StatusText" Text="{Binding StatusMessage}" TextWrapping="Wrap" FontSize="12" Margin="2,6,0,0">
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">

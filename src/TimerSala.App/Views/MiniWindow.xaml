@@ -52,9 +52,26 @@
                         Command="{Binding ToggleMiniCommand}" ToolTip="Torna alla finestra completa (M)" />
                 <TextBlock DockPanel.Dock="Right" Text="{Binding ClockText}" FontFamily="{StaticResource DigitsFont}" FontSize="13"
                            Foreground="#6B7280" VerticalAlignment="Center" Margin="8,0,6,0" />
+                <!-- dopo Ferma: «Annulla» al posto del titolo per qualche secondo -->
+                <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Annulla" Padding="8,0" Height="22" FontSize="12"
+                        FontWeight="SemiBold" Margin="6,0,0,0" Command="{Binding UndoStopCommand}"
+                        ToolTip="Il timer riprende come se non fosse stato fermato (Esc)"
+                        Visibility="{Binding CanUndoStop, Converter={StaticResource BoolToVis}}" />
                 <Ellipse Width="8" Height="8" Fill="{Binding SectionBrush}" VerticalAlignment="Center" Margin="0,0,8,0" />
-                <TextBlock Text="{Binding TitleText}" FontSize="13" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
-                           VerticalAlignment="Center" ToolTip="{Binding TitleText}" />
+                <TextBlock FontSize="13" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" VerticalAlignment="Center">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Text" Value="{Binding TitleText}" />
+                            <Setter Property="ToolTip" Value="{Binding TitleText}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CanUndoStop}" Value="True">
+                                    <Setter Property="Text" Value="{Binding UndoStopText}" />
+                                    <Setter Property="Foreground" Value="{StaticResource AmberBrush}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
             </DockPanel>
 
             <!-- tempo grande e comandi -->

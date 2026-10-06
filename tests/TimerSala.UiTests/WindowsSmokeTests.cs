@@ -27,7 +27,7 @@ public class WindowsSmokeTests
         thread.SetApartmentState(ApartmentState.STA);
         thread.Start();
         if (!thread.Join(TimeSpan.FromMinutes(2)))
-            Assert.Fail($"le finestre non hanno finito in tempo: fermo a «{_stage}»; finestre aperte: {string.Join(" | ", OpenWindows(_nativeThread))}");
+            Assert.Fail($"le finestre non hanno finito in tempo: fermo a «{_stage}»; finestre aperte: {string.Join(" | ", OpenWindows(_nativeThread))}; configurazione guidata aperta da: {WelcomeWindow.LastOpenedFrom}");
         if (failure is not null) throw new Exception("Errore nell'interfaccia: " + failure, failure);
     }
 

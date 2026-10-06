@@ -77,11 +77,11 @@ Mockup approvato: [Schermo](docs/roadmap/impostazioni-schermo.png) · [Messaggi]
 Uscita tutta prima della 2.0: v1.13.2 e v1.14.0 (vedi «Fatte»). Nella 2.0 resta da portare «Annulla» nel sistema di avvisi
 uniforme (vedi Movimento).
 
-### Passaggio dalla 1.x
+### Passaggio dalla 1.x — fatto (verificato con un test sulle impostazioni della 1.13)
 - Impostazioni, schemi salvati (anche quelli modificati a mano), frasi pronte e visite del sorvegliante passano intatti.
 - Le opzioni che cambiano posto mantengono il loro valore; nessuna domanda all'utente se non serve.
 
-### Prova sul campo
+### Prova sul campo — in corso con la v2.0.0-beta.1
 - Versione di anteprima (beta) da usare in sala per qualche settimana prima del rilascio, su un canale separato dalle stabili.
 - Verifica della fluidità su un PC vecchio, con schermo della sala, pagina web e voce attivi insieme.
 

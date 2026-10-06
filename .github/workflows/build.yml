@@ -55,5 +55,7 @@ jobs:
           tag_name: ${{ inputs.release_tag || github.ref_name }}
           target_commitish: ${{ github.sha }}
           name: TimerSala ${{ inputs.release_tag || github.ref_name }}
+          # le versioni con un trattino (v2.0.0-beta.1) sono anteprime: non diventano «latest», il download del README resta sulla stabile
+          prerelease: ${{ contains(inputs.release_tag || github.ref_name, '-') }}
           body_path: release-notes.md
           files: publish/TimerSala.exe

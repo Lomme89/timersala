@@ -1,6 +1,8 @@
 # Novità
 
-## v2.0.0 — in preparazione
+## v2.0.0-beta.1 — 6 ottobre 2026 (anteprima)
+
+Versione di anteprima della 2.0, da provare in sala per qualche settimana prima del rilascio. Impostazioni, schemi salvati (anche quelli modificati a mano), frasi pronte e visite del sorvegliante della 1.x passano intatti. Se qualcosa non va, si può tornare alla v1.14.0 senza perdere nulla.
 
 **Impostazioni riorganizzate**
 - Barra laterale con sette sezioni al posto delle schede: Adunanze, Schermo, Countdown, Messaggi, Voce (beta), Rete e telefono, Programma.

@@ -52,7 +52,7 @@ public partial class QrWindow : Window
         Refresh();
     }
 
-    static BitmapImage ToImage(byte[] png)
+    internal static BitmapImage ToImage(byte[] png)
     {
         var img = new BitmapImage();
         img.BeginInit();

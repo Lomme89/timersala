@@ -37,8 +37,10 @@ public partial class MainWindow : Window
             UpdateTimerWindow();
             ApplyMiniMode();
             OfferRestore();
-            // dopo un aggiornamento le novità, ma non nel mezzo di un'adunanza ripresa
-            if (!_vm.IsRunning) HelpActions.ShowNewsIfUpdated(this, _vm);
+            // la prima volta la configurazione guidata; dopo un aggiornamento le novità (mai nel mezzo di un'adunanza ripresa)
+            if (_vm.IsRunning) return;
+            if (_vm.IsFirstRun && !_vm.Settings.OnboardingDone) Dispatcher.BeginInvoke(ShowWelcome, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+            HelpActions.ShowNewsIfUpdated(this, _vm);
         };
         LocationChanged += (_, _) => UpdateTopmostOfDisplay();
         vm.Timer.StateChanged += (_, _) => Dispatcher.BeginInvoke(CenterCurrentPart, System.Windows.Threading.DispatcherPriority.Background);
@@ -307,6 +309,9 @@ public partial class MainWindow : Window
     void Qr_Click(object sender, RoutedEventArgs e) => ShowPhoneQr();
 
     void Help_Click(object sender, RoutedEventArgs e) => HelpActions.ShowHelp(this, _vm);
+
+    /// <summary>Configurazione guidata (al primo avvio, o da Impostazioni → Programma).</summary>
+    public void ShowWelcome() => new WelcomeWindow(_vm) { Owner = this }.ShowDialog();
 
     void ExportWeek_Click(object sender, RoutedEventArgs e) => ExchangeDialogs.ExportWeek(this, _vm);
 

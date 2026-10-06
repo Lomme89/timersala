@@ -240,6 +240,15 @@ public partial class SettingsWindow : Window
 
     void Help_Click(object sender, RoutedEventArgs e) => HelpActions.ShowHelp(this, _main);
 
+    void Welcome_Click(object sender, RoutedEventArgs e)
+    {
+        _vm.Flush();
+        new WelcomeWindow(_main) { Owner = this }.ShowDialog();
+        // le scelte della configurazione guidata sono già applicate: la finestra si chiude senza riapplicare le sue
+        _reverted = true;
+        Close();
+    }
+
     void News_Click(object sender, RoutedEventArgs e) => HelpActions.ShowNews(this);
 
     void ReportProblem_Click(object sender, RoutedEventArgs e) => HelpActions.Report(this, _main, isProblem: true);

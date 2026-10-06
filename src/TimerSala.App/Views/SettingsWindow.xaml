@@ -1071,6 +1071,15 @@
                                         </StackPanel>
                                     </DockPanel>
                                 </Border>
+                                <Border Style="{StaticResource Row}">
+                                    <DockPanel>
+                                        <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Rifai" Padding="12,5" Click="Welcome_Click" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Configurazione guidata" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Schermo della sala, orari e prova del telefono, come al primo avvio." />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
                             </StackPanel>
                         </Border>
 

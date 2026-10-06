@@ -121,6 +121,19 @@ public class WindowsSmokeTests
         Pump();
         edit.Close();
 
+        // configurazione guidata: tutti i passi, poi chiusa senza finire
+        var welcome = new WelcomeWindow(vm) { Owner = main };
+        welcome.Show();
+        Pump();
+        for (int i = 0; i < WelcomeViewModel.LastStep; i++)
+        {
+            welcome.ViewModel.Step++;
+            Pump(200);
+        }
+        welcome.Close();
+        Pump();
+        Assert.True(vm.Settings.OnboardingDone);
+
         // guida e novità (dal changelog incorporato nel programma)
         var help = DocWindow.Help();
         help.Owner = main;

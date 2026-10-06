@@ -1,343 +1,1006 @@
 <Window x:Class="TimerSala.App.Views.SettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Impostazioni" Width="600" Height="860" ResizeMode="CanResize" MinHeight="480" MinWidth="520"
+        xmlns:v="clr-namespace:TimerSala.App.Views"
+        Title="Impostazioni" Language="it-IT" Width="1080" Height="800" MinWidth="880" MinHeight="560"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
-        Background="{StaticResource BgBrush}" Foreground="{StaticResource TextBrush}" FontFamily="{StaticResource UiFont}">
+        Background="{StaticResource BgBrush}" Foreground="{StaticResource TextBrush}" FontFamily="{StaticResource UiFont}"
+        UseLayoutRounding="True">
     <Window.Resources>
-        <Style TargetType="TextBlock" x:Key="Label">
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Margin" Value="0,0,12,0" />
-        </Style>
-        <Style TargetType="TextBlock" x:Key="Group">
-            <Setter Property="FontSize" Value="13" />
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
+        <Style x:Key="PageTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="28" />
             <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
-            <Setter Property="Margin" Value="0,16,0,8" />
         </Style>
-        <Style TargetType="TextBlock" x:Key="Hint">
-            <Setter Property="FontSize" Value="12" />
+        <Style x:Key="PageSubtitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14" />
             <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
             <Setter Property="TextWrapping" Value="Wrap" />
-            <Setter Property="Margin" Value="0,4,0,0" />
+            <Setter Property="Margin" Value="0,4,0,18" />
         </Style>
-        <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
-            <Setter Property="Margin" Value="0,0,0,6" />
+        <Style x:Key="Panel" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource CardBrush}" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="20,14,20,10" />
+            <Setter Property="Margin" Value="0,0,0,16" />
+        </Style>
+        <Style x:Key="PanelTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+            <Setter Property="Margin" Value="0,2,0,6" />
+        </Style>
+        <!-- una riga: testo a sinistra, controllo a destra; la linea sopra separa le righe -->
+        <Style x:Key="Row" TargetType="Border">
+            <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
+            <Setter Property="BorderThickness" Value="0,1,0,0" />
+            <Setter Property="Padding" Value="0,10" />
+            <Setter Property="MinHeight" Value="54" />
+        </Style>
+        <Style x:Key="FirstRow" TargetType="Border" BasedOn="{StaticResource Row}">
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
+        <Style x:Key="RowLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="RowHint" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12.5" />
+            <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Margin" Value="0,2,16,0" />
+        </Style>
+        <!-- «i» con la spiegazione completa al passaggio del mouse -->
+        <Style x:Key="Info" TargetType="TextBlock">
+            <Setter Property="Text" Value="&#xE946;" />
+            <Setter Property="FontFamily" Value="{StaticResource IconFont}" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+            <Setter Property="Margin" Value="8,0,0,0" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Cursor" Value="Help" />
+            <Setter Property="ToolTipService.ShowDuration" Value="30000" />
+            <Setter Property="ToolTipService.InitialShowDelay" Value="150" />
+        </Style>
+        <Style x:Key="NavIcon" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="{StaticResource IconFont}" />
+            <Setter Property="FontSize" Value="17" />
+            <Setter Property="Width" Value="30" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="Page" TargetType="ScrollViewer">
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="Padding" Value="28,22,28,8" />
+            <Setter Property="Visibility" Value="Collapsed" />
+        </Style>
+        <Style x:Key="Segments" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource InputBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
         </Style>
     </Window.Resources>
-    <DockPanel Margin="16">
-        <DockPanel DockPanel.Dock="Bottom" Margin="0,14,0,0">
-            <Button Style="{StaticResource FlatButton}" Content="Cartella dati" Click="OpenData_Click" ToolTip="Apre la cartella con impostazioni, schemi salvati e diagnostica" />
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Style="{StaticResource FlatButton}" Content="Applica" Width="90" Margin="0,0,8,0" Click="Apply_Click"
-                        ToolTip="Applica senza chiudere (utile per provare lo stile dello schermo)" />
-                <Button Style="{StaticResource FlatButton}" Content="Annulla" IsCancel="True" Width="90" Margin="0,0,8,0" />
-                <Button Style="{StaticResource FlatButton}" Content="Salva" IsDefault="True" Width="90" Click="Save_Click"
-                        Background="{StaticResource AccentBrush}" BorderThickness="0" Foreground="White" />
-            </StackPanel>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="230" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- ═════ barra laterale ═════ -->
+        <DockPanel Margin="14,18,10,14">
+            <TextBlock DockPanel.Dock="Bottom" Text="{Binding VersionText}" FontSize="12" Foreground="{StaticResource MutedBrush}" Margin="14,0,0,0" />
+            <ListBox x:Name="Nav" Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource NavItem}"
+                     SelectionChanged="Nav_SelectionChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBoxItem>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource NavIcon}" Text="&#xE787;" />
+                        <TextBlock Text="Adunanze" />
+                    </StackPanel>
+                </ListBoxItem>
+                <ListBoxItem>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource NavIcon}" Text="&#xE7F4;" />
+                        <TextBlock Text="Schermo" />
+                    </StackPanel>
+                </ListBoxItem>
+                <ListBoxItem>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource NavIcon}" Text="&#xE916;" />
+                        <TextBlock Text="Countdown" />
+                    </StackPanel>
+                </ListBoxItem>
+                <ListBoxItem>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource NavIcon}" Text="&#xE8BD;" />
+                        <TextBlock Text="Messaggi" />
+                    </StackPanel>
+                </ListBoxItem>
+                <ListBoxItem>
+                    <DockPanel Width="170">
+                        <Border DockPanel.Dock="Right" CornerRadius="9" BorderThickness="1" BorderBrush="{StaticResource AmberBrush}" Padding="7,0"
+                                VerticalAlignment="Center" Background="#1FFBBF24">
+                            <TextBlock Text="BETA" FontSize="10.5" FontWeight="Bold" Foreground="{StaticResource AmberBrush}" />
+                        </Border>
+                        <TextBlock Style="{StaticResource NavIcon}" Text="&#xE720;" />
+                        <TextBlock Text="Voce" />
+                    </DockPanel>
+                </ListBoxItem>
+                <ListBoxItem>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource NavIcon}" Text="&#xE701;" />
+                        <TextBlock Text="Rete e telefono" />
+                    </StackPanel>
+                </ListBoxItem>
+                <ListBoxItem>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource NavIcon}" Text="&#xE713;" />
+                        <TextBlock Text="Programma" />
+                    </StackPanel>
+                </ListBoxItem>
+            </ListBox>
         </DockPanel>
 
-        <TabControl x:Name="Tabs" SelectionChanged="Tabs_SelectionChanged">
-            <!-- ADUNANZE -->
-            <TabItem Header="Adunanze">
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="12">
-                        <TextBlock Text="ORARI" Style="{StaticResource Group}" Margin="0,0,0,8" />
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="170" />
-                                <ColumnDefinition Width="150" />
-                                <ColumnDefinition Width="90" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <TextBlock Text="Infrasettimanale" Style="{StaticResource Label}" />
-                            <ComboBox x:Name="MidweekDay" Grid.Column="1" />
-                            <TextBox x:Name="MidweekTime" Grid.Column="2" Margin="8,0,0,0" ToolTip="Ora di inizio, es. 19:00" />
-                            <TextBlock Grid.Row="1" Text="Fine settimana" Style="{StaticResource Label}" Margin="0,8,12,0" />
-                            <ComboBox x:Name="WeekendDay" Grid.Row="1" Grid.Column="1" Margin="0,8,0,0" />
-                            <TextBox x:Name="WeekendTime" Grid.Row="1" Grid.Column="2" Margin="8,8,0,0" ToolTip="Ora di inizio, es. 10:00" />
-                        </Grid>
-                        <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
-                            <TextBlock Text="Durata adunanza (min)" Style="{StaticResource Label}" Width="170" />
-                            <TextBox x:Name="MeetingLength" Width="80" />
-                        </StackPanel>
-                        <TextBlock Style="{StaticResource Hint}" Text="Serve per calcolare la fine prevista. All'avvio viene proposta l'adunanza di oggi o la prossima." />
-
-                        <TextBlock Text="VISITA DEL SORVEGLIANTE" Style="{StaticResource Group}" />
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="170" />
-                                <ColumnDefinition Width="240" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="Settimana" Style="{StaticResource Label}" />
-                            <ComboBox x:Name="OverseerWeekBox" Grid.Column="1" />
-                            <Button Grid.Column="2" Style="{StaticResource FlatButton}" Content="Aggiungi" Margin="8,0,0,0" Click="AddOverseerWeek_Click" />
-                        </Grid>
-                        <TextBlock x:Name="OverseerEmpty" Style="{StaticResource Hint}" Margin="170,6,0,0" Text="Nessuna visita in programma." />
-                        <ItemsControl x:Name="OverseerList" Margin="170,6,0,0" ButtonBase.Click="RemoveOverseerWeek_Click">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid Margin="0,0,0,4">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="240" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Text="{Binding Label}" VerticalAlignment="Center" />
-                                        <Button Grid.Column="1" Style="{StaticResource FlatButton}" Content="✕" Padding="8,2" Margin="8,0,0,0"
-                                                Tag="{Binding Value}" ToolTip="Togli questa settimana" />
-                                    </Grid>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                        <Grid Margin="0,8,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="170" />
-                                <ColumnDefinition Width="150" />
-                                <ColumnDefinition Width="90" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="Infrasettimanale" Style="{StaticResource Label}" />
-                            <ComboBox x:Name="OverseerDay" Grid.Column="1" />
-                            <TextBox x:Name="OverseerTime" Grid.Column="2" Margin="8,0,0,0" ToolTip="Ora di inizio durante la visita. Vuoto = stessa ora" />
-                        </Grid>
-                        <TextBlock Style="{StaticResource Hint}" Text="Nelle settimane indicate lo schema viene scaricato già con la visita del sorvegliante e l'adunanza infrasettimanale si sposta nel giorno scelto. Ora vuota = la solita." />
-
-                        <TextBlock Text="DURATE ADATTIVE" Style="{StaticResource Group}" />
-                        <CheckBox x:Name="AdaptiveStudy" Content="Studio biblico di congregazione adattivo" />
-                        <CheckBox x:Name="AdaptiveWatchtower" Content="Studio Torre di Guardia adattivo" />
-                        <TextBlock Style="{StaticResource Hint}" Text="Se l'adunanza è in ritardo, lo studio si accorcia (al massimo della metà) per finire in orario. Non si allunga mai oltre il tempo previsto. La durata adattata appare in arancione nell'elenco." />
-
-                        <TextBlock Text="CONTO ALLA ROVESCIA PRIMA DELL'INIZIO" Style="{StaticResource Group}" />
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Compare (minuti prima)" Style="{StaticResource Label}" Width="170" />
-                            <TextBox x:Name="CountdownMinutes" Width="80" />
-                        </StackPanel>
-                        <TextBlock Style="{StaticResource Hint}" Text="Compare da solo prima dell'inizio e sparisce all'orario di inizio o quando avvii la prima parte. 0 = disattivato." />
-
-                        <TextBlock Text="SCHEMI DA WOL.JW.ORG" Style="{StaticResource Group}" />
-                        <Grid Margin="0,0,0,8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="170" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="Lingua della guida" Style="{StaticResource Label}" />
-                            <ComboBox x:Name="LanguageBox" Grid.Column="1" />
-                        </Grid>
-                        <CheckBox x:Name="AutoDownload" Content="Scarica automaticamente le settimane non ancora salvate" />
+        <DockPanel Grid.Column="1">
+            <!-- ═════ piè di pagina ═════ -->
+            <Border DockPanel.Dock="Bottom" BorderBrush="{StaticResource LineBrush}" BorderThickness="0,1,0,0" Padding="28,12,20,12">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                        <Button Style="{StaticResource LinkButton}" Foreground="{StaticResource MutedBrush}" Content="Annulla le modifiche"
+                                VerticalAlignment="Center" Margin="0,0,14,0" Click="Revert_Click"
+                                IsEnabled="{Binding HasChanges}" ToolTip="Riporta tutto com'era quando hai aperto le impostazioni" />
+                        <Button Style="{StaticResource FlatButton}" Content="Fatto" Width="104" IsDefault="True" Click="Done_Click"
+                                Background="{StaticResource AccentBrush}" BorderThickness="0" Foreground="White" FontWeight="SemiBold" />
                     </StackPanel>
-                </ScrollViewer>
-            </TabItem>
-
-            <!-- SCHERMO -->
-            <TabItem Header="Schermo">
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="12">
-                        <TextBlock Text="MONITOR DEL TIMER" Style="{StaticResource Group}" Margin="0,0,0,8" />
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <ComboBox x:Name="MonitorBox" />
-                            <Button Grid.Column="1" Style="{StaticResource FlatButton}" Margin="8,0,0,0" Click="Identify_Click"
-                                    ToolTip="Mostra per qualche secondo il numero su ogni schermo">
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="&#xE7F8;" FontFamily="{StaticResource IconFont}" VerticalAlignment="Center" Margin="0,0,6,0" />
-                                    <TextBlock Text="Identifica" />
-                                </StackPanel>
-                            </Button>
-                        </Grid>
-                        <CheckBox x:Name="ShowTimerWindow" Content="Mostra il timer su questo schermo" Margin="0,10,0,0" />
-
-                        <TextBlock Text="ASPETTO" Style="{StaticResource Group}" />
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="110" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <TextBlock Text="Tema" Style="{StaticResource Label}" />
-                            <ComboBox x:Name="ThemeBox" Grid.Column="1" />
-                            <TextBlock Grid.Row="1" Text="Layout" Style="{StaticResource Label}" Margin="0,8,12,0" />
-                            <ComboBox x:Name="LayoutBox" Grid.Row="1" Grid.Column="1" Margin="0,8,0,0" />
-                            <TextBlock Grid.Row="2" Text="Carattere" Style="{StaticResource Label}" Margin="0,8,12,0" />
-                            <ComboBox x:Name="FontBox" Grid.Row="2" Grid.Column="1" Margin="0,8,0,0" IsEditable="True" />
-                        </Grid>
-
-                        <TextBlock Text="CONTO ALLA ROVESCIA PRIMA DELL'INIZIO" Style="{StaticResource Group}" />
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <ComboBox x:Name="CountdownStyleBox" />
-                            <Button Grid.Column="1" Style="{StaticResource FlatButton}" Margin="8,0,0,0" Click="PreviewCountdown_Click"
-                                    ToolTip="Applica e mostra per 12 secondi il conto alla rovescia sullo schermo del timer">
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="&#xE768;" FontFamily="{StaticResource IconFont}" VerticalAlignment="Center" Margin="0,0,6,0" />
-                                    <TextBlock Text="Prova" />
-                                </StackPanel>
-                            </Button>
-                        </Grid>
-                        <TextBlock Style="{StaticResource Hint}" Text="È la schermata che vede tutta la sala prima dell'adunanza: gli stili diversi dal classico non usano verde, giallo e rosso, così non sembra una parte." />
-
-                        <TextBlock Text="DURANTE IL TIMER" Style="{StaticResource Group}" />
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <TextBlock Text="Giallo quando mancano" Style="{StaticResource Label}" />
-                            <TextBox x:Name="WarningSeconds" Width="64" HorizontalContentAlignment="Center" />
-                            <TextBlock Text="secondi" Style="{StaticResource Label}" Margin="8,0,0,0" />
-                        </StackPanel>
-                        <UniformGrid Columns="2">
-                            <CheckBox x:Name="ColoredDigits" Content="Cifre colorate" ToolTip="Verde, giallo e rosso" />
-                            <CheckBox x:Name="FlashOvertime" Content="Lampeggio allo scadere" />
-                            <CheckBox x:Name="ShowTitle" Content="Titolo della parte" />
-                            <CheckBox x:Name="ShowSection" Content="Sezione" ToolTip="Tesori, Ministero, Vita cristiana…" />
-                            <CheckBox x:Name="ShowBar" Content="Barra di avanzamento" ToolTip="Solo nel layout classico" />
-                            <CheckBox x:Name="ShowNextPart" Content="Parte successiva" />
-                            <CheckBox x:Name="ShowClockRunning" Content="Ora in basso" />
-                            <CheckBox x:Name="ShowDelay" Content="Ritardo al posto dell'ora" />
-                        </UniformGrid>
-
-                        <TextBlock Text="A TIMER FERMO" Style="{StaticResource Group}" />
-                        <UniformGrid Columns="2">
-                            <CheckBox x:Name="ShowClock" Content="Orologio" />
-                            <CheckBox x:Name="ShowNext" Content="Prossima parte" />
-                        </UniformGrid>
-
-                        <TextBlock Text="CONTROLLER" Style="{StaticResource Group}" />
-                        <CheckBox x:Name="TopmostBox" Content="Finestra di controllo sempre in primo piano" />
-                        <TextBlock Style="{StaticResource Hint}" Text="Lo stile vale anche per la pagina web. La modalità mini (tasto M) è sempre in primo piano." />
-                    </StackPanel>
-                </ScrollViewer>
-            </TabItem>
-
-            <!-- MESSAGGI -->
-            <TabItem Header="Messaggi">
-                <DockPanel Margin="12">
-                    <StackPanel DockPanel.Dock="Top">
-                        <CheckBox x:Name="MessagesEnabled" Content="Abilita i messaggi all'oratore" FontWeight="SemiBold" Margin="0,0,0,4" />
-                        <TextBlock Style="{StaticResource Hint}" Margin="0,0,0,12"
-                                   Text="Se disattivati, la riga dei messaggi sparisce dal controller, dalla modalità mini e dalla pagina web." />
-                        <TextBlock Text="Frasi pronte per l'oratore, una per riga:" Margin="0,0,0,8" />
-                    </StackPanel>
-                    <StackPanel DockPanel.Dock="Bottom" Margin="0,10,0,0">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Durata sullo schermo (secondi)" Style="{StaticResource Label}" Width="210" />
-                            <TextBox x:Name="MessageSeconds" Width="80" />
-                        </StackPanel>
-                        <TextBlock Style="{StaticResource Hint}" Text="0 = il messaggio resta finché non lo togli. Puoi sempre scrivere un messaggio diverso nel controller." />
-                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                            <TextBlock Text="A tutto schermo per (secondi)" Style="{StaticResource Label}" Width="210" />
-                            <TextBox x:Name="MessageFullSeconds" Width="80" />
-                        </StackPanel>
-                        <TextBlock Style="{StaticResource Hint}" Text="Con il pulsante a tutto schermo (o Ctrl+Invio) il messaggio occupa lo schermo per questi secondi, con il tempo piccolo in un angolo, poi passa nella fascia. Utile per un numero di cantico o il nome di chi ha alzato la mano." />
-                    </StackPanel>
-                    <TextBox x:Name="Presets" AcceptsReturn="True" TextWrapping="Wrap" VerticalContentAlignment="Top"
-                             VerticalScrollBarVisibility="Auto" MinHeight="140" />
+                    <Ellipse Width="8" Height="8" Fill="{StaticResource GreenBrush}" VerticalAlignment="Center" Margin="0,0,10,0" />
+                    <TextBlock Text="Le modifiche si applicano subito" Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center" />
                 </DockPanel>
-            </TabItem>
+            </Border>
 
-            <!-- VOCE -->
-            <TabItem x:Name="VoiceTab" Header="Voce (beta)">
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="12">
-                        <TextBlock Text="AVVIO CON LA VOCE · SPERIMENTALE" Style="{StaticResource Group}" Margin="0,0,0,8" />
-                        <CheckBox x:Name="VoiceEnabled" Content="Avvia le parti quando l'oratore inizia a parlare" />
-                        <TextBlock Style="{StaticResource Hint}" Text="Premi Avvia mentre il presidente presenta la parte: il pulsante diventa «In attesa». Quello che si sente subito dopo la pressione conta come voce del presidente; dopo una pausa intera, la prima voce fa partire il timer, contando dall'istante in cui la voce è iniziata. Premi di nuovo Avvia per partire subito; Esc annulla l'attesa o, nei primi secondi, un avvio sbagliato. Dal telefono l'avvio è sempre immediato." />
+            <Grid x:Name="Pages">
+                <!-- ═════════════ ADUNANZE ═════════════ -->
+                <ScrollViewer Style="{StaticResource Page}">
+                    <StackPanel MaxWidth="900">
+                        <TextBlock Style="{StaticResource PageTitle}" Text="Adunanze" />
+                        <TextBlock Style="{StaticResource PageSubtitle}" Text="Orari, schemi e durate. Lo schema della settimana si scarica da solo." />
 
-                        <TextBlock Text="INGRESSO AUDIO" Style="{StaticResource Group}" />
-                        <ComboBox x:Name="VoiceDevice" SelectionChanged="VoiceDevice_Changed" />
-                        <TextBlock Style="{StaticResource Hint}" Text="Scegli l'ingresso che riceve l'audio del mixer (di solito lo stesso usato per Zoom). TimerSala lo ascolta in condivisione, senza disturbare gli altri programmi." />
-
-                        <Border Margin="0,12,0,0" Padding="12,10" CornerRadius="10" Background="{StaticResource CardBrush}">
+                        <Border Style="{StaticResource Panel}">
                             <StackPanel>
-                                <DockPanel Margin="0,0,0,8">
-                                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                                        <Ellipse x:Name="VoiceLamp" Width="10" Height="10" Fill="{StaticResource LineBrush}" VerticalAlignment="Center" Margin="0,0,6,0" />
-                                        <TextBlock x:Name="VoiceLampText" Text="Silenzio" FontSize="12" Foreground="{StaticResource MutedBrush}" Width="56" VerticalAlignment="Center" />
-                                    </StackPanel>
-                                    <TextBlock Text="Prova: parla nel microfono" FontWeight="SemiBold" VerticalAlignment="Center" />
-                                </DockPanel>
-                                <Grid Height="16">
-                                    <Border Background="{StaticResource LineBrush}" CornerRadius="4" />
-                                    <Border x:Name="VoiceMeter" HorizontalAlignment="Left" Width="0" CornerRadius="4" Background="#22C55E" />
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition x:Name="ThresholdLeft" Width="0.33*" />
-                                            <ColumnDefinition Width="2" />
-                                            <ColumnDefinition x:Name="ThresholdRight" Width="0.67*" />
-                                        </Grid.ColumnDefinitions>
-                                        <Border Grid.Column="1" Background="{StaticResource AmberBrush}" Margin="0,-3" />
-                                    </Grid>
-                                </Grid>
-                                <TextBlock x:Name="VoiceTestStatus" Style="{StaticResource Hint}" Text="La barra mostra il livello dell'ingresso scelto. Il segno giallo è la soglia." />
+                                <TextBlock Style="{StaticResource PanelTitle}" Text="ORARI" />
+                                <Border Style="{StaticResource FirstRow}">
+                                    <DockPanel>
+                                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                            <ComboBox Width="150" ItemsSource="{Binding Days}" DisplayMemberPath="Label" SelectedValuePath="Value"
+                                                      SelectedValue="{Binding MidweekDay}" />
+                                            <v:TimeBox Width="96" Margin="8,0,0,0" Time="{Binding MidweekTime}" />
+                                        </StackPanel>
+                                        <TextBlock Style="{StaticResource RowLabel}" Text="Infrasettimanale" />
+                                    </DockPanel>
+                                </Border>
+                                <Border Style="{StaticResource Row}">
+                                    <DockPanel>
+                                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                            <ComboBox Width="150" ItemsSource="{Binding Days}" DisplayMemberPath="Label" SelectedValuePath="Value"
+                                                      SelectedValue="{Binding WeekendDay}" />
+                                            <v:TimeBox Width="96" Margin="8,0,0,0" Time="{Binding WeekendTime}" />
+                                        </StackPanel>
+                                        <TextBlock Style="{StaticResource RowLabel}" Text="Fine settimana" />
+                                    </DockPanel>
+                                </Border>
+                                <Border Style="{StaticResource Row}">
+                                    <DockPanel>
+                                        <v:NumberBox DockPanel.Dock="Right" Width="150" Minimum="30" Maximum="300" Step="5" Unit="min" Value="{Binding MeetingLength}" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Durata dell'adunanza" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="{Binding EndTimesText}" />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
                             </StackPanel>
                         </Border>
 
-                        <TextBlock Text="REGOLAZIONI" Style="{StaticResource Group}" />
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="170" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="64" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <TextBlock Text="Soglia della voce" Style="{StaticResource Label}" />
-                            <Slider x:Name="VoiceThreshold" Grid.Column="1" Minimum="-60" Maximum="-10" SmallChange="1" LargeChange="5"
-                                    IsSnapToTickEnabled="True" TickFrequency="1" ValueChanged="VoiceSlider_Changed" />
-                            <TextBlock x:Name="VoiceThresholdText" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource PanelTitle}" Text="SETTIMANE PARTICOLARI" />
+                                <Border Style="{StaticResource FirstRow}">
+                                    <DockPanel>
+                                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top">
+                                            <ComboBox Width="250" ItemsSource="{Binding FreeWeeks}" SelectedItem="{Binding WeekToAdd}" MaxDropDownHeight="320" />
+                                            <Button Style="{StaticResource FlatButton}" Content="Aggiungi" Margin="8,0,0,0" Padding="12,5"
+                                                    Command="{Binding AddOverseerWeekCommand}" />
+                                        </StackPanel>
+                                        <StackPanel VerticalAlignment="Top">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Style="{StaticResource RowLabel}" Text="Visita del sorvegliante" />
+                                                <TextBlock Style="{StaticResource Info}"
+                                                           ToolTip="Nelle settimane indicate lo schema viene scaricato già adattato alla visita, anche con «Scarica tutte le prossime settimane». Il pulsante della visita nel controller aggiorna anche questo elenco." />
+                                            </StackPanel>
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Segna le settimane in anticipo, anche a mesi di distanza." />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                                <ItemsControl ItemsSource="{Binding OverseerWeeks}" Margin="0,0,0,10">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border CornerRadius="16" Background="{StaticResource InputBrush}" BorderBrush="{StaticResource LineBrush}"
+                                                    BorderThickness="1" Padding="12,3,4,3" Margin="0,0,8,6">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Label}" VerticalAlignment="Center" FontSize="13" />
+                                                    <Button Style="{StaticResource GhostIconButton}" Width="24" Height="24" FontSize="10" Content="&#xE711;" Margin="6,0,0,0"
+                                                            Command="{Binding DataContext.RemoveOverseerWeekCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                            CommandParameter="{Binding Value}" ToolTip="Togli questa settimana" />
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <Border Style="{StaticResource Row}">
+                                    <DockPanel>
+                                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                            <ComboBox Width="150" ItemsSource="{Binding OverseerDays}" DisplayMemberPath="Label" SelectedValuePath="Value"
+                                                      SelectedValue="{Binding OverseerDay}" />
+                                            <v:TimeBox Width="120" Margin="8,0,0,0" Time="{Binding OverseerTime}" AllowEmpty="True" Placeholder="stessa ora" />
+                                        </StackPanel>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Infrasettimanale durante la visita" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Per esempio il martedì. Countdown e fine prevista seguono il giorno scelto." />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
 
-                            <TextBlock Grid.Row="1" Text="Pausa prima della parte" Style="{StaticResource Label}" Margin="0,12,12,0" />
-                            <Slider x:Name="VoicePause" Grid.Row="1" Grid.Column="1" Margin="0,12,0,0" Minimum="1" Maximum="6" SmallChange="0.5" LargeChange="0.5"
-                                    IsSnapToTickEnabled="True" TickFrequency="0.5" ValueChanged="VoiceSlider_Changed" />
-                            <TextBlock x:Name="VoicePauseText" Grid.Row="1" Grid.Column="2" Margin="0,12,0,0" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource PanelTitle}" Text="SCHEMI DA WOL.JW.ORG" />
+                                <Border Style="{StaticResource FirstRow}">
+                                    <DockPanel>
+                                        <ComboBox DockPanel.Dock="Right" Width="224" ItemsSource="{Binding Languages}" DisplayMemberPath="Name"
+                                                  SelectedItem="{Binding Language}" />
+                                        <TextBlock Style="{StaticResource RowLabel}" Text="Lingua" />
+                                    </DockPanel>
+                                </Border>
+                                <Border Style="{StaticResource Row}">
+                                    <DockPanel>
+                                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding AutoDownload}" />
+                                        <TextBlock Style="{StaticResource RowLabel}" Text="Scarica da solo le settimane mancanti" />
+                                    </DockPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
 
-                            <TextBlock Grid.Row="2" Text="Voce per almeno" Style="{StaticResource Label}" Margin="0,12,12,0" />
-                            <Slider x:Name="VoiceMin" Grid.Row="2" Grid.Column="1" Margin="0,12,0,0" Minimum="0.2" Maximum="1.5" SmallChange="0.1" LargeChange="0.1"
-                                    IsSnapToTickEnabled="True" TickFrequency="0.1" ValueChanged="VoiceSlider_Changed" />
-                            <TextBlock x:Name="VoiceMinText" Grid.Row="2" Grid.Column="2" Margin="0,12,0,0" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                        </Grid>
-                        <TextBlock Style="{StaticResource Hint}" Text="Soglia: con la sala in silenzio la barra deve restare sotto il segno giallo, quando si parla deve superarlo. Pausa: il silenzio che separa la presentazione dall'inizio della parte, misurato da quando premi Avvia; deve essere più lungo delle pause tra una frase e l'altra del presidente. Voce per almeno: colpi, tosse e regolazioni del microfono più brevi di così vengono ignorati." />
-
-                        <CheckBox x:Name="VoiceAutoArm" Content="Dopo Ferma, metti in attesa la parte successiva" Margin="0,14,0,0" />
-                        <TextBlock Style="{StaticResource Hint}" Text="Non vale se in mezzo c'è un cantico: dopo il cantico di solito parla prima il presidente." />
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource PanelTitle}" Text="STUDI ADATTIVI" />
+                                <Border Style="{StaticResource FirstRow}">
+                                    <DockPanel>
+                                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding AdaptiveStudy}" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Style="{StaticResource RowLabel}" Text="Studio biblico di congregazione" />
+                                                <TextBlock Style="{StaticResource Info}"
+                                                           ToolTip="Se l'adunanza è in ritardo, lo studio si accorcia per finire in orario: al massimo della metà, a passi di 15 secondi. Non si allunga mai oltre il tempo previsto. La durata adattata appare in arancione nell'elenco." />
+                                            </StackPanel>
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Si accorcia se l'adunanza è in ritardo, mai oltre la metà" />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                                <Border Style="{StaticResource Row}">
+                                    <DockPanel>
+                                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding AdaptiveWatchtower}" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Style="{StaticResource RowLabel}" Text="Studio Torre di Guardia" />
+                                                <TextBlock Style="{StaticResource Info}"
+                                                           ToolTip="Se l'adunanza è in ritardo, lo studio si accorcia per finire in orario: al massimo della metà, a passi di 15 secondi. Non si allunga mai oltre il tempo previsto." />
+                                            </StackPanel>
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Si accorcia se l'adunanza è in ritardo, mai oltre la metà" />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
                 </ScrollViewer>
-            </TabItem>
 
-            <!-- RETE -->
-            <TabItem Header="Rete">
-                <StackPanel Margin="12">
-                    <CheckBox x:Name="WebEnabled" Content="Server web attivo (timer visibile da altri dispositivi in rete)" Margin="0,0,0,8" />
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Porta" Style="{StaticResource Label}" Width="170" />
-                        <TextBox x:Name="WebPort" Width="90" />
-                    </StackPanel>
-                    <TextBlock Text="Indirizzo nei collegamenti e nei codici QR" Margin="0,12,0,6" />
-                    <ComboBox x:Name="AddressBox" />
-                    <TextBlock Style="{StaticResource Hint}" Text="Automatico usa la scheda di rete principale (quella con cui il PC esce in rete) e ignora le schede virtuali. Il nome del PC funziona solo se la rete lo risolve." />
-                    <TextBlock Style="{StaticResource Hint}" Text="Se gli altri dispositivi non si collegano, controlla che Windows Firewall consenta TimerSala sulle reti private." />
+                <!-- ═════════════ SCHERMO ═════════════ -->
+                <ScrollViewer Style="{StaticResource Page}">
+                    <StackPanel MaxWidth="1000">
+                        <TextBlock Style="{StaticResource PageTitle}" Text="Schermo" />
+                        <TextBlock Style="{StaticResource PageSubtitle}" Text="Lo schermo del timer che vede la sala, e la pagina web. L'anteprima si aggiorna mentre cambi le opzioni." />
 
-                    <TextBlock Text="CONTROLLO REMOTO" Style="{StaticResource Group}" />
-                    <CheckBox x:Name="RemoteEnabled" Content="Consenti di controllare il timer dalla pagina web (con PIN)" Margin="0,0,0,8" />
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="PIN" Style="{StaticResource Label}" Width="170" />
-                        <TextBox x:Name="RemotePin" Width="90" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="16" />
+                                <ColumnDefinition Width="340" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel>
+                                <Border Style="{StaticResource Panel}">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource PanelTitle}" Text="MONITOR" />
+                                        <Border Style="{StaticResource FirstRow}">
+                                            <DockPanel>
+                                                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                                    <ComboBox Width="250" ItemsSource="{Binding Monitors}" SelectedItem="{Binding Monitor}" />
+                                                    <Button Style="{StaticResource FlatButton}" Margin="8,0,0,0" Padding="12,5" Click="Identify_Click"
+                                                            ToolTip="Mostra per qualche secondo il numero su ogni schermo" Content="Identifica" />
+                                                </StackPanel>
+                                                <TextBlock Style="{StaticResource RowLabel}" Text="Schermo della sala" />
+                                            </DockPanel>
+                                        </Border>
+                                        <Border Style="{StaticResource Row}">
+                                            <DockPanel>
+                                                <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding ShowTimerWindow}" />
+                                                <TextBlock Style="{StaticResource RowLabel}" Text="Mostra il timer su questo schermo" />
+                                            </DockPanel>
+                                        </Border>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Style="{StaticResource Panel}">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource PanelTitle}" Text="ASPETTO" />
+                                        <Border Style="{StaticResource FirstRow}">
+                                            <DockPanel>
+                                                <Border DockPanel.Dock="Right" Style="{StaticResource Segments}">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <RadioButton Style="{StaticResource SegmentButton}" GroupName="ScreenTheme" Content="Scuro" MinWidth="80"
+                                                                     IsChecked="{Binding IsDarkScreen}" ToolTip="Consigliato in sala" />
+                                                        <RadioButton Style="{StaticResource SegmentButton}" GroupName="ScreenTheme" Content="Chiaro" MinWidth="80"
+                                                                     IsChecked="{Binding IsLightScreen}" />
+                                                    </StackPanel>
+                                                </Border>
+                                                <TextBlock Style="{StaticResource RowLabel}" Text="Tema" />
+                                            </DockPanel>
+                                        </Border>
+                                        <Border Style="{StaticResource Row}">
+                                            <UniformGrid Columns="3">
+                                                <RadioButton Style="{StaticResource ChoiceCard}" GroupName="Layout" IsChecked="{Binding LayoutClassic}"
+                                                             ToolTip="Titolo, cifre, barra e piè di pagina">
+                                                    <StackPanel>
+                                                        <Border Width="96" Height="54" Background="Black" CornerRadius="4" Padding="8,6">
+                                                            <Grid>
+                                                                <Border Height="3" Width="34" Background="#55606E" HorizontalAlignment="Left" VerticalAlignment="Top" CornerRadius="1.5" />
+                                                                <TextBlock Text="09:41" Foreground="#22C55E" FontFamily="{StaticResource DigitsFont}" FontSize="19"
+                                                                           HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,2,0,0" />
+                                                                <Border Height="3" Background="#22C55E" VerticalAlignment="Bottom" CornerRadius="1.5" Margin="0,0,26,0" />
+                                                            </Grid>
+                                                        </Border>
+                                                        <TextBlock Text="Classico" HorizontalAlignment="Center" Margin="0,6,0,0" />
+                                                    </StackPanel>
+                                                </RadioButton>
+                                                <RadioButton Style="{StaticResource ChoiceCard}" GroupName="Layout" IsChecked="{Binding LayoutHourglass}"
+                                                             ToolTip="Lo sfondo si svuota da destra a sinistra come una clessidra">
+                                                    <StackPanel>
+                                                        <Border Width="96" Height="54" Background="Black" CornerRadius="4" ClipToBounds="True">
+                                                            <Grid>
+                                                                <Border Background="#22C55E" Opacity="0.45" HorizontalAlignment="Left" Width="44" />
+                                                                <TextBlock Text="09:41" Foreground="White" FontFamily="{StaticResource DigitsFont}" FontSize="19"
+                                                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                            </Grid>
+                                                        </Border>
+                                                        <TextBlock Text="Clessidra" HorizontalAlignment="Center" Margin="0,6,0,0" />
+                                                    </StackPanel>
+                                                </RadioButton>
+                                                <RadioButton Style="{StaticResource ChoiceCard}" GroupName="Layout" IsChecked="{Binding LayoutDigits}"
+                                                             ToolTip="Solo le cifre, il più grandi possibile">
+                                                    <StackPanel>
+                                                        <Border Width="96" Height="54" Background="Black" CornerRadius="4">
+                                                            <TextBlock Text="09:41" Foreground="#22C55E" FontFamily="{StaticResource DigitsFont}" FontSize="28"
+                                                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                        </Border>
+                                                        <TextBlock Text="Solo cifre" HorizontalAlignment="Center" Margin="0,6,0,0" />
+                                                    </StackPanel>
+                                                </RadioButton>
+                                            </UniformGrid>
+                                        </Border>
+                                        <Border Style="{StaticResource Row}">
+                                            <DockPanel>
+                                                <ComboBox DockPanel.Dock="Right" Width="250" IsEditable="True" ItemsSource="{Binding FontNames}" MaxDropDownHeight="360"
+                                                          Text="{Binding DisplayFont, UpdateSourceTrigger=LostFocus}" />
+                                                <TextBlock Style="{StaticResource RowLabel}" Text="Carattere" />
+                                            </DockPanel>
+                                        </Border>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2">
+                                <!-- anteprima dello schermo: stessa logica dello schermo vero, con una parte d'esempio -->
+                                <Border CornerRadius="10" BorderBrush="{StaticResource LineBrush}" BorderThickness="1" ClipToBounds="True">
+                                    <Viewbox>
+                                        <Grid Width="640" Height="360" Background="{Binding PreviewBackground}">
+                                            <Rectangle Fill="{Binding PreviewPhase}" Opacity="0.45" RenderTransformOrigin="0,0.5"
+                                                       Visibility="{Binding PreviewShowHourglass, Converter={StaticResource BoolToVis}}">
+                                                <Rectangle.RenderTransform>
+                                                    <ScaleTransform ScaleX="{Binding PreviewRemaining}" />
+                                                </Rectangle.RenderTransform>
+                                            </Rectangle>
+                                            <Grid Margin="30,16,30,10">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="*" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <StackPanel Visibility="{Binding PreviewShowHeader, Converter={StaticResource BoolToVis}}" MinHeight="60">
+                                                    <TextBlock Text="{Binding PreviewSection}" Foreground="{Binding PreviewMuted}" FontSize="13" FontFamily="{Binding PreviewFont}"
+                                                               Visibility="{Binding PreviewShowSection, Converter={StaticResource BoolToVis}}" />
+                                                    <TextBlock Text="{Binding PreviewTitle}" Foreground="{Binding PreviewForeground}" FontSize="28" FontWeight="SemiBold"
+                                                               FontFamily="{Binding PreviewFont}" TextTrimming="CharacterEllipsis"
+                                                               Visibility="{Binding PreviewShowTitle, Converter={StaticResource BoolToVis}}" />
+                                                </StackPanel>
+                                                <Viewbox Grid.Row="1">
+                                                    <Grid>
+                                                        <TextBlock Text="+88:88" Opacity="0" FontSize="200" FontFamily="{Binding PreviewFont}" />
+                                                        <TextBlock Text="{Binding PreviewDigits}" FontSize="200" FontFamily="{Binding PreviewFont}"
+                                                                   Foreground="{Binding PreviewDigitsBrush}" HorizontalAlignment="Center" />
+                                                    </Grid>
+                                                </Viewbox>
+                                                <Grid Grid.Row="2" Height="9" Margin="0,4,0,8" Visibility="{Binding PreviewShowBar, Converter={StaticResource BoolToVis}}">
+                                                    <Border Background="{Binding PreviewTrack}" CornerRadius="4.5" />
+                                                    <ProgressBar Style="{StaticResource SlimProgress}" Height="9" Value="{Binding PreviewProgress, Mode=OneWay}"
+                                                                 Foreground="{Binding PreviewPhase}" />
+                                                </Grid>
+                                                <DockPanel Grid.Row="3" Visibility="{Binding PreviewShowHeader, Converter={StaticResource BoolToVis}}" MinHeight="22">
+                                                    <TextBlock DockPanel.Dock="Right" Text="{Binding PreviewFooterRight}" Foreground="{Binding PreviewMuted}" FontSize="15"
+                                                               FontFamily="{Binding PreviewFont}" />
+                                                    <TextBlock Text="{Binding PreviewFooterLeft}" Foreground="{Binding PreviewMuted}" FontSize="14" FontFamily="{Binding PreviewFont}" />
+                                                </DockPanel>
+                                            </Grid>
+                                        </Grid>
+                                    </Viewbox>
+                                </Border>
+                                <Border Style="{StaticResource Segments}" HorizontalAlignment="Center" Margin="0,10,0,16">
+                                    <StackPanel Orientation="Horizontal">
+                                        <RadioButton Style="{StaticResource SegmentButton}" GroupName="PreviewState" Content="Durante la parte" FontSize="12.5"
+                                                     IsChecked="{Binding PreviewRunning}" />
+                                        <RadioButton Style="{StaticResource SegmentButton}" GroupName="PreviewState" Content="A riposo" FontSize="12.5"
+                                                     IsChecked="{Binding PreviewIdle}" />
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Style="{StaticResource Panel}">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource PanelTitle}" Text="COLORI" />
+                                        <Border Style="{StaticResource FirstRow}">
+                                            <DockPanel>
+                                                <v:NumberBox DockPanel.Dock="Right" Width="136" Minimum="0" Maximum="600" Step="15" Unit="s" ZeroText="mai"
+                                                             Value="{Binding WarningSeconds}" />
+                                                <TextBlock Style="{StaticResource RowLabel}" Text="Giallo quando mancano" />
+                                            </DockPanel>
+                                        </Border>
+                                        <Border Style="{StaticResource Row}">
+                                            <DockPanel>
+                                                <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding ColoredDigits}" />
+                                                <TextBlock Style="{StaticResource RowLabel}" Text="Cifre colorate" ToolTip="Verde, giallo e rosso" />
+                                            </DockPanel>
+                                        </Border>
+                                        <Border Style="{StaticResource Row}">
+                                            <DockPanel>
+                                                <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding FlashOnOvertime}" />
+                                                <TextBlock Style="{StaticResource RowLabel}" Text="Lampeggio allo scadere" />
+                                            </DockPanel>
+                                        </Border>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Grid>
+
+                        <Border Style="{StaticResource Panel}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="110" />
+                                    <ColumnDefinition Width="110" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.Resources>
+                                    <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                    </Style>
+                                    <Style x:Key="None" TargetType="TextBlock">
+                                        <Setter Property="Text" Value="—" />
+                                        <Setter Property="Foreground" Value="{StaticResource LineBrush}" />
+                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                        <Setter Property="VerticalAlignment" Value="Center" />
+                                    </Style>
+                                    <Style x:Key="Cell" TargetType="Border">
+                                        <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
+                                        <Setter Property="BorderThickness" Value="0,1,0,0" />
+                                        <Setter Property="Height" Value="46" />
+                                        <Setter Property="Grid.ColumnSpan" Value="3" />
+                                    </Style>
+                                    <Style x:Key="ColHead" TargetType="TextBlock">
+                                        <Setter Property="FontSize" Value="12.5" />
+                                        <Setter Property="FontWeight" Value="SemiBold" />
+                                        <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                        <Setter Property="VerticalAlignment" Value="Bottom" />
+                                        <Setter Property="Margin" Value="0,0,0,8" />
+                                    </Style>
+                                </Grid.Resources>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Style="{StaticResource PanelTitle}" Text="COSA MOSTRARE" Margin="0,2,0,8" VerticalAlignment="Bottom" />
+                                <TextBlock Grid.Column="1" Style="{StaticResource ColHead}" Text="Durante la parte" />
+                                <TextBlock Grid.Column="2" Style="{StaticResource ColHead}" Text="A riposo" />
+
+                                <Border Grid.Row="1" Style="{StaticResource Cell}" />
+                                <TextBlock Grid.Row="1" Style="{StaticResource RowLabel}" Text="Titolo della parte" />
+                                <CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding ShowTitle}" />
+                                <TextBlock Grid.Row="1" Grid.Column="2" Style="{StaticResource None}" />
+
+                                <Border Grid.Row="2" Style="{StaticResource Cell}" />
+                                <TextBlock Grid.Row="2" Style="{StaticResource RowLabel}" Text="Sezione (Tesori, Ministero, Vita cristiana…)" />
+                                <CheckBox Grid.Row="2" Grid.Column="1" IsChecked="{Binding ShowSection}" />
+                                <TextBlock Grid.Row="2" Grid.Column="2" Style="{StaticResource None}" />
+
+                                <Border Grid.Row="3" Style="{StaticResource Cell}" />
+                                <StackPanel Grid.Row="3" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource RowLabel}" Text="Barra di avanzamento" />
+                                    <TextBlock Style="{StaticResource Info}" ToolTip="Solo nel layout classico" />
+                                </StackPanel>
+                                <CheckBox Grid.Row="3" Grid.Column="1" IsChecked="{Binding ShowProgressBar}" IsEnabled="{Binding IsClassicLayout}" />
+                                <TextBlock Grid.Row="3" Grid.Column="2" Style="{StaticResource None}" />
+
+                                <Border Grid.Row="4" Style="{StaticResource Cell}" />
+                                <TextBlock Grid.Row="4" Style="{StaticResource RowLabel}" Text="Parte successiva" />
+                                <CheckBox Grid.Row="4" Grid.Column="1" IsChecked="{Binding ShowNextPart}" />
+                                <CheckBox Grid.Row="4" Grid.Column="2" IsChecked="{Binding ShowNextPartWhenIdle}" />
+
+                                <Border Grid.Row="5" Style="{StaticResource Cell}" />
+                                <TextBlock Grid.Row="5" Style="{StaticResource RowLabel}" Text="Ora" />
+                                <CheckBox Grid.Row="5" Grid.Column="1" IsChecked="{Binding ShowClockWhileRunning}" />
+                                <CheckBox Grid.Row="5" Grid.Column="2" IsChecked="{Binding ShowClockWhenIdle}" ToolTip="Orologio grande al posto delle cifre" />
+
+                                <Border Grid.Row="6" Style="{StaticResource Cell}" />
+                                <StackPanel Grid.Row="6" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource RowLabel}" Text="Ritardo al posto dell'ora" />
+                                    <TextBlock Style="{StaticResource Info}" ToolTip="In basso a destra, quando l'adunanza è in ritardo o in anticipo di almeno 5 secondi" />
+                                </StackPanel>
+                                <CheckBox Grid.Row="6" Grid.Column="1" IsChecked="{Binding ShowDelayOnDisplay}" />
+                                <TextBlock Grid.Row="6" Grid.Column="2" Style="{StaticResource None}" />
+                            </Grid>
+                        </Border>
                     </StackPanel>
-                    <TextBlock Style="{StaticResource Hint}" Text="Il PIN serve sul telefono per avviare, fermare, cambiare parte e inviare messaggi. Dopo 5 tentativi errati il controllo si blocca per un minuto. Il pulsante QR nel controller mostra un codice che contiene già il PIN." />
-                </StackPanel>
-            </TabItem>
-        </TabControl>
-    </DockPanel>
+                </ScrollViewer>
+
+                <!-- ═════════════ COUNTDOWN ═════════════ -->
+                <ScrollViewer Style="{StaticResource Page}">
+                    <StackPanel MaxWidth="900">
+                        <TextBlock Style="{StaticResource PageTitle}" Text="Countdown" />
+                        <TextBlock Style="{StaticResource PageSubtitle}" Text="La schermata che vede tutta la sala prima dell'adunanza. Sparisce all'orario d'inizio o quando avvii la prima parte." />
+
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <Border Style="{StaticResource FirstRow}">
+                                    <DockPanel>
+                                        <v:NumberBox DockPanel.Dock="Right" Width="150" Minimum="0" Maximum="60" Step="1" Unit="min" ZeroText="mai"
+                                                     Value="{Binding CountdownMinutes}" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Compare prima dell'inizio" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="0 = mai" />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <DockPanel Margin="0,0,0,10">
+                                    <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Padding="14,6" Click="PreviewCountdown_Click"
+                                            ToolTip="Mostra per 12 secondi lo stile scelto sullo schermo del timer e sulla pagina web">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="&#xE768;" FontFamily="{StaticResource IconFont}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                                            <TextBlock Text="Prova sullo schermo" />
+                                        </StackPanel>
+                                    </Button>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Style="{StaticResource PanelTitle}" Text="STILE" />
+                                        <TextBlock Style="{StaticResource RowHint}" Text="Gli stili diversi dal classico non usano verde, giallo e rosso: così il countdown non sembra una parte." />
+                                    </StackPanel>
+                                </DockPanel>
+                                <ListBox ItemsSource="{Binding CountdownStyles}" SelectedItem="{Binding SelectedCountdownStyle}"
+                                         Background="Transparent" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                    <ListBox.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <UniformGrid Columns="2" />
+                                        </ItemsPanelTemplate>
+                                    </ListBox.ItemsPanel>
+                                    <ListBox.ItemContainerStyle>
+                                        <Style TargetType="ListBoxItem">
+                                            <Setter Property="Cursor" Value="Hand" />
+                                            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ListBoxItem">
+                                                        <Border x:Name="Bd" Background="{StaticResource InputBrush}" BorderBrush="{StaticResource LineBrush}" BorderThickness="1"
+                                                                CornerRadius="10" Padding="10" Margin="0,0,8,8">
+                                                            <ContentPresenter />
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource HoverBorderBrush}" />
+                                                            </Trigger>
+                                                            <Trigger Property="IsSelected" Value="True">
+                                                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                                                <Setter TargetName="Bd" Property="Background" Value="#1A3B82F6" />
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <DockPanel>
+                                                <Border DockPanel.Dock="Left" Width="80" Height="45" CornerRadius="5" Background="{Binding Color}" Margin="0,0,12,0">
+                                                    <TextBlock Text="4:32" FontFamily="{StaticResource DigitsFont}" FontSize="18" Foreground="{Binding Accent}"
+                                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                </Border>
+                                                <StackPanel VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding Label}" FontSize="14.5" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" />
+                                                    <TextBlock Text="{Binding Detail}" FontSize="12.5" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" />
+                                                </StackPanel>
+                                            </DockPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- ═════════════ MESSAGGI ═════════════ -->
+                <ScrollViewer Style="{StaticResource Page}">
+                    <StackPanel MaxWidth="900">
+                        <TextBlock Style="{StaticResource PageTitle}" Text="Messaggi" />
+                        <TextBlock Style="{StaticResource PageSubtitle}" Text="Brevi messaggi per l'oratore, dal controller o dal telefono." />
+
+                        <Border Style="{StaticResource Panel}" Padding="20,16">
+                            <DockPanel>
+                                <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding MessagesEnabled}" />
+                                <StackPanel>
+                                    <TextBlock Text="Messaggi all'oratore" FontSize="16" FontWeight="SemiBold" />
+                                    <TextBlock Style="{StaticResource RowHint}" Text="Se spenti, spariscono da controller, modalità mini e telefono." />
+                                </StackPanel>
+                            </DockPanel>
+                        </Border>
+
+                        <StackPanel IsEnabled="{Binding MessagesEnabled}">
+                            <Border Style="{StaticResource Panel}">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource PanelTitle}" Text="DURATA" />
+                                    <Border Style="{StaticResource FirstRow}">
+                                        <DockPanel>
+                                            <v:NumberBox DockPanel.Dock="Right" Width="150" Minimum="0" Maximum="600" Step="5" Unit="s" ZeroText="finché lo togli"
+                                                         Value="{Binding MessageSeconds}" />
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Style="{StaticResource RowLabel}" Text="Nella fascia in basso" />
+                                                <TextBlock Style="{StaticResource RowHint}" Text="0 = finché non lo togli" />
+                                            </StackPanel>
+                                        </DockPanel>
+                                    </Border>
+                                    <Border Style="{StaticResource Row}">
+                                        <DockPanel>
+                                            <v:NumberBox DockPanel.Dock="Right" Width="150" Minimum="2" Maximum="60" Step="1" Unit="s"
+                                                         Value="{Binding MessageFullScreenSeconds}" />
+                                            <StackPanel VerticalAlignment="Center">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Style="{StaticResource RowLabel}" Text="A tutto schermo" />
+                                                    <TextBlock Style="{StaticResource Info}"
+                                                               ToolTip="Con il pulsante a tutto schermo (o Ctrl+Invio) il messaggio occupa lo schermo, con il tempo piccolo in un angolo. Utile per un numero di cantico o il nome di chi ha alzato la mano su Zoom." />
+                                                </StackPanel>
+                                                <TextBlock Style="{StaticResource RowHint}" Text="Poi passa nella fascia" />
+                                            </StackPanel>
+                                        </DockPanel>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource Panel}" Padding="20,14,20,14">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource PanelTitle}" Text="FRASI PRONTE" />
+                                    <TextBlock Style="{StaticResource RowHint}" Margin="0,0,0,10"
+                                               Text="Trascina dal segno ⋮⋮ per cambiare l'ordine (o Alt+↑↓ mentre scrivi). Nel controller puoi sempre scrivere un messaggio diverso." />
+                                    <ItemsControl x:Name="PresetList" ItemsSource="{Binding Presets}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border x:Name="Row" CornerRadius="8" Background="{StaticResource InputBrush}" Margin="0,0,0,6" Padding="4,2"
+                                                        AllowDrop="True" DragOver="Preset_DragOver" Drop="Preset_Drop" Tag="{Binding}">
+                                                    <DockPanel>
+                                                        <TextBlock DockPanel.Dock="Left" Text="⋮⋮" FontSize="16" Foreground="{StaticResource MutedBrush}" Width="28"
+                                                                   TextAlignment="Center" VerticalAlignment="Center" Cursor="SizeAll" Background="Transparent"
+                                                                   MouseLeftButtonDown="PresetHandle_MouseDown" Tag="{Binding}" ToolTip="Trascina per spostare" />
+                                                        <TextBlock DockPanel.Dock="Left" Text="{Binding Number}" Foreground="{StaticResource MutedBrush}" Width="26"
+                                                                   VerticalAlignment="Center" />
+                                                        <Button DockPanel.Dock="Right" Style="{StaticResource GhostIconButton}" Width="32" Height="32" FontSize="11"
+                                                                Content="&#xE711;" Click="RemovePreset_Click" Tag="{Binding}" ToolTip="Togli questa frase" />
+                                                        <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" BorderThickness="0" Background="Transparent"
+                                                                 FontSize="15" MaxLength="80" PreviewKeyDown="Preset_KeyDown" Tag="{Binding}" />
+                                                    </DockPanel>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <Button Style="{StaticResource LinkButton}" HorizontalAlignment="Left" Margin="0,4,0,0" Click="AddPreset_Click"
+                                            IsEnabled="{Binding CanAddPreset}">
+                                        <TextBlock FontWeight="SemiBold"><Run Text="+ " /><Run Text="Aggiungi una frase" /></TextBlock>
+                                    </Button>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- ═════════════ VOCE ═════════════ -->
+                <ScrollViewer x:Name="VoicePage" Style="{StaticResource Page}">
+                    <StackPanel MaxWidth="900">
+                        <TextBlock Style="{StaticResource PageTitle}" Text="Voce" />
+                        <TextBlock Style="{StaticResource PageSubtitle}" Text="Avvio con la voce, sperimentale. La parte parte quando l'oratore inizia a parlare, contando dall'istante in cui la voce è iniziata." />
+
+                        <Border Style="{StaticResource Panel}" Padding="20,16">
+                            <DockPanel>
+                                <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding VoiceStartEnabled}" />
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Avvio con la voce" FontSize="16" FontWeight="SemiBold" />
+                                        <TextBlock Style="{StaticResource Info}"
+                                                   ToolTip="Premi Avvia mentre il presidente presenta la parte: il pulsante diventa «In attesa». Quello che si sente subito dopo la pressione conta come voce del presidente; dopo una pausa intera, la prima voce fa partire il timer. Premi di nuovo Avvia per partire subito; Esc annulla l'attesa o, nei primi secondi, un avvio sbagliato. Dal telefono l'avvio è sempre immediato." />
+                                    </StackPanel>
+                                    <TextBlock Style="{StaticResource RowHint}" Text="Avvia mette la parte in attesa; dopo una pausa, la prima voce la fa partire." />
+                                </StackPanel>
+                            </DockPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource PanelTitle}" Text="INGRESSO AUDIO" />
+                                <Border Style="{StaticResource FirstRow}">
+                                    <DockPanel>
+                                        <ComboBox x:Name="VoiceDevice" DockPanel.Dock="Right" Width="320" DisplayMemberPath="Label" SelectedValuePath="Value"
+                                                  SelectedValue="{Binding VoiceInputDevice}" SelectionChanged="VoiceDevice_Changed" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Ingresso" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Di solito lo stesso del mixer usato per Zoom. Viene ascoltato in condivisione." />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                                <Border Style="{StaticResource Row}" Padding="0,12,0,8">
+                                    <StackPanel>
+                                        <DockPanel Margin="0,0,0,8">
+                                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                                <Ellipse x:Name="VoiceLamp" Width="10" Height="10" Fill="{StaticResource LineBrush}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                                <TextBlock x:Name="VoiceLampText" Text="Silenzio" FontSize="12" Foreground="{StaticResource MutedBrush}" Width="56" VerticalAlignment="Center" />
+                                            </StackPanel>
+                                            <TextBlock Text="Prova: parla nel microfono" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                        </DockPanel>
+                                        <Grid Height="16">
+                                            <Border Background="{StaticResource LineBrush}" CornerRadius="4" />
+                                            <Border x:Name="VoiceMeter" HorizontalAlignment="Left" Width="0" CornerRadius="4" Background="#22C55E" />
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition x:Name="ThresholdLeft" Width="0.33*" />
+                                                    <ColumnDefinition Width="2" />
+                                                    <ColumnDefinition x:Name="ThresholdRight" Width="0.67*" />
+                                                </Grid.ColumnDefinitions>
+                                                <Border Grid.Column="1" Background="{StaticResource AmberBrush}" Margin="0,-3" />
+                                            </Grid>
+                                        </Grid>
+                                        <TextBlock x:Name="VoiceTestStatus" Style="{StaticResource RowHint}" Margin="0,6,0,0"
+                                                   Text="La barra mostra il livello dell'ingresso scelto. Il segno giallo è la soglia." />
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource Row}">
+                                    <DockPanel>
+                                        <TextBlock x:Name="VoiceThresholdText" DockPanel.Dock="Right" Width="56" TextAlignment="Right" VerticalAlignment="Center" />
+                                        <Slider x:Name="VoiceThreshold" DockPanel.Dock="Right" Width="300" Minimum="-60" Maximum="-10" SmallChange="1" LargeChange="5"
+                                                IsSnapToTickEnabled="True" TickFrequency="1" VerticalAlignment="Center"
+                                                Value="{Binding VoiceThresholdDb}" ValueChanged="VoiceSlider_Changed" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Soglia della voce" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="In silenzio la barra resta sotto il segno giallo, quando si parla lo supera." />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource PanelTitle}" Text="DOPO FERMA" />
+                                <Border Style="{StaticResource FirstRow}">
+                                    <DockPanel>
+                                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding VoiceAutoArmNext}" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Metti in attesa la parte successiva" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Non vale se in mezzo c'è un cantico: dopo il cantico di solito parla prima il presidente." />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <CheckBox Content="Mostra opzioni avanzate" IsChecked="{Binding ShowAdvanced}" Margin="4,0,0,12" FontSize="13" />
+                        <Border Style="{StaticResource Panel}" Visibility="{Binding ShowAdvanced, Converter={StaticResource BoolToVis}}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource PanelTitle}" Text="REGOLAZIONI FINI" />
+                                <Border Style="{StaticResource FirstRow}">
+                                    <DockPanel>
+                                        <TextBlock x:Name="VoicePauseText" DockPanel.Dock="Right" Width="56" TextAlignment="Right" VerticalAlignment="Center" />
+                                        <Slider x:Name="VoicePause" DockPanel.Dock="Right" Width="300" Minimum="1" Maximum="6" SmallChange="0.5" LargeChange="0.5"
+                                                IsSnapToTickEnabled="True" TickFrequency="0.5" VerticalAlignment="Center"
+                                                Value="{Binding VoicePauseSeconds}" ValueChanged="VoiceSlider_Changed" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Pausa prima della parte" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Più lunga delle pause tra una frase e l'altra del presidente. Si misura da quando premi Avvia." />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                                <Border Style="{StaticResource Row}">
+                                    <DockPanel>
+                                        <TextBlock x:Name="VoiceMinText" DockPanel.Dock="Right" Width="56" TextAlignment="Right" VerticalAlignment="Center" />
+                                        <Slider x:Name="VoiceMin" DockPanel.Dock="Right" Width="300" Minimum="0.2" Maximum="1.5" SmallChange="0.1" LargeChange="0.1"
+                                                IsSnapToTickEnabled="True" TickFrequency="0.1" VerticalAlignment="Center"
+                                                Value="{Binding VoiceMinSeconds}" ValueChanged="VoiceSlider_Changed" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Voce per almeno" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Colpi, tosse e regolazioni del microfono più brevi vengono ignorati." />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- ═════════════ RETE E TELEFONO ═════════════ -->
+                <ScrollViewer Style="{StaticResource Page}">
+                    <StackPanel MaxWidth="900">
+                        <TextBlock Style="{StaticResource PageTitle}" Text="Rete e telefono" />
+                        <TextBlock Style="{StaticResource PageSubtitle}" Text="Il timer su telefoni, tablet e PC della stessa rete, e il controllo a distanza con il PIN." />
+
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource PanelTitle}" Text="TIMER IN RETE" />
+                                <Border Style="{StaticResource FirstRow}">
+                                    <DockPanel>
+                                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding WebServerEnabled}" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Timer visibile dagli altri dispositivi" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Se non si collegano, controlla che Windows Firewall consenta TimerSala sulle reti private." />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                                <Border Style="{StaticResource Row}" IsEnabled="{Binding WebServerEnabled}">
+                                    <DockPanel>
+                                        <ComboBox DockPanel.Dock="Right" Width="340" ItemsSource="{Binding Addresses}" DisplayMemberPath="Label"
+                                                  SelectedValuePath="Value" SelectedValue="{Binding WebAddressMode}" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Style="{StaticResource RowLabel}" Text="Indirizzo nei QR" />
+                                                <TextBlock Style="{StaticResource Info}"
+                                                           ToolTip="Automatico usa la scheda di rete principale (quella con cui il PC esce in rete) e ignora le schede virtuali (VirtualBox, Hyper-V, VPN). Il nome del PC funziona solo se la rete lo risolve." />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource PanelTitle}" Text="CONTROLLO DAL TELEFONO" />
+                                <Border Style="{StaticResource FirstRow}">
+                                    <DockPanel>
+                                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding RemoteControlEnabled}" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Consenti il controllo con il PIN" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Avviare, fermare, cambiare parte e inviare messaggi dal telefono." />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                                <Border Style="{StaticResource Row}" IsEnabled="{Binding RemoteControlEnabled}">
+                                    <DockPanel>
+                                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                            <TextBox x:Name="PinBox" Width="120" FontSize="16" FontWeight="SemiBold" HorizontalContentAlignment="Center" MaxLength="12"
+                                                     LostKeyboardFocus="Pin_LostFocus" KeyDown="Pin_KeyDown" />
+                                            <Button Style="{StaticResource FlatButton}" Content="Nuovo" Margin="8,0,0,0" Padding="12,5" Click="NewPin_Click"
+                                                    ToolTip="Genera un PIN nuovo: i telefoni dovranno inserirlo di nuovo" />
+                                        </StackPanel>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Style="{StaticResource RowLabel}" Text="PIN" />
+                                                <TextBlock Style="{StaticResource Info}"
+                                                           ToolTip="Dopo 5 tentativi errati il controllo si blocca per un minuto. Il pulsante QR nel controller mostra un codice che contiene già il PIN." />
+                                            </StackPanel>
+                                            <TextBlock x:Name="PinHint" Style="{StaticResource RowHint}" Text="Da 4 a 12 cifre." />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <CheckBox Content="Mostra opzioni avanzate" IsChecked="{Binding ShowAdvanced}" Margin="4,0,0,12" FontSize="13" />
+                        <Border Style="{StaticResource Panel}" Visibility="{Binding ShowAdvanced, Converter={StaticResource BoolToVis}}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource PanelTitle}" Text="AVANZATE" />
+                                <Border Style="{StaticResource FirstRow}">
+                                    <DockPanel>
+                                        <v:NumberBox DockPanel.Dock="Right" Width="150" Minimum="1024" Maximum="65535" Step="1" Value="{Binding WebServerPort}" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Porta" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Se è occupata da un altro programma, TimerSala usa la successiva libera e lo segnala." />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- ═════════════ PROGRAMMA ═════════════ -->
+                <ScrollViewer Style="{StaticResource Page}">
+                    <StackPanel MaxWidth="900">
+                        <TextBlock Style="{StaticResource PageTitle}" Text="Programma" />
+                        <TextBlock Style="{StaticResource PageSubtitle}" Text="Il controller sul PC dell'acustica e i dati di TimerSala." />
+
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource PanelTitle}" Text="CONTROLLER" />
+                                <Border Style="{StaticResource FirstRow}">
+                                    <DockPanel>
+                                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding ControllerTopmost}" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Sempre in primo piano" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="La modalità mini (tasto M) lo è sempre." />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource PanelTitle}" Text="DATI" />
+                                <Border Style="{StaticResource FirstRow}">
+                                    <DockPanel>
+                                        <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Apri la cartella" Padding="12,5" Click="OpenData_Click" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Cartella dati" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="{Binding DataFolder}" />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                                <Border Style="{StaticResource Row}">
+                                    <DockPanel>
+                                        <TextBlock Style="{StaticResource RowLabel}" Text="{Binding VersionText}" />
+                                    </DockPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </DockPanel>
+    </Grid>
 </Window>

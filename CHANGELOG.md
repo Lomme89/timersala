@@ -1,5 +1,18 @@
 # Novità
 
+## v2.0.0 — in preparazione
+
+**Impostazioni riorganizzate**
+- Barra laterale con sette sezioni al posto delle schede: Adunanze, Schermo, Countdown, Messaggi, Voce (beta), Rete e telefono, Programma.
+- **Le modifiche si applicano subito.** In fondo restano solo «Fatto» e «Annulla le modifiche», che riporta tutto com'era all'apertura.
+- **Niente più errori al salvataggio:** interruttori per le funzioni, orari che si scrivono o si regolano con le frecce, numeri con − e +. Un valore non valido torna semplicemente quello di prima.
+- *Schermo*: anteprima dal vivo, «durante la parte» o «a riposo»; tema a pulsanti, layout con le miniature; tabella «Cosa mostrare» con le colonne *Durante la parte* e *A riposo*.
+- *Countdown*: minuti, stile (con le miniature) e Prova, finalmente in un posto solo.
+- *Messaggi*: interruttore generale in cima; frasi pronte in un elenco da riordinare trascinando, con ✕ e «Aggiungi una frase».
+- *Adunanze*: fine prevista calcolata subito accanto alla durata; le visite del sorvegliante stanno sotto «Settimane particolari».
+- Spiegazioni brevi sotto ogni opzione, i dettagli nella «i»; porta di rete e regolazioni fini della voce dietro «Mostra opzioni avanzate».
+- La versione del programma compare nelle impostazioni.
+
 ## v1.14.0 — 6 ottobre 2026
 
 **Sicurezza in sala**

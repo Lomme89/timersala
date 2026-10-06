@@ -617,7 +617,9 @@ public sealed partial class MainViewModel : ObservableObject
 
     // ───────────── Stile dello schermo del timer ─────────────
 
-    sealed record Palette(Brush Bg, Brush Fg, Brush Muted, Brush Track, Brush Green, Brush Amber, Brush Red, Brush OvertimeBg);
+    internal sealed record Palette(Brush Bg, Brush Fg, Brush Muted, Brush Track, Brush Green, Brush Amber, Brush Red, Brush OvertimeBg);
+
+    internal static Palette PaletteFor(DisplayTheme theme) => theme == DisplayTheme.Light ? LightPalette : DarkPalette;
 
     static readonly Palette DarkPalette = new(Black, White, Muted, BrushCache.Get("#262A32"), Green, Amber, Red, OvertimeBg);
     static readonly Palette LightPalette = new(BrushCache.Get("#FFFFFF"), BrushCache.Get("#111827"), BrushCache.Get("#4B5563"),

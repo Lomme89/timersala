@@ -28,8 +28,14 @@ jobs:
       - name: Test
         run: dotnet test tests/TimerSala.Tests -c Release
 
+      - name: Numero di versione (solo per le release)
+        shell: bash
+        run: |
+          tag="${{ inputs.release_tag || github.ref_name }}"
+          if [[ "$tag" =~ ^v[0-9] ]]; then echo "VERSION_ARG=-p:Version=${tag#v}" >> "$GITHUB_ENV"; fi
+
       - name: Publish (eseguibile unico per Windows x64)
-        run: dotnet publish src/TimerSala.App -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o publish
+        run: dotnet publish src/TimerSala.App -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o publish ${{ env.VERSION_ARG }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4

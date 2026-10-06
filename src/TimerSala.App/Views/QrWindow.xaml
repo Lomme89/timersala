@@ -50,7 +50,7 @@
                 </StackPanel>
             </Border>
             <Border x:Name="ControlOff" Style="{StaticResource Card}" Width="280" Visibility="Collapsed">
-                <TextBlock Text="Il controllo remoto è disattivato. Puoi attivarlo in Impostazioni → Rete." TextWrapping="Wrap" VerticalAlignment="Center" />
+                <TextBlock Text="Il controllo remoto è disattivato. Puoi attivarlo in Impostazioni → Rete e telefono." TextWrapping="Wrap" VerticalAlignment="Center" />
             </Border>
         </StackPanel>
         <Button Style="{StaticResource FlatButton}" Content="Chiudi" IsCancel="True" IsDefault="True" Width="100" HorizontalAlignment="Right" Margin="0,16,0,0" />

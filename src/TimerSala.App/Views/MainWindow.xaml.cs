@@ -166,9 +166,8 @@ public partial class MainWindow : Window
 
     void Settings_Click(object sender, RoutedEventArgs e)
     {
-        var dlg = new SettingsWindow(_vm) { Owner = this };
-        if (dlg.ShowDialog() == true)
-            Topmost = _vm.Settings.ControllerTopmost;
+        new SettingsWindow(_vm) { Owner = this }.ShowDialog();
+        Topmost = _vm.Settings.ControllerTopmost;
     }
 
     void Download_Click(object sender, RoutedEventArgs e)
@@ -187,7 +186,7 @@ public partial class MainWindow : Window
     {
         if (_vm.WebUrl is null)
         {
-            MessageBox.Show(this, "Il server web non è attivo. Attivalo in Impostazioni → Rete.", "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(this, "Il server web non è attivo. Attivalo in Impostazioni → Rete e telefono.", "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
         new QrWindow(_vm) { Owner = this }.ShowDialog();

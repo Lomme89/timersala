@@ -134,7 +134,7 @@ Avvia di nuovo = parti subito. **Esc** annulla l'attesa o, nei primi secondi, un
   <img src="docs/images/stili.png" alt="Stati e stili del timer: tempo regolare, ultimo minuto, sforamento con messaggio, clessidra, tema chiaro, countdown" width="100%">
 </p>
 
-**Countdown d'inizio:** è la schermata che vede tutta la sala, quindi ha uno stile suo, che non si confonde con le parti. Si sceglie in *Impostazioni → Schermo*, con il pulsante **Prova** per vederlo subito.
+**Countdown d'inizio:** è la schermata che vede tutta la sala, quindi ha uno stile suo, che non si confonde con le parti. Si sceglie in *Impostazioni → Countdown*, con il pulsante **Prova sullo schermo** per vederlo subito.
 
 <p align="center">
   <img src="docs/images/countdown.png" alt="Stili del countdown d'inizio: marea, anello, blocchi, orologio, quadrante, a parole" width="100%">
@@ -187,7 +187,7 @@ Avvia di nuovo = parti subito. **Esc** annulla l'attesa o, nei primi secondi, un
   - nel fine settimana la Torre di Guardia dura 30 min ed è seguita dal discorso di servizio;
   - in *Impostazioni → Adunanze* puoi segnare in anticipo le settimane della visita: gli schemi vengono scaricati già adattati;
   - nella stessa sezione scegli in che giorno (ed eventualmente a che ora) si tiene l'infrasettimanale durante la visita, per esempio il martedì. Countdown e fine prevista lo seguono.
-- **Rete:** l'indirizzo usa la scheda di rete principale e ignora quelle virtuali (VirtualBox, Hyper‑V, VPN). In *Impostazioni → Rete* puoi scegliere un altro indirizzo o il nome del PC.
+- **Rete:** l'indirizzo usa la scheda di rete principale e ignora quelle virtuali (VirtualBox, Hyper‑V, VPN). In *Impostazioni → Rete e telefono* puoi scegliere un altro indirizzo o il nome del PC.
 - **Sicurezza:** il codice QR di controllo contiene il PIN ed è nascosto finché non lo mostri. Dopo 5 PIN errati il controllo si blocca per un minuto.
 - **Dati:** sono in `%AppData%\TimerSala`: impostazioni, uno schema per settimana e la cartella `diagnostica` con l'ultima pagina scaricata. Se il sito cambia struttura e il download non funziona, quella cartella serve a correggere il programma.
 

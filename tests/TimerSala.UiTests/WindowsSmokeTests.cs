@@ -41,9 +41,11 @@ public class WindowsSmokeTests
     static void Run()
     {
         var dir = Path.Combine(Path.GetTempPath(), "timersala-ui-" + Guid.NewGuid().ToString("N"));
+        // niente rete né microfono durante la prova; impostazioni già salvate, così non è un primo avvio
+        // (che aprirebbe la configurazione guidata, una finestra modale)
+        new DataStore(dir).SaveSettings(new AppSettings { AutoDownload = false, WebServerEnabled = false, VoiceStartEnabled = false, CountdownMinutes = 0 });
         var store = new DataStore(dir);
-        // niente rete né microfono durante la prova
-        store.SaveSettings(new AppSettings { AutoDownload = false, WebServerEnabled = false, VoiceStartEnabled = false, CountdownMinutes = 0 });
+        Assert.False(store.IsNew);
 
         // gli indirizzi come /Assets/timersala.ico vanno cercati nel programma, non nel progetto di prova
         // (WPF lo fissa all'assembly d'ingresso, qui il runner dei test: si corregge il campo interno)

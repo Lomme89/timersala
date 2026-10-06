@@ -222,6 +222,22 @@ public partial class SettingsWindow : Window
 
     // ───── Programma ─────
 
+    void ExportBackup_Click(object sender, RoutedEventArgs e)
+    {
+        CommitPin();
+        _vm.Flush();
+        ExchangeDialogs.ExportBackup(this, _main);
+    }
+
+    void ImportBackup_Click(object sender, RoutedEventArgs e)
+    {
+        _vm.Flush();
+        if (!ExchangeDialogs.Import(this, _main)) return;
+        // le impostazioni ora sono quelle importate: la finestra si chiude senza riapplicare le sue
+        _reverted = true;
+        Close();
+    }
+
     void OpenData_Click(object sender, RoutedEventArgs e)
     {
         try { Process.Start(new ProcessStartInfo(_vm.DataFolder) { UseShellExecute = true }); } catch { }

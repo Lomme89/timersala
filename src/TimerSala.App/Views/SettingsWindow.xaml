@@ -1058,6 +1058,18 @@
                                 </Border>
                                 <Border Style="{StaticResource Row}">
                                     <DockPanel>
+                                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                            <Button Style="{StaticResource FlatButton}" Content="Esporta…" Padding="12,5" Margin="0,0,8,0" Click="ExportBackup_Click" />
+                                            <Button Style="{StaticResource FlatButton}" Content="Importa…" Padding="12,5" Click="ImportBackup_Click" />
+                                        </StackPanel>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Backup" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Impostazioni, frasi pronte e schemi modificati a mano in un file: per cambiare PC o preparare un'altra sala uguale." />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                                <Border Style="{StaticResource Row}">
+                                    <DockPanel>
                                         <TextBlock Style="{StaticResource RowLabel}" Text="{Binding VersionText}" />
                                     </DockPanel>
                                 </Border>

@@ -39,6 +39,13 @@ public sealed class DataStore
 
     public WeekSchedule? LoadWeek(DateOnly monday) => Read<WeekSchedule>(WeekPath(WeekMath.MondayOf(monday)));
 
+    /// <summary>Tutte le settimane salvate.</summary>
+    public IEnumerable<WeekSchedule> AllWeeks()
+    {
+        foreach (var f in Directory.EnumerateFiles(WeeksFolder, "*.json"))
+            if (Read<WeekSchedule>(f) is { } w) yield return w;
+    }
+
     public void SaveWeek(WeekSchedule week) => Write(WeekPath(week.WeekStart), week);
 
     string SessionPath => Path.Combine(Root, "adunanza-in-corso.json");

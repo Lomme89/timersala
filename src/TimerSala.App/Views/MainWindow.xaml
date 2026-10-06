@@ -306,6 +306,9 @@
                                 <ContextMenu>
                                     <MenuItem x:Name="DownloadWeekItem" Header="Aggiorna questa settimana" Click="DownloadWeek_Click" />
                                     <MenuItem x:Name="DownloadAllItem" Header="Scarica tutte le prossime settimane" Click="DownloadAll_Click" />
+                                    <Separator />
+                                    <MenuItem Header="Esporta questa settimana…" Click="ExportWeek_Click" />
+                                    <MenuItem Header="Importa da file…" Click="ImportFile_Click" />
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>

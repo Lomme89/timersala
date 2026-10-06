@@ -296,6 +296,10 @@ public partial class MainWindow : Window
 
     void Qr_Click(object sender, RoutedEventArgs e) => ShowPhoneQr();
 
+    void ExportWeek_Click(object sender, RoutedEventArgs e) => ExchangeDialogs.ExportWeek(this, _vm);
+
+    void ImportFile_Click(object sender, RoutedEventArgs e) => ExchangeDialogs.Import(this, _vm);
+
     void ShowPhoneQr()
     {
         Window owner = _vm.IsMiniMode && _mini is not null ? _mini : this;

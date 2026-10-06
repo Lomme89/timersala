@@ -491,16 +491,7 @@ public sealed class SettingsViewModel : ObservableObject
     /// <summary>Opzioni rare (porta, indirizzo, regolazioni fini della voce).</summary>
     public bool ShowAdvanced { get; set => Set(ref field, value); }
 
-    public string VersionText
-    {
-        get
-        {
-            var v = typeof(SettingsViewModel).Assembly.GetCustomAttributes(typeof(System.Reflection.AssemblyInformationalVersionAttribute), false)
-                .OfType<System.Reflection.AssemblyInformationalVersionAttribute>().FirstOrDefault()?.InformationalVersion ?? "";
-            v = v.Split('+')[0];
-            return v is "" or "1.0.0" ? "TimerSala · versione di sviluppo" : $"TimerSala {v}";
-        }
-    }
+    public string VersionText => AppInfo.Version is "" ? "TimerSala · versione di sviluppo" : $"TimerSala {AppInfo.Version}";
 
     public string DataFolder => _main.DataFolder;
 

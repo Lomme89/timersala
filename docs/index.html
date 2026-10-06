@@ -171,9 +171,29 @@ section { padding: clamp(70px, 9vw, 130px) 0; }
 .final-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 24px; margin-top: 36px; }
 .final p { margin: 0; max-width: 460px; font-size: 18px; }
 .final .pill { background: #fff; color: var(--ink); border-color: #fff; font-size: 17px; padding: 16px 26px; }
-footer { background: var(--ink); color: #a39e94; font-size: 14px; padding: 28px 0; }
-footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
-footer a { color: var(--paper); }
+/* piè di pagina: la fine dell'adunanza */
+footer { background: var(--ink); color: #a39e94; font-size: 15px; position: relative; overflow: hidden; }
+footer .phases { display: grid; grid-template-columns: 6fr 1.4fr 1fr; height: 8px; }
+footer .phases i:nth-child(1) { background: var(--go); } footer .phases i:nth-child(2) { background: var(--warn); } footer .phases i:nth-child(3) { background: var(--stop); }
+footer .top-row { display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr)); gap: 32px; padding: clamp(40px, 6vw, 72px) 0 32px; }
+footer .brand { display: flex; flex-direction: column; gap: 14px; }
+footer .brand .logo span { color: var(--paper); }
+footer .brand p { margin: 0; max-width: 300px; line-height: 1.5; }
+footer .brand .pill { align-self: flex-start; background: var(--paper); color: var(--ink); border-color: var(--paper); }
+footer .brand .pill .ver { opacity: .6; }
+footer h4 { font: 600 12px var(--sans); letter-spacing: .14em; text-transform: uppercase; color: #6f6a62; margin: 6px 0 14px; }
+footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+footer ul a { color: var(--paper); text-decoration: none; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .3s var(--ease); }
+footer ul a:hover { background-size: 100% 1px; }
+footer .mark { font: 900 clamp(64px, 21vw, 300px)/.78 var(--sign); text-transform: uppercase; letter-spacing: -.01em; margin: 0 0 -.06em;
+  color: transparent; -webkit-text-stroke: 1px #3a3833; user-select: none; white-space: nowrap; }
+footer .bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; border-top: 1px solid #2b2925; padding: 18px 0 22px; font-size: 13px; color: #7d786f; }
+footer .bottom a { color: var(--paper); text-decoration: none; }
+footer .clock { font: 700 13px var(--sans); font-variant-numeric: tabular-nums; color: var(--paper); }
+@media (max-width: 820px) {
+  footer .top-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  footer .brand { grid-column: 1 / -1; }
+}
 
 /* ── avvio con la voce: video ── */
 .voice { background: var(--paper2); }
@@ -442,13 +462,57 @@ footer a { color: var(--paper); }
 </main>
 
 <footer>
+  <div class="phases" aria-hidden="true"><i></i><i></i><i></i></div>
   <div class="wrap">
-    <span>TimerSala · progetto indipendente, non affiliato a jw.org.</span>
-    <span><a href="https://github.com/Lomme89/timersala">GitHub</a> · <a href="novita.html">Novità</a></span>
+    <div class="top-row">
+      <div class="brand">
+        <a class="logo" href="#"><img src="images/icon.png" alt=""><span>TimerSala</span></a>
+        <p>Il timer per le adunanze di congregazione. Gratuito, in italiano, senza installazione, per Windows 10 e 11.</p>
+        <a class="pill" href="https://github.com/Lomme89/timersala/releases/latest/download/TimerSala.exe"><svg><use href="#i-dl"/></svg>Scarica <small class="ver" data-version></small></a>
+      </div>
+      <div>
+        <h4>Il programma</h4>
+        <ul>
+          <li><a href="#programma">Il controller</a></li>
+          <li><a href="#voce">Avvio con la voce</a></li>
+          <li><a href="#schermate">Lo schermo della sala</a></li>
+          <li><a href="#telefono">Dal telefono</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Versioni</h4>
+        <ul>
+          <li><a href="novita.html">Novità</a></li>
+          <li><a href="https://github.com/Lomme89/timersala/releases">Tutte le versioni</a></li>
+          <li><a href="https://github.com/Lomme89/timersala/blob/HEAD/ROADMAP.md">Cosa arriverà</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Aiuto</h4>
+        <ul>
+          <li><a href="#domande">Domande frequenti</a></li>
+          <li><a href="https://github.com/Lomme89/timersala/issues/new?labels=bug">Segnala un problema</a></li>
+          <li><a href="https://github.com/Lomme89/timersala/issues/new?labels=enhancement">Proponi un'idea</a></li>
+          <li><a href="https://github.com/Lomme89/timersala">Codice su GitHub</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="mark" aria-hidden="true">TimerSala</div>
+    <div class="bottom">
+      <span>Progetto indipendente, non affiliato a jw.org.</span>
+      <span>In sala sono le <span class="clock" id="footClock">--:--</span> · <a href="#top">Torna su ↑</a></span>
+    </div>
   </div>
 </footer>
 
 <script src="versione.js"></script>
+<script>
+(() => {
+  const el = document.getElementById('footClock');
+  const tick = () => { el.textContent = new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }); };
+  tick(); setInterval(tick, 10000);
+})();
+</script>
 <script>
 (() => {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;

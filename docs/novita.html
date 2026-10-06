@@ -56,8 +56,12 @@ h1 em { display: block; font-size: .36em; text-transform: none; color: var(--go)
 .body em { font-family: inherit; font-style: italic; }
 .more { display: inline-block; margin-top: 8px; font-weight: 600; }
 .state { padding: 40px 0; color: var(--muted); }
-footer { border-top: 1px solid var(--line); margin-top: 40px; padding: 24px 0 40px; font-size: 14px; color: var(--muted); }
-footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+footer { background: var(--ink); color: #a39e94; margin-top: 56px; font-size: 14px; }
+footer .phases { display: grid; grid-template-columns: 6fr 1.4fr 1fr; height: 8px; }
+footer .phases i:nth-child(1) { background: var(--go); } footer .phases i:nth-child(2) { background: var(--warn); } footer .phases i:nth-child(3) { background: var(--stop); }
+footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-top: 22px; padding-bottom: 26px; }
+footer a { color: #f1ece3; text-decoration: none; }
+footer a:hover { text-decoration: underline; }
 @media (max-width: 720px) {
   .rel { grid-template-columns: minmax(0, 1fr); }
   .pill .wide { display: none; }
@@ -79,9 +83,10 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
 </main>
 
 <footer>
+  <div class="phases" aria-hidden="true"><i></i><i></i><i></i></div>
   <div class="wrap">
     <span>TimerSala · progetto indipendente, non affiliato a jw.org.</span>
-    <span><a href="./">Sito</a> · <a href="https://github.com/Lomme89/timersala/releases">Tutte le versioni su GitHub</a></span>
+    <span><a href="./">Il sito</a> · <a href="https://github.com/Lomme89/timersala/releases">Tutte le versioni su GitHub</a> · <a href="#">Torna su ↑</a></span>
   </div>
 </footer>
 

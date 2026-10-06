@@ -24,8 +24,13 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <Border Background="{Binding SectionBrush}" CornerRadius="2" />
+                    <!-- «⋯»: lo stesso menu del tasto destro -->
+                    <Button x:Name="MenuButton" Grid.Column="5" Style="{StaticResource GhostIconButton}" Width="26" Height="24" FontSize="13"
+                            Content="&#xE712;" Margin="4,0,-4,0" Click="PartMenu_Click" Tag="{Binding}" Visibility="Collapsed"
+                            ToolTip="Modifica, sposta o salta questa parte" />
                     <TextBlock x:Name="Planned" Grid.Column="1" Text="{Binding PlannedStartText}" Foreground="{StaticResource MutedBrush}" Margin="10,0,0,0"
                                VerticalAlignment="Center" FontFamily="{StaticResource DigitsFont}" FontSize="13" ToolTip="Orario previsto d'inizio" />
                     <StackPanel Grid.Column="2" Margin="6,0,8,0" VerticalAlignment="Center">
@@ -70,6 +75,13 @@
                 <DataTrigger Binding="{Binding IsSelected}" Value="True">
                     <Setter TargetName="Row" Property="Background" Value="{StaticResource CardHoverBrush}" />
                     <Setter TargetName="Row" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                    <Setter TargetName="MenuButton" Property="Visibility" Value="Visible" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsSkipped}" Value="True">
+                    <Setter TargetName="Actual" Property="Foreground" Value="{StaticResource MutedBrush}" />
+                    <Setter TargetName="Actual" Property="FontFamily" Value="{StaticResource UiFont}" />
+                    <Setter TargetName="Actual" Property="FontStyle" Value="Italic" />
+                    <Setter TargetName="TitleTb" Property="TextDecorations" Value="Strikethrough" />
                 </DataTrigger>
                 <!-- la parte in corso è più grande ed evidenziata -->
                 <DataTrigger Binding="{Binding IsRunning}" Value="True">
@@ -78,6 +90,10 @@
                     <Setter TargetName="Row" Property="Padding" Value="8,10" />
                     <Setter TargetName="TitleTb" Property="FontSize" Value="15.5" />
                     <Setter TargetName="TitleTb" Property="FontWeight" Value="SemiBold" />
+                    <Setter TargetName="MenuButton" Property="Visibility" Value="Visible" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsSong}" Value="True">
+                    <Setter TargetName="MenuButton" Property="Visibility" Value="Collapsed" />
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
@@ -433,18 +449,18 @@
             </Grid>
             <!-- annulla una fermata sbagliata, nei secondi successivi -->
             <Border Margin="0,6,0,0" CornerRadius="8" Background="#1FFBBF24" BorderBrush="#55FBBF24" BorderThickness="1" ClipToBounds="True"
-                    Visibility="{Binding CanUndoStop, Converter={StaticResource BoolToVis}}">
+                    Visibility="{Binding CanUndoAction, Converter={StaticResource BoolToVis}}">
                 <Grid>
                     <DockPanel Margin="10,4,4,6">
                         <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Annulla" Padding="12,2" FontWeight="SemiBold"
-                                Command="{Binding UndoStopCommand}" ToolTip="Il timer riprende come se non fosse stato fermato (Esc)" />
+                                Command="{Binding UndoActionCommand}" ToolTip="Annulla l'ultima azione (Esc)" />
                         <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE7A7;" FontSize="13" Foreground="{StaticResource AmberBrush}"
                                    VerticalAlignment="Center" Margin="0,0,8,0" />
-                        <TextBlock Text="{Binding UndoStopText}" FontSize="12" Foreground="{StaticResource AmberBrush}" VerticalAlignment="Center"
+                        <TextBlock Text="{Binding UndoActionText}" FontSize="12" Foreground="{StaticResource AmberBrush}" VerticalAlignment="Center"
                                    TextTrimming="CharacterEllipsis" />
                     </DockPanel>
                     <ProgressBar Style="{StaticResource SlimProgress}" Height="2" VerticalAlignment="Bottom" Minimum="0" Maximum="1"
-                                 Value="{Binding UndoStopFraction, Mode=OneWay}" Foreground="{StaticResource AmberBrush}" Background="Transparent" />
+                                 Value="{Binding UndoActionFraction, Mode=OneWay}" Foreground="{StaticResource AmberBrush}" Background="Transparent" />
                 </Grid>
             </Border>
             <!-- avvio con la voce (sperimentale) -->
@@ -544,8 +560,12 @@
                          Background="Transparent" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False"
                          PreviewMouseLeftButtonUp="PartsList_Click" PreviewMouseRightButtonUp="PartsList_RightClick" Focusable="False">
                     <ListBox.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem x:Name="ResetPartItem" Header="Azzera il tempo della parte selezionata" Click="ResetPart_Click" />
+                        <ContextMenu x:Name="PartMenu" Opened="PartMenu_Opened">
+                            <MenuItem x:Name="EditPartItem" Header="Modifica titolo e durata…" Click="EditPart_Click" />
+                            <MenuItem x:Name="MovePartItem" Header="Sposta dopo la prossima" Click="MovePart_Click" />
+                            <MenuItem x:Name="SkipPartItem" Header="Salta" Click="SkipPart_Click" />
+                            <Separator />
+                            <MenuItem x:Name="ResetPartItem" Header="Azzera il tempo di questa parte" Click="ResetPart_Click" />
                             <MenuItem x:Name="ResetAllItem" Header="Azzera tutti i tempi" Click="ResetAll_Click" />
                         </ContextMenu>
                     </ListBox.ContextMenu>

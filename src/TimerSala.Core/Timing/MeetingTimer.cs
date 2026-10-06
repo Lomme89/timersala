@@ -348,6 +348,112 @@ public sealed class MeetingTimer
         return -1;
     }
 
+    // ───── imprevisti durante l'adunanza (menu della parte) ─────
+
+    /// <summary>Istantanea di schema e tempi, per annullare una modifica fatta durante l'adunanza.</summary>
+    public sealed record EditSnapshot(List<MeetingPart> Parts, TimerState State, int Selected);
+
+    public EditSnapshot Snapshot()
+    {
+        lock (_lock) return new EditSnapshot(_meeting.Parts.Select(p => p.Clone()).ToList(), ExportStateUnlocked(), _selected);
+    }
+
+    /// <summary>Riporta schema e tempi all'istantanea; una parte in corso continua senza perdere tempo.</summary>
+    public void Restore(EditSnapshot snapshot)
+    {
+        lock (_lock)
+        {
+            _meeting.Parts.Clear();
+            _meeting.Parts.AddRange(snapshot.Parts.Select(p => p.Clone()));
+        }
+        ImportState(snapshot.State, countDowntime: true);
+        lock (_lock)
+        {
+            if (_startedAt is null && snapshot.Selected >= 0 && snapshot.Selected < _meeting.Parts.Count) _selected = snapshot.Selected;
+        }
+        Raise();
+    }
+
+    /// <summary>Le modifiche dal menu della parte valgono solo con le parti normali (non durante consiglio o timer libero).</summary>
+    public bool CanEditParts { get { lock (_lock) return _startedAt is null || _mode == TimerMode.Part; } }
+
+    /// <summary>Cambia titolo e durata di una parte (anche quella in corso: il tempo assegnato si aggiorna).</summary>
+    public bool EditPart(int index, string title, int durationSeconds)
+    {
+        lock (_lock)
+        {
+            if (!ValidTimed(index) || !CanEditPartsUnlocked() || durationSeconds <= 0) return false;
+            var part = _meeting.Parts[index];
+            part.Title = string.IsNullOrWhiteSpace(title) ? part.Title : title.Trim();
+            part.DurationSeconds = durationSeconds;
+            _adaptedTargets.Remove(index);
+            if (_startedAt is not null && _runningIndex == index) _targetSeconds = TargetForUnlocked(index);
+        }
+        Raise();
+        return true;
+    }
+
+    /// <summary>La parte successiva cronometrata, o -1.</summary>
+    public int NextTimedAfter(int index) { lock (_lock) return FirstTimedFrom(index + 1); }
+
+    /// <summary>Scambia la parte con la successiva (per esempio se un oratore non è ancora pronto). I cantici in mezzo restano dove sono.</summary>
+    public bool MoveAfterNext(int index)
+    {
+        lock (_lock)
+        {
+            if (!ValidTimed(index) || !CanEditPartsUnlocked()) return false;
+            int next = FirstTimedFrom(index + 1);
+            if (next < 0 || IsRunningUnlocked(index) || IsRunningUnlocked(next)) return false;
+            (_meeting.Parts[index], _meeting.Parts[next]) = (_meeting.Parts[next], _meeting.Parts[index]);
+            Swap(_actual, index, next);
+            Swap(_adaptedTargets, index, next);
+            bool a = _adaptive.Remove(index), b = _adaptive.Remove(next);
+            if (a) _adaptive.Add(next);
+            if (b) _adaptive.Add(index);
+            // la selezione resta sulla posizione: si parte con quella che ora viene prima
+        }
+        Raise();
+        return true;
+    }
+
+    /// <summary>
+    /// Salta una parte (per esempio uno studente assente): conta come durata zero, così il ritardo
+    /// ne tiene conto, e si passa alla successiva.
+    /// </summary>
+    public bool Skip(int index)
+    {
+        lock (_lock)
+        {
+            if (!ValidTimed(index) || !CanEditPartsUnlocked() || IsRunningUnlocked(index)) return false;
+            _actual[index] = TimeSpan.Zero;
+            _adaptedTargets.Remove(index);
+            if (_selected == index && _startedAt is null)
+            {
+                int next = FirstTimedFrom(index + 1);
+                if (next >= 0) _selected = next;
+            }
+            _lastStop = null;
+        }
+        Raise();
+        return true;
+    }
+
+    /// <summary>La parte è stata saltata (tempo registrato zero).</summary>
+    public bool IsSkipped(int index) { lock (_lock) return _actual.TryGetValue(index, out var t) && t == TimeSpan.Zero; }
+
+    bool ValidTimed(int index) => index >= 0 && index < _meeting.Parts.Count && _meeting.Parts[index].IsTimed;
+
+    bool CanEditPartsUnlocked() => _startedAt is null || _mode == TimerMode.Part;
+
+    bool IsRunningUnlocked(int index) => _startedAt is not null && _mode == TimerMode.Part && _runningIndex == index;
+
+    static void Swap<T>(Dictionary<int, T> d, int a, int b)
+    {
+        bool hasA = d.Remove(a, out var va), hasB = d.Remove(b, out var vb);
+        if (hasA) d[b] = va!;
+        if (hasB) d[a] = vb!;
+    }
+
     // ───── durate adattive (studio biblico / Torre di Guardia) ─────
 
     /// <summary>Parti la cui durata si adatta al ritardo accumulato per finire in orario.</summary>
@@ -404,7 +510,11 @@ public sealed class MeetingTimer
 
     public TimerState ExportState()
     {
-        lock (_lock)
+        lock (_lock) return ExportStateUnlocked();
+    }
+
+    TimerState ExportStateUnlocked()
+    {
         {
             var state = new TimerState
             {

@@ -123,6 +123,68 @@ public class MeetingTimerTests
     }
 
     [Fact]
+    public void Skip_counts_as_zero_and_moves_on()
+    {
+        var (t, _) = Create();
+        t.Select(2);
+        int duration = t.Meeting.Parts[2].DurationSeconds;
+        Assert.True(t.Skip(2));
+        Assert.True(t.IsSkipped(2));
+        Assert.Equal(t.NextTimedAfter(2), t.SelectedIndex);
+        Assert.Equal(-duration, t.GetSnapshot().DelaySeconds);
+    }
+
+    [Fact]
+    public void Move_after_next_swaps_parts_and_their_times()
+    {
+        var (t, clock) = Create();
+        int a = 1, b = t.NextTimedAfter(1);
+        string first = t.Meeting.Parts[a].Title, second = t.Meeting.Parts[b].Title;
+        t.Select(a);
+        t.Start();
+        clock.Advance(TimeSpan.FromMinutes(2));
+        t.Stop();
+        Assert.True(t.MoveAfterNext(a));
+        Assert.Equal(second, t.Meeting.Parts[a].Title);
+        Assert.Equal(first, t.Meeting.Parts[b].Title);
+        Assert.Null(t.ActualFor(a));
+        Assert.Equal(TimeSpan.FromMinutes(2), t.ActualFor(b));
+    }
+
+    [Fact]
+    public void Running_part_can_be_edited_but_not_moved_or_skipped()
+    {
+        var (t, clock) = Create();
+        t.Select(1);
+        t.Start();
+        clock.Advance(TimeSpan.FromMinutes(1));
+        Assert.False(t.Skip(1));
+        Assert.False(t.MoveAfterNext(1));
+        Assert.True(t.EditPart(1, "Discorso dell'ospite", 12 * 60));
+        Assert.Equal("Discorso dell'ospite", t.GetSnapshot().Title);
+        Assert.Equal("11:00", t.GetSnapshot().Display);
+    }
+
+    [Fact]
+    public void Restore_undoes_an_edit_without_losing_the_running_time()
+    {
+        var (t, clock) = Create();
+        t.Select(1);
+        t.Start();
+        var snap = t.Snapshot();
+        string title = t.Meeting.Parts[1].Title;
+        t.EditPart(1, "Altro", 5 * 60);
+        t.Skip(t.NextTimedAfter(1));
+        clock.Advance(TimeSpan.FromSeconds(30));
+        t.Restore(snap);
+        Assert.Equal(title, t.Meeting.Parts[1].Title);
+        Assert.True(t.IsRunning);
+        Assert.Equal(1, t.RunningIndex);
+        Assert.Null(t.ActualFor(t.NextTimedAfter(1)));
+        Assert.Equal(30, (int)t.GetSnapshot().ElapsedSeconds);
+    }
+
+    [Fact]
     public void Stop_records_time_and_advances_skipping_songs()
     {
         var (t, clock) = Create();

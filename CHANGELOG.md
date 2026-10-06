@@ -20,6 +20,12 @@
 - **Messaggi in una riga:** campo, invio e tutto schermo; il messaggio in onda compare in una pastiglia gialla con «Togli».
 - **Programma:** l'elenco è più alto e mostra l'orario previsto d'inizio di ogni parte; la parte in corso è più grande ed evidenziata, quelle già fatte si compattano mostrando il tempo effettivo, e lo scorrimento tiene al centro la parte corrente.
 
+**Menu della parte** (tasto destro o «⋯»), per gli imprevisti senza aprire l'editor
+- **Modifica:** titolo e durata, per esempio il tema del discorso pubblico o il nome dell'oratore ospite. Vale anche per la parte in corso.
+- **Sposta dopo la prossima:** scambia l'ordine se un oratore non è ancora pronto.
+- **Salta:** per esempio uno studente assente. Si passa alla successiva e il ritardo ne tiene conto.
+- Sposta e Salta chiedono conferma; dopo ogni azione c'è «Annulla» per 10 secondi (anche con Esc), nella stessa barra di «Annulla» dopo Ferma.
+
 **Tema e dimensione dell'interfaccia** (*Impostazioni → Programma*)
 - **Tema chiaro** per controller, mini, editor e impostazioni, utile se l'acustica è in un punto molto luminoso: scuro, chiaro o «come Windows» (segue il tema delle app di Windows anche mentre il programma è aperto). Lo schermo della sala resta con il suo tema.
 - **Dimensione dell'interfaccia** dal 90 al 150 %, per portatili piccoli o schermi ad alta risoluzione. Le finestre aperte si adattano subito.

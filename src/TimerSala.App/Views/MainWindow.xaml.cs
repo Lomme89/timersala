@@ -169,14 +169,72 @@ public partial class MainWindow : Window
             _vm.SelectPartCommand.Execute(item);
     }
 
+    // ───── menu della parte (tasto destro o «⋯») ─────
+
+    PartItemViewModel? _menuPart;
+
     // il tasto destro seleziona la parte prima di aprire il menu
     void PartsList_RightClick(object sender, MouseButtonEventArgs e)
     {
+        _menuPart = null;
         if (e.OriginalSource is FrameworkElement { DataContext: PartItemViewModel item })
-            _vm.SelectPartCommand.Execute(item);
+        {
+            _menuPart = item;
+            if (!item.IsRunning) _vm.SelectPartCommand.Execute(item);
+        }
     }
 
-    void ResetPart_Click(object sender, RoutedEventArgs e) => _vm.ResetSelectedCommand.Execute(null);
+    void PartMenu_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not FrameworkElement { Tag: PartItemViewModel item } button) return;
+        _menuPart = item;
+        PartMenu.PlacementTarget = button;
+        PartMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+        PartMenu.IsOpen = true;
+        e.Handled = true;
+    }
+
+    void PartMenu_Opened(object sender, RoutedEventArgs e)
+    {
+        var p = _menuPart ?? _vm.Parts.FirstOrDefault(x => x.IsSelected);
+        _menuPart = p;
+        EditPartItem.IsEnabled = _vm.CanEditPart(p);
+        MovePartItem.IsEnabled = _vm.CanMovePart(p);
+        SkipPartItem.IsEnabled = _vm.CanSkipPart(p);
+        MovePartItem.Header = p is not null && _vm.NextPartTitle(p) is { } next ? $"Sposta dopo «{Short(next)}»" : "Sposta dopo la prossima";
+        ResetPartItem.IsEnabled = p is { IsTimed: true, IsRunning: false } && p.ActualText is not null;
+    }
+
+    static string Short(string s) => s.Length <= 28 ? s : s[..26].TrimEnd() + "…";
+
+    void EditPart_Click(object sender, RoutedEventArgs e)
+    {
+        if (_menuPart is not { } p) return;
+        var dlg = new PartEditWindow(p) { Owner = this };
+        if (dlg.ShowDialog() == true) _vm.EditPart(p, dlg.PartTitle, dlg.DurationSeconds);
+    }
+
+    void MovePart_Click(object sender, RoutedEventArgs e)
+    {
+        if (_menuPart is not { } p || _vm.NextPartTitle(p) is not { } next) return;
+        if (MessageBox.Show(this, $"Spostare «{p.Title}» dopo «{next}»?\nLe due parti si scambiano di posto.", "TimerSala",
+                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            _vm.MovePartAfterNext(p);
+    }
+
+    void SkipPart_Click(object sender, RoutedEventArgs e)
+    {
+        if (_menuPart is not { } p) return;
+        if (MessageBox.Show(this, $"Saltare «{p.Title}»?\nConta come durata zero: il ritardo ne tiene conto.", "TimerSala",
+                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            _vm.SkipPart(p);
+    }
+
+    void ResetPart_Click(object sender, RoutedEventArgs e)
+    {
+        if (_menuPart is { } p) _vm.SelectPartCommand.Execute(p);
+        _vm.ResetSelectedCommand.Execute(null);
+    }
 
     void ResetAll_Click(object sender, RoutedEventArgs e) => _vm.ResetAllCommand.Execute(null);
 

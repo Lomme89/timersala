@@ -177,6 +177,7 @@ public sealed partial class MainViewModel : ObservableObject
 
     void ApplyMeeting()
     {
+        _offer = null;
         Timer.LoadMeeting(CurrentMeeting);
         UpdateMeetingStart();
         UpdateAdaptiveParts();
@@ -423,7 +424,7 @@ public sealed partial class MainViewModel : ObservableObject
         else
         {
             // un nuovo avvio (o l'attesa della voce) chiude la possibilità di annullare la fermata
-            Timer.ForgetStop();
+            ForgetUndo();
             if (!TryArmOrStartNow()) Timer.Start();
         }
         RefreshDisplay();
@@ -709,7 +710,8 @@ public sealed partial class MainViewModel : ObservableObject
             // le parti già fatte si compattano
             p.IsPast = current >= 0 && p.Index < current;
             var actual = Timer.ActualFor(p.Index);
-            p.ActualText = actual is { } a ? TimerSnapshot.FormatDuration(a.TotalSeconds) : null;
+            p.IsSkipped = actual == TimeSpan.Zero;
+            p.ActualText = actual is { } a ? a == TimeSpan.Zero ? "saltata" : TimerSnapshot.FormatDuration(a.TotalSeconds) : null;
             p.IsOver = actual is { } b && b.TotalSeconds >= p.Part.DurationSeconds + 1;
             p.AdaptedSeconds = actual is null ? Timer.AdaptedTargetFor(p.Index) : null;
             p.RefreshDuration();

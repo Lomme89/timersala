@@ -16,7 +16,7 @@ Le tappe sono indicative: l'ordine dentro una tappa non è una priorità.
 
 ## 2.0 · Nuovo aspetto e sala sicura
 
-### Controller riorganizzato (nuovo design)
+### Controller riorganizzato (nuovo design) — fatto
 Mockup approvato: [prima e dopo](docs/roadmap/controller-prima-dopo.png). Stesso stile delle nuove impostazioni.
 - **Intestazione**: ora, etichetta «In orario» / ritardo, icone mini · editor · impostazioni e **icona della rete**
   (pallino verde; un clic apre il riquadro della rete: indirizzo, QR, dispositivi collegati). Sparisce la riga «Timer in rete» in fondo.

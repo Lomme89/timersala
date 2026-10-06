@@ -1,0 +1,27 @@
+<Window x:Class="TimerSala.App.Views.PartEditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:v="clr-namespace:TimerSala.App.Views"
+        Title="Modifica la parte" Width="420" SizeToContent="Height" ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        Background="{StaticResource BgBrush}" Foreground="{StaticResource TextBrush}" FontFamily="{StaticResource UiFont}">
+    <StackPanel Margin="20,18,20,16">
+        <TextBlock Text="Titolo" Style="{StaticResource Caption}" FontSize="12.5" Margin="0,0,0,6" />
+        <TextBox x:Name="TitleBox" FontSize="15" />
+        <TextBlock Text="Per esempio il tema del discorso pubblico o il nome dell'oratore ospite." Style="{StaticResource Caption}"
+                   TextWrapping="Wrap" Margin="0,4,0,14" />
+        <DockPanel>
+            <v:NumberBox x:Name="MinutesBox" DockPanel.Dock="Right" Width="150" Minimum="1" Maximum="180" Step="1" Unit="min" />
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Durata" FontSize="15" />
+                <TextBlock x:Name="RunningHint" Text="La parte è in corso: il tempo assegnato cambia subito." Style="{StaticResource Caption}"
+                           TextWrapping="Wrap" Margin="0,2,12,0" Visibility="Collapsed" />
+            </StackPanel>
+        </DockPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+            <Button Style="{StaticResource FlatButton}" Content="Annulla" IsCancel="True" Width="100" Margin="0,0,8,0" />
+            <Button Style="{StaticResource FlatButton}" Content="Applica" IsDefault="True" Width="100" Click="Apply_Click"
+                    Background="{StaticResource AccentBrush}" BorderThickness="0" Foreground="White" FontWeight="SemiBold" />
+        </StackPanel>
+    </StackPanel>
+</Window>

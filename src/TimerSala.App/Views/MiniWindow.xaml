@@ -54,9 +54,9 @@
                            Foreground="{StaticResource DimTextBrush}" VerticalAlignment="Center" Margin="8,0,6,0" />
                 <!-- dopo Ferma: «Annulla» al posto del titolo per qualche secondo -->
                 <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Annulla" Padding="8,0" Height="22" FontSize="12"
-                        FontWeight="SemiBold" Margin="6,0,0,0" Command="{Binding UndoStopCommand}"
-                        ToolTip="Il timer riprende come se non fosse stato fermato (Esc)"
-                        Visibility="{Binding CanUndoStop, Converter={StaticResource BoolToVis}}" />
+                        FontWeight="SemiBold" Margin="6,0,0,0" Command="{Binding UndoActionCommand}"
+                        ToolTip="Annulla l'ultima azione (Esc)"
+                        Visibility="{Binding CanUndoAction, Converter={StaticResource BoolToVis}}" />
                 <Ellipse Width="8" Height="8" Fill="{Binding SectionBrush}" VerticalAlignment="Center" Margin="0,0,8,0" />
                 <TextBlock FontSize="13" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" VerticalAlignment="Center">
                     <TextBlock.Style>
@@ -64,8 +64,8 @@
                             <Setter Property="Text" Value="{Binding TitleText}" />
                             <Setter Property="ToolTip" Value="{Binding TitleText}" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding CanUndoStop}" Value="True">
-                                    <Setter Property="Text" Value="{Binding UndoStopText}" />
+                                <DataTrigger Binding="{Binding CanUndoAction}" Value="True">
+                                    <Setter Property="Text" Value="{Binding UndoActionText}" />
                                     <Setter Property="Foreground" Value="{StaticResource AmberBrush}" />
                                 </DataTrigger>
                             </Style.Triggers>

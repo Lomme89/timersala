@@ -31,6 +31,9 @@ public sealed partial class PartItemViewModel(MeetingPart part, int index) : Obs
 
     public string? ActualText { get; set => Set(ref field, value); }
     public bool IsOver { get; set => Set(ref field, value); }
+
+    /// <summary>Saltata dal menu della parte (per esempio uno studente assente).</summary>
+    public bool IsSkipped { get; set => Set(ref field, value); }
     public bool IsSelected { get; set => Set(ref field, value); }
 
     /// <summary>Parte prima di quella in corso (o selezionata): nell'elenco si compatta.</summary>

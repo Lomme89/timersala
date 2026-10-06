@@ -7,47 +7,82 @@ namespace TimerSala.App.ViewModels;
 /// <summary>Sicurezza in sala: «Annulla» dopo Ferma, chiusura protetta, orologio del PC.</summary>
 public sealed partial class MainViewModel
 {
-    // ───────────── Annulla dopo Ferma ─────────────
+    // ───────────── Annulla: dopo Ferma e dopo le modifiche dal menu della parte ─────────────
 
+    /// <summary>Un'azione da poter annullare per qualche secondo.</summary>
+    sealed record UndoOffer(string Text, Action Undo, DateTime Until, TimeSpan Window);
+
+    static readonly TimeSpan EditUndoWindow = TimeSpan.FromSeconds(10);
+
+    UndoOffer? _offer;
     bool _stoppedFromPhone;
 
-    /// <summary>Nei secondi dopo Ferma c'è «Annulla» per rimediare a una pressione sbagliata.</summary>
-    public bool CanUndoStop { get; private set => Set(ref field, value); }
+    /// <summary>C'è qualcosa da annullare: compare la barra con «Annulla».</summary>
+    public bool CanUndoAction { get; private set => Set(ref field, value); }
 
-    public string UndoStopText { get; private set => Set(ref field, value); } = "";
+    public string UndoActionText { get; private set => Set(ref field, value); } = "";
 
     /// <summary>Tempo rimasto per annullare, tra 1 e 0 (barra che si svuota).</summary>
-    public double UndoStopFraction { get; private set => Set(ref field, value); }
+    public double UndoActionFraction { get; private set => Set(ref field, value); }
 
-    public ICommand UndoStopCommand => field ??= new RelayCommand(UndoStop);
+    public ICommand UndoActionCommand => field ??= new RelayCommand(UndoAction);
 
-    /// <summary>Esc: annulla l'ultima fermata, altrimenti l'attesa o l'avvio fatto dalla voce.</summary>
+    /// <summary>Esc: annulla l'ultima azione, altrimenti l'attesa o l'avvio fatto dalla voce.</summary>
     public ICommand UndoCommand => field ??= new RelayCommand(Undo);
 
-    public bool CanUndo => CanUndoStop || CanCancelVoice;
+    public bool CanUndo => CanUndoAction || CanCancelVoice;
 
     void Undo()
     {
-        if (Timer.CanUndoStop) UndoStop();
+        if (CanUndoAction) UndoAction();
         else if (CanCancelVoice) CancelVoiceCommand.Execute(null);
     }
 
-    void UndoStop()
+    void UndoAction()
     {
-        if (!Timer.CanUndoStop) return;
-        // la parte successiva potrebbe essere già in attesa della voce
-        if (IsVoiceArmed) Disarm();
-        if (Timer.UndoStop()) ShowStatus("Fermata annullata: il tempo continua da dove era.");
+        if (Timer.CanUndoStop)
+        {
+            // la parte successiva potrebbe essere già in attesa della voce
+            if (IsVoiceArmed) Disarm();
+            if (Timer.UndoStop()) ShowStatus("Fermata annullata: il tempo continua da dove era.");
+        }
+        else if (_offer is { } offer && DateTime.UtcNow < offer.Until)
+        {
+            _offer = null;
+            offer.Undo();
+        }
         RefreshDisplay();
+    }
+
+    /// <summary>Offre «Annulla» per qualche secondo dopo una modifica.</summary>
+    void OfferUndo(string text, Action undo) =>
+        _offer = new UndoOffer(text, undo, DateTime.UtcNow + EditUndoWindow, EditUndoWindow);
+
+    void ForgetUndo()
+    {
+        _offer = null;
+        Timer.ForgetStop();
     }
 
     void RefreshUndoStop()
     {
-        var left = Timer.UndoStopRemaining;
-        CanUndoStop = left is not null;
-        if (left is not { } l) return;
-        UndoStopFraction = Math.Clamp(l / MeetingTimer.UndoStopWindow, 0, 1);
-        UndoStopText = $"{(_stoppedFromPhone ? "Fermato dal telefono" : "Parte fermata")} · {Math.Ceiling(l.TotalSeconds):0} s";
+        if (Timer.UndoStopRemaining is { } l)
+        {
+            CanUndoAction = true;
+            UndoActionFraction = Math.Clamp(l / MeetingTimer.UndoStopWindow, 0, 1);
+            UndoActionText = $"{(_stoppedFromPhone ? "Fermato dal telefono" : "Parte fermata")} · {Math.Ceiling(l.TotalSeconds):0} s";
+            return;
+        }
+        if (_offer is { } o && DateTime.UtcNow < o.Until)
+        {
+            var left = o.Until - DateTime.UtcNow;
+            CanUndoAction = true;
+            UndoActionFraction = Math.Clamp(left / o.Window, 0, 1);
+            UndoActionText = $"{o.Text} · {Math.Ceiling(left.TotalSeconds):0} s";
+            return;
+        }
+        _offer = null;
+        CanUndoAction = false;
     }
 
     // ───────────── Chiusura protetta ─────────────

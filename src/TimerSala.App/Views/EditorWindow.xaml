@@ -126,6 +126,10 @@
             <StackPanel>
                 <TextBlock Text="{Binding Heading}" FontSize="20" FontWeight="SemiBold" />
                 <TextBlock Text="{Binding WeekText}" Style="{StaticResource Caption}" FontSize="13" Margin="0,2,0,0" />
+                <Border CornerRadius="8" BorderThickness="1" BorderBrush="{StaticResource AmberBrush}" Background="#1FFBBF24" Padding="10,5" Margin="0,8,0,0"
+                        HorizontalAlignment="Left" Visibility="{Binding HasOverrun, Converter={StaticResource BoolToVis}}">
+                    <TextBlock Text="{Binding OverrunText}" Foreground="{StaticResource AmberBrush}" FontSize="12.5" TextWrapping="Wrap" />
+                </Border>
             </StackPanel>
         </DockPanel>
 
@@ -281,6 +285,10 @@
         <!-- piè di pagina -->
         <DockPanel Grid.Row="2" Margin="0,14,0,0">
             <StackPanel Orientation="Horizontal">
+                <Button Style="{StaticResource IconButton}" Content="&#xE7A7;" Command="{Binding UndoCommand}" IsEnabled="{Binding CanUndo}"
+                        ToolTip="Annulla l'ultima modifica (Ctrl+Z)" />
+                <Button Style="{StaticResource IconButton}" Content="&#xE7A6;" Command="{Binding RedoCommand}" IsEnabled="{Binding CanRedo}"
+                        ToolTip="Ripeti (Ctrl+Y)" Margin="4,0,12,0" />
                 <Button Style="{StaticResource FlatButton}" Content="Ripristina scaricato" Command="{Binding RestoreDownloadedCommand}" Margin="0,0,8,0"
                         ToolTip="Torna allo schema scaricato da wol.jw.org (o al modello se non scaricato)" />
                 <Button Style="{StaticResource FlatButton}" Content="Modello standard" Command="{Binding UseTemplateCommand}"

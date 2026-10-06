@@ -21,6 +21,22 @@ public partial class EditorWindow : Window
         _vm = new EditorViewModel(main);
         DataContext = _vm;
         Closed += (_, _) => Mouse.OverrideCursor = null;
+        PreviewKeyDown += OnUndoKeys;
+    }
+
+    // Ctrl+Z / Ctrl+Y (o Ctrl+Maiusc+Z) annullano e ripetono le modifiche allo schema, anche dentro i campi di testo
+    void OnUndoKeys(object sender, KeyEventArgs e)
+    {
+        if (_dragItem is not null || !Keyboard.Modifiers.HasFlag(ModifierKeys.Control)) return;
+        bool shift = Keyboard.Modifiers.HasFlag(ModifierKeys.Shift);
+        if (e.Key == Key.Z && !shift) { CommitFocusedText(); _vm.Undo(); e.Handled = true; }
+        else if (e.Key == Key.Y || (e.Key == Key.Z && shift)) { CommitFocusedText(); _vm.Redo(); e.Handled = true; }
+    }
+
+    static void CommitFocusedText()
+    {
+        if (Keyboard.FocusedElement is TextBox tb)
+            tb.GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
     }
 
     void Save_Click(object sender, RoutedEventArgs e)

@@ -96,6 +96,16 @@ public class WindowsSmokeTests
         var editor = new EditorWindow(vm) { Owner = main };
         editor.Show();
         Pump();
+        // Annulla e Ripeti: una parte eliminata torna, e se ne va di nuovo
+        var evm = (EditorViewModel)editor.DataContext;
+        int count = evm.Parts.Count;
+        evm.RemoveCommand.Execute(null);
+        Assert.Equal(count - 1, evm.Parts.Count);
+        evm.Undo();
+        Assert.Equal(count, evm.Parts.Count);
+        evm.Redo();
+        Assert.Equal(count - 1, evm.Parts.Count);
+        Pump();
         editor.Close();
         var part = vm.Parts.First(p => p.IsTimed);
         var edit = new PartEditWindow(part) { Owner = main };

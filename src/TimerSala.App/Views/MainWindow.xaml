@@ -252,6 +252,11 @@
                     </ControlTemplate>
                 </ToggleButton.Template>
                 <DockPanel>
+                    <Border DockPanel.Dock="Right" CornerRadius="9" BorderThickness="1" BorderBrush="{StaticResource AmberBrush}" Background="#1FFBBF24"
+                            Padding="7,1" Margin="8,0,0,0" VerticalAlignment="Center" Visibility="{Binding HasOverrun, Converter={StaticResource BoolToVis}}"
+                            ToolTip="Le parti dello schema, con i cantici, superano la durata dell'adunanza impostata. Si può sistemare nell'editor.">
+                        <TextBlock Text="{Binding OverrunText}" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource AmberBrush}" />
+                    </Border>
                     <TextBlock DockPanel.Dock="Right" FontFamily="{StaticResource IconFont}" FontSize="11" Foreground="{StaticResource MutedBrush}"
                                VerticalAlignment="Center" Margin="8,0,0,0">
                         <TextBlock.Style>

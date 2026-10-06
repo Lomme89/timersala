@@ -25,4 +25,22 @@ public static class MeetingPlan
         }
         return result;
     }
+
+    /// <summary>Minuti stimati per ogni cantico (con la preghiera, quando c'è).</summary>
+    public const int SongMinutes = 5;
+
+    /// <summary>
+    /// Durata stimata dello schema: parti cronometrate più <see cref="SongMinutes"/> per ogni cantico,
+    /// compresi quelli scritti nel titolo di una parte («Cantico e preghiera | Commenti introduttivi»).
+    /// </summary>
+    public static int EstimatedSeconds(Meeting meeting)
+    {
+        int timed = meeting.Parts.Where(p => p.IsTimed).Sum(p => p.DurationSeconds);
+        int songs = meeting.Parts.Count(p => !p.IsTimed || p.Title.Contains("cantico", StringComparison.OrdinalIgnoreCase));
+        return timed + songs * SongMinutes * 60;
+    }
+
+    /// <summary>Minuti oltre la durata dell'adunanza (0 se lo schema ci sta).</summary>
+    public static int OverrunMinutes(Meeting meeting, int lengthMinutes) =>
+        Math.Max(0, (int)Math.Ceiling(EstimatedSeconds(meeting) / 60.0) - lengthMinutes);
 }

@@ -19,6 +19,10 @@ public sealed partial class MainViewModel
     public string MeetingDayText { get; private set => Set(ref field, value); } = "";
     public string MeetingLineText { get; private set => Set(ref field, value); } = "";
 
+    /// <summary>«3 min oltre» se lo schema supera la durata dell'adunanza, altrimenti vuoto.</summary>
+    public string OverrunText { get; private set => Set(ref field, value); } = "";
+    public bool HasOverrun { get; private set => Set(ref field, value); }
+
     // riquadro del tempo
     public string CardStartText { get; private set => Set(ref field, value); } = "";
     public string CardEndText { get; private set => Set(ref field, value); } = "";
@@ -86,6 +90,9 @@ public sealed partial class MainViewModel
     /// <summary>Orari previsti delle parti, dallo schema.</summary>
     void UpdatePlannedStarts()
     {
+        int over = MeetingPlan.OverrunMinutes(Timer.Meeting, Settings.MeetingLengthMinutes);
+        OverrunText = over > 0 ? $"{over} min oltre" : "";
+        HasOverrun = over > 0;
         if (Timer.MeetingStart is not { } start) return;
         var starts = MeetingPlan.PlannedStarts(Timer.Meeting, start.DateTime, Settings.MeetingLengthMinutes);
         foreach (var p in Parts)

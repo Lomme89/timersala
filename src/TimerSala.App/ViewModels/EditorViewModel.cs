@@ -88,7 +88,7 @@ public sealed class EditorViewModel : ObservableObject
 
     public IReadOnlyList<int> QuickMinutes { get; }
 
-    public string MeetingTitle { get; set => Set(ref field, value); }
+    public string MeetingTitle { get; set { if (Set(ref field, value)) Track("titolo"); } }
 
     public EditablePart? Selected
     {
@@ -109,6 +109,8 @@ public sealed class EditorViewModel : ObservableObject
         MeetingTitle = m.Title;
         Heading = _kind == MeetingKind.Midweek ? "Adunanza infrasettimanale" : "Adunanza del fine settimana";
         WeekText = main.WeekTitle;
+        _length = main.Settings.MeetingLengthMinutes;
+        _start = main.Timer.MeetingStart;
         Parts.CollectionChanged += (_, e) =>
         {
             if (e.NewItems is not null)
@@ -116,14 +118,114 @@ public sealed class EditorViewModel : ObservableObject
             if (e.OldItems is not null)
                 foreach (EditablePart p in e.OldItems) p.PropertyChanged -= OnPartChanged;
             NotifyTotal();
+            Track(null);
         };
+        _suspend++;
         Load(m);
+        _suspend--;
+        _baseline = Capture();
     }
 
     void OnPartChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName is nameof(EditablePart.Minutes) or nameof(EditablePart.IsSong)) NotifyTotal();
+        // le modifiche di fila allo stesso campo (per esempio mentre si scrive) diventano un solo passo da annullare
+        if (e.PropertyName is nameof(EditablePart.Title) or nameof(EditablePart.Section) or nameof(EditablePart.Minutes)
+            or nameof(EditablePart.IsSong) or nameof(EditablePart.Detail))
+            Track($"{sender?.GetHashCode()}:{e.PropertyName}");
     }
+
+    // ── annulla e ripeti ──
+
+    sealed record State(string Title, List<EditablePart> Parts, int Selected);
+
+    readonly Stack<State> _undo = new(), _redo = new();
+    State? _baseline;
+    string? _lastKey;
+    DateTime _lastAt;
+    int _suspend;
+
+    State Capture() => new(MeetingTitle, Parts.Select(p => p.Copy()).ToList(), Selected is null ? -1 : Parts.IndexOf(Selected));
+
+    /// <summary>Lo schema è cambiato: lo stato precedente diventa un passo da annullare.</summary>
+    void Track(string? key)
+    {
+        if (_suspend > 0 || _baseline is null) return;
+        var now = DateTime.UtcNow;
+        bool merge = key is not null && key == _lastKey && now - _lastAt < TimeSpan.FromSeconds(1.5);
+        if (!merge)
+        {
+            _undo.Push(_baseline);
+            _redo.Clear();
+        }
+        _lastKey = key;
+        _lastAt = now;
+        _baseline = Capture();
+        NotifyUndo();
+    }
+
+    void Restore(State s)
+    {
+        _suspend++;
+        MeetingTitle = s.Title;
+        Parts.Clear();
+        foreach (var p in s.Parts) Parts.Add(p.Copy());
+        Selected = s.Selected >= 0 && s.Selected < Parts.Count ? Parts[s.Selected] : Parts.FirstOrDefault();
+        _suspend--;
+        _baseline = Capture();
+        _lastKey = null;
+        NotifyUndo();
+    }
+
+    public bool CanUndo => _undo.Count > 0;
+    public bool CanRedo => _redo.Count > 0;
+
+    public ICommand UndoCommand => field ??= new RelayCommand(Undo);
+    public ICommand RedoCommand => field ??= new RelayCommand(Redo);
+
+    public void Undo()
+    {
+        if (_undo.Count == 0) return;
+        _redo.Push(Capture());
+        Restore(_undo.Pop());
+    }
+
+    public void Redo()
+    {
+        if (_redo.Count == 0) return;
+        _undo.Push(Capture());
+        Restore(_redo.Pop());
+    }
+
+    void NotifyUndo()
+    {
+        OnPropertyChanged(nameof(CanUndo));
+        OnPropertyChanged(nameof(CanRedo));
+    }
+
+    // ── sforamento ──
+
+    readonly int _length;
+    readonly DateTimeOffset? _start;
+
+    Meeting Draft() => new() { Kind = _kind, Title = MeetingTitle, Parts = Parts.Select(p => p.ToPart()).ToList() };
+
+    /// <summary>«Lo schema dura circa 108 minuti: 3 minuti oltre i 105, finirà verso le 20:48».</summary>
+    public string OverrunText
+    {
+        get
+        {
+            var m = Draft();
+            int over = MeetingPlan.OverrunMinutes(m, _length);
+            if (over == 0) return "";
+            int total = _length + over;
+            var end = _start is { } s ? $", finirà verso le {s.AddMinutes(total):HH:mm}" : "";
+            return $"Lo schema dura circa {total} minuti, contando {MeetingPlan.SongMinutes} minuti per ogni cantico: "
+                   + $"{over} {(over == 1 ? "minuto" : "minuti")} oltre i {_length}{end}.";
+        }
+    }
+
+    public bool HasOverrun => OverrunText.Length > 0;
 
     void Load(Meeting m)
     {
@@ -149,7 +251,12 @@ public sealed class EditorViewModel : ObservableObject
         }
     }
 
-    void NotifyTotal() => OnPropertyChanged(nameof(TotalText));
+    void NotifyTotal()
+    {
+        OnPropertyChanged(nameof(TotalText));
+        OnPropertyChanged(nameof(OverrunText));
+        OnPropertyChanged(nameof(HasOverrun));
+    }
 
     // ── comandi ──
 
@@ -211,7 +318,25 @@ public sealed class EditorViewModel : ObservableObject
         Selected = item;
     }
 
-    void RestoreDownloaded()
+    void RestoreDownloaded() => Batch(RestoreDownloadedCore);
+
+    void UseTemplate() => Batch(UseTemplateCore);
+
+    /// <summary>Un'operazione con più modifiche diventa un solo passo da annullare.</summary>
+    void Batch(Action action)
+    {
+        var before = Capture();
+        _suspend++;
+        try { action(); }
+        finally { _suspend--; }
+        _undo.Push(before);
+        _redo.Clear();
+        _baseline = Capture();
+        _lastKey = null;
+        NotifyUndo();
+    }
+
+    void RestoreDownloadedCore()
     {
         var week = _main.Week;
         var m = (_kind == MeetingKind.Midweek ? week.DownloadedMidweek : week.DownloadedWeekend)?.Clone()
@@ -221,7 +346,7 @@ public sealed class EditorViewModel : ObservableObject
         Load(m);
     }
 
-    void UseTemplate()
+    void UseTemplateCore()
     {
         var m = _kind == MeetingKind.Midweek ? MeetingTemplates.DefaultMidweek() : MeetingTemplates.DefaultWeekend();
         MeetingTitle = m.Title;

@@ -7,6 +7,11 @@
 - **Modalità mini** (M): una finestrella sempre in primo piano, sopra JW Library e Zoom. Con M torni al controller.
 - In alto vedi l'ora e la pastiglia **In orario** o il ritardo accumulato.
 
+## Telecomando per presentazioni
+
+- **Avanti** (Pagina giù) avvia o ferma, come il pulsante Avvia. **Indietro** (Pagina su) è Annulla.
+- In *Impostazioni → Programma* puoi **associare** il telecomando: così funziona anche con JW Library o Zoom in primo piano.
+
 ## Imprevisti
 
 Tasto destro su una parte (o «⋯»):

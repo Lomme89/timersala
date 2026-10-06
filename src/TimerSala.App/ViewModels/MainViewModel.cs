@@ -63,6 +63,7 @@ public sealed partial class MainViewModel : ObservableObject
         ApplyVoiceSettings();
         ApplyWindowsSettings();
         ApplyChecklistSettings();
+        ApplyClickerSettings();
 
         Timer.StateChanged += (_, _) => Application.Current.Dispatcher.BeginInvoke(RefreshParts);
 
@@ -1053,6 +1054,7 @@ public sealed partial class MainViewModel : ObservableObject
         bool webChanged = settings.WebServerEnabled != Settings.WebServerEnabled || settings.WebServerPort != Settings.WebServerPort;
         // i dispositivi fidati li gestisce solo il registro (le impostazioni aperte ne hanno una copia vecchia)
         settings.TrustedDevices = Settings.TrustedDevices;
+        settings.ClickerDevice = Settings.ClickerDevice;
         Settings = settings;
         OnPropertyChanged(nameof(MessagePresets));
         OnPropertyChanged(nameof(MessagesEnabled));
@@ -1067,6 +1069,7 @@ public sealed partial class MainViewModel : ObservableObject
         ApplyVoiceSettings();
         ApplyWindowsSettings();
         ApplyChecklistSettings();
+        ApplyClickerSettings();
         UiTheme.Apply(settings);
         SaveSettings();
         if (!Timer.IsRunning && settings.IsOverseerWeek(Week.WeekStart) != Week.CircuitOverseerVisit)
@@ -1093,6 +1096,7 @@ public sealed partial class MainViewModel : ObservableObject
         // a programma chiuso il display non va più aggiornato (l'applicazione e i suoi colori non ci sono più)
         _tick.Stop();
         DisposeVoice();
+        DisposeClicker();
         KeepAwake.Set(false);
     }
 

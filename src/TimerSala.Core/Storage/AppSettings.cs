@@ -195,6 +195,12 @@ public sealed class AppSettings
     /// <summary>Il primo avvio guidato è stato completato (o saltato).</summary>
     public bool OnboardingDone { get; set; }
 
+    /// <summary>Telecomando per presentazioni: Pagina giù = Avvia/Ferma, Pagina su = Annulla.</summary>
+    public bool ClickerEnabled { get; set; } = true;
+
+    /// <summary>Telecomando associato (percorso del dispositivo): funziona anche con TimerSala in secondo piano.</summary>
+    public string? ClickerDevice { get; set; }
+
     /// <summary>TimerSala si apre all'accesso a Windows.</summary>
     public bool StartWithWindows { get; set; }
 

@@ -154,6 +154,13 @@ public class WindowsSmokeTests
         Pump();
         vm.ChecklistOpen = false;
 
+        // telecomando: l'associazione registra l'input da tutte le tastiere, poi si annulla
+        vm.StartClickerAssociation();
+        Pump();
+        Assert.Contains("Premi un tasto", vm.ClickerStatus);
+        vm.ForgetClicker();
+        Assert.False(vm.ClickerAssociated);
+
         // riquadro della settimana, modalità mini e ritorno
         Stage("riquadro della settimana, modalità mini e ritorno");
         vm.WeekPanelOpen = true;

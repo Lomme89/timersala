@@ -1046,6 +1046,35 @@
 
                         <Border Style="{StaticResource Panel}">
                             <StackPanel>
+                                <TextBlock Style="{StaticResource PanelTitle}" Text="TELECOMANDO PER PRESENTAZIONI" />
+                                <Border Style="{StaticResource FirstRow}">
+                                    <DockPanel>
+                                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding ClickerEnabled}" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Telecomando" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="«Avanti» (Pagina giù) avvia o ferma come il pulsante Avvia, compresa l'attesa della voce. «Indietro» (Pagina su) è sempre Annulla, mai la parte precedente." />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                                <Border Style="{StaticResource Row}" IsEnabled="{Binding ClickerEnabled}">
+                                    <DockPanel>
+                                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                            <Button Style="{StaticResource FlatButton}" Content="Associa" Padding="12,5" Margin="0,0,8,0" Click="ClickerAssociate_Click" />
+                                            <Button Style="{StaticResource FlatButton}" Content="Dimentica" Padding="12,5" Click="ClickerForget_Click"
+                                                    Visibility="{Binding Main.ClickerAssociated, Converter={StaticResource BoolToVis}}" />
+                                        </StackPanel>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Anche con altri programmi in primo piano" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="{Binding Main.ClickerStatus}" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Premi «Associa», poi un tasto del telecomando (non della tastiera). Così funziona anche con JW Library o Zoom davanti." />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
                                 <TextBlock Style="{StaticResource PanelTitle}" Text="AIUTO" />
                                 <Border Style="{StaticResource FirstRow}">
                                     <DockPanel>

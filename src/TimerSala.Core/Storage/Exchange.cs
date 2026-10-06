@@ -91,6 +91,7 @@ public static class Exchange
         // i telefoni autorizzati sono quelli che hanno usato questo PC
         s.TrustedDevices = current.TrustedDevices;
         s.LastWebAddress = current.LastWebAddress;
+        s.ClickerDevice = current.ClickerDevice;
         return s;
     }
 

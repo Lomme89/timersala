@@ -170,6 +170,7 @@ Avvia di nuovo = parti subito. **Esc** annulla l'attesa o, nei primi secondi, un
 | Modifica lo schema | `E` |
 | Modalità mini | `M` |
 | Guida rapida | `F1` |
+| Telecomando per presentazioni: avvia / ferma · annulla | `Pagina giù` · `Pagina su` |
 | Annulla: una fermata sbagliata (per 5 secondi), l'attesa della voce o l'avvio appena fatto | `Esc` |
 | Editor: sposta la parte / elimina | `Alt+↑↓` / `Canc` |
 | Editor: annulla / ripeti | `Ctrl+Z` / `Ctrl+Y` |

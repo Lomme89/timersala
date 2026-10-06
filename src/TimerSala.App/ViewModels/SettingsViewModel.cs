@@ -484,6 +484,11 @@ public sealed class SettingsViewModel : ObservableObject
         OnPropertyChanged(nameof(ThemeAuto));
     }
 
+    public bool ClickerEnabled { get => Draft.ClickerEnabled; set => Edit(s => s.ClickerEnabled = value); }
+
+    /// <summary>Il programma (per lo stato del telecomando, gestito fuori dalle impostazioni in modifica).</summary>
+    public MainViewModel Main => _main;
+
     public bool StartWithWindows { get => Draft.StartWithWindows; set => Edit(s => s.StartWithWindows = value); }
     public bool AutoMiniOnFirstPart { get => Draft.AutoMiniOnFirstPart; set => Edit(s => s.AutoMiniOnFirstPart = value); }
     public int UiScalePercent { get => Draft.UiScalePercent; set => Edit(s => s.UiScalePercent = value); }

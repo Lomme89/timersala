@@ -10,6 +10,12 @@ static class Shortcuts
     public static void Handle(MainViewModel vm, KeyEventArgs e, Action? edit = null)
     {
         if (e.OriginalSource is TextBox or ComboBox or ComboBoxItem) return;
+        // telecomando per presentazioni: Pagina giù = Avvia/Ferma, Pagina su = Annulla
+        if (vm.HandleClickerKey(e.Key == Key.System ? e.SystemKey : e.Key))
+        {
+            e.Handled = true;
+            return;
+        }
         switch (e.Key)
         {
             case Key.Space:

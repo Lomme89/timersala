@@ -240,6 +240,14 @@ public partial class SettingsWindow : Window
 
     void Help_Click(object sender, RoutedEventArgs e) => HelpActions.ShowHelp(this, _main);
 
+    void ClickerAssociate_Click(object sender, RoutedEventArgs e)
+    {
+        _vm.Flush();
+        _main.StartClickerAssociation();
+    }
+
+    void ClickerForget_Click(object sender, RoutedEventArgs e) => _main.ForgetClicker();
+
     void Training_Click(object sender, RoutedEventArgs e)
     {
         if (_main.StartTraining() is { } why)

@@ -64,7 +64,7 @@ Mockup approvato: [Schermo](docs/roadmap/impostazioni-schermo.png) · [Messaggi]
   Lo schermo del timer resta indipendente.
 - **Scala dell'interfaccia** (per esempio 90–150 %), per portatili piccoli o schermi ad alta risoluzione.
 
-### Movimento
+### Movimento — fatto (avvisi: un'unica barra «Annulla» per fermate e modifiche; le conferme restano le finestre di Windows)
 - **Controller ↔ mini animato**: la finestra si restringe e le cifre restano al loro posto rimpicciolendosi, invece di saltare.
 - **Cambi di colore più leggibili**: al passaggio verde → giallo → rosso un solo leggero «respiro» delle cifre, oltre alla sfumatura.
 - **Pulsante Avvia/Ferma**: l'icona passa da ▶ a ■ con un'animazione e il colore sfuma, senza scatti.

@@ -49,7 +49,8 @@ public sealed partial class MainViewModel
         CdDigits = $"{secs / 60}:{secs % 60:00}";
         CdRemaining = s.TargetSeconds <= 0 ? 0 : Math.Clamp(rem / s.TargetSeconds, 0, 1);
         CdLevel = Math.Max(0.03, 1 - CdRemaining);
-        CdPhase = s.Now.TimeOfDay.TotalSeconds * 1.3;
+        // l'onda della marea si muove piano; ferma se Windows chiede di ridurre il movimento
+        CdPhase = Theming.Motion.Reduced ? 0 : s.Now.TimeOfDay.TotalSeconds * 1.3;
         CdBlockCount = Math.Clamp((int)Math.Ceiling(s.TargetSeconds / 60.0), 1, 10);
         CdStart = s.StartsAt?.ToString("HH:mm") ?? "";
         CdStartLabel = CdStart.Length > 0 ? $"ALLE {CdStart}" : "";

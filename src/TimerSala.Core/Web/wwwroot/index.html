@@ -215,6 +215,10 @@
   #pinBox .cancel { font: 15px var(--ui); background: transparent; border: 0; color: var(--muted); cursor: pointer; }
   #offline { position: fixed; left: 50%; top: 12px; transform: translateX(-50%); background: var(--red); color: #fff; padding: 8px 16px; border-radius: 99px; display: none; font: 15px var(--ui); z-index: 20; }
   body.offline #offline { display: block; }
+  /* «riduci movimento» del telefono o del PC: niente animazioni né lampeggi, solo i cambi di stato */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
 </style>
 </head>
 <body>

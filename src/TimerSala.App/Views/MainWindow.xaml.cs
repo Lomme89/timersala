@@ -26,6 +26,8 @@ public partial class MainWindow : Window
 
         RestorePlacement();
         WindowSizing.FitToScreen(this);
+        ControllerMotion.Attach(this, vm, StartButton, StartIcon, Digits);
+        if (Background is System.Windows.Media.SolidColorBrush bg) Theming.Motion.PaintBackgroundEarly(this, bg.Color);
         Topmost = vm.Settings.ControllerTopmost;
 
         vm.MiniModeChanged += (_, _) => ApplyMiniMode();
@@ -114,15 +116,18 @@ public partial class MainWindow : Window
                     Dispatcher.BeginInvoke(Close);
                 };
             }
-            _mini.Show();
-            _mini.Activate();
-            Hide();
+            // la finestra si restringe nella mini (o si apre subito, la prima volta)
+            if (IsVisible) Theming.Motion.SwitchWindows(this, _mini);
+            else { _mini.Show(); _mini.Activate(); }
+        }
+        else if (_mini is { IsVisible: true })
+        {
+            Theming.Motion.SwitchWindows(_mini, this);
         }
         else
         {
             Show();
             Activate();
-            _mini?.Hide();
         }
     }
 

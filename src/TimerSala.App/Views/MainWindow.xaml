@@ -359,7 +359,7 @@
                 </DockPanel>
                 <TextBlock Text="{Binding TitleText}" FontSize="17" FontWeight="SemiBold" Margin="0,4,0,0" TextWrapping="Wrap" MaxHeight="46" TextTrimming="CharacterEllipsis" />
                 <Viewbox Height="96" StretchDirection="DownOnly" Margin="0,0,0,2">
-                    <TextBlock Text="{Binding DisplayText}" Foreground="{Binding PhaseBrush}" FontFamily="{StaticResource DigitsFont}"
+                    <TextBlock x:Name="Digits" Text="{Binding DisplayText}" Foreground="{Binding PhaseBrush}" FontFamily="{StaticResource DigitsFont}"
                                FontSize="92" Typography.NumeralAlignment="Tabular" />
                 </Viewbox>
                 <ProgressBar Style="{StaticResource SlimProgress}" Value="{Binding Progress, Mode=OneWay}" Foreground="{Binding PhaseBrush}" />
@@ -413,7 +413,7 @@
                         </Style>
                     </Button.Style>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="{StaticResource IconFont}" FontSize="20" VerticalAlignment="Center" Margin="0,0,10,0">
+                        <TextBlock x:Name="StartIcon" FontFamily="{StaticResource IconFont}" FontSize="20" VerticalAlignment="Center" Margin="0,0,10,0">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="Text" Value="&#xE768;" />

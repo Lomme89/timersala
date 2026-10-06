@@ -30,6 +30,13 @@
 - La barra in alto dice cosa sta succedendo: durante l'attesa della voce il titolo lascia il posto a «In attesa di una pausa…» (giallo, con il pallino che pulsa), poi «In ascolto: parte alla prima voce»; quando la parte parte torna il titolo.
 - Messaggi più puliti: una riga con campo, invio e tutto schermo; il messaggio in onda diventa una pastiglia gialla «Sullo schermo: …» con «Togli», che sparisce quando non c'è nulla sullo schermo.
 
+**Movimento** (solo dove aiuta a capire, mai continuo)
+- **Controller ↔ mini:** la finestra si restringe nella mini (e si allarga tornando indietro) invece di saltare.
+- **Cambi di colore più leggibili:** al passaggio verde → giallo → rosso le cifre fanno un solo leggero «respiro», sullo schermo della sala e nel controller.
+- **Pulsante Avvia/Ferma:** il colore sfuma e l'icona entra con un piccolo scatto.
+- **Avvio senza lampo bianco:** lo schermo della sala parte nero e il contenuto sfuma; sul proiettore mai un flash o una finestra vuota.
+- **Riduci movimento:** se in Windows gli effetti di animazione sono spenti (o sul telefono è attivo «riduci movimento»), tutto questo si spegne, compresi il lampeggio allo scadere e l'onda del countdown «Marea».
+
 **Tema e dimensione dell'interfaccia** (*Impostazioni → Programma*)
 - **Tema chiaro** per controller, mini, editor e impostazioni, utile se l'acustica è in un punto molto luminoso: scuro, chiaro o «come Windows» (segue il tema delle app di Windows anche mentre il programma è aperto). Lo schermo della sala resta con il suo tema.
 - **Dimensione dell'interfaccia** dal 90 al 150 %, per portatili piccoli o schermi ad alta risoluzione. Le finestre aperte si adattano subito.

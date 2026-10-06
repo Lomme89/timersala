@@ -4,6 +4,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using TimerSala.App.Interop;
 using TimerSala.App.ViewModels;
+using TimerSala.Core.Timing;
 
 namespace TimerSala.App.Views;
 
@@ -32,26 +33,43 @@ public partial class TimerWindow : Window
         vm.PropertyChanged += OnViewModelChanged;
         Closed += (_, _) => vm.PropertyChanged -= OnViewModelChanged;
         DpiChanged += (_, _) => Dispatcher.BeginInvoke(PlaceOnMonitor);
+
+        // sul proiettore mai un lampo bianco o una finestra vuota: parte nero e il contenuto sfuma
+        Theming.Motion.PaintBackgroundEarly(this, Colors.Black);
+        Loaded += (_, _) =>
+        {
+            if (Theming.Motion.Reduced || Content is not UIElement content) return;
+            content.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(500))) { EasingFunction = Ease });
+        };
     }
+
+    TimerPhase _lastPhase = TimerPhase.Idle;
 
     void OnViewModelChanged(object? sender, PropertyChangedEventArgs e)
     {
+        bool calm = Theming.Motion.Reduced;
         switch (e.PropertyName)
         {
+            case nameof(MainViewModel.Phase):
+                // un solo «respiro» delle cifre quando il tempo passa al giallo o al rosso
+                if (_vm.Phase is TimerPhase.Warning or TimerPhase.Overtime && _vm.Phase > _lastPhase && _lastPhase != TimerPhase.Idle)
+                    Theming.Motion.Breathe(DigitsBox, 1.04);
+                _lastPhase = _vm.Phase;
+                break;
             case nameof(MainViewModel.ShowScreenHeader):
                 ApplyScale();
                 break;
             case nameof(MainViewModel.ScreenDigitsBrush):
-                SetColor(_digits, _vm.ScreenDigitsBrush, animate: true);
+                SetColor(_digits, _vm.ScreenDigitsBrush, animate: !calm);
                 break;
             case nameof(MainViewModel.DisplayBackground):
-                SetColor(_background, _vm.DisplayBackground, animate: true);
+                SetColor(_background, _vm.DisplayBackground, animate: !calm);
                 break;
-            case nameof(MainViewModel.IsIdle):
+            case nameof(MainViewModel.IsIdle) when !calm:
                 // passaggio morbido tra orologio e timer
                 DigitsBox.BeginAnimation(OpacityProperty, new DoubleAnimation(0.15, 1, new Duration(TimeSpan.FromMilliseconds(350))) { EasingFunction = Ease });
                 break;
-            case nameof(MainViewModel.ScreenMessageFull) when _vm.ScreenMessageFull:
+            case nameof(MainViewModel.ScreenMessageFull) when _vm.ScreenMessageFull && !calm:
             {
                 // entra con un piccolo «colpo»: si allarga appena e si assesta
                 var f = new Duration(TimeSpan.FromMilliseconds(380));
@@ -61,7 +79,7 @@ public partial class TimerWindow : Window
                 MsgFull.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(200))));
                 break;
             }
-            case nameof(MainViewModel.ShowMessageBand) when _vm.ShowMessageBand:
+            case nameof(MainViewModel.ShowMessageBand) when _vm.ShowMessageBand && !calm:
                 // il messaggio entra scorrendo dal basso
                 var d = new Duration(TimeSpan.FromMilliseconds(320));
                 MsgShift.BeginAnimation(TranslateTransform.YProperty, new DoubleAnimation(ActualHeight * 0.15, 0, d) { EasingFunction = new BackEase { EasingMode = EasingMode.EaseOut, Amplitude = 0.4 } });

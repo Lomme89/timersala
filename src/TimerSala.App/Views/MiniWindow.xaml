@@ -121,7 +121,7 @@
                     </Grid.RowDefinitions>
                     <StackPanel Orientation="Horizontal">
                         <Button Style="{StaticResource MiniButton}" Content="&#xE892;" Command="{Binding PreviousCommand}" ToolTip="Parte precedente (←)" />
-                        <Button Height="38" Width="50" Margin="6,0" Command="{Binding ToggleStartCommand}">
+                        <Button x:Name="StartButton" Height="38" Width="50" Margin="6,0" Command="{Binding ToggleStartCommand}">
                             <Button.Style>
                                 <Style TargetType="Button" BasedOn="{StaticResource FlatButton}">
                                     <Setter Property="Background" Value="#16A34A" />

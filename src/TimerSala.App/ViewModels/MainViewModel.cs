@@ -678,7 +678,7 @@ public sealed partial class MainViewModel : ObservableObject
         ShowScreenBar = layout == DisplayLayout.Classic && Settings.ShowProgressBar && active;
         ShowHourglass = layout == DisplayLayout.Hourglass && active;
         RemainingFraction = Phase == TimerPhase.Overtime ? 1 : 1 - Progress;
-        FlashDigits = Settings.FlashOnOvertime && Phase == TimerPhase.Overtime;
+        FlashDigits = Settings.FlashOnOvertime && Phase == TimerPhase.Overtime && !Motion.Reduced;
 
         if (_fontName != Settings.DisplayFont)
         {

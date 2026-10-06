@@ -67,7 +67,7 @@ public partial class App : Application
         if (sender is not Window w || !ReferenceEquals(e.OriginalSource, w)) return;
         Theming.UiTheme.OnWindowLoaded(w);
         Interop.DarkTitleBar.Apply(w, roundCorners: w.WindowStyle == WindowStyle.None && w is not TimerWindow);
-        if (w is TimerWindow || w.Content is not UIElement content) return;
+        if (w is TimerWindow || w.AllowsTransparency || Theming.Motion.Reduced || w.Content is not UIElement content) return;
 
         var duration = new Duration(TimeSpan.FromMilliseconds(180));
         var ease = new CubicEase { EasingMode = EasingMode.EaseOut };

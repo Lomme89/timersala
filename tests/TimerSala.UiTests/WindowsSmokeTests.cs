@@ -91,7 +91,7 @@ public class WindowsSmokeTests
         // niente rete né microfono durante la prova; impostazioni già salvate, così non è un primo avvio
         // (che aprirebbe la configurazione guidata, una finestra modale)
         Stage("dati della prova");
-        new DataStore(dir).SaveSettings(new AppSettings { AutoDownload = false, WebServerEnabled = false, VoiceStartEnabled = false, CountdownMinutes = 0 });
+        new DataStore(dir).SaveSettings(new AppSettings { AutoDownload = false, WebServerEnabled = false, VoiceStartEnabled = false, CountdownMinutes = 0, OnboardingDone = true });
         var store = new DataStore(dir);
         Assert.False(store.IsNew);
 
@@ -106,6 +106,8 @@ public class WindowsSmokeTests
         app.DispatcherUnhandledException += (_, e) => { unhandled ??= e.Exception; e.Handled = true; };
 
         var vm = new MainViewModel(store);
+        Assert.False(vm.IsFirstRun);
+        Assert.True(vm.Settings.OnboardingDone);
         UiTheme.Apply(vm.Settings);
         var main = new MainWindow(vm);
         app.MainWindow = main;

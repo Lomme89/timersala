@@ -62,7 +62,7 @@ Il timer in tempo reale su qualsiasi dispositivo della rete. Con un codice QR e 
 <td valign="top">
 
 **✏️ Tutto modificabile**<br>
-Editor con trascinamento e un pulsante per la **visita del sorvegliante**. Le settimane modificate a mano non vengono sovrascritte.
+Editor con trascinamento e un pulsante per la **visita del sorvegliante**. Durante l'adunanza, con il tasto destro su una parte, la modifichi, la sposti dopo la prossima o la salti, con «Annulla». Le settimane modificate a mano non vengono sovrascritte.
 
 </td>
 </tr>
@@ -146,7 +146,7 @@ Avvia di nuovo = parti subito. **Esc** annulla l'attesa o, nei primi secondi, un
   <img src="docs/images/telefono-v2.png" alt="Pagina web di controllo sul telefono: comandi, programma e messaggi" width="70%">
 </p>
 
-<p align="center"><sub>Nel controller premi <b>Collega telefono</b> e inquadra il codice QR. Il telefono deve essere sulla stessa rete Wi‑Fi del PC.<br>
+<p align="center"><sub>Nel controller premi l'icona della rete in alto, poi <b>Collega un telefono</b>, e inquadra il codice QR. Il telefono deve essere sulla stessa rete Wi‑Fi del PC.<br>
   Su un tablet usato come schermo: aggiungi la pagina alla schermata Home, poi attiva <b>schermo sempre acceso</b> e <b>schermo intero</b> dai pulsanti in alto.</sub></p>
 
 ## 🚀 Per iniziare

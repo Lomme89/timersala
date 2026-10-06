@@ -139,6 +139,24 @@ public sealed class AppSettings
 
     public bool IsOverseerWeek(DateOnly monday) => OverseerVisits.Contains(monday);
 
+    // ── Altre settimane particolari ──
+
+    /// <summary>Settimane dell'assemblea (il lunedì): nessuna adunanza.</summary>
+    public List<DateOnly> AssemblyWeeks { get; set; } = [];
+
+    /// <summary>Commemorazioni: giorno e ora. Sostituisce l'adunanza di quella parte della settimana.</summary>
+    public List<Models.MemorialDate> Memorials { get; set; } = [];
+
+    /// <summary>Settimane con il discorso speciale (il lunedì): il discorso pubblico diventa «Discorso speciale».</summary>
+    public List<DateOnly> SpecialTalkWeeks { get; set; } = [];
+
+    public bool IsAssemblyWeek(DateOnly monday) => AssemblyWeeks.Contains(monday);
+    public bool IsSpecialTalkWeek(DateOnly monday) => SpecialTalkWeeks.Contains(monday);
+    public Models.MemorialDate? MemorialIn(DateOnly monday) => Memorials.FirstOrDefault(m => Models.WeekMath.MondayOf(m.Date) == monday);
+
+    /// <summary>In quella settimana c'è l'adunanza di questo tipo (no durante l'assemblea).</summary>
+    public bool HasMeeting(Models.MeetingKind kind, DateOnly monday) => !IsAssemblyWeek(monday);
+
     public (DayOfWeek Day, TimeOnly Time) ScheduleFor(Models.MeetingKind kind) =>
         kind == Models.MeetingKind.Midweek ? (MidweekDay, MidweekTime) : (WeekendDay, WeekendTime);
 
@@ -146,6 +164,9 @@ public sealed class AppSettings
     public (DayOfWeek Day, TimeOnly Time) ScheduleFor(Models.MeetingKind kind, DateOnly monday)
     {
         var (day, time) = ScheduleFor(kind);
+        // la Commemorazione prende il posto dell'adunanza della sua parte di settimana, con il suo giorno e la sua ora
+        if (MemorialIn(monday) is { } memorial && memorial.Replaces == kind)
+            return (memorial.Date.DayOfWeek, memorial.Time);
         if (kind == Models.MeetingKind.Midweek && IsOverseerWeek(monday))
             return (OverseerMidweekDay ?? day, OverseerMidweekTime ?? time);
         return (day, time);

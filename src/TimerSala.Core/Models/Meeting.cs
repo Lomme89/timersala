@@ -103,3 +103,10 @@ public sealed class WeekSchedule
         if (kind == MeetingKind.Midweek) Midweek = meeting; else Weekend = meeting;
     }
 }
+
+/// <summary>Giorno e ora della Commemorazione.</summary>
+public sealed record MemorialDate(DateOnly Date, TimeOnly Time)
+{
+    /// <summary>Nei giorni feriali prende il posto dell'infrasettimanale, nel fine settimana di quella del fine settimana.</summary>
+    public MeetingKind Replaces => Date.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday ? MeetingKind.Weekend : MeetingKind.Midweek;
+}

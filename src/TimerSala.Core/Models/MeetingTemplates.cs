@@ -31,6 +31,24 @@ public static class MeetingTemplates
         ],
     };
 
+    public const string MemorialTitle = "Commemorazione della morte di Cristo";
+    public const string SpecialTalkTitle = "Discorso speciale";
+
+    /// <summary>Schema della Commemorazione: si sistema nell'editor come ogni altro.</summary>
+    public static Meeting Memorial(MeetingKind kind) => new()
+    {
+        Kind = kind,
+        Title = MemorialTitle,
+        Parts =
+        [
+            Song("Cantico e preghiera", PartSection.Opening),
+            P("Discorso della Commemorazione", PartSection.Other, 45),
+            Song("Cantico e preghiera", PartSection.Closing),
+        ],
+    };
+
+    public static bool IsMemorial(Meeting m) => m.Title == MemorialTitle;
+
     public static Meeting DefaultWeekend(string? watchtowerTitle = null, int? wtOpeningSong = null, int? wtClosingSong = null) => new()
     {
         Kind = MeetingKind.Weekend,

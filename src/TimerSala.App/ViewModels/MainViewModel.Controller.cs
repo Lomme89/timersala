@@ -43,6 +43,9 @@ public sealed partial class MainViewModel
         var bits = new List<string> { Kind == MeetingKind.Midweek ? "Infrasettimanale" : "Fine settimana" };
         if (!string.IsNullOrWhiteSpace(Week.BibleReading)) bits.Add(It.TextInfo.ToTitleCase(Week.BibleReading!.ToLower(It)));
         if (Week.CircuitOverseerVisit) bits.Add("sorvegliante");
+        if (Settings.IsAssemblyWeek(Week.WeekStart)) bits.Add("assemblea: nessuna adunanza");
+        else if (MeetingTemplates.IsMemorial(CurrentMeeting)) bits.Add("Commemorazione");
+        if (Kind == MeetingKind.Weekend && Settings.IsSpecialTalkWeek(Week.WeekStart)) bits.Add("discorso speciale");
         MeetingLineText = string.Join(" · ", bits);
     }
 

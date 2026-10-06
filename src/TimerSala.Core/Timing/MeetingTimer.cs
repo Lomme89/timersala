@@ -51,6 +51,14 @@ public sealed class MeetingTimer
     bool _forceCountdown;
     DateTimeOffset? _previewStart, _previewUntil;
 
+    /// <summary>Al posto del titolo dell'adunanza su schermo e telefono (per esempio nella settimana dell'assemblea).</summary>
+    public string? TitleOverride
+    {
+        get { lock (_lock) return _titleOverride; }
+        set { lock (_lock) _titleOverride = value; }
+    }
+    string? _titleOverride;
+
     /// <summary>Orario di inizio dell'adunanza corrente (per il conto alla rovescia).</summary>
     public DateTimeOffset? MeetingStart
     {
@@ -610,7 +618,7 @@ public sealed class MeetingTimer
                     TargetSeconds = target,
                     ElapsedSeconds = target - remainingToStart,
                     NextTitle = _selected >= 0 ? _meeting.Parts[_selected].Title : null,
-                    MeetingTitle = _meeting.Title,
+                    MeetingTitle = _titleOverride ?? _meeting.Title,
                     StartsAt = TimeZoneInfo.ConvertTime(start, _clock.LocalTimeZone),
                     DelaySeconds = delay,
                     Now = now,
@@ -626,7 +634,7 @@ public sealed class MeetingTimer
                     Title = _selected >= 0 ? _meeting.Parts[_selected].Title : "",
                     TargetSeconds = _selected >= 0 ? TargetForUnlocked(_selected) : 0,
                     NextTitle = _selected >= 0 ? _meeting.Parts[_selected].Title : null,
-                    MeetingTitle = _meeting.Title,
+                    MeetingTitle = _titleOverride ?? _meeting.Title,
                     DelaySeconds = delay,
                     Now = now,
                 };
@@ -657,7 +665,7 @@ public sealed class MeetingTimer
                 TargetSeconds = _targetSeconds,
                 ElapsedSeconds = elapsed,
                 NextTitle = _mode == TimerMode.Part ? NextFrom(_runningIndex + 1) : (_selected >= 0 ? _meeting.Parts[_selected].Title : null),
-                MeetingTitle = _meeting.Title,
+                MeetingTitle = _titleOverride ?? _meeting.Title,
                 DelaySeconds = delay,
                 Now = now,
             };

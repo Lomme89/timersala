@@ -164,6 +164,7 @@ public sealed partial class MainViewModel : ObservableObject
             Weekend = MeetingTemplates.DefaultWeekend(),
         };
         SyncOverseerWeek();
+        SyncSpecialWeeks();
         ApplyMeeting();
         StatusMessage = null;
         if (saved is null && Settings.AutoDownload)
@@ -188,8 +189,20 @@ public sealed partial class MainViewModel : ObservableObject
         Timer.SetAdaptiveParts(indices);
     }
 
-    void UpdateMeetingStart() =>
-        Timer.MeetingStart = new DateTimeOffset(Settings.StartOf(Kind, Week.WeekStart));
+    void UpdateMeetingStart()
+    {
+        // nella settimana dell'assemblea non c'è adunanza: niente countdown, e su schermo e telefono lo si dice
+        bool meeting = Settings.HasMeeting(Kind, Week.WeekStart) || IsTraining;
+        Timer.MeetingStart = meeting ? new DateTimeOffset(Settings.StartOf(Kind, Week.WeekStart)) : null;
+        Timer.TitleOverride = IsTraining ? null : SpecialWeeks.NoMeetingNotice(Settings, Week.WeekStart);
+    }
+
+    /// <summary>Commemorazione e discorso speciale pianificati: applicati (o tolti) allo schema della settimana.</summary>
+    void SyncSpecialWeeks()
+    {
+        if (Timer.IsRunning || IsTraining) return;
+        if (SpecialWeeks.Apply(Week, Settings)) _store.SaveWeek(Week);
+    }
 
     void ApplyMeeting()
     {
@@ -333,6 +346,7 @@ public sealed partial class MainViewModel : ObservableObject
                 fetched.Weekend = MeetingTemplates.ApplyOverseerVisit(fetched.Weekend);
             }
             Week = fetched;
+            SpecialWeeks.Apply(Week, Settings);
             _store.SaveWeek(Week);
             ApplyMeeting();
             ShowStatus("Schema aggiornato da wol.jw.org.");
@@ -1077,6 +1091,11 @@ public sealed partial class MainViewModel : ObservableObject
             _overseerListEdited = true;
             if (ChangeWeekOverseer(settings.IsOverseerWeek(Week.WeekStart))) ApplyMeeting();
             _overseerListEdited = false;
+        }
+        if (!Timer.IsRunning && !IsTraining && SpecialWeeks.Apply(Week, Settings))
+        {
+            _store.SaveWeek(Week);
+            ApplyMeeting();
         }
         if (webChanged) _ = StartWebServerAsync();
         else UpdateWebUrl();

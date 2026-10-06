@@ -206,23 +206,25 @@
                             <StackPanel>
                                 <TextBlock Style="{StaticResource PanelTitle}" Text="SETTIMANE PARTICOLARI" />
                                 <Border Style="{StaticResource FirstRow}">
-                                    <DockPanel>
-                                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top">
-                                            <ComboBox Width="250" ItemsSource="{Binding FreeWeeks}" SelectedItem="{Binding WeekToAdd}" MaxDropDownHeight="320" />
-                                            <Button Style="{StaticResource FlatButton}" Content="Aggiungi" Margin="8,0,0,0" Padding="12,5"
-                                                    Command="{Binding AddOverseerWeekCommand}" />
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Settimane da segnare in anticipo" />
+                                            <TextBlock Style="{StaticResource Info}"
+                                                       ToolTip="Sorvegliante: lo schema viene adattato alla visita. Assemblea: nessuna adunanza, niente countdown, e schermo e telefono lo dicono. Commemorazione: prende il posto dell'adunanza di quel giorno, con il suo orario. Discorso speciale: il discorso pubblico diventa «Discorso speciale»." />
                                         </StackPanel>
-                                        <StackPanel VerticalAlignment="Top">
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Style="{StaticResource RowLabel}" Text="Visita del sorvegliante" />
-                                                <TextBlock Style="{StaticResource Info}"
-                                                           ToolTip="Nelle settimane indicate lo schema viene scaricato già adattato alla visita, anche con «Scarica tutte le prossime settimane». Il pulsante della visita nel controller aggiorna anche questo elenco." />
+                                        <TextBlock Style="{StaticResource RowHint}" Text="Visita del sorvegliante, assemblea, Commemorazione, discorso speciale: anche a mesi di distanza." Margin="0,0,0,8" />
+                                        <WrapPanel>
+                                            <ComboBox Width="210" ItemsSource="{Binding SpecialKinds}" DisplayMemberPath="Label" SelectedItem="{Binding KindToAdd}" Margin="0,0,8,6" />
+                                            <ComboBox Width="230" ItemsSource="{Binding FreeWeeks}" SelectedItem="{Binding WeekToAdd}" MaxDropDownHeight="320" Margin="0,0,8,6" />
+                                            <StackPanel Orientation="Horizontal" Visibility="{Binding IsMemorialToAdd, Converter={StaticResource BoolToVis}}" Margin="0,0,8,6">
+                                                <ComboBox Width="190" ItemsSource="{Binding MemorialDays}" SelectedItem="{Binding MemorialDayToAdd}" />
+                                                <v:TimeBox Width="96" Margin="8,0,0,0" Time="{Binding MemorialTimeToAdd}" />
                                             </StackPanel>
-                                            <TextBlock Style="{StaticResource RowHint}" Text="Segna le settimane in anticipo, anche a mesi di distanza." />
-                                        </StackPanel>
-                                    </DockPanel>
+                                            <Button Style="{StaticResource FlatButton}" Content="Aggiungi" Padding="12,5" Margin="0,0,0,6" Command="{Binding AddSpecialWeekCommand}" />
+                                        </WrapPanel>
+                                    </StackPanel>
                                 </Border>
-                                <ItemsControl ItemsSource="{Binding OverseerWeeks}" Margin="0,0,0,10">
+                                <ItemsControl ItemsSource="{Binding SpecialWeekList}" Margin="0,0,0,10">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <WrapPanel />
@@ -235,8 +237,8 @@
                                                 <StackPanel Orientation="Horizontal">
                                                     <TextBlock Text="{Binding Label}" VerticalAlignment="Center" FontSize="13" />
                                                     <Button Style="{StaticResource GhostIconButton}" Width="24" Height="24" FontSize="10" Content="&#xE711;" Margin="6,0,0,0"
-                                                            Command="{Binding DataContext.RemoveOverseerWeekCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                                            CommandParameter="{Binding Value}" ToolTip="Togli questa settimana" />
+                                                            Command="{Binding DataContext.RemoveSpecialWeekCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                            CommandParameter="{Binding}" ToolTip="Togli" />
                                                 </StackPanel>
                                             </Border>
                                         </DataTemplate>

@@ -180,44 +180,116 @@ public sealed class SettingsViewModel : ObservableObject
 
     // settimane particolari: per ora la visita del sorvegliante
 
-    public ObservableCollection<Choice<DateOnly>> OverseerWeeks { get; } = [];
+    // ── settimane particolari: un solo elenco con il tipo ──
+
+    public enum SpecialKind { Overseer, Assembly, Memorial, SpecialTalk }
+
+    /// <summary>Una settimana particolare nell'elenco.</summary>
+    public sealed record SpecialWeekItem(SpecialKind Kind, DateOnly Monday, DateOnly? Date, string Label);
+
+    public IReadOnlyList<Choice<SpecialKind>> SpecialKinds { get; } =
+    [
+        new(SpecialKind.Overseer, "Visita del sorvegliante"),
+        new(SpecialKind.Assembly, "Assemblea (niente adunanze)"),
+        new(SpecialKind.Memorial, "Commemorazione"),
+        new(SpecialKind.SpecialTalk, "Discorso speciale"),
+    ];
+
+    public ObservableCollection<SpecialWeekItem> SpecialWeekList { get; } = [];
     public ObservableCollection<Choice<DateOnly>> FreeWeeks { get; } = [];
-    public Choice<DateOnly>? WeekToAdd { get; set => Set(ref field, value); }
-    public bool HasOverseerWeeks => OverseerWeeks.Count > 0;
+    public ObservableCollection<Choice<DateOnly>> MemorialDays { get; } = [];
+    public bool HasSpecialWeeks => SpecialWeekList.Count > 0;
+
+    public Choice<SpecialKind> KindToAdd
+    {
+        get;
+        set { if (Set(ref field, value)) { OnPropertyChanged(nameof(IsMemorialToAdd)); LoadMemorialDays(); } }
+    } = null!;
+
+    public bool IsMemorialToAdd => KindToAdd?.Value == SpecialKind.Memorial;
+
+    public Choice<DateOnly>? WeekToAdd { get; set { if (Set(ref field, value)) LoadMemorialDays(); } }
+    public Choice<DateOnly>? MemorialDayToAdd { get; set => Set(ref field, value); }
+    public TimeOnly? MemorialTimeToAdd { get; set => Set(ref field, value); } = new TimeOnly(19, 0);
 
     public DayOfWeek? OverseerDay { get => Draft.OverseerMidweekDay; set => Edit(s => s.OverseerMidweekDay = value); }
     public TimeOnly? OverseerTime { get => Draft.OverseerMidweekTime; set => Edit(s => s.OverseerMidweekTime = value); }
 
-    public ICommand AddOverseerWeekCommand => field ??= new RelayCommand(() =>
+    public ICommand AddSpecialWeekCommand => field ??= new RelayCommand(() =>
     {
         if (WeekToAdd is not { } week) return;
-        SetOverseerWeeks(Draft.OverseerVisits.Append(week.Value));
-    });
-
-    public ICommand RemoveOverseerWeekCommand => field ??= new RelayCommand(p =>
-    {
-        if (p is DateOnly monday) SetOverseerWeeks(Draft.OverseerVisits.Where(m => m != monday));
-    });
-
-    void SetOverseerWeeks(IEnumerable<DateOnly> weeks)
-    {
-        Draft.OverseerVisits = weeks.Distinct().Order().ToList();
-        LoadOverseerWeeks();
+        var monday = week.Value;
+        switch (KindToAdd.Value)
+        {
+            case SpecialKind.Overseer:
+                Draft.OverseerVisits = Draft.OverseerVisits.Append(monday).Distinct().Order().ToList();
+                break;
+            case SpecialKind.Assembly:
+                Draft.AssemblyWeeks = Draft.AssemblyWeeks.Append(monday).Distinct().Order().ToList();
+                break;
+            case SpecialKind.SpecialTalk:
+                Draft.SpecialTalkWeeks = Draft.SpecialTalkWeeks.Append(monday).Distinct().Order().ToList();
+                break;
+            case SpecialKind.Memorial:
+                if (MemorialDayToAdd is not { } day || MemorialTimeToAdd is not { } time) return;
+                // una sola Commemorazione per settimana
+                Draft.Memorials = Draft.Memorials.Where(m => WeekMath.MondayOf(m.Date) != monday)
+                    .Append(new MemorialDate(day.Value, time)).OrderBy(m => m.Date).ToList();
+                break;
+        }
+        LoadSpecialWeeks();
         Changed();
+    });
+
+    public ICommand RemoveSpecialWeekCommand => field ??= new RelayCommand(p =>
+    {
+        if (p is not SpecialWeekItem item) return;
+        switch (item.Kind)
+        {
+            case SpecialKind.Overseer: Draft.OverseerVisits = Draft.OverseerVisits.Where(m => m != item.Monday).ToList(); break;
+            case SpecialKind.Assembly: Draft.AssemblyWeeks = Draft.AssemblyWeeks.Where(m => m != item.Monday).ToList(); break;
+            case SpecialKind.SpecialTalk: Draft.SpecialTalkWeeks = Draft.SpecialTalkWeeks.Where(m => m != item.Monday).ToList(); break;
+            case SpecialKind.Memorial: Draft.Memorials = Draft.Memorials.Where(m => m.Date != item.Date).ToList(); break;
+        }
+        LoadSpecialWeeks();
+        Changed();
+    });
+
+    void LoadSpecialWeeks()
+    {
+        var items = new List<SpecialWeekItem>();
+        // le settimane passate restano salvate (servono se si riapre una settimana già fatta), ma non si mostrano
+        foreach (var m in Draft.OverseerVisits.Where(m => m >= _thisMonday))
+            items.Add(new(SpecialKind.Overseer, m, null, $"{WeekMath.Label(m)} · sorvegliante"));
+        foreach (var m in Draft.AssemblyWeeks.Where(m => m >= _thisMonday))
+            items.Add(new(SpecialKind.Assembly, m, null, $"{WeekMath.Label(m)} · assemblea"));
+        foreach (var m in Draft.SpecialTalkWeeks.Where(m => m >= _thisMonday))
+            items.Add(new(SpecialKind.SpecialTalk, m, null, $"{WeekMath.Label(m)} · discorso speciale"));
+        foreach (var c in Draft.Memorials.Where(c => c.Date >= _thisMonday))
+            items.Add(new(SpecialKind.Memorial, WeekMath.MondayOf(c.Date), c.Date,
+                $"Commemorazione · {c.Date.ToString("ddd d MMM", It).Replace(".", "")} alle {c.Time:HH:mm}"));
+        SpecialWeekList.Clear();
+        foreach (var i in items.OrderBy(i => i.Monday)) SpecialWeekList.Add(i);
+
+        if (FreeWeeks.Count == 0)
+            foreach (var m in Enumerable.Range(0, 52).Select(i => _thisMonday.AddDays(7 * i)))
+                FreeWeeks.Add(new(m, WeekMath.Label(m)));
+        WeekToAdd ??= FreeWeeks.FirstOrDefault();
+        KindToAdd ??= SpecialKinds[0];
+        OnPropertyChanged(nameof(HasSpecialWeeks));
     }
 
-    void LoadOverseerWeeks()
+    void LoadMemorialDays()
     {
-        OverseerWeeks.Clear();
-        // le visite passate restano salvate (servono se si riapre una settimana già fatta), ma non si mostrano
-        foreach (var m in Draft.OverseerVisits.Where(m => m >= _thisMonday).Order())
-            OverseerWeeks.Add(new(m, WeekMath.Label(m)));
-        var taken = Draft.OverseerVisits.ToHashSet();
-        FreeWeeks.Clear();
-        foreach (var m in Enumerable.Range(0, 52).Select(i => _thisMonday.AddDays(7 * i)).Where(m => !taken.Contains(m)))
-            FreeWeeks.Add(new(m, WeekMath.Label(m)));
-        WeekToAdd = FreeWeeks.FirstOrDefault();
-        OnPropertyChanged(nameof(HasOverseerWeeks));
+        MemorialDays.Clear();
+        if (WeekToAdd is not { } week) return;
+        for (int i = 0; i < 7; i++)
+        {
+            var d = week.Value.AddDays(i);
+            var label = d.ToString("dddd d MMMM", It);
+            MemorialDays.Add(new(d, char.ToUpper(label[0], It) + label[1..]));
+        }
+        MemorialDayToAdd = MemorialDays.FirstOrDefault(d => d.Value.DayOfWeek == Draft.MidweekDay) ?? MemorialDays[0];
     }
 
     // ───── Schermo ─────
@@ -547,7 +619,7 @@ public sealed class SettingsViewModel : ObservableObject
 
     void LoadLists()
     {
-        LoadOverseerWeeks();
+        LoadSpecialWeeks();
         Presets.Clear();
         foreach (var text in Draft.MessagePresets)
             Presets.Add(WatchPreset(new PresetItem(text)));

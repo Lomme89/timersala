@@ -29,6 +29,7 @@ public sealed partial class MainViewModel
         Timer.LoadMeeting(TrainingMeeting.From(CurrentMeeting));
         // un breve countdown d'inizio, per vedere anche quello
         Timer.MeetingStart = DateTimeOffset.Now.AddSeconds(40);
+        Timer.TitleOverride = null;
         UpdateAdaptiveParts();
         RebuildParts();
         RefreshDisplay();

@@ -471,6 +471,8 @@ public sealed class SettingsViewModel : ObservableObject
         OnPropertyChanged(nameof(ThemeAuto));
     }
 
+    public bool StartWithWindows { get => Draft.StartWithWindows; set => Edit(s => s.StartWithWindows = value); }
+    public bool AutoMiniOnFirstPart { get => Draft.AutoMiniOnFirstPart; set => Edit(s => s.AutoMiniOnFirstPart = value); }
     public int UiScalePercent { get => Draft.UiScalePercent; set => Edit(s => s.UiScalePercent = value); }
 
     /// <summary>Opzioni rare (porta, indirizzo, regolazioni fini della voce).</summary>

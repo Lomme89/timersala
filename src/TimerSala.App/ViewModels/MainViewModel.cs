@@ -59,6 +59,7 @@ public sealed partial class MainViewModel : ObservableObject
         Messages.Changed += (_, _) => Application.Current.Dispatcher.BeginInvoke(RefreshDisplay);
         ApplyTimerSettings();
         ApplyVoiceSettings();
+        ApplyWindowsSettings();
 
         Timer.StateChanged += (_, _) => Application.Current.Dispatcher.BeginInvoke(RefreshParts);
 
@@ -79,6 +80,7 @@ public sealed partial class MainViewModel : ObservableObject
             RefreshDisplay();
             TickVoice();
             KeepAwake.Set(ShouldStayAwake());
+            TickWindows(Timer.GetSnapshot());
             // mentre il timer corre, salva lo stato ogni 5 secondi
             if (Timer.IsRunning && ++_ticksSinceSave >= 50) SaveSession();
         };
@@ -983,6 +985,7 @@ public sealed partial class MainViewModel : ObservableObject
         UpdatePlannedStarts();
         UpdateMeetingLine();
         ApplyVoiceSettings();
+        ApplyWindowsSettings();
         UiTheme.Apply(settings);
         SaveSettings();
         if (!Timer.IsRunning && settings.IsOverseerWeek(Week.WeekStart) != Week.CircuitOverseerVisit)

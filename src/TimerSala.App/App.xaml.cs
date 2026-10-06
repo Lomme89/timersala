@@ -1,6 +1,7 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Shell;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using TimerSala.App.ViewModels;
@@ -15,18 +16,22 @@ public partial class App : Application
 
     // una sola copia per utente: una seconda apertura chiede alla prima di farsi vedere e si chiude
     const string InstanceName = @"Local\TimerSala.Instance";
-    const string ShowEventName = @"Local\TimerSala.Show";
+    const string CommandEventPrefix = @"Local\TimerSala.";
+    // comandi accettati dalla riga di comando (anche dal menu dell'icona): «mostra» porta solo in primo piano
+    static readonly string[] Commands = ["mostra", "schermo", "mini", "telefono"];
     Mutex? _instance;
-    EventWaitHandle? _showEvent;
+    EventWaitHandle[] _commandEvents = [];
 
     protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
         _instance = new Mutex(true, InstanceName, out bool first);
-        _showEvent = new EventWaitHandle(false, EventResetMode.AutoReset, ShowEventName);
+        _commandEvents = Commands.Select(c => new EventWaitHandle(false, EventResetMode.AutoReset, CommandEventPrefix + c)).ToArray();
         if (!first)
         {
-            _showEvent.Set();
+            // la copia già aperta esegue il comando (per esempio dal menu dell'icona) o si fa vedere
+            var asked = e.Args.Select(a => a.TrimStart('-')).FirstOrDefault(a => Commands.Contains(a)) ?? "mostra";
+            _commandEvents[Array.IndexOf(Commands, asked)].Set();
             _instance.Dispose();
             _instance = null;
             Shutdown();
@@ -44,22 +49,48 @@ public partial class App : Application
         MainWindow = main;
         main.Show();
         ListenForSecondInstance(main);
+        SetJumpList();
         await _vm.StartWebServerAsync();
     }
 
     void ListenForSecondInstance(MainWindow main)
     {
-        var showEvent = _showEvent!;
+        var events = _commandEvents;
         var thread = new Thread(() =>
         {
             try
             {
-                while (showEvent.WaitOne())
-                    Dispatcher.BeginInvoke(main.BringToFront);
+                while (true)
+                {
+                    int i = WaitHandle.WaitAny(events);
+                    var command = Commands[i];
+                    Dispatcher.BeginInvoke(() => main.RunShellCommand(command));
+                }
             }
             catch (ObjectDisposedException) { }
         }) { IsBackground = true, Name = "TimerSala seconda apertura" };
         thread.Start();
+    }
+
+    /// <summary>Menu dell'icona sulla barra delle applicazioni (tasto destro).</summary>
+    void SetJumpList()
+    {
+        if (Environment.ProcessPath is not { } exe) return;
+        try
+        {
+            JumpTask Task(string command, string title, string description) => new()
+            {
+                ApplicationPath = exe, Arguments = "--" + command, Title = title, Description = description,
+                IconResourcePath = exe, IconResourceIndex = 0,
+            };
+            var list = new JumpList([
+                Task("schermo", "Mostra o nascondi lo schermo della sala", "Accende o spegne il timer sullo schermo della sala"),
+                Task("mini", "Modalità mini", "Passa dal controller alla mini e viceversa"),
+                Task("telefono", "Collega un telefono", "Mostra il codice QR per seguire o comandare il timer"),
+            ], showFrequent: false, showRecent: false);
+            JumpList.SetJumpList(this, list);
+        }
+        catch { /* il menu dell'icona è un di più */ }
     }
 
     static void OnWindowLoaded(object sender, RoutedEventArgs e)

@@ -16,6 +16,7 @@ public partial class MiniWindow : Window
         DataContext = vm;
         PreviewKeyDown += (_, e) => Shortcuts.Handle(vm, e);
         ControllerMotion.Attach(this, vm, StartButton, null, null);
+        TaskbarProgress.Attach(this, vm);
 
         // allo sforamento anche il bordo di sistema della finestra (Windows 11) diventa rosso
         vm.PropertyChanged += OnViewModelChanged;

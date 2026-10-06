@@ -173,6 +173,12 @@ public sealed class AppSettings
     /// <summary>Tema di controller, mini, editor e impostazioni: scuro, chiaro o come Windows.</summary>
     public ControllerTheme ControllerTheme { get; set; } = ControllerTheme.Dark;
 
+    /// <summary>TimerSala si apre all'accesso a Windows.</summary>
+    public bool StartWithWindows { get; set; }
+
+    /// <summary>All'avvio della prima parte dell'adunanza il controller passa alla modalità mini.</summary>
+    public bool AutoMiniOnFirstPart { get; set; }
+
     /// <summary>Scala dell'interfaccia in percento (90–150).</summary>
     public int UiScalePercent { get; set; } = 100;
 

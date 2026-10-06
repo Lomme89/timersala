@@ -27,6 +27,7 @@ public partial class MainWindow : Window
         RestorePlacement();
         WindowSizing.FitToScreen(this);
         ControllerMotion.Attach(this, vm, StartButton, StartIcon, Digits);
+        TaskbarProgress.Attach(this, vm);
         if (Background is System.Windows.Media.SolidColorBrush bg) Theming.Motion.PaintBackgroundEarly(this, bg.Color);
         Topmost = vm.Settings.ControllerTopmost;
 
@@ -74,6 +75,27 @@ public partial class MainWindow : Window
         w.Topmost = true;
         w.Topmost = topmost;
         w.Focus();
+    }
+
+    /// <summary>Comandi dal menu dell'icona sulla barra delle applicazioni (arrivano dalla copia già aperta).</summary>
+    public void RunShellCommand(string command)
+    {
+        switch (command)
+        {
+            case "schermo":
+                _vm.TimerWindowVisible = !_vm.TimerWindowVisible;
+                break;
+            case "mini":
+                _vm.IsMiniMode = !_vm.IsMiniMode;
+                break;
+            case "telefono":
+                BringToFront();
+                ShowPhoneQr();
+                break;
+            default:
+                BringToFront();
+                break;
+        }
     }
 
     void UpdateTimerWindow()
@@ -272,14 +294,18 @@ public partial class MainWindow : Window
 
     void DownloadAll_Click(object sender, RoutedEventArgs e) => _vm.DownloadAllCommand.Execute(null);
 
-    void Qr_Click(object sender, RoutedEventArgs e)
+    void Qr_Click(object sender, RoutedEventArgs e) => ShowPhoneQr();
+
+    void ShowPhoneQr()
     {
+        Window owner = _vm.IsMiniMode && _mini is not null ? _mini : this;
         if (_vm.WebUrl is null)
         {
-            MessageBox.Show(this, "Il server web non è attivo. Attivalo in Impostazioni → Rete e telefono.", "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(owner, "Il server web non è attivo. Attivalo in Impostazioni → Rete e telefono.", "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
-        new QrWindow(_vm) { Owner = this }.ShowDialog();
+        if (OwnedWindows.OfType<QrWindow>().Any()) return;
+        new QrWindow(_vm) { Owner = owner }.ShowDialog();
     }
 
     void MessageInput_KeyDown(object sender, KeyEventArgs e)

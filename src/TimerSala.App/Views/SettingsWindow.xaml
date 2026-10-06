@@ -1000,6 +1000,24 @@
                                         </StackPanel>
                                     </DockPanel>
                                 </Border>
+                                <Border Style="{StaticResource Row}">
+                                    <DockPanel>
+                                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding AutoMiniOnFirstPart}" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Passa alla mini alla prima parte" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Quando parte la prima parte dell'adunanza, il controller diventa la mini, sempre visibile sopra JW Library e Zoom. Si torna con M." />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                                <Border Style="{StaticResource Row}">
+                                    <DockPanel>
+                                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding StartWithWindows}" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Apri all'avvio di Windows" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="All'accensione del PC TimerSala si apre da solo, con lo schermo della sala e lo schema della settimana." />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
                             </StackPanel>
                         </Border>
 

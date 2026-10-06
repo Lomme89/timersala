@@ -125,11 +125,21 @@
 
   /* ── barra strumenti ── */
   .toolbar { position: fixed; right: calc(12px + var(--sa-r)); top: calc(12px + var(--sa-t)); z-index: 5; display: flex; gap: 6px; opacity: .35; transition: opacity .3s; }
-  .toolbar:hover, .toolbar:focus-within, body.panel .toolbar { opacity: 1; }
+  .toolbar:hover, .toolbar:focus-within, body.panel .toolbar, body.look-open .toolbar { opacity: 1; }
+  #lookMenu { display: none; position: fixed; right: calc(12px + var(--sa-r)); top: calc(56px + var(--sa-t)); z-index: 8; width: min(300px, calc(100vw - 24px));
+              background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 8px; font-family: var(--ui); box-shadow: 0 12px 32px rgba(0,0,0,.35); }
+  body.look-open #lookMenu { display: block; }
+  #lookMenu .lookTitle { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding: 6px 10px 8px; }
+  #lookMenu button { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; font: 15px var(--ui); color: var(--fg);
+                     background: transparent; border: 0; border-radius: 10px; padding: 11px 10px; cursor: pointer; }
+  #lookMenu button::before { content: ""; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--muted); flex: none; }
+  #lookMenu button[aria-checked="true"]::before { background: var(--accent); border-color: var(--accent); }
+  #lookMenu button:hover { background: var(--card2); }
   .tbtn { display: inline-flex; align-items: center; gap: 6px; background: var(--card); color: var(--fg); border: 1px solid var(--line);
           border-radius: 10px; padding: 8px 12px; font: 14px var(--ui); cursor: pointer; }
   .tbtn.on { background: var(--accent); border-color: var(--accent); color: #fff; }
   .tbtn span { white-space: nowrap; }
+  @media (max-width: 440px) { .tbtn span { display: none; } }   /* sul telefono solo le icone: ci stanno tutte */
   #btnControl { display: none; }
   body.no-full #btnFull { display: none; }
   #toast { position: fixed; left: 50%; top: calc(64px + var(--sa-t)); transform: translate(-50%, -12px); background: var(--card); color: var(--fg); border: 1px solid var(--line);
@@ -238,6 +248,7 @@
     <symbol id="i-full" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
     <symbol id="i-wake" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></symbol>
     <symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3 10 14"/><path d="m21 3-7 18-4-7-7-4 18-7z"/></symbol>
+    <symbol id="i-look" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
     <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
     <symbol id="i-msg" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4V5z"/></symbol>
     <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
@@ -318,8 +329,18 @@
   <div class="toolbar">
     <button class="tbtn" id="btnSchedule" type="button"><svg><use href="#i-list"/></svg><span>Programma</span></button>
     <button class="tbtn" id="btnControl" type="button"><svg><use href="#i-remote"/></svg><span>Controllo</span></button>
+    <button class="tbtn" id="btnLook" type="button" aria-label="Aspetto di questo dispositivo" title="Aspetto di questo dispositivo" aria-haspopup="true"><svg><use href="#i-look"/></svg></button>
     <button class="tbtn" id="btnWake" type="button" aria-label="Schermo sempre acceso" title="Schermo sempre acceso"><svg><use href="#i-wake"/></svg></button>
     <button class="tbtn" id="btnFull" type="button" aria-label="Schermo intero" title="Schermo intero"><svg><use href="#i-full"/></svg></button>
+  </div>
+
+  <!-- aspetto scelto per questo dispositivo (ricordato dal browser) -->
+  <div id="lookMenu" role="menu" aria-label="Aspetto di questo dispositivo">
+    <div class="lookTitle">Su questo dispositivo</div>
+    <button type="button" role="menuitemradio" data-look="pc">Come sullo schermo della sala</button>
+    <button type="button" role="menuitemradio" data-look="digits">Solo le cifre, grandissime</button>
+    <button type="button" role="menuitemradio" data-look="classic">Classico: titolo, cifre e barra</button>
+    <button type="button" role="menuitemradio" data-look="schedule">Con il programma accanto</button>
   </div>
 
   <div id="pinBox">
@@ -353,8 +374,15 @@
 
   // ── stile scelto sul PC ──
   let lastFont = null;
+  // aspetto di questo dispositivo: «pc» segue lo schermo della sala, gli altri valgono solo qui
+  let look = 'pc';
+  try { look = localStorage.getItem('timersala-aspetto') || 'pc'; } catch { }
+  let lastStyle = null;
   function applyStyle(st) {
     if (!st) return;
+    lastStyle = st;
+    if (look === 'digits') st = { ...st, layout: 'digitsonly' };
+    else if (look === 'classic' || look === 'schedule') st = { ...st, layout: 'classic', showTitle: true, showBar: true };
     B.toggle('theme-light', st.theme === 'light');
     B.toggle('layout-hourglass', st.layout === 'hourglass');
     B.toggle('layout-digits', st.layout === 'digitsonly');
@@ -627,6 +655,25 @@
     es.onerror = () => B.add('offline');
   }
   connect();
+
+  // ── aspetto di questo dispositivo ──
+  function markLook() {
+    document.querySelectorAll('#lookMenu [data-look]').forEach(b => b.setAttribute('aria-checked', String(b.dataset.look === look)));
+  }
+  $('btnLook').onclick = e => { e.stopPropagation(); markLook(); B.toggle('look-open'); };
+  $('lookMenu').onclick = e => {
+    const b = e.target.closest('[data-look]');
+    if (!b) return;
+    look = b.dataset.look;
+    try { localStorage.setItem('timersala-aspetto', look); } catch { }
+    B.remove('look-open');
+    applyStyle(lastStyle);
+    if (look === 'schedule' && !B.contains('panel')) setPanel('schedule');
+    else if (look !== 'schedule' && B.contains('panel') && !B.contains('control')) setPanel(null);
+    requestAnimationFrame(fit);
+  };
+  document.addEventListener('click', e => { if (!e.target.closest('#lookMenu')) B.remove('look-open'); });
+  if (look === 'schedule') setPanel('schedule');
 
   // ── schermo sempre acceso (manuale) ──
   // La Wake Lock API funziona solo in HTTPS; sulla rete locale (HTTP) si ricorre

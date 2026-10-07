@@ -203,7 +203,7 @@ public class WindowsSmokeTests
         Stage("telecomando: associazione");
         vm.StartClickerAssociation();
         Pump();
-        Assert.Contains("Premi un tasto", vm.ClickerStatus);
+        Assert.Contains("Premi «avanti» o «indietro»", vm.ClickerStatus);
         vm.ForgetClicker();
         Assert.False(vm.ClickerAssociated);
 

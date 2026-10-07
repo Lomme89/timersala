@@ -243,6 +243,10 @@ public sealed class AppSettings
     /// <summary>Telecomando associato (percorso del dispositivo): funziona anche con TimerSala in secondo piano.</summary>
     public string? ClickerDevice { get; set; }
 
+    /// <summary>Tasti del telecomando impostati a mano (codici dei tasti virtuali): vincono sui tasti predefiniti.</summary>
+    public List<int> ClickerForwardKeys { get; set; } = [];
+    public List<int> ClickerBackKeys { get; set; } = [];
+
     /// <summary>TimerSala si apre all'accesso a Windows.</summary>
     public bool StartWithWindows { get; set; }
 

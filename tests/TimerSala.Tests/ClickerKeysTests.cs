@@ -12,7 +12,21 @@ public class ClickerKeysTests
         Assert.Equal(ClickerAction.None, ClickerKeys.FromKeyboard(0x27)); // le frecce della tastiera scelgono la parte
         Assert.Equal(ClickerAction.Forward, ClickerKeys.FromAssociatedDevice(0x27)); // dal telecomando sono «avanti»
         Assert.Equal(ClickerAction.Back, ClickerKeys.FromAssociatedDevice(0x25));
-        Assert.Equal(ClickerAction.None, ClickerKeys.FromAssociatedDevice(0x42)); // «B», schermo nero: ignorato
+        Assert.Equal(ClickerAction.Forward, ClickerKeys.FromAssociatedDevice(0x09)); // Tab, «OK» dei telecomandi su/giù
+        Assert.Equal(ClickerAction.Forward, ClickerKeys.FromAssociatedDevice(0x6D)); // −, giù
+        Assert.Equal(ClickerAction.Back, ClickerKeys.FromAssociatedDevice(0x6B));    // +, su
+        Assert.Equal(ClickerAction.None, ClickerKeys.FromAssociatedDevice(0x42));
+        // tasti impostati a mano: vincono sui predefiniti
+        Assert.Equal(ClickerAction.Forward, ClickerKeys.FromAssociatedDevice(0x74, [0x74], []));  // F5
+        Assert.Equal(ClickerAction.Back, ClickerKeys.FromAssociatedDevice(0x22, [], [0x22]));      // Pagina giù rimappata
+        Assert.Equal(ClickerAction.Back, ClickerKeys.FromAssociatedDevice(0x21, [0x74], []));      // gli altri restano
+
+        // elenco per le impostazioni: i scelti prima, i predefiniti spostati sull'altra azione spariscono
+        var forward = ClickerKeys.KeysFor(ClickerAction.Forward, [0x74], [0x22]);
+        Assert.Equal(0x74, forward[0]);
+        Assert.DoesNotContain(0x22, forward);
+        Assert.Equal("Pagina su", ClickerKeys.Name(ClickerKeys.KeysFor(ClickerAction.Back, [0x74], [0x22])[1]));
+        Assert.Equal("F5", ClickerKeys.Name(0x74)); // «B», schermo nero: ignorato
     }
 
     [Fact]

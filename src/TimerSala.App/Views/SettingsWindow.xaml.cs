@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using TimerSala.Core.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using TimerSala.App.Audio;
@@ -285,6 +286,20 @@ public partial class SettingsWindow : Window
     }
 
     void ClickerForget_Click(object sender, RoutedEventArgs e) => _main.ForgetClicker();
+
+    void ClickerLearnForward_Click(object sender, RoutedEventArgs e)
+    {
+        _vm.Flush();
+        _main.StartClickerAssociation(ClickerAction.Forward);
+    }
+
+    void ClickerLearnBack_Click(object sender, RoutedEventArgs e)
+    {
+        _vm.Flush();
+        _main.StartClickerAssociation(ClickerAction.Back);
+    }
+
+    void ClickerResetKeys_Click(object sender, RoutedEventArgs e) => _main.ResetClickerKeys();
 
     void Training_Click(object sender, RoutedEventArgs e)
     {

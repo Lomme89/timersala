@@ -92,6 +92,8 @@ public static class Exchange
         s.TrustedDevices = current.TrustedDevices;
         s.LastWebAddress = current.LastWebAddress;
         s.ClickerDevice = current.ClickerDevice;
+        s.ClickerForwardKeys = current.ClickerForwardKeys;
+        s.ClickerBackKeys = current.ClickerBackKeys;
         return s;
     }
 

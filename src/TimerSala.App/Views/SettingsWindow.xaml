@@ -1194,24 +1194,55 @@
                                 <TextBlock Style="{StaticResource PanelTitle}" Text="TELECOMANDO PER PRESENTAZIONI" />
                                 <Border Style="{StaticResource FirstRow}">
                                     <DockPanel>
-                                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding ClickerEnabled}" />
+                                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" VerticalAlignment="Center" IsChecked="{Binding ClickerEnabled}" />
                                         <StackPanel VerticalAlignment="Center">
                                             <TextBlock Style="{StaticResource RowLabel}" Text="Telecomando" />
-                                            <TextBlock Style="{StaticResource RowHint}" Text="«Avanti» (Pagina giù) avvia o ferma come il pulsante Avvia, compresa l'attesa della voce. «Indietro» (Pagina su) è sempre Annulla, mai la parte precedente." />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="«Avanti» avvia o ferma il tempo, come il pulsante Avvia. «Indietro» annulla l'ultima azione." />
                                         </StackPanel>
                                     </DockPanel>
                                 </Border>
                                 <Border Style="{StaticResource Row}" IsEnabled="{Binding ClickerEnabled}">
                                     <DockPanel>
-                                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                                            <Button Style="{StaticResource FlatButton}" Content="Associa" Padding="12,5" Margin="0,0,8,0" Click="ClickerAssociate_Click" />
-                                            <Button Style="{StaticResource FlatButton}" Content="Dimentica" Padding="12,5" Click="ClickerForget_Click"
+                                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Button Style="{StaticResource FlatButton}" Content="Dimentica" Padding="12,5" Margin="0,0,8,0" Click="ClickerForget_Click"
                                                     Visibility="{Binding Main.ClickerAssociated, Converter={StaticResource BoolToVis}}" />
+                                            <Button Style="{StaticResource FlatButton}" Content="Associa" Padding="12,5" MinWidth="96" Click="ClickerAssociate_Click" />
                                         </StackPanel>
-                                        <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Style="{StaticResource RowLabel}" Text="Anche con altri programmi in primo piano" />
+                                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Associazione" />
                                             <TextBlock Style="{StaticResource RowHint}" Text="{Binding Main.ClickerStatus}" />
-                                            <TextBlock Style="{StaticResource RowHint}" Text="Premi «Associa», poi un tasto del telecomando (non della tastiera). Così funziona anche con JW Library o Zoom davanti." />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Associato, funziona anche con JW Library o Zoom in primo piano. Senza, solo Pagina giù e Pagina su con TimerSala in primo piano." />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                                <Border Style="{StaticResource Row}" IsEnabled="{Binding ClickerEnabled}">
+                                    <DockPanel>
+                                        <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Scegli" Padding="12,5" MinWidth="96" VerticalAlignment="Center"
+                                                Click="ClickerLearnForward_Click" ToolTip="Poi premi sul telecomando il tasto che deve avviare e fermare" />
+                                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Tasti «avanti» · Avvia/Ferma" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="{Binding Main.ClickerForwardText}" />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                                <Border Style="{StaticResource Row}" IsEnabled="{Binding ClickerEnabled}">
+                                    <DockPanel>
+                                        <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Scegli" Padding="12,5" MinWidth="96" VerticalAlignment="Center"
+                                                Click="ClickerLearnBack_Click" ToolTip="Poi premi sul telecomando il tasto che deve annullare" />
+                                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Tasti «indietro» · Annulla" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="{Binding Main.ClickerBackText}" />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                                <Border Style="{StaticResource Row}" IsEnabled="{Binding ClickerEnabled}"
+                                        Visibility="{Binding Main.ClickerHasCustomKeys, Converter={StaticResource BoolToVis}}">
+                                    <DockPanel>
+                                        <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Ripristina" Padding="12,5" MinWidth="96" VerticalAlignment="Center"
+                                                Click="ClickerResetKeys_Click" />
+                                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Tasti scelti a mano" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Torna ai soli tasti predefiniti." />
                                         </StackPanel>
                                     </DockPanel>
                                 </Border>

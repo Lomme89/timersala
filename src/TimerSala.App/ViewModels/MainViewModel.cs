@@ -1069,6 +1069,8 @@ public sealed partial class MainViewModel : ObservableObject
         // i dispositivi fidati li gestisce solo il registro (le impostazioni aperte ne hanno una copia vecchia)
         settings.TrustedDevices = Settings.TrustedDevices;
         settings.ClickerDevice = Settings.ClickerDevice;
+        settings.ClickerForwardKeys = Settings.ClickerForwardKeys;
+        settings.ClickerBackKeys = Settings.ClickerBackKeys;
         Settings = settings;
         OnPropertyChanged(nameof(MessagePresets));
         OnPropertyChanged(nameof(MessagesEnabled));

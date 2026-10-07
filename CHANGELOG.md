@@ -1,5 +1,15 @@
 # Novità
 
+## v2.3.0-beta.3 — 7 ottobre 2026 (anteprima)
+
+Sesta anteprima: il telecomando per presentazioni funziona con più modelli ed è più facile da configurare. Si può sempre tornare alla v1.14.0 senza perdere nulla.
+
+**Telecomando per presentazioni**
+- Premendo «Associa» si vede che TimerSala è in attesa, con i secondi che restano. Se il tasto premuto non è riconosciuto viene mostrato quale tasto è arrivato; allo scadere del tempo l'associazione si annulla e lo dice.
+- Funzionano anche i telecomandi con su, giù e OK che mandano +, − e Tab: giù e OK avviano o fermano, su annulla.
+- Con «Scegli» si imposta qualsiasi tasto del telecomando come «avanti» (Avvia/Ferma) o «indietro» (Annulla); «Ripristina» torna ai tasti predefiniti. Scegliere un tasto associa anche il telecomando.
+- *Impostazioni → Telecomando* riorganizzata: una riga per ogni funzione, con i tasti attivi scritti per nome (Pagina giù, Invio, →…).
+
 ## v2.3.0-beta.2 — 7 ottobre 2026 (anteprima)
 
 Quinta anteprima: rifiniture dell'interfaccia, provate finestra per finestra su Windows. Si può sempre tornare alla v1.14.0 senza perdere nulla.

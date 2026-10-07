@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Collega un dispositivo" SizeToContent="WidthAndHeight" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
-        Background="{StaticResource BgBrush}" Foreground="{StaticResource TextBrush}" FontFamily="{StaticResource UiFont}">
+        Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" FontFamily="{StaticResource UiFont}">
     <StackPanel Margin="20">
         <TextBlock Text="Inquadra il codice con la fotocamera del telefono (stessa rete Wi-Fi del PC)." Style="{StaticResource Caption}" FontSize="13" Margin="0,0,0,16" />
         <StackPanel Orientation="Horizontal">
@@ -22,9 +22,9 @@
                     <TextBlock Text="Controlla il timer" FontSize="16" FontWeight="SemiBold" />
                     <TextBlock Text="Avvia, ferma, cambia parte, messaggi" Style="{StaticResource Caption}" Margin="0,2,0,10" />
                     <StackPanel x:Name="ControlHidden">
-                        <Border Background="{StaticResource BgBrush}" CornerRadius="8" Width="232" Height="232" HorizontalAlignment="Center">
+                        <Border Background="{DynamicResource BgBrush}" CornerRadius="8" Width="232" Height="232" HorizontalAlignment="Center">
                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                <TextBlock Text="&#xE72E;" FontFamily="{StaticResource IconFont}" FontSize="36" Foreground="{StaticResource MutedBrush}"
+                                <TextBlock Text="&#xE72E;" FontFamily="{StaticResource IconFont}" FontSize="36" Foreground="{DynamicResource MutedBrush}"
                                            HorizontalAlignment="Center" />
                                 <TextBlock Text="Nascosto: contiene il PIN" Style="{StaticResource Caption}" Margin="0,8,0,0" HorizontalAlignment="Center" />
                             </StackPanel>

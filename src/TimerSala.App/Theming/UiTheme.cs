@@ -74,14 +74,20 @@ public static class UiTheme
         bool changed = light != IsLight || Math.Abs(scale - Scale) > 0.001;
         IsLight = light;
         var res = Application.Current.Resources;
-        // i pennelli sono condivisi da tutti gli stili: cambiandone il colore si aggiorna tutto
+        // pennelli nuovi: lo XAML li usa come DynamicResource e si aggiorna da solo
+        // (cambiare il colore di quelli vecchi non basta: negli stili WPF li congela)
         foreach (var (key, (dark, lightColor)) in Colors)
         {
-            var color = Parse(light ? lightColor : dark);
-            if (res[key] is SolidColorBrush { IsFrozen: false } b) b.Color = color;
-            else res[key] = new SolidColorBrush(color);
+            var brush = new SolidColorBrush(Parse(light ? lightColor : dark));
+            brush.Freeze();
+            res[key] = brush;
         }
         Interop.DarkTitleBar.Light = light;
+
+        // menu contestuali e suggerimenti sono finestre a parte (le tendine invece seguono già il loro controllo): la scala la prendono da qui
+        var popupScale = new ScaleTransform(scale, scale);
+        popupScale.Freeze();
+        res["UiScaleTransform"] = popupScale;
 
         double old = Scale;
         Scale = scale;

@@ -30,9 +30,9 @@
 
     <!-- Pulsante generico arrotondato -->
     <Style x:Key="FlatButton" TargetType="Button">
-        <Setter Property="Background" Value="{StaticResource CardBrush}" />
-        <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
-        <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
+        <Setter Property="Background" Value="{DynamicResource CardBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource LineBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Padding" Value="12,8" />
         <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
@@ -84,7 +84,7 @@
                             </Trigger.ExitActions>
                         </Trigger>
                         <Trigger Property="IsKeyboardFocused" Value="True">
-                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Bd" Property="Opacity" Value="0.35" />
@@ -106,12 +106,12 @@
     <Style x:Key="GhostIconButton" TargetType="Button" BasedOn="{StaticResource IconButton}">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="Transparent" />
-        <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource MutedBrush}" />
     </Style>
 
     <!-- Interruttore a segmenti (Infrasettimanale / Fine settimana) -->
     <Style x:Key="SegmentButton" TargetType="RadioButton">
-        <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource MutedBrush}" />
         <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="Cursor" Value="Hand" />
@@ -124,12 +124,12 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource CardHoverBrush}" />
-                            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CardHoverBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
                             <Setter Property="FontWeight" Value="SemiBold" />
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -138,9 +138,9 @@
     </Style>
 
     <Style x:Key="PillToggle" TargetType="ToggleButton">
-        <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
-        <Setter Property="Background" Value="{StaticResource CardBrush}" />
-        <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource MutedBrush}" />
+        <Setter Property="Background" Value="{DynamicResource CardBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource LineBrush}" />
         <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
         <Setter Property="FontSize" Value="13" />
         <Setter Property="Cursor" Value="Hand" />
@@ -155,11 +155,11 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="True">
                             <Setter TargetName="Bd" Property="Background" Value="#33FBBF24" />
-                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource AmberBrush}" />
-                            <Setter Property="Foreground" Value="{StaticResource AmberBrush}" />
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource AmberBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource AmberBrush}" />
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -168,15 +168,15 @@
     </Style>
 
     <Style x:Key="Card" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource CardBrush}" />
+        <Setter Property="Background" Value="{DynamicResource CardBrush}" />
         <Setter Property="CornerRadius" Value="12" />
         <Setter Property="Padding" Value="14" />
-        <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource LineBrush}" />
         <Setter Property="BorderThickness" Value="1" />
     </Style>
 
     <Style x:Key="Caption" TargetType="TextBlock">
-        <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource MutedBrush}" />
         <Setter Property="FontSize" Value="12" />
         <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
     </Style>
@@ -190,7 +190,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="ProgressBar">
                     <Grid>
-                        <Border Background="{StaticResource LineBrush}" CornerRadius="3" />
+                        <Border Background="{DynamicResource LineBrush}" CornerRadius="3" />
                         <Border x:Name="PART_Track" />
                         <Border x:Name="PART_Indicator" HorizontalAlignment="Left" CornerRadius="3" Background="{TemplateBinding Foreground}" />
                     </Grid>

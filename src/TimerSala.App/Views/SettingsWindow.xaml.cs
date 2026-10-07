@@ -94,6 +94,7 @@ public partial class SettingsWindow : Window
     protected override void OnClosed(EventArgs e)
     {
         StopTest();
+        _vm.Detach();
         base.OnClosed(e);
     }
 

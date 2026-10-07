@@ -1085,6 +1085,7 @@ public sealed partial class MainViewModel : ObservableObject
         ApplyChecklistSettings();
         ApplyClickerSettings();
         UiTheme.Apply(settings);
+        RefreshDisplay(); // colori delle cifre e del ritardo col tema nuovo
         SaveSettings();
         if (!Timer.IsRunning && settings.IsOverseerWeek(Week.WeekStart) != Week.CircuitOverseerVisit)
         {

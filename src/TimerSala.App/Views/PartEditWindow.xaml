@@ -4,7 +4,7 @@
         xmlns:v="clr-namespace:TimerSala.App.Views"
         Title="Modifica la parte" Width="420" SizeToContent="Height" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
-        Background="{StaticResource BgBrush}" Foreground="{StaticResource TextBrush}" FontFamily="{StaticResource UiFont}">
+        Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" FontFamily="{StaticResource UiFont}">
     <StackPanel Margin="20,18,20,16">
         <TextBlock Text="Titolo" Style="{StaticResource Caption}" FontSize="12.5" Margin="0,0,0,6" />
         <TextBox x:Name="TitleBox" FontSize="15" />
@@ -21,7 +21,7 @@
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
             <Button Style="{StaticResource FlatButton}" Content="Annulla" IsCancel="True" Width="100" Margin="0,0,8,0" />
             <Button Style="{StaticResource FlatButton}" Content="Applica" IsDefault="True" Width="100" Click="Apply_Click"
-                    Background="{StaticResource AccentBrush}" BorderThickness="0" Foreground="White" FontWeight="SemiBold" />
+                    Background="{DynamicResource AccentBrush}" BorderThickness="0" Foreground="White" FontWeight="SemiBold" />
         </StackPanel>
     </StackPanel>
 </Window>

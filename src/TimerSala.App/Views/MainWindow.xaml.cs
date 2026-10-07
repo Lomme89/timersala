@@ -48,6 +48,11 @@ public partial class MainWindow : Window
         SystemEvents.DisplaySettingsChanged += OnDisplaySettingsChanged;
         SystemEvents.PowerModeChanged += OnPowerModeChanged;
         PreviewKeyDown += OnPreviewKeyDown;
+
+        // riquadro della rete sotto il pulsante, allineato al suo bordo destro (misure in pixel: vale a ogni scala)
+        NetworkPopup.CustomPopupPlacementCallback = (popup, target, _) =>
+            [new System.Windows.Controls.Primitives.CustomPopupPlacement(new Point(target.Width - popup.Width, target.Height * 1.18),
+                System.Windows.Controls.Primitives.PopupPrimaryAxis.Horizontal)];
     }
 
     // Windows avvisa del cambio di schermi prima di aver finito di sistemarli (e a volte sposta le finestre dopo):

@@ -110,6 +110,13 @@ public sealed class SettingsViewModel : ObservableObject
         Apply(Draft);
     }
 
+    /// <summary>Finestra chiusa: i controlli che si scaricano non devono più toccare le impostazioni (già applicate).</summary>
+    public void Detach()
+    {
+        _applyTimer.Stop();
+        _loading = true;
+    }
+
     bool HasPendingApply() => JsonSerializer.Serialize(Draft) != JsonSerializer.Serialize(_main.Settings);
 
     void Apply(AppSettings settings)

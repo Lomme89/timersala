@@ -4,7 +4,6 @@ using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
 
 namespace TimerSala.App.Theming;
 
@@ -70,105 +69,17 @@ public static class Motion
     }
 
     /// <summary>
-    /// Passa da una finestra all'altra (controller ↔ mini) con un'immagine che si restringe o si allarga
-    /// dalla prima alla seconda. Senza animazioni, o la prima volta che la seconda si apre, il passaggio è immediato.
+    /// Passa da una finestra all'altra (controller ↔ mini): la seconda compare prima che la prima sparisca,
+    /// così non c'è mai un istante senza finestre; l'apertura e la chiusura le anima Windows.
     /// </summary>
-    public static void SwitchWindows(Window from, Window to, Action? done = null)
+    // ponytail: prima c'era un'immagine che si deformava da una finestra all'altra (contenuto senza barra del titolo
+    // stirato, finestra trasparente ridimensionata a ogni fotogramma, istantanea vecchia della mini): sembrava strana
+    public static void SwitchWindows(Window from, Window to)
     {
-        void Instant()
-        {
-            to.Show();
-            if (to.WindowState == WindowState.Minimized) to.WindowState = WindowState.Normal;
-            to.Activate();
-            from.Hide();
-            done?.Invoke();
-        }
-
-        bool known = new WindowInteropHelper(to).Handle != IntPtr.Zero && to.ActualWidth > 0 && to.ActualHeight > 0;
-        if (Reduced || !from.IsVisible || from.WindowState != WindowState.Normal || !known)
-        {
-            Instant();
-            return;
-        }
-
-        ImageSource? a, b;
-        try
-        {
-            a = Snapshot(from);
-            b = Snapshot(to);
-        }
-        catch
-        {
-            Instant();
-            return;
-        }
-        if (a is null || b is null)
-        {
-            Instant();
-            return;
-        }
-
-        var imgA = new Image { Source = a, Stretch = Stretch.Fill };
-        var imgB = new Image { Source = b, Stretch = Stretch.Fill, Opacity = 0 };
-        var ghost = new Window
-        {
-            WindowStyle = WindowStyle.None,
-            AllowsTransparency = true,
-            Background = Brushes.Transparent,
-            ShowInTaskbar = false,
-            ShowActivated = false,
-            Topmost = true,
-            ResizeMode = ResizeMode.NoResize,
-            Left = from.Left,
-            Top = from.Top,
-            Width = from.ActualWidth,
-            Height = from.ActualHeight,
-            Content = new Border { CornerRadius = new CornerRadius(8), ClipToBounds = true, Child = new Grid { Children = { imgA, imgB } } },
-        };
-        ghost.Show();
+        to.Show();
+        if (to.WindowState == WindowState.Minimized) to.WindowState = WindowState.Normal;
+        to.Activate();
         from.Hide();
-
-        var d = new Duration(TimeSpan.FromMilliseconds(260));
-        var sb = new Storyboard();
-        void Add(DependencyObject target, DependencyProperty prop, double fromValue, double toValue)
-        {
-            var anim = new DoubleAnimation(fromValue, toValue, d) { EasingFunction = Ease };
-            Storyboard.SetTarget(anim, target);
-            Storyboard.SetTargetProperty(anim, new PropertyPath(prop));
-            sb.Children.Add(anim);
-        }
-        Add(ghost, Window.LeftProperty, from.Left, to.Left);
-        Add(ghost, Window.TopProperty, from.Top, to.Top);
-        Add(ghost, FrameworkElement.WidthProperty, from.ActualWidth, to.ActualWidth);
-        Add(ghost, FrameworkElement.HeightProperty, from.ActualHeight, to.ActualHeight);
-        Add(imgA, UIElement.OpacityProperty, 1, 0);
-        Add(imgB, UIElement.OpacityProperty, 0, 1);
-        sb.Completed += (_, _) =>
-        {
-            to.Show();
-            to.Activate();
-            ghost.Close();
-            done?.Invoke();
-        };
-        sb.Begin();
-    }
-
-    static ImageSource? Snapshot(Window w)
-    {
-        if (w.Content is not FrameworkElement content || content.ActualWidth <= 0 || content.ActualHeight <= 0) return null;
-        var dpi = VisualTreeHelper.GetDpi(content);
-        var bmp = new RenderTargetBitmap((int)Math.Ceiling(w.ActualWidth * dpi.DpiScaleX), (int)Math.Ceiling(w.ActualHeight * dpi.DpiScaleY),
-            dpi.PixelsPerInchX, dpi.PixelsPerInchY, PixelFormats.Pbgra32);
-        // sfondo della finestra, poi il contenuto
-        var dv = new DrawingVisual();
-        using (var dc = dv.RenderOpen())
-        {
-            dc.DrawRectangle(w.Background, null, new Rect(0, 0, w.ActualWidth, w.ActualHeight));
-            dc.DrawRectangle(new VisualBrush(content) { Stretch = Stretch.Fill }, null, new Rect(0, 0, w.ActualWidth, w.ActualHeight));
-        }
-        bmp.Render(dv);
-        bmp.Freeze();
-        return bmp;
     }
 
     /// <summary>La finestra parte già nera (o del colore di sfondo): niente lampo bianco prima del primo disegno.</summary>

@@ -4,7 +4,7 @@
         xmlns:v="clr-namespace:TimerSala.App.Views"
         Title="TimerSala mini" Width="360" SizeToContent="Height"
         WindowStyle="None" ResizeMode="NoResize" Topmost="True" ShowInTaskbar="True"
-        Background="{StaticResource BgBrush}" Foreground="{StaticResource TextBrush}"
+        Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}"
         FontFamily="{StaticResource UiFont}" Icon="/Assets/timersala.ico"
         UseLayoutRounding="True" TextOptions.TextFormattingMode="Display">
     <Window.Resources>
@@ -19,7 +19,7 @@
             <Setter Property="Padding" Value="0" />
             <Setter Property="FontSize" Value="12" />
             <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Foreground" Value="{StaticResource SoftTextBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource SoftTextBrush}" />
         </Style>
     </Window.Resources>
 
@@ -27,13 +27,13 @@
     <Border x:Name="Frame" BorderThickness="1">
         <Border.Style>
             <Style TargetType="Border">
-                <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
-                <Setter Property="Background" Value="{StaticResource BgBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource LineBrush}" />
+                <Setter Property="Background" Value="{DynamicResource BgBrush}" />
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding IsOvertime}" Value="True">
-                        <Setter Property="BorderBrush" Value="{StaticResource RedBrush}" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource RedBrush}" />
                         <Setter Property="BorderThickness" Value="2" />
-                        <Setter Property="Background" Value="{StaticResource OvertimeBgBrush}" />
+                        <Setter Property="Background" Value="{DynamicResource OvertimeBgBrush}" />
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
@@ -51,7 +51,7 @@
                 <Button DockPanel.Dock="Right" Style="{StaticResource GhostIconButton}" Width="26" Height="24" FontSize="11" Content="&#xE740;"
                         Command="{Binding ToggleMiniCommand}" ToolTip="Torna alla finestra completa (M)" />
                 <TextBlock DockPanel.Dock="Right" Text="{Binding ClockText}" FontFamily="{StaticResource DigitsFont}" FontSize="13"
-                           Foreground="{StaticResource DimTextBrush}" VerticalAlignment="Center" Margin="8,0,6,0" />
+                           Foreground="{DynamicResource DimTextBrush}" VerticalAlignment="Center" Margin="8,0,6,0" />
                 <!-- dopo Ferma: «Annulla» al posto del titolo per qualche secondo -->
                 <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Annulla" Padding="8,0" Height="22" FontSize="12"
                         FontWeight="SemiBold" Margin="6,0,0,0" Command="{Binding UndoActionCommand}"
@@ -64,7 +64,7 @@
                             <Setter Property="Fill" Value="{Binding SectionBrush}" />
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsVoiceArmed}" Value="True">
-                                    <Setter Property="Fill" Value="{StaticResource AmberBrush}" />
+                                    <Setter Property="Fill" Value="{DynamicResource AmberBrush}" />
                                     <DataTrigger.EnterActions>
                                         <BeginStoryboard x:Name="VoicePulse">
                                             <Storyboard RepeatBehavior="Forever" AutoReverse="True">
@@ -93,11 +93,11 @@
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsVoiceArmed}" Value="True">
                                     <Setter Property="Text" Value="{Binding VoiceStatus}" />
-                                    <Setter Property="Foreground" Value="{StaticResource AmberBrush}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource AmberBrush}" />
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding CanUndoAction}" Value="True">
                                     <Setter Property="Text" Value="{Binding UndoActionText}" />
-                                    <Setter Property="Foreground" Value="{StaticResource AmberBrush}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource AmberBrush}" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -196,10 +196,10 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <ComboBox IsEditable="True" ItemsSource="{Binding MessagePresets}" FontSize="12" MinHeight="28"
+                    <ComboBox IsEditable="True" ItemsSource="{Binding MessagePresets}" FontSize="12" Height="30" Padding="6,2"
                               Text="{Binding MessageText, UpdateSourceTrigger=PropertyChanged}" KeyDown="Message_KeyDown"
                               ToolTip="Messaggio per l'oratore (Invio per mostrarlo, Ctrl+Invio a tutto schermo)" />
-                    <TextBlock Text="Messaggio…" Foreground="{StaticResource MutedBrush}" FontSize="12" VerticalAlignment="Center" Margin="9,0,0,0"
+                    <TextBlock Text="Messaggio…" Foreground="{DynamicResource MutedBrush}" FontSize="12" VerticalAlignment="Center" Margin="9,0,0,0"
                                HorizontalAlignment="Left" IsHitTestVisible="False">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
@@ -212,16 +212,16 @@
                             </Style>
                         </TextBlock.Style>
                     </TextBlock>
-                    <Button Grid.Column="1" Style="{StaticResource IconButton}" Width="30" Height="28" FontSize="13" Content="&#xE724;" Margin="4,0,0,0"
+                    <Button Grid.Column="1" Style="{StaticResource IconButton}" Width="30" Height="30" FontSize="13" Content="&#xE724;" Margin="4,0,0,0"
                             Command="{Binding SendMessageCommand}" ToolTip="Mostra il messaggio (Invio)" />
-                    <Button Grid.Column="2" Style="{StaticResource IconButton}" Width="30" Height="28" FontSize="13" Content="&#xE740;" Margin="4,0,0,0"
+                    <Button Grid.Column="2" Style="{StaticResource IconButton}" Width="30" Height="30" FontSize="13" Content="&#xE740;" Margin="4,0,0,0"
                             Command="{Binding SendMessageFullCommand}" ToolTip="A tutto schermo per qualche secondo (Ctrl+Invio)" />
                 </Grid>
             </StackPanel>
 
             <!-- avanzamento lungo il bordo inferiore -->
             <Grid Grid.Row="3" Height="4">
-                <Border Background="{StaticResource CardHoverBrush}" />
+                <Border Background="{DynamicResource CardHoverBrush}" />
                 <ProgressBar Value="{Binding Progress, Mode=OneWay}" Minimum="0" Maximum="1" Foreground="{Binding PhaseBrush}" Height="4">
                     <ProgressBar.Template>
                         <ControlTemplate TargetType="ProgressBar">

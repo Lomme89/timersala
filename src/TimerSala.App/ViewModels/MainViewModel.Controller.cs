@@ -73,8 +73,10 @@ public sealed partial class MainViewModel
         }
         else
         {
-            CardNextLabel = "Prossima";
-            CardNextTitle = null;
+            // a riposo: «Inizio» a sinistra, a specchio di «Fine prevista» (e non ripetuto sopra)
+            CardNextLabel = "Inizio";
+            CardNextTitle = Timer.MeetingStart?.ToString("HH:mm");
+            CardStartText = "";
         }
 
         int devices = _web.ConnectedClients, controllers = _web.ConnectedControllers;

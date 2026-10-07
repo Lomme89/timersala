@@ -266,6 +266,9 @@ public class WindowsSmokeTests
         Stage("tema chiaro e interfaccia più grande, poi di nuovo come prima");
         UiTheme.Apply(ControllerTheme.Light, 1.3);
         Pump();
+        // il controller già aperto cambia colore davvero (i pennelli negli stili non devono restare quelli scuri)
+        Assert.True(UiTheme.IsLight);
+        Assert.Equal(((System.Windows.Media.SolidColorBrush)UiTheme.Brush("CardBrush")).Color, ((System.Windows.Media.SolidColorBrush)main.ProfileButton.Background).Color);
         UiTheme.Apply(ControllerTheme.Dark, 1.0);
         Pump();
 

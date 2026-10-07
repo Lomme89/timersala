@@ -4,7 +4,7 @@
         xmlns:v="clr-namespace:TimerSala.App.Views"
         Title="Impostazioni" Language="it-IT" Width="1080" Height="800" MinWidth="880" MinHeight="560"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
-        Background="{StaticResource BgBrush}" Foreground="{StaticResource TextBrush}" FontFamily="{StaticResource UiFont}"
+        Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" FontFamily="{StaticResource UiFont}"
         UseLayoutRounding="True">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
@@ -15,12 +15,12 @@
         </Style>
         <Style x:Key="PageSubtitle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="14" />
-            <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource MutedBrush}" />
             <Setter Property="TextWrapping" Value="Wrap" />
             <Setter Property="Margin" Value="0,4,0,18" />
         </Style>
         <Style x:Key="Panel" TargetType="Border">
-            <Setter Property="Background" Value="{StaticResource CardBrush}" />
+            <Setter Property="Background" Value="{DynamicResource CardBrush}" />
             <Setter Property="CornerRadius" Value="12" />
             <Setter Property="Padding" Value="20,14,20,10" />
             <Setter Property="Margin" Value="0,0,0,16" />
@@ -28,12 +28,12 @@
         <Style x:Key="PanelTitle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="12" />
             <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource MutedBrush}" />
             <Setter Property="Margin" Value="0,2,0,6" />
         </Style>
         <!-- una riga: testo a sinistra, controllo a destra; la linea sopra separa le righe -->
         <Style x:Key="Row" TargetType="Border">
-            <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource LineBrush}" />
             <Setter Property="BorderThickness" Value="0,1,0,0" />
             <Setter Property="Padding" Value="0,10" />
             <Setter Property="MinHeight" Value="54" />
@@ -48,7 +48,7 @@
         </Style>
         <Style x:Key="RowHint" TargetType="TextBlock">
             <Setter Property="FontSize" Value="12.5" />
-            <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource MutedBrush}" />
             <Setter Property="TextWrapping" Value="Wrap" />
             <Setter Property="Margin" Value="0,2,16,0" />
         </Style>
@@ -57,7 +57,7 @@
             <Setter Property="Text" Value="&#xE946;" />
             <Setter Property="FontFamily" Value="{StaticResource IconFont}" />
             <Setter Property="FontSize" Value="13" />
-            <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource MutedBrush}" />
             <Setter Property="Margin" Value="8,0,0,0" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Cursor" Value="Help" />
@@ -70,14 +70,15 @@
             <Setter Property="Width" Value="30" />
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
+        <!-- barra sempre al suo posto (vuota se non serve): tutte le pagine hanno la stessa larghezza -->
         <Style x:Key="Page" TargetType="ScrollViewer">
-            <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="VerticalScrollBarVisibility" Value="Visible" />
             <Setter Property="Padding" Value="28,22,28,8" />
             <Setter Property="Visibility" Value="Collapsed" />
         </Style>
         <Style x:Key="Segments" TargetType="Border">
-            <Setter Property="Background" Value="{StaticResource InputBrush}" />
-            <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
+            <Setter Property="Background" Value="{DynamicResource InputBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource LineBrush}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="8" />
             <Setter Property="HorizontalAlignment" Value="Right" />
@@ -92,7 +93,7 @@
 
         <!-- ═════ barra laterale ═════ -->
         <DockPanel Margin="14,18,10,14">
-            <TextBlock DockPanel.Dock="Bottom" Text="{Binding VersionText}" FontSize="12" Foreground="{StaticResource MutedBrush}" Margin="14,0,0,0" />
+            <TextBlock DockPanel.Dock="Bottom" Text="{Binding VersionText}" FontSize="12" Foreground="{DynamicResource MutedBrush}" Margin="14,0,0,0" />
             <ListBox x:Name="Nav" Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource NavItem}"
                      SelectionChanged="Nav_SelectionChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                 <ListBoxItem>
@@ -121,9 +122,9 @@
                 </ListBoxItem>
                 <ListBoxItem>
                     <DockPanel Width="170">
-                        <Border DockPanel.Dock="Right" CornerRadius="9" BorderThickness="1" BorderBrush="{StaticResource AmberBrush}" Padding="7,0"
+                        <Border DockPanel.Dock="Right" CornerRadius="9" BorderThickness="1" BorderBrush="{DynamicResource AmberBrush}" Padding="7,0"
                                 VerticalAlignment="Center" Background="#1FFBBF24">
-                            <TextBlock Text="BETA" FontSize="10.5" FontWeight="Bold" Foreground="{StaticResource AmberBrush}" />
+                            <TextBlock Text="BETA" FontSize="10.5" FontWeight="Bold" Foreground="{DynamicResource AmberBrush}" />
                         </Border>
                         <TextBlock Style="{StaticResource NavIcon}" Text="&#xE720;" />
                         <TextBlock Text="Voce" />
@@ -146,17 +147,17 @@
 
         <DockPanel Grid.Column="1">
             <!-- ═════ piè di pagina ═════ -->
-            <Border DockPanel.Dock="Bottom" BorderBrush="{StaticResource LineBrush}" BorderThickness="0,1,0,0" Padding="28,12,20,12">
+            <Border DockPanel.Dock="Bottom" BorderBrush="{DynamicResource LineBrush}" BorderThickness="0,1,0,0" Padding="28,12,20,12">
                 <DockPanel>
                     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                        <Button Style="{StaticResource LinkButton}" Foreground="{StaticResource MutedBrush}" Content="Annulla le modifiche"
+                        <Button Style="{StaticResource LinkButton}" Foreground="{DynamicResource MutedBrush}" Content="Annulla le modifiche"
                                 VerticalAlignment="Center" Margin="0,0,14,0" Click="Revert_Click"
                                 IsEnabled="{Binding HasChanges}" ToolTip="Riporta tutto com'era quando hai aperto le impostazioni" />
                         <Button Style="{StaticResource FlatButton}" Content="Fatto" Width="104" IsDefault="True" Click="Done_Click"
-                                Background="{StaticResource AccentBrush}" BorderThickness="0" Foreground="White" FontWeight="SemiBold" />
+                                Background="{DynamicResource AccentBrush}" BorderThickness="0" Foreground="White" FontWeight="SemiBold" />
                     </StackPanel>
-                    <Ellipse Width="8" Height="8" Fill="{StaticResource GreenBrush}" VerticalAlignment="Center" Margin="0,0,10,0" />
-                    <TextBlock Text="Le modifiche si applicano subito" Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center" />
+                    <Ellipse Width="8" Height="8" Fill="{DynamicResource GreenBrush}" VerticalAlignment="Center" Margin="0,0,10,0" />
+                    <TextBlock Text="Le modifiche si applicano subito" Foreground="{DynamicResource MutedBrush}" VerticalAlignment="Center" />
                 </DockPanel>
             </Border>
 
@@ -172,8 +173,8 @@
                                 <TextBlock Style="{StaticResource PanelTitle}" Text="CONGREGAZIONI" />
                                 <Border Style="{StaticResource FirstRow}">
                                     <DockPanel>
-                                        <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Rinomina" Padding="12,5" Margin="8,0,0,0" Click="RenameProfile_Click" />
-                                        <TextBox x:Name="ProfileNameBox" DockPanel.Dock="Right" Width="240" Padding="6,4" VerticalContentAlignment="Center" />
+                                        <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Rinomina" Padding="12,5" Margin="8,0,0,0" VerticalAlignment="Center" Click="RenameProfile_Click" />
+                                        <TextBox x:Name="ProfileNameBox" DockPanel.Dock="Right" VerticalAlignment="Center" Width="240" Padding="6,4" VerticalContentAlignment="Center" />
                                         <StackPanel VerticalAlignment="Center">
                                             <TextBlock Style="{StaticResource RowLabel}" Text="Questa congregazione" />
                                             <TextBlock Style="{StaticResource RowHint}" Text="Orari, schemi, stile, frasi pronte e settimane particolari sono di ogni congregazione." />
@@ -182,8 +183,8 @@
                                 </Border>
                                 <Border Style="{StaticResource Row}">
                                     <DockPanel>
-                                        <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Aggiungi" Padding="12,5" Margin="8,0,0,0" Click="AddProfile_Click" />
-                                        <TextBox x:Name="NewProfileBox" DockPanel.Dock="Right" Width="240" Padding="6,4" VerticalContentAlignment="Center" />
+                                        <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Aggiungi" Padding="12,5" Margin="8,0,0,0" VerticalAlignment="Center" Click="AddProfile_Click" />
+                                        <TextBox x:Name="NewProfileBox" DockPanel.Dock="Right" VerticalAlignment="Center" Width="240" Padding="6,4" VerticalContentAlignment="Center" />
                                         <StackPanel VerticalAlignment="Center">
                                             <TextBlock Style="{StaticResource RowLabel}" Text="Un'altra congregazione nella stessa sala" />
                                             <TextBlock Style="{StaticResource RowHint}" Text="Parte dalle impostazioni di questa. All'apertura TimerSala sceglie da solo quella dell'adunanza di adesso; si cambia anche con il nome in alto nel controller." />
@@ -196,7 +197,7 @@
                                     </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Border CornerRadius="16" Background="{StaticResource InputBrush}" BorderBrush="{StaticResource LineBrush}"
+                                            <Border CornerRadius="16" Background="{DynamicResource InputBrush}" BorderBrush="{DynamicResource LineBrush}"
                                                     BorderThickness="1" Padding="12,3,4,3" Margin="0,0,8,6">
                                                 <StackPanel Orientation="Horizontal">
                                                     <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontSize="13" />
@@ -275,7 +276,7 @@
                                     </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Border CornerRadius="16" Background="{StaticResource InputBrush}" BorderBrush="{StaticResource LineBrush}"
+                                            <Border CornerRadius="16" Background="{DynamicResource InputBrush}" BorderBrush="{DynamicResource LineBrush}"
                                                     BorderThickness="1" Padding="12,3,4,3" Margin="0,0,8,6">
                                                 <StackPanel Orientation="Horizontal">
                                                     <TextBlock Text="{Binding Label}" VerticalAlignment="Center" FontSize="13" />
@@ -397,14 +398,15 @@
                                     <StackPanel>
                                         <TextBlock Style="{StaticResource PanelTitle}" Text="MONITOR" />
                                         <Border Style="{StaticResource FirstRow}">
-                                            <DockPanel>
-                                                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                                                    <ComboBox Width="250" ItemsSource="{Binding Monitors}" SelectedItem="{Binding Monitor}" />
-                                                    <Button Style="{StaticResource FlatButton}" Margin="8,0,0,0" Padding="12,5" Click="Identify_Click"
+                                            <!-- etichetta sopra: accanto all'anteprima la colonna è stretta per tendina e pulsante sulla stessa riga -->
+                                            <StackPanel>
+                                                <TextBlock Style="{StaticResource RowLabel}" Text="Schermo della sala" Margin="0,0,0,8" />
+                                                <DockPanel>
+                                                    <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Margin="8,0,0,0" Padding="12,5" Click="Identify_Click"
                                                             ToolTip="Mostra per qualche secondo il numero su ogni schermo" Content="Identifica" />
-                                                </StackPanel>
-                                                <TextBlock Style="{StaticResource RowLabel}" Text="Schermo della sala" />
-                                            </DockPanel>
+                                                    <ComboBox ItemsSource="{Binding Monitors}" SelectedItem="{Binding Monitor}" />
+                                                </DockPanel>
+                                            </StackPanel>
                                         </Border>
                                         <Border Style="{StaticResource Row}">
                                             <DockPanel>
@@ -432,7 +434,8 @@
                                             </DockPanel>
                                         </Border>
                                         <Border Style="{StaticResource Row}">
-                                            <UniformGrid Columns="3">
+                                            <!-- le schede hanno un margine a destra e sotto: la griglia lo compensa per restare allineata -->
+                                            <UniformGrid Columns="3" Margin="0,0,-8,-8">
                                                 <RadioButton Style="{StaticResource ChoiceCard}" GroupName="Layout" IsChecked="{Binding LayoutClassic}"
                                                              ToolTip="Titolo, cifre, barra e piè di pagina">
                                                     <StackPanel>
@@ -485,7 +488,7 @@
 
                             <StackPanel Grid.Column="2">
                                 <!-- anteprima dello schermo: stessa logica dello schermo vero, con una parte d'esempio -->
-                                <Border CornerRadius="10" BorderBrush="{StaticResource LineBrush}" BorderThickness="1" ClipToBounds="True">
+                                <Border CornerRadius="10" BorderBrush="{DynamicResource LineBrush}" BorderThickness="1" ClipToBounds="True">
                                     <Viewbox>
                                         <Grid Width="640" Height="360" Background="{Binding PreviewBackground}">
                                             <Rectangle Fill="{Binding PreviewPhase}" Opacity="0.45" RenderTransformOrigin="0,0.5"
@@ -538,73 +541,74 @@
                                     </StackPanel>
                                 </Border>
 
-                                <Border Style="{StaticResource Panel}">
-                                    <StackPanel>
-                                        <TextBlock Style="{StaticResource PanelTitle}" Text="COLORI" />
-                                        <Border Style="{StaticResource FirstRow}">
-                                            <DockPanel>
-                                                <v:NumberBox DockPanel.Dock="Right" Width="136" Minimum="0" Maximum="{Binding WarningStudentsMax}" Step="5" Unit="{Binding WarningStudentsUnit}" ZeroText="mai"
-                                                             Value="{Binding WarningStudentsValue}" />
-                                                <Border DockPanel.Dock="Right" Style="{StaticResource Segments}" Margin="0,0,8,0" VerticalAlignment="Center">
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <RadioButton Style="{StaticResource SegmentButton}" GroupName="WarnStudents" Content="secondi" FontSize="12" IsChecked="{Binding WarningStudentsSeconds}" />
-                                                        <RadioButton Style="{StaticResource SegmentButton}" GroupName="WarnStudents" Content="%" FontSize="12" IsChecked="{Binding WarningStudentsPercent}" />
-                                                    </StackPanel>
-                                                </Border>
-                                                <StackPanel VerticalAlignment="Center">
-                                                    <TextBlock Style="{StaticResource RowLabel}" Text="Giallo: parti degli studenti" />
-                                                    <TextBlock Style="{StaticResource RowHint}" Text="Quanto prima della fine, in secondi o in percentuale della parte" />
-                                                </StackPanel>
-                                            </DockPanel>
-                                        </Border>
-                                        <Border Style="{StaticResource Row}">
-                                            <DockPanel>
-                                                <v:NumberBox DockPanel.Dock="Right" Width="136" Minimum="0" Maximum="{Binding WarningTalksMax}" Step="5" Unit="{Binding WarningTalksUnit}" ZeroText="mai"
-                                                             Value="{Binding WarningTalksValue}" />
-                                                <Border DockPanel.Dock="Right" Style="{StaticResource Segments}" Margin="0,0,8,0" VerticalAlignment="Center">
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <RadioButton Style="{StaticResource SegmentButton}" GroupName="WarnTalks" Content="secondi" FontSize="12" IsChecked="{Binding WarningTalksSeconds}" />
-                                                        <RadioButton Style="{StaticResource SegmentButton}" GroupName="WarnTalks" Content="%" FontSize="12" IsChecked="{Binding WarningTalksPercent}" />
-                                                    </StackPanel>
-                                                </Border>
-                                                <StackPanel VerticalAlignment="Center">
-                                                    <TextBlock Style="{StaticResource RowLabel}" Text="Giallo: discorsi" />
-                                                    <TextBlock Style="{StaticResource RowHint}" Text="Discorso pubblico, discorsi dell'infrasettimanale e del sorvegliante" />
-                                                </StackPanel>
-                                            </DockPanel>
-                                        </Border>
-                                        <Border Style="{StaticResource Row}">
-                                            <DockPanel>
-                                                <v:NumberBox DockPanel.Dock="Right" Width="136" Minimum="0" Maximum="{Binding WarningOthersMax}" Step="5" Unit="{Binding WarningOthersUnit}" ZeroText="mai"
-                                                             Value="{Binding WarningSeconds}" />
-                                                <Border DockPanel.Dock="Right" Style="{StaticResource Segments}" Margin="0,0,8,0" VerticalAlignment="Center">
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <RadioButton Style="{StaticResource SegmentButton}" GroupName="WarnOthers" Content="secondi" FontSize="12" IsChecked="{Binding WarningOthersSeconds}" />
-                                                        <RadioButton Style="{StaticResource SegmentButton}" GroupName="WarnOthers" Content="%" FontSize="12" IsChecked="{Binding WarningOthersPercent}" />
-                                                    </StackPanel>
-                                                </Border>
-                                                <StackPanel VerticalAlignment="Center">
-                                                    <TextBlock Style="{StaticResource RowLabel}" Text="Giallo: altre parti" />
-                                                    <TextBlock Style="{StaticResource RowHint}" Text="Anche consiglio e timer manuali" />
-                                                </StackPanel>
-                                            </DockPanel>
-                                        </Border>
-                                        <Border Style="{StaticResource Row}">
-                                            <DockPanel>
-                                                <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding ColoredDigits}" />
-                                                <TextBlock Style="{StaticResource RowLabel}" Text="Cifre colorate" ToolTip="Verde, giallo e rosso" />
-                                            </DockPanel>
-                                        </Border>
-                                        <Border Style="{StaticResource Row}">
-                                            <DockPanel>
-                                                <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding FlashOnOvertime}" />
-                                                <TextBlock Style="{StaticResource RowLabel}" Text="Lampeggio allo scadere" />
-                                            </DockPanel>
-                                        </Border>
-                                    </StackPanel>
-                                </Border>
                             </StackPanel>
                         </Grid>
+
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource PanelTitle}" Text="COLORI" />
+                                <Border Style="{StaticResource FirstRow}">
+                                    <DockPanel>
+                                        <v:NumberBox DockPanel.Dock="Right" Width="136" Minimum="0" Maximum="{Binding WarningStudentsMax}" Step="5" Unit="{Binding WarningStudentsUnit}" ZeroText="mai"
+                                                     Value="{Binding WarningStudentsValue}" />
+                                        <Border DockPanel.Dock="Right" Style="{StaticResource Segments}" Margin="0,0,8,0" VerticalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal">
+                                                <RadioButton Style="{StaticResource SegmentButton}" GroupName="WarnStudents" Content="secondi" FontSize="12" IsChecked="{Binding WarningStudentsSeconds}" />
+                                                <RadioButton Style="{StaticResource SegmentButton}" GroupName="WarnStudents" Content="%" FontSize="12" IsChecked="{Binding WarningStudentsPercent}" />
+                                            </StackPanel>
+                                        </Border>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Giallo: parti degli studenti" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Quanto prima della fine, in secondi o in percentuale della parte" />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                                <Border Style="{StaticResource Row}">
+                                    <DockPanel>
+                                        <v:NumberBox DockPanel.Dock="Right" Width="136" Minimum="0" Maximum="{Binding WarningTalksMax}" Step="5" Unit="{Binding WarningTalksUnit}" ZeroText="mai"
+                                                     Value="{Binding WarningTalksValue}" />
+                                        <Border DockPanel.Dock="Right" Style="{StaticResource Segments}" Margin="0,0,8,0" VerticalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal">
+                                                <RadioButton Style="{StaticResource SegmentButton}" GroupName="WarnTalks" Content="secondi" FontSize="12" IsChecked="{Binding WarningTalksSeconds}" />
+                                                <RadioButton Style="{StaticResource SegmentButton}" GroupName="WarnTalks" Content="%" FontSize="12" IsChecked="{Binding WarningTalksPercent}" />
+                                            </StackPanel>
+                                        </Border>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Giallo: discorsi" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Discorso pubblico, discorsi dell'infrasettimanale e del sorvegliante" />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                                <Border Style="{StaticResource Row}">
+                                    <DockPanel>
+                                        <v:NumberBox DockPanel.Dock="Right" Width="136" Minimum="0" Maximum="{Binding WarningOthersMax}" Step="5" Unit="{Binding WarningOthersUnit}" ZeroText="mai"
+                                                     Value="{Binding WarningSeconds}" />
+                                        <Border DockPanel.Dock="Right" Style="{StaticResource Segments}" Margin="0,0,8,0" VerticalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal">
+                                                <RadioButton Style="{StaticResource SegmentButton}" GroupName="WarnOthers" Content="secondi" FontSize="12" IsChecked="{Binding WarningOthersSeconds}" />
+                                                <RadioButton Style="{StaticResource SegmentButton}" GroupName="WarnOthers" Content="%" FontSize="12" IsChecked="{Binding WarningOthersPercent}" />
+                                            </StackPanel>
+                                        </Border>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Giallo: altre parti" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Anche consiglio e timer manuali" />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                                <Border Style="{StaticResource Row}">
+                                    <DockPanel>
+                                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding ColoredDigits}" />
+                                        <TextBlock Style="{StaticResource RowLabel}" Text="Cifre colorate" ToolTip="Verde, giallo e rosso" />
+                                    </DockPanel>
+                                </Border>
+                                <Border Style="{StaticResource Row}">
+                                    <DockPanel>
+                                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding FlashOnOvertime}" />
+                                        <TextBlock Style="{StaticResource RowLabel}" Text="Lampeggio allo scadere" />
+                                    </DockPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
 
                         <Border Style="{StaticResource Panel}">
                             <Grid>
@@ -619,12 +623,12 @@
                                     </Style>
                                     <Style x:Key="None" TargetType="TextBlock">
                                         <Setter Property="Text" Value="—" />
-                                        <Setter Property="Foreground" Value="{StaticResource LineBrush}" />
+                                        <Setter Property="Foreground" Value="{DynamicResource LineBrush}" />
                                         <Setter Property="HorizontalAlignment" Value="Center" />
                                         <Setter Property="VerticalAlignment" Value="Center" />
                                     </Style>
                                     <Style x:Key="Cell" TargetType="Border">
-                                        <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource LineBrush}" />
                                         <Setter Property="BorderThickness" Value="0,1,0,0" />
                                         <Setter Property="Height" Value="46" />
                                         <Setter Property="Grid.ColumnSpan" Value="3" />
@@ -632,7 +636,7 @@
                                     <Style x:Key="ColHead" TargetType="TextBlock">
                                         <Setter Property="FontSize" Value="12.5" />
                                         <Setter Property="FontWeight" Value="SemiBold" />
-                                        <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+                                        <Setter Property="Foreground" Value="{DynamicResource MutedBrush}" />
                                         <Setter Property="HorizontalAlignment" Value="Center" />
                                         <Setter Property="VerticalAlignment" Value="Bottom" />
                                         <Setter Property="Margin" Value="0,0,0,8" />
@@ -727,7 +731,7 @@
                                         <TextBlock Style="{StaticResource RowHint}" Text="Gli stili diversi dal classico non usano verde, giallo e rosso: così il countdown non sembra una parte." />
                                     </StackPanel>
                                 </DockPanel>
-                                <ListBox ItemsSource="{Binding CountdownStyles}" SelectedItem="{Binding SelectedCountdownStyle}"
+                                <ListBox ItemsSource="{Binding CountdownStyles}" SelectedItem="{Binding SelectedCountdownStyle}" Margin="0,0,-8,0" Padding="0"
                                          Background="Transparent" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                                     <ListBox.ItemsPanel>
                                         <ItemsPanelTemplate>
@@ -741,16 +745,16 @@
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate TargetType="ListBoxItem">
-                                                        <Border x:Name="Bd" Background="{StaticResource InputBrush}" BorderBrush="{StaticResource LineBrush}" BorderThickness="1"
+                                                        <Border x:Name="Bd" Background="{DynamicResource InputBrush}" BorderBrush="{DynamicResource LineBrush}" BorderThickness="1"
                                                                 CornerRadius="10" Padding="10" Margin="0,0,8,8">
                                                             <ContentPresenter />
                                                         </Border>
                                                         <ControlTemplate.Triggers>
                                                             <Trigger Property="IsMouseOver" Value="True">
-                                                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource HoverBorderBrush}" />
+                                                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource HoverBorderBrush}" />
                                                             </Trigger>
                                                             <Trigger Property="IsSelected" Value="True">
-                                                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                                                                 <Setter TargetName="Bd" Property="Background" Value="#1A3B82F6" />
                                                             </Trigger>
                                                         </ControlTemplate.Triggers>
@@ -762,13 +766,142 @@
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <DockPanel>
-                                                <Border DockPanel.Dock="Left" Width="80" Height="45" CornerRadius="5" Background="{Binding Color}" Margin="0,0,12,0">
-                                                    <TextBlock Text="4:32" FontFamily="{StaticResource DigitsFont}" FontSize="18" Foreground="{Binding Accent}"
-                                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                <!-- miniatura dello schermo vero (stessi elementi di TimerWindow), ferma su 4:32 prima delle 19:00 -->
+                                                <Border DockPanel.Dock="Left" Width="112" Height="63" Background="{Binding Color}" Margin="0,0,12,0" ClipToBounds="True">
+                                                    <Viewbox>
+                                                        <ContentControl Content="{Binding Value}" Width="1280" Height="720" Focusable="False">
+                                                            <ContentControl.Style>
+                                                                <Style TargetType="ContentControl">
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding Value}" Value="Tide">
+                                                                            <Setter Property="ContentTemplate">
+                                                                                <Setter.Value>
+                                                                                    <DataTemplate>
+                                                                                        <Grid Background="#071018">
+                                                                                            <v:TideFill Level="0.55" Phase="1" Crest="#2C7396">
+                                                                                                <v:TideFill.Fill>
+                                                                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                                                                        <GradientStop Color="#1D5A78" Offset="0" />
+                                                                                                        <GradientStop Color="#123A52" Offset="1" />
+                                                                                                    </LinearGradientBrush>
+                                                                                                </v:TideFill.Fill>
+                                                                                            </v:TideFill>
+                                                                                            <StackPanel VerticalAlignment="Center">
+                                                                                                <TextBlock Text="INIZIA TRA" FontFamily="Segoe UI Semibold" FontSize="30" Foreground="#A8D0E6" HorizontalAlignment="Center" />
+                                                                                                <TextBlock Text="4:32" FontFamily="{StaticResource DigitsFont}" FontSize="360" Foreground="#EAF4FA" HorizontalAlignment="Center" Margin="0,-30,0,0" />
+                                                                                            </StackPanel>
+                                                                                        </Grid>
+                                                                                    </DataTemplate>
+                                                                                </Setter.Value>
+                                                                            </Setter>
+                                                                        </DataTrigger>
+                                                                        <DataTrigger Binding="{Binding Value}" Value="Ring">
+                                                                            <Setter Property="ContentTemplate">
+                                                                                <Setter.Value>
+                                                                                    <DataTemplate>
+                                                                                        <Grid>
+                                                                                            <Grid.Background>
+                                                                                                <RadialGradientBrush Center="0.5,0.3" GradientOrigin="0.5,0.3" RadiusX="1.1" RadiusY="0.9">
+                                                                                                    <GradientStop Color="#14324D" Offset="0" />
+                                                                                                    <GradientStop Color="#0A1724" Offset="0.6" />
+                                                                                                    <GradientStop Color="#060D15" Offset="1" />
+                                                                                                </RadialGradientBrush>
+                                                                                            </Grid.Background>
+                                                                                            <v:RingArc Width="620" Height="620" Fraction="0.45" Stroke="#7FB3D5" Track="#1C3A55" Thickness="16" />
+                                                                                            <StackPanel VerticalAlignment="Center">
+                                                                                                <TextBlock Text="INIZIA TRA" FontFamily="Segoe UI Semibold" FontSize="30" Foreground="#7FB3D5" HorizontalAlignment="Center" />
+                                                                                                <TextBlock Text="4:32" FontFamily="{StaticResource DigitsFont}" FontSize="220" Foreground="#E8F1F8" HorizontalAlignment="Center" Margin="0,-24,0,-18" />
+                                                                                                <TextBlock Text="ALLE 19:00" FontFamily="Segoe UI Semibold" FontSize="30" Foreground="#5F8FB0" HorizontalAlignment="Center" />
+                                                                                            </StackPanel>
+                                                                                        </Grid>
+                                                                                    </DataTemplate>
+                                                                                </Setter.Value>
+                                                                            </Setter>
+                                                                        </DataTrigger>
+                                                                        <DataTrigger Binding="{Binding Value}" Value="Blocks">
+                                                                            <Setter Property="ContentTemplate">
+                                                                                <Setter.Value>
+                                                                                    <DataTemplate>
+                                                                                        <Grid Background="#0D0F12">
+                                                                                            <TextBlock Text="L'ADUNANZA INIZIA TRA" FontFamily="Segoe UI Semibold" FontSize="30" Foreground="#7FB3D5"
+                                                                                                       HorizontalAlignment="Left" VerticalAlignment="Top" Margin="120,70,0,0" />
+                                                                                            <TextBlock Text="4:32" FontFamily="{StaticResource DigitsFont}" FontSize="430" Foreground="#F1ECE3"
+                                                                                                       HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,30" />
+                                                                                            <v:BlockBar Height="30" VerticalAlignment="Bottom" Margin="120,0,120,70" Count="10" Fraction="0.45" OnBrush="#7FB3D5" OffBrush="#2A2D33" />
+                                                                                        </Grid>
+                                                                                    </DataTemplate>
+                                                                                </Setter.Value>
+                                                                            </Setter>
+                                                                        </DataTrigger>
+                                                                        <DataTrigger Binding="{Binding Value}" Value="Clock">
+                                                                            <Setter Property="ContentTemplate">
+                                                                                <Setter.Value>
+                                                                                    <DataTemplate>
+                                                                                        <Grid Background="#0B0B0C">
+                                                                                            <StackPanel VerticalAlignment="Center">
+                                                                                                <TextBlock HorizontalAlignment="Center" FontFamily="{StaticResource DigitsFont}">
+                                                                                                    <Run Text="18:55" FontSize="330" Foreground="#F4F5F7" /><Run Text="28" FontSize="160" Foreground="#55606E" />
+                                                                                                </TextBlock>
+                                                                                                <TextBlock Text="si comincia alle 19:00 · tra 5 minuti" FontFamily="Segoe UI" FontSize="52" Foreground="#9AA6B3" HorizontalAlignment="Center" Margin="0,4,0,0" />
+                                                                                            </StackPanel>
+                                                                                        </Grid>
+                                                                                    </DataTemplate>
+                                                                                </Setter.Value>
+                                                                            </Setter>
+                                                                        </DataTrigger>
+                                                                        <DataTrigger Binding="{Binding Value}" Value="Dial">
+                                                                            <Setter Property="ContentTemplate">
+                                                                                <Setter.Value>
+                                                                                    <DataTemplate>
+                                                                                        <Grid Background="#0A0E14">
+                                                                                            <v:TickDial Width="660" Height="660" Lit="32" OnBrush="#E8F1F8" OffBrush="#253445" />
+                                                                                            <StackPanel VerticalAlignment="Center">
+                                                                                                <TextBlock Text="5" FontFamily="{StaticResource DigitsFont}" FontSize="300" Foreground="#E8F1F8" HorizontalAlignment="Center" Margin="0,-40,0,-30" />
+                                                                                                <TextBlock Text="MINUTI" FontFamily="Segoe UI Semibold" FontSize="30" Foreground="#7FB3D5" HorizontalAlignment="Center" />
+                                                                                            </StackPanel>
+                                                                                        </Grid>
+                                                                                    </DataTemplate>
+                                                                                </Setter.Value>
+                                                                            </Setter>
+                                                                        </DataTrigger>
+                                                                        <DataTrigger Binding="{Binding Value}" Value="Words">
+                                                                            <Setter Property="ContentTemplate">
+                                                                                <Setter.Value>
+                                                                                    <DataTemplate>
+                                                                                        <Grid Background="#0C0C0D">
+                                                                                            <StackPanel VerticalAlignment="Center">
+                                                                                                <TextBlock Text="si comincia tra" FontFamily="Segoe UI Light" FontSize="110" Foreground="#D9D3C8" HorizontalAlignment="Center" />
+                                                                                                <TextBlock Text="5 MINUTI" FontFamily="{StaticResource DigitsFont}" FontSize="230" Foreground="#F4F5F7" HorizontalAlignment="Center" Margin="0,-30,0,0" />
+                                                                                            </StackPanel>
+                                                                                        </Grid>
+                                                                                    </DataTemplate>
+                                                                                </Setter.Value>
+                                                                            </Setter>
+                                                                        </DataTrigger>
+                                                                        <DataTrigger Binding="{Binding Value}" Value="Classic">
+                                                                            <Setter Property="ContentTemplate">
+                                                                                <Setter.Value>
+                                                                                    <DataTemplate>
+                                                                                        <Grid Background="Black" Margin="0">
+                                                                                            <TextBlock Text="ADUNANZA INFRASETTIMANALE" FontFamily="Segoe UI Semibold" FontSize="44" Foreground="#9AA6B3" Margin="60,40,0,0" />
+                                                                                            <TextBlock Text="4:32" FontFamily="{StaticResource DigitsFont}" FontSize="440" Foreground="#22C55E" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                                                            <Border Height="22" VerticalAlignment="Bottom" Margin="60,0,60,60" Background="#1F2937" CornerRadius="11">
+                                                                                                <Border Background="#22C55E" CornerRadius="11" HorizontalAlignment="Left" Width="520" />
+                                                                                            </Border>
+                                                                                        </Grid>
+                                                                                    </DataTemplate>
+                                                                                </Setter.Value>
+                                                                            </Setter>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </ContentControl.Style>
+                                                        </ContentControl>
+                                                    </Viewbox>
                                                 </Border>
                                                 <StackPanel VerticalAlignment="Center">
-                                                    <TextBlock Text="{Binding Label}" FontSize="14.5" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" />
-                                                    <TextBlock Text="{Binding Detail}" FontSize="12.5" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" />
+                                                    <TextBlock Text="{Binding Label}" FontSize="14.5" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" />
+                                                    <TextBlock Text="{Binding Detail}" FontSize="12.5" Foreground="{DynamicResource MutedBrush}" TextWrapping="Wrap" />
                                                 </StackPanel>
                                             </DockPanel>
                                         </DataTemplate>
@@ -834,13 +967,13 @@
                                     <ItemsControl x:Name="PresetList" ItemsSource="{Binding Presets}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Border x:Name="Row" CornerRadius="8" Background="{StaticResource InputBrush}" Margin="0,0,0,6" Padding="4,2"
+                                                <Border x:Name="Row" CornerRadius="8" Background="{DynamicResource InputBrush}" Margin="0,0,0,6" Padding="4,2"
                                                         AllowDrop="True" DragOver="Preset_DragOver" Drop="Preset_Drop" Tag="{Binding}">
                                                     <DockPanel>
-                                                        <TextBlock DockPanel.Dock="Left" Text="⋮⋮" FontSize="16" Foreground="{StaticResource MutedBrush}" Width="28"
+                                                        <TextBlock DockPanel.Dock="Left" Text="⋮⋮" FontSize="16" Foreground="{DynamicResource MutedBrush}" Width="28"
                                                                    TextAlignment="Center" VerticalAlignment="Center" Cursor="SizeAll" Background="Transparent"
                                                                    MouseLeftButtonDown="PresetHandle_MouseDown" Tag="{Binding}" ToolTip="Trascina per spostare" />
-                                                        <TextBlock DockPanel.Dock="Left" Text="{Binding Number}" Foreground="{StaticResource MutedBrush}" Width="26"
+                                                        <TextBlock DockPanel.Dock="Left" Text="{Binding Number}" Foreground="{DynamicResource MutedBrush}" Width="26"
                                                                    VerticalAlignment="Center" />
                                                         <Button DockPanel.Dock="Right" Style="{StaticResource GhostIconButton}" Width="32" Height="32" FontSize="11"
                                                                 Content="&#xE711;" Click="RemovePreset_Click" Tag="{Binding}" ToolTip="Togli questa frase" />
@@ -898,13 +1031,13 @@
                                     <StackPanel>
                                         <DockPanel Margin="0,0,0,8">
                                             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                                                <Ellipse x:Name="VoiceLamp" Width="10" Height="10" Fill="{StaticResource LineBrush}" VerticalAlignment="Center" Margin="0,0,6,0" />
-                                                <TextBlock x:Name="VoiceLampText" Text="Silenzio" FontSize="12" Foreground="{StaticResource MutedBrush}" Width="56" VerticalAlignment="Center" />
+                                                <Ellipse x:Name="VoiceLamp" Width="10" Height="10" Fill="{DynamicResource LineBrush}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                                <TextBlock x:Name="VoiceLampText" Text="Silenzio" FontSize="12" Foreground="{DynamicResource MutedBrush}" Width="56" VerticalAlignment="Center" />
                                             </StackPanel>
                                             <TextBlock Text="Prova: parla nel microfono" FontWeight="SemiBold" VerticalAlignment="Center" />
                                         </DockPanel>
                                         <Grid Height="16">
-                                            <Border Background="{StaticResource LineBrush}" CornerRadius="4" />
+                                            <Border Background="{DynamicResource LineBrush}" CornerRadius="4" />
                                             <Border x:Name="VoiceMeter" HorizontalAlignment="Left" Width="0" CornerRadius="4" Background="#22C55E" />
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
@@ -912,7 +1045,7 @@
                                                     <ColumnDefinition Width="2" />
                                                     <ColumnDefinition x:Name="ThresholdRight" Width="0.67*" />
                                                 </Grid.ColumnDefinitions>
-                                                <Border Grid.Column="1" Background="{StaticResource AmberBrush}" Margin="0,-3" />
+                                                <Border Grid.Column="1" Background="{DynamicResource AmberBrush}" Margin="0,-3" />
                                             </Grid>
                                         </Grid>
                                         <TextBlock x:Name="VoiceTestStatus" Style="{StaticResource RowHint}" Margin="0,6,0,0"

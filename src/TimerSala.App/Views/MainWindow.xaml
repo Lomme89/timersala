@@ -4,8 +4,8 @@
         xmlns:vm="clr-namespace:TimerSala.App.ViewModels"
         xmlns:v="clr-namespace:TimerSala.App.Views"
         Title="TimerSala"
-        Width="440" Height="800" MinWidth="380" MinHeight="560"
-        Background="{StaticResource BgBrush}" Foreground="{StaticResource TextBrush}"
+        Width="500" Height="800" MinWidth="400" MinHeight="560"
+        Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}"
         FontFamily="{StaticResource UiFont}"
         Icon="/Assets/timersala.ico"
         UseLayoutRounding="True" TextOptions.TextFormattingMode="Display">
@@ -31,29 +31,29 @@
                     <Button x:Name="MenuButton" Grid.Column="5" Style="{StaticResource GhostIconButton}" Width="26" Height="24" FontSize="13"
                             Content="&#xE712;" Margin="4,0,-4,0" Click="PartMenu_Click" Tag="{Binding}" Visibility="Collapsed"
                             ToolTip="Modifica, sposta o salta questa parte" />
-                    <TextBlock x:Name="Planned" Grid.Column="1" Text="{Binding PlannedStartText}" Foreground="{StaticResource MutedBrush}" Margin="10,0,0,0"
+                    <TextBlock x:Name="Planned" Grid.Column="1" Text="{Binding PlannedStartText}" Foreground="{DynamicResource MutedBrush}" Margin="10,0,0,0"
                                VerticalAlignment="Center" FontFamily="{StaticResource DigitsFont}" FontSize="13" ToolTip="Orario previsto d'inizio" />
                     <StackPanel Grid.Column="2" Margin="6,0,8,0" VerticalAlignment="Center">
                         <DockPanel>
-                            <TextBlock DockPanel.Dock="Left" Text="&#xE714;" FontFamily="{StaticResource IconFont}" FontSize="12" Foreground="{StaticResource AmberBrush}"
+                            <TextBlock DockPanel.Dock="Left" Text="&#xE714;" FontFamily="{StaticResource IconFont}" FontSize="12" Foreground="{DynamicResource AmberBrush}"
                                        VerticalAlignment="Center" Margin="0,1,6,0" ToolTip="Parte con un video: preparalo in JW Library"
                                        Visibility="{Binding HasVideo, Converter={StaticResource BoolToVis}}" />
-                            <TextBlock x:Name="TitleTb" Text="{Binding Title}" TextTrimming="CharacterEllipsis" FontSize="14" Foreground="{StaticResource TextBrush}"
+                            <TextBlock x:Name="TitleTb" Text="{Binding Title}" TextTrimming="CharacterEllipsis" FontSize="14" Foreground="{DynamicResource TextBrush}"
                                        ToolTip="{Binding Title}" />
                         </DockPanel>
                         <TextBlock x:Name="DetailTb" Text="{Binding Detail}" Style="{StaticResource Caption}" TextTrimming="CharacterEllipsis"
                                    Visibility="{Binding HasDetail, Converter={StaticResource BoolToVis}}" ToolTip="{Binding Detail}" />
                     </StackPanel>
-                    <TextBlock x:Name="Duration" Grid.Column="3" Text="{Binding DurationText}" Foreground="{StaticResource MutedBrush}"
+                    <TextBlock x:Name="Duration" Grid.Column="3" Text="{Binding DurationText}" Foreground="{DynamicResource MutedBrush}"
                                VerticalAlignment="Center" FontFamily="{StaticResource DigitsFont}" FontSize="14" ToolTip="Tempo previsto" />
-                    <TextBlock x:Name="Actual" Grid.Column="4" Text="{Binding ActualText}" Foreground="{StaticResource GreenBrush}"
+                    <TextBlock x:Name="Actual" Grid.Column="4" Text="{Binding ActualText}" Foreground="{DynamicResource GreenBrush}"
                                HorizontalAlignment="Right" VerticalAlignment="Center" FontFamily="{StaticResource DigitsFont}" FontSize="14"
                                ToolTip="Tempo effettivo" />
                 </Grid>
             </Border>
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding IsSong}" Value="True">
-                    <Setter TargetName="TitleTb" Property="Foreground" Value="{StaticResource MutedBrush}" />
+                    <Setter TargetName="TitleTb" Property="Foreground" Value="{DynamicResource MutedBrush}" />
                     <Setter TargetName="TitleTb" Property="FontStyle" Value="Italic" />
                     <Setter TargetName="TitleTb" Property="FontSize" Value="13" />
                     <Setter TargetName="Planned" Property="FontStyle" Value="Italic" />
@@ -63,7 +63,7 @@
                 <!-- parti già fatte: compatte, si legge il tempo effettivo -->
                 <DataTrigger Binding="{Binding IsPast}" Value="True">
                     <Setter TargetName="Row" Property="Padding" Value="8,2" />
-                    <Setter TargetName="TitleTb" Property="Foreground" Value="{StaticResource MutedBrush}" />
+                    <Setter TargetName="TitleTb" Property="Foreground" Value="{DynamicResource MutedBrush}" />
                     <Setter TargetName="TitleTb" Property="FontSize" Value="12.5" />
                     <Setter TargetName="DetailTb" Property="Visibility" Value="Collapsed" />
                     <Setter TargetName="Planned" Property="FontSize" Value="12" />
@@ -71,19 +71,19 @@
                     <Setter TargetName="Actual" Property="FontSize" Value="12.5" />
                 </DataTrigger>
                 <DataTrigger Binding="{Binding IsOver}" Value="True">
-                    <Setter TargetName="Actual" Property="Foreground" Value="{StaticResource RedBrush}" />
+                    <Setter TargetName="Actual" Property="Foreground" Value="{DynamicResource RedBrush}" />
                 </DataTrigger>
                 <DataTrigger Binding="{Binding IsAdapted}" Value="True">
                     <Setter TargetName="Duration" Property="Foreground" Value="#F59E0B" />
                     <Setter TargetName="Duration" Property="ToolTip" Value="Durata adattata per recuperare il ritardo" />
                 </DataTrigger>
                 <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                    <Setter TargetName="Row" Property="Background" Value="{StaticResource CardHoverBrush}" />
-                    <Setter TargetName="Row" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                    <Setter TargetName="Row" Property="Background" Value="{DynamicResource CardHoverBrush}" />
+                    <Setter TargetName="Row" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                     <Setter TargetName="MenuButton" Property="Visibility" Value="Visible" />
                 </DataTrigger>
                 <DataTrigger Binding="{Binding IsSkipped}" Value="True">
-                    <Setter TargetName="Actual" Property="Foreground" Value="{StaticResource MutedBrush}" />
+                    <Setter TargetName="Actual" Property="Foreground" Value="{DynamicResource MutedBrush}" />
                     <Setter TargetName="Actual" Property="FontFamily" Value="{StaticResource UiFont}" />
                     <Setter TargetName="Actual" Property="FontStyle" Value="Italic" />
                     <Setter TargetName="TitleTb" Property="TextDecorations" Value="Strikethrough" />
@@ -91,7 +91,7 @@
                 <!-- la parte in corso è più grande ed evidenziata -->
                 <DataTrigger Binding="{Binding IsRunning}" Value="True">
                     <Setter TargetName="Row" Property="Background" Value="#1A22C55E" />
-                    <Setter TargetName="Row" Property="BorderBrush" Value="{StaticResource GreenBrush}" />
+                    <Setter TargetName="Row" Property="BorderBrush" Value="{DynamicResource GreenBrush}" />
                     <Setter TargetName="Row" Property="Padding" Value="8,10" />
                     <Setter TargetName="TitleTb" Property="FontSize" Value="15.5" />
                     <Setter TargetName="TitleTb" Property="FontWeight" Value="SemiBold" />
@@ -111,7 +111,7 @@
         </Style>
     </Window.Resources>
 
-    <Grid Margin="14,10,14,12">
+    <Grid Margin="14,10,14,14">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -132,11 +132,11 @@
                     </TextBlock>
                 </DockPanel>
             </Border>
-            <Border DockPanel.Dock="Top" Margin="0,0,0,8" Padding="12,7" CornerRadius="10" Background="#26FBBF24" BorderBrush="{StaticResource AmberBrush}"
+            <Border DockPanel.Dock="Top" Margin="0,0,0,8" Padding="12,7" CornerRadius="10" Background="#26FBBF24" BorderBrush="{DynamicResource AmberBrush}"
                     BorderThickness="1" Visibility="{Binding IsTraining, Converter={StaticResource BoolToVis}}">
                 <DockPanel>
                     <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Esci" Padding="14,3" Command="{Binding StopTrainingCommand}" />
-                    <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" FontSize="12.5" Foreground="{StaticResource AmberBrush}">
+                    <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" FontSize="12.5" Foreground="{DynamicResource AmberBrush}">
                         <Run Text="ADDESTRAMENTO" FontWeight="Bold" /><Run Text="  ·  le parti durano un decimo del solito, niente viene salvato" />
                     </TextBlock>
                 </DockPanel>
@@ -159,16 +159,16 @@
                             <ControlTemplate TargetType="ToggleButton">
                                 <Border x:Name="Bd" Background="Transparent" CornerRadius="8">
                                     <Grid>
-                                        <TextBlock Text="&#xE701;" FontFamily="{StaticResource IconFont}" FontSize="15" Foreground="{StaticResource MutedBrush}"
+                                        <TextBlock Text="&#xE701;" FontFamily="{StaticResource IconFont}" FontSize="15" Foreground="{DynamicResource MutedBrush}"
                                                    HorizontalAlignment="Center" VerticalAlignment="Center" />
                                         <Ellipse Width="8" Height="8" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,6,5,0"
-                                                 Stroke="{StaticResource BgBrush}" StrokeThickness="1.5">
+                                                 Stroke="{DynamicResource BgBrush}" StrokeThickness="1.5">
                                             <Ellipse.Style>
                                                 <Style TargetType="Ellipse">
-                                                    <Setter Property="Fill" Value="{StaticResource MutedBrush}" />
+                                                    <Setter Property="Fill" Value="{DynamicResource MutedBrush}" />
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding WebRunning}" Value="True">
-                                                            <Setter Property="Fill" Value="{StaticResource GreenBrush}" />
+                                                            <Setter Property="Fill" Value="{DynamicResource GreenBrush}" />
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
@@ -178,10 +178,10 @@
                                 </Border>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="Bd" Property="Background" Value="{StaticResource SubtleBrush}" />
+                                        <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SubtleBrush}" />
                                     </Trigger>
                                     <Trigger Property="IsChecked" Value="True">
-                                        <Setter TargetName="Bd" Property="Background" Value="{StaticResource CardHoverBrush}" />
+                                        <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CardHoverBrush}" />
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
@@ -189,18 +189,18 @@
                     </ToggleButton>
                     <!-- riquadro della rete -->
                     <Popup x:Name="NetworkPopup" IsOpen="{Binding IsChecked, ElementName=NetworkButton, Mode=TwoWay}"
-                           PlacementTarget="{Binding ElementName=NetworkButton}" Placement="Bottom" HorizontalOffset="-266" VerticalOffset="6" StaysOpen="False" AllowsTransparency="True" PopupAnimation="Fade">
-                        <Border Width="300" Background="{StaticResource CardBrush}" BorderBrush="{StaticResource HoverBorderBrush}" BorderThickness="1"
-                                CornerRadius="10" Padding="14,12" Margin="4">
+                           PlacementTarget="{Binding ElementName=NetworkButton}" Placement="Custom" StaysOpen="False" AllowsTransparency="True" PopupAnimation="Fade">
+                        <Border Width="300" Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource HoverBorderBrush}" BorderThickness="1"
+                                CornerRadius="10" Padding="14,12">
                             <StackPanel>
                                 <DockPanel>
                                     <Ellipse Width="8" Height="8" VerticalAlignment="Center" Margin="0,0,8,0">
                                         <Ellipse.Style>
                                             <Style TargetType="Ellipse">
-                                                <Setter Property="Fill" Value="{StaticResource MutedBrush}" />
+                                                <Setter Property="Fill" Value="{DynamicResource MutedBrush}" />
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding WebRunning}" Value="True">
-                                                        <Setter Property="Fill" Value="{StaticResource GreenBrush}" />
+                                                        <Setter Property="Fill" Value="{DynamicResource GreenBrush}" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -213,11 +213,11 @@
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="Text" Value="{Binding WebAddressText}" />
-                                            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+                                            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding WebRunning}" Value="False">
                                                     <Setter Property="Text" Value="{Binding WebStatus}" />
-                                                    <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+                                                    <Setter Property="Foreground" Value="{DynamicResource MutedBrush}" />
                                                     <Setter Property="FontSize" Value="13" />
                                                     <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
                                                 </DataTrigger>
@@ -244,7 +244,7 @@
                                 </Button>
 
                                 <!-- comandi dal telefono: interruttore al volo e dispositivi autorizzati -->
-                                <Border BorderBrush="{StaticResource LineBrush}" BorderThickness="0,1,0,0" Margin="0,12,0,0" Padding="0,10,0,0">
+                                <Border BorderBrush="{DynamicResource LineBrush}" BorderThickness="0,1,0,0" Margin="0,12,0,0" Padding="0,10,0,0">
                                     <StackPanel>
                                         <DockPanel>
                                             <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding RemoteCommandsEnabled}" />
@@ -274,7 +274,7 @@
                                                                     Command="{Binding DataContext.RevokeDeviceCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                                     CommandParameter="{Binding Id}" />
                                                             <StackPanel>
-                                                                <TextBlock Text="{Binding Name}" FontSize="12.5" Foreground="{StaticResource TextBrush}" />
+                                                                <TextBlock Text="{Binding Name}" FontSize="12.5" Foreground="{DynamicResource TextBrush}" />
                                                                 <TextBlock Text="{Binding LastSeenText}" Style="{StaticResource Caption}" FontSize="11" />
                                                             </StackPanel>
                                                         </DockPanel>
@@ -295,39 +295,42 @@
                 <Button Style="{StaticResource HeadButton}" Content="&#xE897;" ToolTip="Guida rapida, novità e segnalazioni (F1)" Click="Help_Click" />
                 <Button Style="{StaticResource HeadButton}" Content="&#xE713;" ToolTip="Impostazioni" Click="Settings_Click" />
             </StackPanel>
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+            <!-- DockPanel: con poco spazio la pastiglia si accorcia invece di finire sotto le icone -->
+            <DockPanel VerticalAlignment="Center">
                 <TextBlock Text="{Binding ClockText}" FontFamily="{StaticResource DigitsFont}" FontSize="24" VerticalAlignment="Bottom" />
                 <TextBlock Text="{Binding ClockSeconds}" FontFamily="{StaticResource DigitsFont}" FontSize="14"
-                           Foreground="{StaticResource MutedBrush}" Margin="3,0,0,3" VerticalAlignment="Bottom" />
+                           Foreground="{DynamicResource MutedBrush}" Margin="3,0,0,3" VerticalAlignment="Bottom" />
                 <!-- «In orario» / ritardo come pastiglia colorata -->
-                <Grid Margin="12,0,0,2" VerticalAlignment="Center" ToolTip="Differenza accumulata rispetto ai tempi assegnati">
+                <Grid Margin="12,0,8,2" VerticalAlignment="Center" HorizontalAlignment="Left" ToolTip="Differenza accumulata rispetto ai tempi assegnati">
                     <Border CornerRadius="11" Background="{Binding DelayBrush}" Opacity="0.16" />
-                    <TextBlock Text="{Binding DelayText}" Foreground="{Binding DelayBrush}" FontSize="12.5" FontWeight="SemiBold" Margin="10,3" />
+                    <TextBlock Text="{Binding DelayText}" Foreground="{Binding DelayBrush}" FontSize="12.5" FontWeight="SemiBold" Margin="10,3"
+                               TextTrimming="CharacterEllipsis" />
                 </Grid>
-                <!-- congregazione (con più profili): un clic per cambiarla -->
-                <Button x:Name="ProfileButton" Style="{StaticResource FlatButton}" Margin="8,0,0,2" Padding="10,2" VerticalAlignment="Center" Click="Profile_Click"
-                        Visibility="{Binding HasProfiles, Converter={StaticResource BoolToVis}}" ToolTip="Congregazione: un clic per cambiarla">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xE716;" FontFamily="{StaticResource IconFont}" FontSize="11" VerticalAlignment="Center" Margin="0,0,6,0" />
-                        <TextBlock Text="{Binding ProfileName}" FontSize="12.5" FontWeight="SemiBold" MaxWidth="160" TextTrimming="CharacterEllipsis" />
-                    </StackPanel>
-                </Button>
-            </StackPanel>
+            </DockPanel>
         </DockPanel>
 
         <!-- ═════ Settimana in una riga; il riquadro completo si apre con la freccia ═════ -->
         <StackPanel Grid.Row="1" Margin="0,0,0,8">
+            <!-- congregazione (con più profili): riga sua, nell'intestazione non c'è posto; un clic per cambiarla -->
+            <Button x:Name="ProfileButton" Style="{StaticResource FlatButton}" HorizontalAlignment="Left" Margin="0,0,0,8" Padding="10,3" Click="Profile_Click"
+                    Visibility="{Binding HasProfiles, Converter={StaticResource BoolToVis}}" ToolTip="Congregazione: un clic per cambiarla">
+                <DockPanel>
+                    <TextBlock Text="&#xE716;" FontFamily="{StaticResource IconFont}" FontSize="11" VerticalAlignment="Center" Margin="0,0,6,0" />
+                    <TextBlock DockPanel.Dock="Right" Text="&#xE70D;" FontFamily="{StaticResource IconFont}" FontSize="9" Foreground="{DynamicResource MutedBrush}" VerticalAlignment="Center" Margin="8,0,0,0" />
+                    <TextBlock Text="{Binding ProfileName}" FontSize="12.5" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                </DockPanel>
+            </Button>
             <ToggleButton IsChecked="{Binding WeekPanelOpen}" Cursor="Hand" FocusVisualStyle="{x:Null}"
                           ToolTip="Cambia settimana o adunanza, scarica gli schemi, visita del sorvegliante">
                 <ToggleButton.Template>
                     <ControlTemplate TargetType="ToggleButton">
-                        <Border x:Name="Bd" Background="{StaticResource CardBrush}" BorderBrush="{StaticResource LineBrush}" BorderThickness="1"
+                        <Border x:Name="Bd" Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource LineBrush}" BorderThickness="1"
                                 CornerRadius="10" Padding="12,9">
                             <ContentPresenter />
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource HoverBorderBrush}" />
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource HoverBorderBrush}" />
                             </Trigger>
                             <Trigger Property="IsChecked" Value="True">
                                 <Setter TargetName="Bd" Property="CornerRadius" Value="10,10,0,0" />
@@ -336,12 +339,12 @@
                     </ControlTemplate>
                 </ToggleButton.Template>
                 <DockPanel>
-                    <Border DockPanel.Dock="Right" CornerRadius="9" BorderThickness="1" BorderBrush="{StaticResource AmberBrush}" Background="#1FFBBF24"
+                    <Border DockPanel.Dock="Right" CornerRadius="9" BorderThickness="1" BorderBrush="{DynamicResource AmberBrush}" Background="#1FFBBF24"
                             Padding="7,1" Margin="8,0,0,0" VerticalAlignment="Center" Visibility="{Binding HasOverrun, Converter={StaticResource BoolToVis}}"
                             ToolTip="Le parti dello schema, con i cantici, superano la durata dell'adunanza impostata. Si può sistemare nell'editor.">
-                        <TextBlock Text="{Binding OverrunText}" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource AmberBrush}" />
+                        <TextBlock Text="{Binding OverrunText}" FontSize="11.5" FontWeight="SemiBold" Foreground="{DynamicResource AmberBrush}" />
                     </Border>
-                    <TextBlock DockPanel.Dock="Right" FontFamily="{StaticResource IconFont}" FontSize="11" Foreground="{StaticResource MutedBrush}"
+                    <TextBlock DockPanel.Dock="Right" FontFamily="{StaticResource IconFont}" FontSize="11" Foreground="{DynamicResource MutedBrush}"
                                VerticalAlignment="Center" Margin="8,0,0,0">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
@@ -354,15 +357,15 @@
                             </Style>
                         </TextBlock.Style>
                     </TextBlock>
-                    <TextBlock TextTrimming="CharacterEllipsis" FontSize="14" VerticalAlignment="Center">
+                    <TextBlock TextTrimming="CharacterEllipsis" FontSize="14" VerticalAlignment="Center" Foreground="{DynamicResource TextBrush}">
                         <Run Text="{Binding MeetingDayText, Mode=OneWay}" FontWeight="SemiBold" />
-                        <Run Text="  ·  " Foreground="{StaticResource MutedBrush}" />
-                        <Run Text="{Binding MeetingLineText, Mode=OneWay}" Foreground="{StaticResource MutedBrush}" />
+                        <Run Text="  ·  " Foreground="{DynamicResource MutedBrush}" />
+                        <Run Text="{Binding MeetingLineText, Mode=OneWay}" Foreground="{DynamicResource MutedBrush}" />
                     </TextBlock>
                 </DockPanel>
             </ToggleButton>
             <ProgressBar IsIndeterminate="True" Height="2" Margin="6,0" Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}" />
-            <Border Background="{StaticResource CardBrush}" BorderBrush="{StaticResource LineBrush}" BorderThickness="1,0,1,1" CornerRadius="0,0,10,10"
+            <Border Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource LineBrush}" BorderThickness="1,0,1,1" CornerRadius="0,0,10,10"
                     Padding="10,4,10,10" Visibility="{Binding WeekPanelOpen, Converter={StaticResource BoolToVis}}">
                 <StackPanel>
                     <Grid>
@@ -400,7 +403,7 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <Border Background="{StaticResource BgBrush}" CornerRadius="8">
+                        <Border Background="{DynamicResource BgBrush}" CornerRadius="8">
                             <UniformGrid Columns="2">
                                 <RadioButton Style="{StaticResource SegmentButton}" Content="Infrasettimanale" IsChecked="{Binding IsMidweek}" GroupName="kind" />
                                 <RadioButton Style="{StaticResource SegmentButton}" Content="Fine settimana" IsChecked="{Binding IsWeekend}" GroupName="kind" />
@@ -546,13 +549,13 @@
                     <DockPanel Margin="10,4,4,6">
                         <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Annulla" Padding="12,2" FontWeight="SemiBold"
                                 Command="{Binding UndoActionCommand}" ToolTip="Annulla l'ultima azione (Esc)" />
-                        <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE7A7;" FontSize="13" Foreground="{StaticResource AmberBrush}"
+                        <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE7A7;" FontSize="13" Foreground="{DynamicResource AmberBrush}"
                                    VerticalAlignment="Center" Margin="0,0,8,0" />
-                        <TextBlock Text="{Binding UndoActionText}" FontSize="12" Foreground="{StaticResource AmberBrush}" VerticalAlignment="Center"
+                        <TextBlock Text="{Binding UndoActionText}" FontSize="12" Foreground="{DynamicResource AmberBrush}" VerticalAlignment="Center"
                                    TextTrimming="CharacterEllipsis" />
                     </DockPanel>
                     <ProgressBar Style="{StaticResource SlimProgress}" Height="2" VerticalAlignment="Bottom" Minimum="0" Maximum="1"
-                                 Value="{Binding UndoActionFraction, Mode=OneWay}" Foreground="{StaticResource AmberBrush}" Background="Transparent" />
+                                 Value="{Binding UndoActionFraction, Mode=OneWay}" Foreground="{DynamicResource AmberBrush}" Background="Transparent" />
                 </Grid>
             </Border>
             <!-- azioni arrivate dal telefono: compaiono per qualche secondo, così si sa chi ha fatto cosa -->
@@ -565,7 +568,7 @@
                 </DockPanel>
             </Border>
             <!-- avvio con la voce (sperimentale) -->
-            <Border Margin="0,6,0,0" CornerRadius="8" Padding="10,5" Background="{StaticResource BgBrush}"
+            <Border Margin="0,6,0,0" CornerRadius="8" Padding="10,5" Background="{DynamicResource BgBrush}"
                     Visibility="{Binding VoiceEnabled, Converter={StaticResource BoolToVis}}">
                 <DockPanel>
                     <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Annulla" Padding="10,2" Margin="8,0,0,0"
@@ -574,7 +577,7 @@
                     <TextBlock DockPanel.Dock="Left" FontFamily="{StaticResource IconFont}" Text="&#xE720;" FontSize="13" VerticalAlignment="Center">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
-                                <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+                                <Setter Property="Foreground" Value="{DynamicResource MutedBrush}" />
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding VoiceHeard}" Value="True">
                                         <Setter Property="Foreground" Value="#22C55E" />
@@ -588,10 +591,10 @@
                     <TextBlock Text="{Binding VoiceStatus}" FontSize="12" VerticalAlignment="Center" TextTrimming="CharacterEllipsis">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
-                                <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+                                <Setter Property="Foreground" Value="{DynamicResource MutedBrush}" />
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsVoiceArmed}" Value="True">
-                                        <Setter Property="Foreground" Value="{StaticResource AmberBrush}" />
+                                        <Setter Property="Foreground" Value="{DynamicResource AmberBrush}" />
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding VoiceError}" Value="True">
                                         <Setter Property="Foreground" Value="#EF4444" />
@@ -617,9 +620,9 @@
                     <ComboBox x:Name="MessageInput" IsEditable="True" ItemsSource="{Binding MessagePresets}" MinHeight="38" Padding="28,5,6,5"
                               Text="{Binding MessageText, UpdateSourceTrigger=PropertyChanged}" KeyDown="MessageInput_KeyDown"
                               ToolTip="Scegli una frase o scrivila e premi Invio (Ctrl+Invio: a tutto schermo)" />
-                    <TextBlock Text="&#xE8BD;" FontFamily="{StaticResource IconFont}" FontSize="14" Foreground="{StaticResource AmberBrush}"
+                    <TextBlock Text="&#xE8BD;" FontFamily="{StaticResource IconFont}" FontSize="14" Foreground="{DynamicResource AmberBrush}"
                                VerticalAlignment="Center" Margin="10,0,0,0" HorizontalAlignment="Left" IsHitTestVisible="False" />
-                    <TextBlock Text="Messaggio all'oratore…" Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center" Margin="34,0,0,0"
+                    <TextBlock Text="Messaggio all'oratore…" Foreground="{DynamicResource MutedBrush}" VerticalAlignment="Center" Margin="34,0,0,0"
                                HorizontalAlignment="Left" IsHitTestVisible="False" FontSize="14">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
@@ -643,7 +646,7 @@
                     <DockPanel>
                         <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Togli" Padding="10,2" FontSize="12.5"
                                 Command="{Binding ClearMessageCommand}" ToolTip="Togli il messaggio dallo schermo" />
-                        <TextBlock Text="{Binding MessageInfo}" Foreground="{StaticResource AmberBrush}" FontSize="12.5" VerticalAlignment="Center"
+                        <TextBlock Text="{Binding MessageInfo}" Foreground="{DynamicResource AmberBrush}" FontSize="12.5" VerticalAlignment="Center"
                                    TextTrimming="CharacterEllipsis" ToolTip="{Binding MessageInfo}" />
                     </DockPanel>
                 </Border>
@@ -654,8 +657,8 @@
         <Border Grid.Row="4" Style="{StaticResource Card}" Padding="6,10,6,6">
             <DockPanel>
                 <!-- lista di controllo: durante il countdown d'inizio o aperta con il pulsante -->
-                <Border DockPanel.Dock="Top" Margin="4,0,4,10" Padding="12,10" CornerRadius="10" Background="{StaticResource SubtleBrush}"
-                        BorderBrush="{StaticResource LineBrush}" BorderThickness="1" Visibility="{Binding ChecklistVisible, Converter={StaticResource BoolToVis}}">
+                <Border DockPanel.Dock="Top" Margin="4,0,4,10" Padding="12,10" CornerRadius="10" Background="{DynamicResource SubtleBrush}"
+                        BorderBrush="{DynamicResource LineBrush}" BorderThickness="1" Visibility="{Binding ChecklistVisible, Converter={StaticResource BoolToVis}}">
                     <StackPanel>
                         <DockPanel Margin="0,0,0,6">
                             <Button DockPanel.Dock="Right" Style="{StaticResource GhostIconButton}" Content="&#xE711;" Width="26" Height="26" FontSize="10"
@@ -663,10 +666,10 @@
                             <TextBlock DockPanel.Dock="Right" Text="{Binding ChecklistSummary}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,8,0">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
-                                        <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+                                        <Setter Property="Foreground" Value="{DynamicResource MutedBrush}" />
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding ChecklistComplete}" Value="True">
-                                                <Setter Property="Foreground" Value="{StaticResource GreenBrush}" />
+                                                <Setter Property="Foreground" Value="{DynamicResource GreenBrush}" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
@@ -677,7 +680,7 @@
                         <ItemsControl ItemsSource="{Binding Checklist}" Focusable="False">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <CheckBox IsChecked="{Binding Done}" Margin="0,3" Cursor="Hand" Foreground="{StaticResource TextBrush}">
+                                    <CheckBox IsChecked="{Binding Done}" Margin="0,3" Cursor="Hand" Foreground="{DynamicResource TextBrush}">
                                         <TextBlock Text="{Binding Text}" TextWrapping="Wrap" FontSize="13" />
                                     </CheckBox>
                                 </DataTemplate>
@@ -689,9 +692,16 @@
                     <TextBlock DockPanel.Dock="Right" Text="PREVISTO · REALE" Style="{StaticResource Caption}" FontSize="11" FontWeight="SemiBold" />
                     <TextBlock Text="PROGRAMMA" Style="{StaticResource Caption}" FontSize="11" FontWeight="SemiBold" />
                 </DockPanel>
-                <ListBox x:Name="PartsList" ItemsSource="{Binding Parts}" ItemTemplate="{StaticResource PartTemplate}" Foreground="{StaticResource TextBrush}"
+                <ListBox x:Name="PartsList" ItemsSource="{Binding Parts}" ItemTemplate="{StaticResource PartTemplate}" Foreground="{DynamicResource TextBrush}"
                          Background="Transparent" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False"
                          PreviewMouseLeftButtonUp="PartsList_Click" PreviewMouseRightButtonUp="PartsList_RightClick" Focusable="False">
+                    <!-- la riga tagliata in fondo sfuma invece di finire di netto contro il bordo -->
+                    <ListBox.OpacityMask>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="Black" Offset="0.9" />
+                            <GradientStop Color="Transparent" Offset="1" />
+                        </LinearGradientBrush>
+                    </ListBox.OpacityMask>
                     <ListBox.ContextMenu>
                         <ContextMenu x:Name="PartMenu" Opened="PartMenu_Opened">
                             <MenuItem x:Name="EditPartItem" Header="Modifica titolo e durata…" Click="EditPart_Click" />
@@ -707,7 +717,7 @@
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
                             <Setter Property="Focusable" Value="False" />
-                            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                             <Setter Property="Template">
                                 <Setter.Value>
@@ -726,16 +736,20 @@
         <StackPanel Grid.Row="5">
             <DockPanel Margin="2,6,0,0" Visibility="{Binding HasClockWarning, Converter={StaticResource BoolToVis}}">
                 <TextBlock DockPanel.Dock="Left" FontFamily="{StaticResource IconFont}" Text="&#xE823;" FontSize="12"
-                           Foreground="{StaticResource AmberBrush}" Margin="0,2,6,0" />
-                <TextBlock Text="{Binding ClockWarning}" TextWrapping="Wrap" FontSize="12" Foreground="{StaticResource AmberBrush}" />
+                           Foreground="{DynamicResource AmberBrush}" Margin="0,2,6,0" />
+                <TextBlock Text="{Binding ClockWarning}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource AmberBrush}" />
             </DockPanel>
+            <!-- senza messaggi la riga sparisce: niente striscia vuota sotto il programma -->
             <TextBlock x:Name="StatusText" Text="{Binding StatusMessage}" TextWrapping="Wrap" FontSize="12" Margin="2,6,0,0">
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">
-                        <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+                        <Setter Property="Foreground" Value="{DynamicResource MutedBrush}" />
                         <Style.Triggers>
+                            <Trigger Property="Text" Value="">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </Trigger>
                             <DataTrigger Binding="{Binding StatusIsError}" Value="True">
-                                <Setter Property="Foreground" Value="{StaticResource AmberBrush}" />
+                                <Setter Property="Foreground" Value="{DynamicResource AmberBrush}" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>

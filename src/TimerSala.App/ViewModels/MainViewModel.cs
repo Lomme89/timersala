@@ -1151,5 +1151,21 @@ public sealed partial class MainViewModel : ObservableObject
     {
         StatusMessage = message;
         StatusIsError = error;
+        // avviso passeggero: sparisce da solo (gli errori restano un po' di più); durante un download resta finché serve
+        _statusTimer ??= new DispatcherTimer();
+        _statusTimer.Stop();
+        _statusTimer.Interval = TimeSpan.FromSeconds(error ? 10 : 4);
+        _statusTimer.Tick -= HideStatus;
+        _statusTimer.Tick += HideStatus;
+        _statusTimer.Start();
+    }
+
+    DispatcherTimer? _statusTimer;
+
+    void HideStatus(object? sender, EventArgs e)
+    {
+        if (IsBusy) return;
+        _statusTimer?.Stop();
+        StatusMessage = null;
     }
 }

@@ -16,6 +16,7 @@ Quinta anteprima: rifiniture dell'interfaccia, provate finestra per finestra su 
 - A riposo la scheda mostra «Inizio» e «Fine prevista» affiancati.
 - Il riquadro della rete si apre allineato sotto il suo pulsante.
 - In fondo non resta più una striscia vuota; il programma sfuma invece di finire tagliato.
+- I messaggi brevi (per esempio «Indirizzo copiato») compaiono sopra il fondo del programma senza spostarlo e spariscono da soli dopo qualche secondo.
 
 **Modalità mini**
 - Il passaggio dal controller alla mini e ritorno è diretto, senza l'immagine che si deformava.

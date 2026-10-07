@@ -8,6 +8,7 @@ Quinta anteprima: rifiniture dell'interfaccia, provate finestra per finestra su 
 - Il tema chiaro ora vale davvero per tutto: prima molti pulsanti, caselle e riquadri restavano scuri. Il cambio si applica subito, anche alle finestre già aperte.
 - Barra del titolo nel colore del tema, senza l'icona generica di Windows nelle finestre secondarie (impostazioni, editor, dialoghi).
 - Nel tema scuro la data accanto all'adunanza era quasi invisibile: ora si legge.
+- Le domande e gli avvisi (per esempio «Il timer è in funzione. Chiudere comunque?») sono nei colori del programma invece che nella finestrella grigia di Windows; per chiudere col timer in corso i pulsanti sono «Resta aperto» e «Chiudi».
 - Con l'interfaccia ingrandita (*Impostazioni → Programma*) si ingrandiscono anche i menu del tasto destro e i suggerimenti.
 
 **Controller**

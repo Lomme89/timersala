@@ -58,7 +58,7 @@ public static class HelpActions
                       ? "Si apre GitHub con una segnalazione già preparata: versione, sistema, impostazioni principali ed errori recenti (mai il PIN).\n\n"
                       : "Si apre GitHub con un suggerimento da completare.\n\n")
                   + "Serve un account GitHub (gratuito) e quello che scrivi sarà pubblico. Continuare?";
-        if (MessageBox.Show(owner, ask, "TimerSala", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;
+        if (ThemedDialog.Show(owner, ask, "TimerSala", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;
         string? log = null;
         try
         {

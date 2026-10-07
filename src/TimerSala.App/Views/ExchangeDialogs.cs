@@ -27,11 +27,11 @@ public static class ExchangeDialogs
         try
         {
             Exchange.Write(dlg.FileName, create());
-            MessageBox.Show(owner, done, "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
+            ThemedDialog.Show(owner, done, "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            MessageBox.Show(owner, "Non è stato possibile salvare il file: " + ex.Message, "TimerSala", MessageBoxButton.OK, MessageBoxImage.Warning);
+            ThemedDialog.Show(owner, "Non è stato possibile salvare il file: " + ex.Message, "TimerSala", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
     }
 
@@ -44,7 +44,7 @@ public static class ExchangeDialogs
         try { file = Exchange.Read(dlg.FileName); }
         catch (Exception ex) when (ex is InvalidDataException or IOException or UnauthorizedAccessException)
         {
-            MessageBox.Show(owner, ex.Message, "TimerSala", MessageBoxButton.OK, MessageBoxImage.Warning);
+            ThemedDialog.Show(owner, ex.Message, "TimerSala", MessageBoxButton.OK, MessageBoxImage.Warning);
             return false;
         }
 
@@ -52,15 +52,15 @@ public static class ExchangeDialogs
             ? "Importare questo backup? Impostazioni e frasi pronte di questo PC verranno sostituite, e gli schemi delle stesse settimane sovrascritti. "
               + "Schermo della sala, finestre e microfono restano quelli di questo PC."
             : $"Importare la settimana {WeekMath.Label(file.Weeks[0].WeekStart)}? Se è già salvata verrà sostituita.";
-        if (MessageBox.Show(owner, question, "TimerSala", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return false;
+        if (ThemedDialog.Show(owner, question, "TimerSala", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return false;
 
         if (vm.Import(file) is not { } done)
         {
-            MessageBox.Show(owner, vm.IsTraining ? "Esci prima dall'addestramento." : vm.IsFreeEvent ? "Torna prima all'adunanza della settimana." : "Ferma il timer prima di importare.", "TimerSala",
+            ThemedDialog.Show(owner, vm.IsTraining ? "Esci prima dall'addestramento." : vm.IsFreeEvent ? "Torna prima all'adunanza della settimana." : "Ferma il timer prima di importare.", "TimerSala",
                 MessageBoxButton.OK, MessageBoxImage.Information);
             return false;
         }
-        MessageBox.Show(owner, done, "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
+        ThemedDialog.Show(owner, done, "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
         return true;
     }
 }

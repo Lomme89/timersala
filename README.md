@@ -143,7 +143,7 @@ Avvia di nuovo = parti subito. **Esc** annulla l'attesa o, nei primi secondi, un
 ## 📱 Controllo dal telefono
 
 <p align="center">
-  <img src="docs/images/telefono-v2.png" alt="Pagina web di controllo sul telefono: comandi, programma e messaggi" width="70%">
+  <img src="docs/images/tablet.webp" alt="Pagina web sul tablet: il timer con il programma della serata accanto" width="62%"> <img src="docs/images/telefono.webp" alt="Pagina web di controllo sul telefono: comandi, messaggio in onda e programma" width="20%">
 </p>
 
 <p align="center"><sub>Nel controller premi l'icona della rete in alto, poi <b>Collega un telefono</b>, e inquadra il codice QR. Il telefono deve essere sulla stessa rete Wi‑Fi del PC.<br>

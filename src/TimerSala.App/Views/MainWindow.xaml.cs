@@ -21,7 +21,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         _vm = vm;
         DataContext = vm;
-        vm.Confirm = msg => MessageBox.Show(this, msg, "TimerSala", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
+        vm.Confirm = msg => ThemedDialog.Show(this, msg, "TimerSala", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
         vm.DisplayTargetChanged += (_, _) => Dispatcher.BeginInvoke(UpdateTimerWindow);
 
         RestorePlacement();
@@ -262,7 +262,7 @@ public partial class MainWindow : Window
     void MovePart_Click(object sender, RoutedEventArgs e)
     {
         if (_menuPart is not { } p || _vm.NextPartTitle(p) is not { } next) return;
-        if (MessageBox.Show(this, $"Spostare «{p.Title}» dopo «{next}»?\nLe due parti si scambiano di posto.", "TimerSala",
+        if (ThemedDialog.Show(this, $"Spostare «{p.Title}» dopo «{next}»?\nLe due parti si scambiano di posto.", "TimerSala",
                 MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             _vm.MovePartAfterNext(p);
     }
@@ -270,7 +270,7 @@ public partial class MainWindow : Window
     void SkipPart_Click(object sender, RoutedEventArgs e)
     {
         if (_menuPart is not { } p) return;
-        if (MessageBox.Show(this, $"Saltare «{p.Title}»?\nConta come durata zero: il ritardo ne tiene conto.", "TimerSala",
+        if (ThemedDialog.Show(this, $"Saltare «{p.Title}»?\nConta come durata zero: il ritardo ne tiene conto.", "TimerSala",
                 MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             _vm.SkipPart(p);
     }
@@ -287,13 +287,13 @@ public partial class MainWindow : Window
     {
         if (_vm.IsTemporaryMeeting)
         {
-            MessageBox.Show(this, _vm.IsTraining ? "Durante l'addestramento lo schema non si modifica. Esci prima dall'addestramento."
+            ThemedDialog.Show(this, _vm.IsTraining ? "Durante l'addestramento lo schema non si modifica. Esci prima dall'addestramento."
                 : "Durante un evento fuori programma lo schema della settimana non si modifica.", "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
         if (_vm.IsRunning)
         {
-            MessageBox.Show(this, "Ferma il timer prima di modificare lo schema.", "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
+            ThemedDialog.Show(this, "Ferma il timer prima di modificare lo schema.", "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
         var editor = new EditorWindow(_vm) { Owner = this };
@@ -336,7 +336,7 @@ public partial class MainWindow : Window
             var item = new MenuItem { Header = p.Name, IsCheckable = true, IsChecked = p.Id == _vm.CurrentProfile?.Id };
             item.Click += (_, _) =>
             {
-                if (_vm.SwitchProfile(p) is { } why) MessageBox.Show(this, why, "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (_vm.SwitchProfile(p) is { } why) ThemedDialog.Show(this, why, "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
             };
             menu.Items.Add(item);
         }
@@ -354,7 +354,7 @@ public partial class MainWindow : Window
     {
         if (_vm.StartTraining() is { } why)
         {
-            MessageBox.Show(owner, why, "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
+            ThemedDialog.Show(owner, why, "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
         BringToFront();
@@ -372,7 +372,7 @@ public partial class MainWindow : Window
         Window owner = _vm.IsMiniMode && _mini is not null ? _mini : this;
         if (_vm.WebUrl is null)
         {
-            MessageBox.Show(owner, "Il server web non è attivo. Attivalo in Impostazioni → Rete e telefono.", "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
+            ThemedDialog.Show(owner, "Il server web non è attivo. Attivalo in Impostazioni → Rete e telefono.", "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
         if (OwnedWindows.OfType<QrWindow>().Any()) return;
@@ -428,8 +428,8 @@ public partial class MainWindow : Window
     protected override void OnClosing(CancelEventArgs e)
     {
         if (_vm.CloseWarning() is { } warning &&
-            MessageBox.Show(_vm.IsMiniMode && _mini is not null ? _mini : this, $"{warning}\nChiudere comunque TimerSala?", "TimerSala",
-                MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
+            ThemedDialog.Show(_vm.IsMiniMode && _mini is not null ? _mini : this, $"{warning}\nChiudere comunque TimerSala?", "TimerSala",
+                MessageBoxButton.YesNo, MessageBoxImage.Warning, yes: "Chiudi", no: "Resta aperto") != MessageBoxResult.Yes)
         {
             e.Cancel = true;
             return;

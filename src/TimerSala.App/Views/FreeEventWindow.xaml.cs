@@ -28,12 +28,12 @@ public partial class FreeEventWindow : Window
         if (Keyboard.FocusedElement is TextBox tb) tb.GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
         if (_vm.Start is not { } start)
         {
-            MessageBox.Show(this, "Indica l'ora d'inizio, per esempio 16:00.", "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
+            ThemedDialog.Show(this, "Indica l'ora d'inizio, per esempio 16:00.", "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
         if (_main.StartFreeEvent(_vm.ToEvent(), start) is { } why)
         {
-            MessageBox.Show(this, why, "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
+            ThemedDialog.Show(this, why, "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
         DialogResult = true;

@@ -257,7 +257,7 @@ public partial class SettingsWindow : Window
         _vm.Flush();
         if (_main.AddProfile(name) is null) return;
         NewProfileBox.Text = "";
-        MessageBox.Show(this, $"Aggiunta «{name}». Per passarci usa il nome della congregazione in alto nel controller; lì poi ne imposti orari e schemi.",
+        ThemedDialog.Show(this, $"Aggiunta «{name}». Per passarci usa il nome della congregazione in alto nel controller; lì poi ne imposti orari e schemi.",
             "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
@@ -266,15 +266,15 @@ public partial class SettingsWindow : Window
         if (e.OriginalSource is not System.Windows.Controls.Button { Tag: Core.Storage.ProfileInfo p }) return;
         if (p.Id == _main.CurrentProfile?.Id)
         {
-            MessageBox.Show(this, "È la congregazione in uso: passa prima a un'altra.", "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
+            ThemedDialog.Show(this, "È la congregazione in uso: passa prima a un'altra.", "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
         if (p.Id == "")
         {
-            MessageBox.Show(this, "La prima congregazione non si può togliere.", "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
+            ThemedDialog.Show(this, "La prima congregazione non si può togliere.", "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
-        if (MessageBox.Show(this, $"Togliere «{p.Name}» con le sue impostazioni e i suoi schemi?", "TimerSala", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+        if (ThemedDialog.Show(this, $"Togliere «{p.Name}» con le sue impostazioni e i suoi schemi?", "TimerSala", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             _main.RemoveProfile(p);
     }
 
@@ -290,7 +290,7 @@ public partial class SettingsWindow : Window
     {
         if (_main.StartTraining() is { } why)
         {
-            MessageBox.Show(this, why, "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
+            ThemedDialog.Show(this, why, "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
         Close();

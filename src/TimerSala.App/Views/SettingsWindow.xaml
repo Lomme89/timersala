@@ -257,15 +257,51 @@
                                                        ToolTip="Sorvegliante: lo schema viene adattato alla visita. Assemblea: nessuna adunanza, niente countdown, e schermo e telefono lo dicono. Commemorazione: prende il posto dell'adunanza di quel giorno, con il suo orario. Discorso speciale: il discorso pubblico diventa «Discorso speciale»." />
                                         </StackPanel>
                                         <TextBlock Style="{StaticResource RowHint}" Text="Visita del sorvegliante, assemblea, Commemorazione, discorso speciale: anche a mesi di distanza." Margin="0,0,0,8" />
-                                        <WrapPanel>
-                                            <ComboBox Width="210" ItemsSource="{Binding SpecialKinds}" DisplayMemberPath="Label" SelectedItem="{Binding KindToAdd}" Margin="0,0,8,6" />
-                                            <ComboBox Width="230" ItemsSource="{Binding FreeWeeks}" SelectedItem="{Binding WeekToAdd}" MaxDropDownHeight="320" Margin="0,0,8,6" />
-                                            <StackPanel Orientation="Horizontal" Visibility="{Binding IsMemorialToAdd, Converter={StaticResource BoolToVis}}" Margin="0,0,8,6">
-                                                <ComboBox Width="190" ItemsSource="{Binding MemorialDays}" SelectedItem="{Binding MemorialDayToAdd}" />
-                                                <v:TimeBox Width="96" Margin="8,0,0,0" Time="{Binding MemorialTimeToAdd}" />
+                                        <!-- griglia fissa: tipo, settimana e «Aggiungi» (alto quanto le caselle) sulla stessa riga; giorno e ora della Commemorazione sotto -->
+                                        <Grid Margin="0,0,0,8">
+                                            <Grid.Resources>
+                                                <Style x:Key="FieldLabel" TargetType="TextBlock" BasedOn="{StaticResource RowHint}">
+                                                    <Setter Property="Margin" Value="0,0,0,4" />
+                                                </Style>
+                                            </Grid.Resources>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="10" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="10" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <StackPanel>
+                                                <TextBlock Style="{StaticResource FieldLabel}" Text="Tipo" />
+                                                <ComboBox ItemsSource="{Binding SpecialKinds}" DisplayMemberPath="Label" SelectedItem="{Binding KindToAdd}" />
                                             </StackPanel>
-                                            <Button Style="{StaticResource FlatButton}" Content="Aggiungi" Padding="12,5" Margin="0,0,0,6" Command="{Binding AddSpecialWeekCommand}" />
-                                        </WrapPanel>
+                                            <StackPanel Grid.Column="2">
+                                                <TextBlock Style="{StaticResource FieldLabel}" Text="Settimana" />
+                                                <ComboBox x:Name="SpecialWeekBox" ItemsSource="{Binding FreeWeeks}" SelectedItem="{Binding WeekToAdd}" MaxDropDownHeight="320" />
+                                            </StackPanel>
+                                            <Grid Grid.Row="1" Grid.ColumnSpan="3" Margin="0,10,0,0" Visibility="{Binding IsMemorialToAdd, Converter={StaticResource BoolToVis}}">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="10" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel>
+                                                    <TextBlock Style="{StaticResource FieldLabel}" Text="Giorno della Commemorazione" />
+                                                    <ComboBox ItemsSource="{Binding MemorialDays}" SelectedItem="{Binding MemorialDayToAdd}" />
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="2">
+                                                    <TextBlock Style="{StaticResource FieldLabel}" Text="Ora" />
+                                                    <v:TimeBox Time="{Binding MemorialTimeToAdd}" HorizontalAlignment="Left" Width="120" />
+                                                </StackPanel>
+                                            </Grid>
+                                            <Button Grid.Column="4" VerticalAlignment="Bottom" Style="{StaticResource FlatButton}" Content="Aggiungi" Padding="16,0"
+                                                    Height="{Binding ActualHeight, ElementName=SpecialWeekBox}"
+                                                    Command="{Binding AddSpecialWeekCommand}" />
+                                        </Grid>
                                     </StackPanel>
                                 </Border>
                                 <ItemsControl ItemsSource="{Binding SpecialWeekList}" Margin="0,0,0,10">
@@ -296,8 +332,8 @@
                                             <v:TimeBox Width="120" Margin="8,0,0,0" Time="{Binding OverseerTime}" AllowEmpty="True" Placeholder="stessa ora" />
                                         </StackPanel>
                                         <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Style="{StaticResource RowLabel}" Text="Infrasettimanale durante la visita" />
-                                            <TextBlock Style="{StaticResource RowHint}" Text="Per esempio il martedì. Countdown e fine prevista seguono il giorno scelto." />
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Infrasettimanale nella visita del sorvegliante" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Se durante la visita l'adunanza cambia giorno, per esempio il martedì. Countdown e fine prevista seguono il giorno scelto." />
                                         </StackPanel>
                                     </DockPanel>
                                 </Border>

@@ -27,6 +27,10 @@ Quinta anteprima: rifiniture dell'interfaccia, provate finestra per finestra su 
 - *Schermo*: il nome del monitor non va più a capo lettera per lettera; i colori dell'avviso giallo stanno a tutta larghezza.
 - *Countdown*: le anteprime degli stili sono miniature dello schermo vero.
 - Le schede sono allineate e tutte le pagine hanno la stessa larghezza.
+- *Adunanze → Settimane particolari*: tipo, settimana e «Aggiungi» su una riga, con il giorno e l'ora della Commemorazione sotto; non va più a capo in modo strano. La riga del giorno dell'infrasettimanale dice chiaramente che riguarda la visita del sorvegliante.
+
+**Evento fuori programma più facile da trovare**
+- Nel riquadro della settimana (la freccia accanto alla data) c'è il pulsante **Evento fuori programma** per un matrimonio, un funerale o altro; resta anche nel menu del tasto destro sulle parti. La guida (F1) spiega come si usa.
 - Chiudendo la finestra non si riapplicano più per errore valori di prima (per esempio la dimensione dell'interfaccia).
 - Se le impostazioni non si possono salvare (file bloccato, disco pieno) il controller lo dice, invece di perderle in silenzio.
 

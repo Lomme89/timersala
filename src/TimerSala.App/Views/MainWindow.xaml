@@ -418,6 +418,14 @@
                         </ToggleButton>
                     </Grid>
                     <TextBlock Text="{Binding ScheduleText}" Style="{StaticResource Caption}" HorizontalAlignment="Center" Margin="0,8,0,0" />
+                    <!-- evento fuori programma: matrimonio, funerale… (c'è anche nel menu del tasto destro sulle parti) -->
+                    <Button Style="{StaticResource FlatButton}" Margin="0,10,0,0" Padding="10,6" HorizontalAlignment="Stretch" Click="FreeEvent_Click"
+                            ToolTip="Un discorso di matrimonio, di funerale o altro, fuori dallo schema della settimana">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE710;" FontSize="12" VerticalAlignment="Center" Margin="0,0,8,0" />
+                            <TextBlock Text="Evento fuori programma (matrimonio, funerale…)" FontSize="13" />
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
             </Border>
         </StackPanel>

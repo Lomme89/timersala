@@ -50,6 +50,13 @@ Ogni azione chiede conferma e si può annullare.
 - La freccia accanto alla settimana apre frecce delle settimane, download e visita del sorvegliante.
 - Dal menu del download puoi **esportare una settimana** preparata a casa e **importarla** sul PC della sala.
 - In *Impostazioni → Programma* trovi il **backup** di impostazioni e schemi, per cambiare PC.
+- Visita del sorvegliante, assemblea, Commemorazione e discorso speciale si segnano in anticipo in *Impostazioni → Adunanze → Settimane particolari*.
+
+## Evento fuori programma
+
+- Per un discorso di matrimonio, di funerale o altro: apri il riquadro della settimana (la freccia accanto alla data) e premi **Evento fuori programma**. C'è anche nel menu del tasto destro su una parte.
+- Scrivi titolo, ora d'inizio e parti con le durate, poi **Inizia**: countdown, schermo e telefono funzionano come sempre.
+- Lo schema della settimana non viene toccato. Alla fine **Torna all'adunanza** riporta tutto com'era.
 
 ## Avvio con la voce (beta)
 

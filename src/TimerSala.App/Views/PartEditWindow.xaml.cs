@@ -14,6 +14,7 @@ public partial class PartEditWindow : Window
     public PartEditWindow(PartItemViewModel part)
     {
         InitializeComponent();
+        Interop.DarkTitleBar.HideIconWhenCreated(this);
         TitleBox.Text = part.Title;
         // le durate con i secondi (rare) si arrotondano al minuto solo se le si cambia
         int seconds = part.Part.DurationSeconds;

@@ -37,6 +37,7 @@ public partial class SettingsWindow : Window
     public SettingsWindow(MainViewModel main, Section? section = null)
     {
         InitializeComponent();
+        Interop.DarkTitleBar.HideIconWhenCreated(this);
         WindowSizing.FitToScreen(this);
         WindowSizing.Remember(this, main, "impostazioni");
         _main = main;

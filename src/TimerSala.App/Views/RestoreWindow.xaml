@@ -19,7 +19,7 @@
         </StackPanel>
         <TextBlock x:Name="Description" TextWrapping="Wrap" Foreground="{DynamicResource MutedBrush}" FontSize="13" Margin="0,0,0,16" />
 
-        <Button Style="{StaticResource Choice}" Click="Count_Click" Background="#16A34A" BorderThickness="0" Foreground="White" IsDefault="True">
+        <Button Style="{StaticResource Choice}" Click="Count_Click" Background="{DynamicResource StartBrush}" BorderThickness="0" Foreground="White" IsDefault="True">
             <StackPanel>
                 <TextBlock Text="Riprendi contando il tempo trascorso" FontWeight="SemiBold" FontSize="14" />
                 <TextBlock Text="Consigliato: l'adunanza è andata avanti mentre TimerSala era chiuso." FontSize="12" Opacity="0.85" TextWrapping="Wrap" />

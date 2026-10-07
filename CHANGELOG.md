@@ -1,5 +1,36 @@
 # Novità
 
+## v2.3.0-beta.2 — 7 ottobre 2026 (anteprima)
+
+Quinta anteprima: rifiniture dell'interfaccia, provate finestra per finestra su Windows. Si può sempre tornare alla v1.14.0 senza perdere nulla.
+
+**Tema chiaro e scuro**
+- Il tema chiaro ora vale davvero per tutto: prima molti pulsanti, caselle e riquadri restavano scuri. Il cambio si applica subito, anche alle finestre già aperte.
+- Barra del titolo nel colore del tema, senza l'icona generica di Windows nelle finestre secondarie (impostazioni, editor, dialoghi).
+- Nel tema scuro la data accanto all'adunanza era quasi invisibile: ora si legge.
+- Con l'interfaccia ingrandita (*Impostazioni → Programma*) si ingrandiscono anche i menu del tasto destro e i suggerimenti.
+
+**Controller**
+- Un po' più largo all'apertura, così la pastiglia di anticipo o ritardo non finisce sotto le icone; se lo spazio manca si accorcia. L'orologio non la fa più «ballare» a ogni secondo.
+- Con più congregazioni, il nome di quella attuale ha una riga sua; nel menu per cambiarla è spuntata quella in uso.
+- A riposo la scheda mostra «Inizio» e «Fine prevista» affiancati.
+- Il riquadro della rete si apre allineato sotto il suo pulsante.
+- In fondo non resta più una striscia vuota; il programma sfuma invece di finire tagliato.
+
+**Modalità mini**
+- Il passaggio dal controller alla mini e ritorno è diretto, senza l'immagine che si deformava.
+- La casella del messaggio è alta quanto i pulsanti accanto.
+
+**Impostazioni**
+- *Schermo*: il nome del monitor non va più a capo lettera per lettera; i colori dell'avviso giallo stanno a tutta larghezza.
+- *Countdown*: le anteprime degli stili sono miniature dello schermo vero.
+- Le schede sono allineate e tutte le pagine hanno la stessa larghezza.
+- Chiudendo la finestra non si riapplicano più per errore valori di prima (per esempio la dimensione dell'interfaccia).
+- Se le impostazioni non si possono salvare (file bloccato, disco pieno) il controller lo dice, invece di perderle in silenzio.
+
+**Telefono e tablet**
+- In orizzontale il titolo della parte non finisce più sotto i pulsanti in alto.
+
 ## v2.3.0-beta.1 — 6 ottobre 2026 (anteprima)
 
 Quarta anteprima: contiene la 2.2 beta e la tappa 2.3 della roadmap (adunanze particolari e rifiniture dei tempi). Si può sempre tornare alla v1.14.0 senza perdere nulla.

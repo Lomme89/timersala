@@ -1134,7 +1134,9 @@ public sealed partial class MainViewModel : ObservableObject
 
     public void SaveSettings()
     {
-        try { _store.SaveSettings(Settings); } catch { /* non bloccare l'interfaccia */ }
+        // non blocca l'interfaccia, ma lo dice: altrimenti le modifiche sparirebbero alla riapertura senza avviso
+        try { _store.SaveSettings(Settings); }
+        catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException) { ShowStatus("Impostazioni non salvate: " + ex.Message, error: true); }
     }
 
     public string DataFolder => _store.Root;

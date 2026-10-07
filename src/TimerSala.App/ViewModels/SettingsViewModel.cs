@@ -21,7 +21,40 @@ public sealed record Choice<T>(T Value, string Label, string Detail = "")
 }
 
 /// <summary>Uno stile del countdown, con il colore di sfondo per la miniatura.</summary>
-public sealed record CountdownChoice(CountdownStyle Value, string Label, string Detail, string Color, string Accent);
+public sealed record CountdownChoice(CountdownStyle Value, string Label, string Detail)
+{
+    /// <summary>Dati d'esempio per l'anteprima, disegnata con le stesse scene dello schermo vero.</summary>
+    public CountdownSample Sample { get; } = new(Value);
+}
+
+/// <summary>
+/// Un countdown fermo a 4:32 (di 10 minuti) prima delle 19:00, alle 18:55:28: stessi nomi delle proprietà
+/// di <see cref="MainViewModel"/> lette da <c>CountdownScenes</c>.
+/// </summary>
+public sealed class CountdownSample(CountdownStyle style)
+{
+    public bool IsClassic => style == CountdownStyle.Classic;
+    public bool CdRing => style == CountdownStyle.Ring;
+    public bool CdBlocks => style == CountdownStyle.Blocks;
+    public bool CdClock => style == CountdownStyle.Clock;
+    public bool CdTide => style == CountdownStyle.Tide;
+    public bool CdDial => style == CountdownStyle.Dial;
+    public bool CdWords => style == CountdownStyle.Words;
+    public string CdDigits => "4:32";
+    public double CdRemaining => 0.45;
+    public double CdLevel => 0.55;
+    public double CdPhase => 1;
+    public int CdBlockCount => 10;
+    public string CdStartLabel => "ALLE 19:00";
+    public string ClockText => "18:55";
+    public string CdClockSeconds => ":28";
+    public string CdClockNote => "si comincia alle 19:00 · tra 5 minuti";
+    public string CdDialBig => "4";
+    public string CdDialUnit => "MINUTI";
+    public int CdDialLit => 32;
+    public string CdWordsBig => "5 MINUTI";
+    public string ScreenFont => "Bahnschrift SemiBold";
+}
 
 /// <summary>Una frase pronta nell'elenco riordinabile.</summary>
 public sealed class PresetItem(string text) : ObservableObject
@@ -481,13 +514,13 @@ public sealed class SettingsViewModel : ObservableObject
 
     static readonly IReadOnlyList<CountdownChoice> AllCountdownStyles =
     [
-        new(CountdownStyle.Tide, "Marea", "Lo schermo si riempie di blu fino all'inizio", "#123A52", "#A8D0E6"),
-        new(CountdownStyle.Ring, "Anello", "Blu notte, un anello che si chiude", "#0A1724", "#7FB3D5"),
-        new(CountdownStyle.Blocks, "Blocchi", "Cifre grandi e un blocco per ogni minuto", "#0D0F12", "#7FB3D5"),
-        new(CountdownStyle.Clock, "Orologio", "L'ora attuale in grande, l'inizio sotto", "#0B0B0C", "#F4F5F7"),
-        new(CountdownStyle.Dial, "Quadrante", "I minuti al centro, i secondi sulle tacche", "#0A0E14", "#E8F1F8"),
-        new(CountdownStyle.Words, "A parole", "«Si comincia tra 4 minuti»", "#0C0C0D", "#D9D3C8"),
-        new(CountdownStyle.Classic, "Classico", "Come una parte, con verde, giallo e rosso", "#000000", "#22C55E"),
+        new(CountdownStyle.Tide, "Marea", "Lo schermo si riempie di blu fino all'inizio"),
+        new(CountdownStyle.Ring, "Anello", "Blu notte, un anello che si chiude"),
+        new(CountdownStyle.Blocks, "Blocchi", "Cifre grandi e un blocco per ogni minuto"),
+        new(CountdownStyle.Clock, "Orologio", "L'ora attuale in grande, l'inizio sotto"),
+        new(CountdownStyle.Dial, "Quadrante", "I minuti al centro, i secondi sulle tacche"),
+        new(CountdownStyle.Words, "A parole", "«Si comincia tra 4 minuti»"),
+        new(CountdownStyle.Classic, "Classico", "Come una parte, con verde, giallo e rosso"),
     ];
 
     public CountdownChoice SelectedCountdownStyle

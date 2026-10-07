@@ -297,8 +297,8 @@
             </StackPanel>
             <!-- DockPanel: con poco spazio la pastiglia si accorcia invece di finire sotto le icone -->
             <DockPanel VerticalAlignment="Center">
-                <TextBlock Text="{Binding ClockText}" FontFamily="{StaticResource DigitsFont}" FontSize="24" VerticalAlignment="Bottom" />
-                <TextBlock Text="{Binding ClockSeconds}" FontFamily="{StaticResource DigitsFont}" FontSize="14"
+                <TextBlock Text="{Binding ClockText}" FontFamily="{StaticResource DigitsFont}" Typography.NumeralAlignment="Tabular" FontSize="24" VerticalAlignment="Bottom" />
+                <TextBlock Text="{Binding ClockSeconds}" FontFamily="{StaticResource DigitsFont}" Typography.NumeralAlignment="Tabular" FontSize="14"
                            Foreground="{DynamicResource MutedBrush}" Margin="3,0,0,3" VerticalAlignment="Bottom" />
                 <!-- «In orario» / ritardo come pastiglia colorata -->
                 <Grid Margin="12,0,8,2" VerticalAlignment="Center" HorizontalAlignment="Left" ToolTip="Differenza accumulata rispetto ai tempi assegnati">
@@ -492,16 +492,16 @@
                 <Button x:Name="StartButton" Grid.Column="1" Height="56" Margin="6,0" Command="{Binding ToggleStartCommand}">
                     <Button.Style>
                         <Style TargetType="Button" BasedOn="{StaticResource FlatButton}">
-                            <Setter Property="Background" Value="#16A34A" />
+                            <Setter Property="Background" Value="{DynamicResource StartBrush}" />
                             <Setter Property="BorderThickness" Value="0" />
                             <Setter Property="Foreground" Value="White" />
                             <Setter Property="ToolTip" Value="Avvia / ferma (barra spaziatrice)" />
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsRunning}" Value="True">
-                                    <Setter Property="Background" Value="#DC2626" />
+                                    <Setter Property="Background" Value="{DynamicResource StopBrush}" />
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding IsVoiceArmed}" Value="True">
-                                    <Setter Property="Background" Value="#B45309" />
+                                    <Setter Property="Background" Value="{DynamicResource WaitBrush}" />
                                     <Setter Property="ToolTip" Value="In attesa della voce: premi di nuovo per avviare subito, Esc per annullare" />
                                 </DataTrigger>
                             </Style.Triggers>

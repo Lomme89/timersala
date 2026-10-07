@@ -14,6 +14,7 @@ public partial class QrWindow : Window
     public QrWindow(MainViewModel vm)
     {
         InitializeComponent();
+        Interop.DarkTitleBar.HideIconWhenCreated(this);
         _vm = vm;
         Refresh();
     }

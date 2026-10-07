@@ -14,9 +14,9 @@ namespace TimerSala.App.Views;
 /// </summary>
 static class ControllerMotion
 {
-    static readonly Color Start = Color.FromRgb(0x16, 0xA3, 0x4A);
-    static readonly Color Stop = Color.FromRgb(0xDC, 0x26, 0x26);
-    static readonly Color Waiting = Color.FromRgb(0xB4, 0x53, 0x09);
+    static Color Start => UiTheme.ColorOf("StartBrush");
+    static Color Stop => UiTheme.ColorOf("StopBrush");
+    static Color Waiting => UiTheme.ColorOf("WaitBrush");
 
     public static void Attach(Window window, MainViewModel vm, Button startButton, FrameworkElement? icon, FrameworkElement? digits)
     {

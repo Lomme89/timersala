@@ -12,7 +12,8 @@ namespace TimerSala.App.Theming;
 /// </summary>
 public static class UiTheme
 {
-    // chiave → (scuro, chiaro)
+    // UNICA palette del controller (finestre, barra del titolo, pulsante Avvia): chiave → (scuro, chiaro).
+    // Lo XAML usa le chiavi come DynamicResource; nel codice: Brush(chiave) o ColorOf(chiave).
     static readonly Dictionary<string, (string Dark, string Light)> Colors = new()
     {
         ["BgBrush"] = ("#0F1115", "#F3F4F6"),
@@ -34,6 +35,10 @@ public static class UiTheme
         ["FocusRingBrush"] = ("#93C5FD", "#2563EB"),
         ["OvertimeBgBrush"] = ("#1A0B0D", "#FDECEC"),
         ["PanelAltBrush"] = ("#1D2027", "#EEF0F3"),
+        // pulsante Avvia / Ferma / in attesa della voce: uguali nei due temi
+        ["StartBrush"] = ("#16A34A", "#16A34A"),
+        ["StopBrush"] = ("#DC2626", "#DC2626"),
+        ["WaitBrush"] = ("#B45309", "#B45309"),
     };
 
     static bool _prepared;
@@ -82,7 +87,6 @@ public static class UiTheme
             brush.Freeze();
             res[key] = brush;
         }
-        Interop.DarkTitleBar.Light = light;
 
         // menu contestuali e suggerimenti sono finestre a parte (le tendine invece seguono già il loro controllo): la scala la prendono da qui
         var popupScale = new ScaleTransform(scale, scale);
@@ -146,6 +150,15 @@ public static class UiTheme
 
     static Color Parse(string hex) => (Color)ColorConverter.ConvertFromString(hex);
 
+    /// <summary>Colore del tema corrente.</summary>
+    public static Color ColorOf(string key) => (Brush(key) as SolidColorBrush)?.Color ?? System.Windows.Media.Colors.Transparent;
+
     /// <summary>Pennello del tema corrente (per i colori calcolati nel codice).</summary>
-    public static Brush Brush(string key) => Application.Current?.Resources[key] as Brush ?? Brushes.Transparent;
+    public static Brush Brush(string key)
+    {
+        if (Application.Current is not { } app) return Brushes.Transparent;
+        // chiesto prima che il tema sia applicato (il ViewModel nasce prima delle finestre): palette di partenza
+        if (app.Resources[key] is null && Colors.ContainsKey(key)) Apply(_mode, Scale);
+        return app.Resources[key] as Brush ?? Brushes.Transparent;
+    }
 }

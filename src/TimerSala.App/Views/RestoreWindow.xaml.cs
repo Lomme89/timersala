@@ -11,6 +11,7 @@ public partial class RestoreWindow : Window
     public RestoreWindow(string description)
     {
         InitializeComponent();
+        Interop.DarkTitleBar.HideIconWhenCreated(this);
         Description.Text = description;
     }
 

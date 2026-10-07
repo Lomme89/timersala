@@ -49,7 +49,7 @@ public partial class MiniWindow : Window
     void OnViewModelChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(MainViewModel.IsOvertime))
-            Interop.DarkTitleBar.SetBorder(this, _vm.IsOvertime ? System.Windows.Media.Color.FromRgb(0xEF, 0x44, 0x44) : null);
+            Interop.DarkTitleBar.SetBorder(this, _vm.IsOvertime ? Theming.UiTheme.ColorOf("RedBrush") : null);
     }
 
     void Message_KeyDown(object sender, KeyEventArgs e)

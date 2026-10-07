@@ -50,7 +50,7 @@
             <DockPanel x:Name="DragBar" Background="Transparent" MouseLeftButtonDown="DragBar_MouseDown" Margin="12,7,6,0">
                 <Button DockPanel.Dock="Right" Style="{StaticResource GhostIconButton}" Width="26" Height="24" FontSize="11" Content="&#xE740;"
                         Command="{Binding ToggleMiniCommand}" ToolTip="Torna alla finestra completa (M)" />
-                <TextBlock DockPanel.Dock="Right" Text="{Binding ClockText}" FontFamily="{StaticResource DigitsFont}" FontSize="13"
+                <TextBlock DockPanel.Dock="Right" Text="{Binding ClockText}" FontFamily="{StaticResource DigitsFont}" Typography.NumeralAlignment="Tabular" FontSize="13"
                            Foreground="{DynamicResource DimTextBrush}" VerticalAlignment="Center" Margin="8,0,6,0" />
                 <!-- dopo Ferma: «Annulla» al posto del titolo per qualche secondo -->
                 <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Annulla" Padding="8,0" Height="22" FontSize="12"
@@ -124,7 +124,7 @@
                         <Button x:Name="StartButton" Height="38" Width="50" Margin="6,0" Command="{Binding ToggleStartCommand}">
                             <Button.Style>
                                 <Style TargetType="Button" BasedOn="{StaticResource FlatButton}">
-                                    <Setter Property="Background" Value="#16A34A" />
+                                    <Setter Property="Background" Value="{DynamicResource StartBrush}" />
                                     <Setter Property="BorderThickness" Value="0" />
                                     <Setter Property="Foreground" Value="White" />
                                     <Setter Property="Padding" Value="0" />
@@ -134,11 +134,11 @@
                                     <Setter Property="ToolTip" Value="Avvia / ferma (Spazio)" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsRunning}" Value="True">
-                                            <Setter Property="Background" Value="#DC2626" />
+                                            <Setter Property="Background" Value="{DynamicResource StopBrush}" />
                                             <Setter Property="Content" Value="&#xE71A;" />
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding IsVoiceArmed}" Value="True">
-                                            <Setter Property="Background" Value="#B45309" />
+                                            <Setter Property="Background" Value="{DynamicResource WaitBrush}" />
                                             <Setter Property="Content" Value="&#xE720;" />
                                             <Setter Property="ToolTip" Value="In attesa della voce: premi per avviare subito, Esc per annullare" />
                                         </DataTrigger>

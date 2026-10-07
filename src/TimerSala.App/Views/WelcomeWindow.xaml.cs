@@ -13,6 +13,7 @@ public partial class WelcomeWindow : Window
     public WelcomeWindow(MainViewModel main)
     {
         InitializeComponent();
+        Interop.DarkTitleBar.HideIconWhenCreated(this);
         _vm = new WelcomeViewModel(main);
         DataContext = _vm;
         _main = main;

@@ -196,6 +196,14 @@ public class WindowsSmokeTests
         vm.IsMiniMode = false;
         Pump(600);
 
+        // schermo della sala (con le scene del countdown): si apre e si disegna
+        Stage("schermo della sala");
+        var screen = new TimerWindow(vm);
+        screen.Show();
+        Pump();
+        screen.Close();
+        Pump();
+
         // impostazioni: tutte le sezioni
         Stage("impostazioni: tutte le sezioni");
         var settings = new SettingsWindow(vm) { Owner = main };

@@ -13,6 +13,7 @@ public partial class FreeEventWindow : Window
     public FreeEventWindow(MainViewModel main)
     {
         InitializeComponent();
+        Interop.DarkTitleBar.HideIconWhenCreated(this);
         _main = main;
         _vm = new FreeEventViewModel(main);
         DataContext = _vm;

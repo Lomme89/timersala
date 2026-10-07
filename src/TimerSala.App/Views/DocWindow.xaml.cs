@@ -11,6 +11,7 @@ public partial class DocWindow : Window
     public DocWindow(string title, string subtitle)
     {
         InitializeComponent();
+        Interop.DarkTitleBar.HideIconWhenCreated(this);
         Title = title;
         Heading.Text = title;
         Subheading.Text = subtitle;

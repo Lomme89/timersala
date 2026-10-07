@@ -766,137 +766,21 @@
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <DockPanel>
-                                                <!-- miniatura dello schermo vero (stessi elementi di TimerWindow), ferma su 4:32 prima delle 19:00 -->
-                                                <Border DockPanel.Dock="Left" Width="112" Height="63" Background="{Binding Color}" Margin="0,0,12,0" ClipToBounds="True">
+                                                <!-- miniatura: le stesse scene dello schermo vero (CountdownScenes) con dati d'esempio;
+                                                     il classico è il layout normale di una parte, qui solo abbozzato -->
+                                                <Border DockPanel.Dock="Left" Width="112" Height="63" Background="Black" Margin="0,0,12,0" ClipToBounds="True">
                                                     <Viewbox>
-                                                        <ContentControl Content="{Binding Value}" Width="1280" Height="720" Focusable="False">
-                                                            <ContentControl.Style>
-                                                                <Style TargetType="ContentControl">
-                                                                    <Style.Triggers>
-                                                                        <DataTrigger Binding="{Binding Value}" Value="Tide">
-                                                                            <Setter Property="ContentTemplate">
-                                                                                <Setter.Value>
-                                                                                    <DataTemplate>
-                                                                                        <Grid Background="#071018">
-                                                                                            <v:TideFill Level="0.55" Phase="1" Crest="#2C7396">
-                                                                                                <v:TideFill.Fill>
-                                                                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                                                                        <GradientStop Color="#1D5A78" Offset="0" />
-                                                                                                        <GradientStop Color="#123A52" Offset="1" />
-                                                                                                    </LinearGradientBrush>
-                                                                                                </v:TideFill.Fill>
-                                                                                            </v:TideFill>
-                                                                                            <StackPanel VerticalAlignment="Center">
-                                                                                                <TextBlock Text="INIZIA TRA" FontFamily="Segoe UI Semibold" FontSize="30" Foreground="#A8D0E6" HorizontalAlignment="Center" />
-                                                                                                <TextBlock Text="4:32" FontFamily="{StaticResource DigitsFont}" FontSize="360" Foreground="#EAF4FA" HorizontalAlignment="Center" Margin="0,-30,0,0" />
-                                                                                            </StackPanel>
-                                                                                        </Grid>
-                                                                                    </DataTemplate>
-                                                                                </Setter.Value>
-                                                                            </Setter>
-                                                                        </DataTrigger>
-                                                                        <DataTrigger Binding="{Binding Value}" Value="Ring">
-                                                                            <Setter Property="ContentTemplate">
-                                                                                <Setter.Value>
-                                                                                    <DataTemplate>
-                                                                                        <Grid>
-                                                                                            <Grid.Background>
-                                                                                                <RadialGradientBrush Center="0.5,0.3" GradientOrigin="0.5,0.3" RadiusX="1.1" RadiusY="0.9">
-                                                                                                    <GradientStop Color="#14324D" Offset="0" />
-                                                                                                    <GradientStop Color="#0A1724" Offset="0.6" />
-                                                                                                    <GradientStop Color="#060D15" Offset="1" />
-                                                                                                </RadialGradientBrush>
-                                                                                            </Grid.Background>
-                                                                                            <v:RingArc Width="620" Height="620" Fraction="0.45" Stroke="#7FB3D5" Track="#1C3A55" Thickness="16" />
-                                                                                            <StackPanel VerticalAlignment="Center">
-                                                                                                <TextBlock Text="INIZIA TRA" FontFamily="Segoe UI Semibold" FontSize="30" Foreground="#7FB3D5" HorizontalAlignment="Center" />
-                                                                                                <TextBlock Text="4:32" FontFamily="{StaticResource DigitsFont}" FontSize="220" Foreground="#E8F1F8" HorizontalAlignment="Center" Margin="0,-24,0,-18" />
-                                                                                                <TextBlock Text="ALLE 19:00" FontFamily="Segoe UI Semibold" FontSize="30" Foreground="#5F8FB0" HorizontalAlignment="Center" />
-                                                                                            </StackPanel>
-                                                                                        </Grid>
-                                                                                    </DataTemplate>
-                                                                                </Setter.Value>
-                                                                            </Setter>
-                                                                        </DataTrigger>
-                                                                        <DataTrigger Binding="{Binding Value}" Value="Blocks">
-                                                                            <Setter Property="ContentTemplate">
-                                                                                <Setter.Value>
-                                                                                    <DataTemplate>
-                                                                                        <Grid Background="#0D0F12">
-                                                                                            <TextBlock Text="L'ADUNANZA INIZIA TRA" FontFamily="Segoe UI Semibold" FontSize="30" Foreground="#7FB3D5"
-                                                                                                       HorizontalAlignment="Left" VerticalAlignment="Top" Margin="120,70,0,0" />
-                                                                                            <TextBlock Text="4:32" FontFamily="{StaticResource DigitsFont}" FontSize="430" Foreground="#F1ECE3"
-                                                                                                       HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,30" />
-                                                                                            <v:BlockBar Height="30" VerticalAlignment="Bottom" Margin="120,0,120,70" Count="10" Fraction="0.45" OnBrush="#7FB3D5" OffBrush="#2A2D33" />
-                                                                                        </Grid>
-                                                                                    </DataTemplate>
-                                                                                </Setter.Value>
-                                                                            </Setter>
-                                                                        </DataTrigger>
-                                                                        <DataTrigger Binding="{Binding Value}" Value="Clock">
-                                                                            <Setter Property="ContentTemplate">
-                                                                                <Setter.Value>
-                                                                                    <DataTemplate>
-                                                                                        <Grid Background="#0B0B0C">
-                                                                                            <StackPanel VerticalAlignment="Center">
-                                                                                                <TextBlock HorizontalAlignment="Center" FontFamily="{StaticResource DigitsFont}">
-                                                                                                    <Run Text="18:55" FontSize="330" Foreground="#F4F5F7" /><Run Text="28" FontSize="160" Foreground="#55606E" />
-                                                                                                </TextBlock>
-                                                                                                <TextBlock Text="si comincia alle 19:00 · tra 5 minuti" FontFamily="Segoe UI" FontSize="52" Foreground="#9AA6B3" HorizontalAlignment="Center" Margin="0,4,0,0" />
-                                                                                            </StackPanel>
-                                                                                        </Grid>
-                                                                                    </DataTemplate>
-                                                                                </Setter.Value>
-                                                                            </Setter>
-                                                                        </DataTrigger>
-                                                                        <DataTrigger Binding="{Binding Value}" Value="Dial">
-                                                                            <Setter Property="ContentTemplate">
-                                                                                <Setter.Value>
-                                                                                    <DataTemplate>
-                                                                                        <Grid Background="#0A0E14">
-                                                                                            <v:TickDial Width="660" Height="660" Lit="32" OnBrush="#E8F1F8" OffBrush="#253445" />
-                                                                                            <StackPanel VerticalAlignment="Center">
-                                                                                                <TextBlock Text="5" FontFamily="{StaticResource DigitsFont}" FontSize="300" Foreground="#E8F1F8" HorizontalAlignment="Center" Margin="0,-40,0,-30" />
-                                                                                                <TextBlock Text="MINUTI" FontFamily="Segoe UI Semibold" FontSize="30" Foreground="#7FB3D5" HorizontalAlignment="Center" />
-                                                                                            </StackPanel>
-                                                                                        </Grid>
-                                                                                    </DataTemplate>
-                                                                                </Setter.Value>
-                                                                            </Setter>
-                                                                        </DataTrigger>
-                                                                        <DataTrigger Binding="{Binding Value}" Value="Words">
-                                                                            <Setter Property="ContentTemplate">
-                                                                                <Setter.Value>
-                                                                                    <DataTemplate>
-                                                                                        <Grid Background="#0C0C0D">
-                                                                                            <StackPanel VerticalAlignment="Center">
-                                                                                                <TextBlock Text="si comincia tra" FontFamily="Segoe UI Light" FontSize="110" Foreground="#D9D3C8" HorizontalAlignment="Center" />
-                                                                                                <TextBlock Text="5 MINUTI" FontFamily="{StaticResource DigitsFont}" FontSize="230" Foreground="#F4F5F7" HorizontalAlignment="Center" Margin="0,-30,0,0" />
-                                                                                            </StackPanel>
-                                                                                        </Grid>
-                                                                                    </DataTemplate>
-                                                                                </Setter.Value>
-                                                                            </Setter>
-                                                                        </DataTrigger>
-                                                                        <DataTrigger Binding="{Binding Value}" Value="Classic">
-                                                                            <Setter Property="ContentTemplate">
-                                                                                <Setter.Value>
-                                                                                    <DataTemplate>
-                                                                                        <Grid Background="Black" Margin="0">
-                                                                                            <TextBlock Text="ADUNANZA INFRASETTIMANALE" FontFamily="Segoe UI Semibold" FontSize="44" Foreground="#9AA6B3" Margin="60,40,0,0" />
-                                                                                            <TextBlock Text="4:32" FontFamily="{StaticResource DigitsFont}" FontSize="440" Foreground="#22C55E" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                                                                            <Border Height="22" VerticalAlignment="Bottom" Margin="60,0,60,60" Background="#1F2937" CornerRadius="11">
-                                                                                                <Border Background="#22C55E" CornerRadius="11" HorizontalAlignment="Left" Width="520" />
-                                                                                            </Border>
-                                                                                        </Grid>
-                                                                                    </DataTemplate>
-                                                                                </Setter.Value>
-                                                                            </Setter>
-                                                                        </DataTrigger>
-                                                                    </Style.Triggers>
-                                                                </Style>
-                                                            </ContentControl.Style>
-                                                        </ContentControl>
+                                                        <Grid Width="1280" Height="720">
+                                                            <v:CountdownScenes DataContext="{Binding Sample}" />
+                                                            <Grid Visibility="{Binding Sample.IsClassic, Converter={StaticResource BoolToVis}}">
+                                                                <TextBlock Text="ADUNANZA INFRASETTIMANALE" FontFamily="Segoe UI Semibold" FontSize="44" Foreground="#9AA6B3" Margin="60,40,0,0" />
+                                                                <TextBlock Text="4:32" FontFamily="{StaticResource DigitsFont}" FontSize="440" Foreground="#22C55E"
+                                                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                                <Border Height="22" VerticalAlignment="Bottom" Margin="60,0,60,60" Background="#1F2937" CornerRadius="11">
+                                                                    <Border Background="#22C55E" CornerRadius="11" HorizontalAlignment="Left" Width="520" />
+                                                                </Border>
+                                                            </Grid>
+                                                        </Grid>
                                                     </Viewbox>
                                                 </Border>
                                                 <StackPanel VerticalAlignment="Center">

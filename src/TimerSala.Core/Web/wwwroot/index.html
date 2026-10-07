@@ -34,7 +34,7 @@
 
   /* ── timer ── */
   #stage { flex: 1; display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: calc(3vh + var(--sa-t)) calc(4vw + var(--sa-r)) calc(2.5vh + var(--sa-b)) calc(4vw + var(--sa-l)); position: relative; z-index: 1; }
-  .top { display: flex; align-items: center; gap: 1.5vw; min-height: 11vh; padding-right: 220px; }
+  .top { display: flex; align-items: center; gap: 1.5vw; min-height: 11vh; padding-right: var(--toolbar-w, 220px); }   /* spazio per la barra strumenti, misurata */
   .chip { width: 1.1vmin; min-width: 6px; align-self: stretch; border-radius: 99px; background: var(--muted); }
   .titles { min-width: 0; flex: 1; }
   #section { font-size: clamp(12px, 2.8vmin, 40px); color: var(--muted); text-transform: uppercase; letter-spacing: .08em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -361,6 +361,10 @@
   const B = document.body.classList;
   const fmtDelay = s => { const a = Math.abs(s); return (s > 0 ? '+' : '−') + Math.floor(a / 60) + ':' + String(a % 60).padStart(2, '0'); };
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  // il titolo lascia alla barra strumenti lo spazio che occupa davvero (con le etichette è ben più dei 220px di prima)
+  const toolbar = document.querySelector('.toolbar');
+  new ResizeObserver(() => document.documentElement.style.setProperty('--toolbar-w', (toolbar.offsetWidth + 16) + 'px')).observe(toolbar);
 
   // ── dimensione cifre adattata allo spazio disponibile ──
   function fit() {

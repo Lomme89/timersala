@@ -5,17 +5,6 @@
         <ResourceDictionary Source="Theme.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <!-- colori del tema scuro: UiTheme li cambia al volo per il tema chiaro -->
-    <SolidColorBrush x:Key="InputBrush" Color="#111318" />
-    <SolidColorBrush x:Key="HoverBorderBrush" Color="#3A404B" />
-    <SolidColorBrush x:Key="SelectionBrush" Color="#2A3B5C" />
-    <SolidColorBrush x:Key="SubtleBrush" Color="#14FFFFFF" />
-    <SolidColorBrush x:Key="SoftTextBrush" Color="#C9CED6" />
-    <SolidColorBrush x:Key="DimTextBrush" Color="#6B7280" />
-    <SolidColorBrush x:Key="FocusRingBrush" Color="#93C5FD" />
-    <SolidColorBrush x:Key="OvertimeBgBrush" Color="#1A0B0D" />
-    <SolidColorBrush x:Key="PanelAltBrush" Color="#1D2027" />
-
     <!-- TextBox -->
     <Style TargetType="TextBox">
         <Setter Property="Background" Value="{DynamicResource InputBrush}" />

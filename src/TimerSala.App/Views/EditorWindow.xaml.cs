@@ -16,6 +16,7 @@ public partial class EditorWindow : Window
     public EditorWindow(MainViewModel main)
     {
         InitializeComponent();
+        Interop.DarkTitleBar.HideIconWhenCreated(this);
         WindowSizing.FitToScreen(this);
         WindowSizing.Remember(this, main, "editor");
         _vm = new EditorViewModel(main);

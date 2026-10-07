@@ -28,6 +28,21 @@ public partial class App : Application
     /// </summary>
     internal static bool SkipStartup;
 
+    /// <summary>
+    /// Durata dei suggerimenti (tooltip). WPF, dalla versione 9, li tiene aperti a tempo indefinito con un timer da
+    /// <see cref="int.MaxValue"/> ms (24,8 giorni). Se quel timer nasce mentre un altro timer è appena scaduto ma non ancora
+    /// eseguito, il dispatcher sbaglia il conto (overflow sugli intervalli a 32 bit), mette il timer di sistema a 24,8 giorni
+    /// e si fermano TUTTI i timer: orologio, cifre del controller e schermo della sala, finché il suggerimento resta aperto
+    /// (basta il mouse fermo sopra un pulsante). Con una durata finita il conto non va mai in overflow.
+    /// </summary>
+    internal const int ToolTipMilliseconds = 60_000;
+
+    static App()
+    {
+        System.Windows.Controls.ToolTipService.ShowDurationProperty.OverrideMetadata(typeof(FrameworkElement), new FrameworkPropertyMetadata(ToolTipMilliseconds));
+        System.Windows.Controls.ToolTipService.ShowDurationProperty.OverrideMetadata(typeof(FrameworkContentElement), new FrameworkPropertyMetadata(ToolTipMilliseconds));
+    }
+
     protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);

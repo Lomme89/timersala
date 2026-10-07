@@ -21,18 +21,33 @@ public class WindowsSmokeTests
         var thread = new Thread(() =>
         {
             _nativeThread = GetCurrentThreadId();
+            _dispatcher = Dispatcher.CurrentDispatcher;
             try { Run(); }
             catch (Exception ex) { failure = ex; }
         });
         thread.SetApartmentState(ApartmentState.STA);
         thread.Start();
         if (!thread.Join(TimeSpan.FromMinutes(2)))
-            Assert.Fail($"le finestre non hanno finito in tempo: fermo a «{_stage}»; finestre aperte: {string.Join(" | ", OpenWindows(_nativeThread))}");
+            Assert.Fail($"le finestre non hanno finito in tempo: fermo a «{_stage}»; finestre aperte: {string.Join(" | ", OpenWindows(_nativeThread))}\n"
+                + $"stack del thread dell'interfaccia: {StuckStack()}");
         if (failure is not null) throw new Exception("Errore nell'interfaccia: " + failure, failure);
     }
 
     // dove è arrivata la prova, per capire un blocco (per esempio una finestra di messaggio inattesa)
     static volatile string _stage = "inizio";
+    static Dispatcher? _dispatcher;
+
+    /// <summary>
+    /// Dove aspetta il thread bloccato: gli si chiede lo stack con la priorità più alta. Se risponde, il dispatcher gira
+    /// ma qualcosa non arriva (per esempio i timer, vedi App.ToolTipMilliseconds); se non risponde, è fermo in una chiamata che non torna.
+    /// </summary>
+    static string StuckStack()
+    {
+        if (_dispatcher is null) return "(dispatcher non avviato)";
+        try { return _dispatcher.Invoke(() => Environment.StackTrace, DispatcherPriority.Send, CancellationToken.None, TimeSpan.FromSeconds(10)); }
+        catch (TimeoutException) { return "nessuna risposta in 10 s: il thread è fermo fuori dal dispatcher"; }
+        catch (Exception ex) { return "non disponibile: " + ex.Message; }
+    }
     static uint _nativeThread;
 
     static void Stage(string name) => _stage = name;
@@ -104,6 +119,9 @@ public class WindowsSmokeTests
         TimerSala.App.App.SkipStartup = true;
         var app = new TimerSala.App.App();
         app.InitializeComponent();
+        // suggerimenti con durata finita: con quella «infinita» di WPF (int.MaxValue ms) i timer del dispatcher
+        // possono fermarsi tutti mentre un suggerimento è aperto (successo davvero in CI, con orologio e prova bloccati)
+        Assert.True(System.Windows.Controls.ToolTipService.GetShowDuration(new System.Windows.Controls.Button()) <= 10 * 60_000);
         Exception? unhandled = null;
         app.DispatcherUnhandledException += (_, e) => { unhandled ??= e.Exception; e.Handled = true; };
 
@@ -176,11 +194,13 @@ public class WindowsSmokeTests
         vm.ChecklistOpen = true;
         Pump();
         Assert.True(vm.ChecklistVisible);
+        Stage("lista di controllo: voce spuntata");
         vm.Checklist[0].Done = true;
         Pump();
         vm.ChecklistOpen = false;
 
         // telecomando: l'associazione registra l'input da tutte le tastiere, poi si annulla
+        Stage("telecomando: associazione");
         vm.StartClickerAssociation();
         Pump();
         Assert.Contains("Premi un tasto", vm.ClickerStatus);

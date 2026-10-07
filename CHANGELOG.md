@@ -11,6 +11,9 @@ Quinta anteprima: rifiniture dell'interfaccia, provate finestra per finestra su 
 - Le domande e gli avvisi (per esempio «Il timer è in funzione. Chiudere comunque?») sono nei colori del programma invece che nella finestrella grigia di Windows; per chiudere col timer in corso i pulsanti sono «Resta aperto» e «Chiudi».
 - Con l'interfaccia ingrandita (*Impostazioni → Programma*) si ingrandiscono anche i menu del tasto destro e i suggerimenti.
 
+**Affidabilità**
+- Corretto un blocco raro ma serio: con il mouse fermo sopra un pulsante, quando compariva il suggerimento, in certi istanti si fermavano tutti i timer del programma (orologio, cifre del controller e schermo della sala) finché il suggerimento restava aperto. Ora i suggerimenti spariscono dopo un minuto e il problema non può più presentarsi.
+
 **Controller**
 - Un po' più largo all'apertura, così la pastiglia di anticipo o ritardo non finisce sotto le icone; se lo spazio manca si accorcia. L'orologio non la fa più «ballare» a ogni secondo.
 - Con più congregazioni, il nome di quella attuale ha una riga sua; nel menu per cambiarla è spuntata quella in uso.

@@ -42,9 +42,12 @@ public static class WindowPlacement
 
         wp.rcNormalPosition = r;
         wp.flags = 0;
-        wp.showCmd = saved.Maximized && window.ResizeMode is ResizeMode.CanResize or ResizeMode.CanResizeWithGrip
-            ? SW_SHOWMAXIMIZED : SW_SHOWNORMAL;
+        // la finestra resta nascosta: la mostra WPF. Se la mostrasse già ingrandita Windows, WPF la crederebbe
+        // «normale» e la lascerebbe vuota finché non viene ridotta e riaperta
+        wp.showCmd = SW_HIDE;
         SetWindowPlacement(hwnd, ref wp);
+        if (saved.Maximized && window.ResizeMode is ResizeMode.CanResize or ResizeMode.CanResizeWithGrip)
+            window.WindowState = WindowState.Maximized;
     }
 
     /// <summary>Posizione e dimensioni attuali (quelle «normali» se la finestra è ingrandita), anche se è nascosta.</summary>
@@ -55,10 +58,12 @@ public static class WindowPlacement
         var wp = new WINDOWPLACEMENT { length = Marshal.SizeOf<WINDOWPLACEMENT>() };
         if (!GetWindowPlacement(hwnd, ref wp)) return null;
         var r = wp.rcNormalPosition;
-        return new WindowBounds(r.Left, r.Top, r.Right, r.Bottom, wp.showCmd == SW_SHOWMAXIMIZED);
+        // ridotta a icona da ingrandita: alla riapertura torna ingrandita
+        bool maximized = wp.showCmd == SW_SHOWMAXIMIZED || wp.showCmd == SW_SHOWMINIMIZED && (wp.flags & WPF_RESTORETOMAXIMIZED) != 0;
+        return new WindowBounds(r.Left, r.Top, r.Right, r.Bottom, maximized);
     }
 
-    const int SW_SHOWNORMAL = 1, SW_SHOWMAXIMIZED = 3;
+    const int SW_HIDE = 0, SW_SHOWMINIMIZED = 2, SW_SHOWMAXIMIZED = 3, WPF_RESTORETOMAXIMIZED = 2;
     const uint MONITOR_DEFAULTTONULL = 0;
 
     [StructLayout(LayoutKind.Sequential)]

@@ -1,5 +1,12 @@
 # Novità
 
+## v2.3.0-beta.4 — 14 ottobre 2026 (anteprima)
+
+Settima anteprima: una correzione. Si può sempre tornare alla v1.14.0 senza perdere nulla.
+
+- La finestra principale riaperta ingrandita mostra subito il contenuto: prima a volte restava vuota finché non veniva ridotta a icona e riaperta.
+- Se la finestra principale era ingrandita e poi ridotta a icona, alla riapertura torna ingrandita.
+
 ## v2.3.0-beta.3 — 7 ottobre 2026 (anteprima)
 
 Sesta anteprima: il telecomando per presentazioni funziona con più modelli ed è più facile da configurare. Si può sempre tornare alla v1.14.0 senza perdere nulla.

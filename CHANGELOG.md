@@ -1,5 +1,15 @@
 # Novità
 
+## v2.4.0-beta.3 — 6 novembre 2026 (anteprima)
+
+Decima anteprima: la condivisione su Zoom è più veloce. Si può sempre tornare alla v1.14.0 senza perdere nulla.
+
+**Zoom**
+- Condividere lo schermo richiede meno di un secondo, circa la metà di prima.
+- Anche «Interrompi» è più svelto, e la finestra che stai usando resta attiva.
+- «Ferma musica» spegne subito la musica in sala. L'audio condiviso in Zoom si chiude subito dopo.
+- «Leggi da Zoom» propone solo gli schermi. Prima elencava anche finestre e file.
+
 ## v2.4.0-beta.2 — 6 novembre 2026 (anteprima)
 
 Nona anteprima: TimerSala si installa e si aggiorna da solo. Si può sempre tornare alla v1.14.0 senza perdere nulla.

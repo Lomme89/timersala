@@ -18,7 +18,7 @@ static class ZoomClient
     const string Participants = "Partecipanti,", Share = "Condividi, Alt+S", MuteAllButton = "Disattiva audio per tutti",
         AllowUnmute = "Consenti ai partecipanti di attivare il proprio audio", Yes = "Sì", ScreensTab = "Schermi", OtherTab = "Altro",
         AudioRow = "audio del computer", VideoBox = "Ottimizza per condivisione video", ConfirmScreen = "Condividi Schermo", ConfirmAudio = "Condividi Audio",
-        SharingAudio = "Condivisione audio computer", Self = "(Organizzatore, io)";
+        SharingAudio = "Condivisione audio computer", Self = "(Organizzatore, io)", StopSharing = "Interrompi condivisione";
 
     enum Sharing { None, Screen, Audio }
 
@@ -43,8 +43,8 @@ static class ZoomClient
     // mentre si condivide lo schermo Zoom nasconde la finestra della riunione e mostra solo la barra flottante
     static bool InMeeting => Meeting != 0 || Win(SharingToolbar) != 0;
 
-    static Ctl? Find(IntPtr h, string text, int role = 0, bool hidden = false) =>
-        Msaa.First(h, c => (role == 0 || c.Role == role) && c.Name.StartsWith(text, StringComparison.OrdinalIgnoreCase), hidden);
+    static Ctl? Find(IntPtr h, string text, int role = 0, bool hidden = false, bool clip = false) =>
+        Msaa.First(h, c => (role == 0 || c.Role == role) && c.Name.StartsWith(text, StringComparison.OrdinalIgnoreCase), hidden, clip);
 
     static T Until<T>(Func<T?> probe, string what, int ms = 8000) where T : class
     {
@@ -55,11 +55,11 @@ static class ZoomClient
             try { if (probe() is { } hit) return hit; }
             catch (System.Runtime.InteropServices.COMException) { }
             if (sw.ElapsedMilliseconds > ms) throw new ZoomFailed($"non trovo «{what}»");
-            Thread.Sleep(50);
+            Thread.Sleep(20);
         }
     }
 
-    static void WaitFor(Func<bool> done, string what) => Until(() => done() ? "" : null, what);
+    static void WaitFor(Func<bool> done, string what, int ms = 8000) => Until(() => done() ? "" : null, what, ms);
 
     static void EnsureMeeting()
     {
@@ -95,8 +95,8 @@ static class ZoomClient
         Until(() => Find(Win(MuteDialog), Yes), Yes).Press();
     }
 
-    // schede e righe ignorano accSelect: solo un clic sposta il fuoco di Zoom, e ogni clic si verifica rileggendo lo stato
-    // Zoom riapre Condividi sull'ultima scheda e riga usate: se sono già quelle giuste non si clicca
+    // schede e righe ignorano accSelect: solo un clic sposta il fuoco di Zoom, e ogni clic si verifica rileggendo lo stato.
+    // In Condividi le sezioni stanno in una lista sola che scorre (la scheda la fa scorrere): si legge solo la parte visibile (clip)
     static void PickTab(IntPtr w, string tab)
     {
         var t = Until(() => Find(w, tab, Ctl.Tab), tab);
@@ -105,12 +105,18 @@ static class ZoomClient
         Until(() => Find(w, tab, Ctl.Tab) is { Selected: true } c ? c : null, tab);
     }
 
-    static void PickRow(IntPtr w, Func<Ctl, bool> target, string what)
+    static void PickRow(IntPtr w, Func<Ctl, bool> target, string what) =>
+        Pick(w, Until(() => Msaa.First(w, c => c.Role == Ctl.Row && target(c), clip: true), what), target, what);
+
+    // Zoom 7.2.5 non ricrea la riga scelta: basta rileggerne lo stato (Zoom risponde in qualche decina di ms);
+    // se dopo 300 ms non conferma, forse un'altra versione l'ha ricreata, e la si cerca di nuovo
+    static void Pick(IntPtr w, Ctl row, Func<Ctl, bool> target, string what)
     {
-        var row = Until(() => Msaa.First(w, c => c.Role == Ctl.Row && target(c)), what);
         if (row.Selected) return;
         row.Click(w);
-        Until(() => Msaa.First(w, c => c.Role == Ctl.Row && c.Selected && target(c)), what);
+        var sw = Stopwatch.StartNew();
+        WaitFor(() => row.SelectedNow
+            || sw.ElapsedMilliseconds > 300 && Msaa.First(w, c => c.Role == Ctl.Row && c.Selected && target(c), clip: true) != null, what);
     }
 
     static IntPtr OpenShareWindow(string tab)
@@ -138,7 +144,18 @@ static class ZoomClient
     {
         EnsureMeeting();
         var w = OpenShareWindow(ScreensTab);
-        try { return Until(() => Msaa.Controls(w).Where(c => c.Role == Ctl.Row).Select(c => c.Name).ToList() is { Count: > 0 } r ? r : null, "gli schermi"); }
+        try
+        {
+            return Until(() =>
+            {
+                // nella lista unica gli schermi sono le righe tra la casella «Schermi» e la successiva (le finestre)
+                var all = Msaa.Controls(w, clip: true);
+                int at = all.FindIndex(c => c.Role == Ctl.List && c.Name.StartsWith(ScreensTab));
+                var rows = (at < 0 ? all : all.Skip(at + 1).TakeWhile(c => c.Role != Ctl.List))
+                    .Where(c => c.Role == Ctl.Row).Select(c => c.Name).ToList();
+                return rows.Count > 0 ? rows : null;
+            }, "gli schermi");
+        }
         finally { CloseShareWindow(); }
     }
 
@@ -172,26 +189,26 @@ static class ZoomClient
         StopShare();
         var w = ShareWindowHandle();
 
-        // di solito Zoom riapre Condividi già pronto (scheda, schermo e spunta dell'ultima volta):
-        // una sola lettura della finestra lo verifica e si conferma subito; altrimenti passo per passo
-        var all = Until(() => Msaa.Controls(w) is var c && c.Any(x => x.Role == Ctl.Tab) ? c : null, "la finestra Condividi");
-        bool Is(Ctl c, int role, string text) => c.Role == role && c.Name.StartsWith(text, StringComparison.OrdinalIgnoreCase);
-        if (all.Any(c => Is(c, Ctl.Tab, ScreensTab) && c.Selected)
-            && all.Any(c => Is(c, Ctl.Row, screen) && c.Selected)
-            && all.Any(c => Is(c, Ctl.Check, VideoBox) && c.Checked)
-            && all.FirstOrDefault(c => c.Name.StartsWith(ConfirmScreen, StringComparison.OrdinalIgnoreCase)) is { } ready)
+        // una lettura sola della finestra, poi si usano i controlli trovati. Zoom riapre Condividi con la scheda e la spunta
+        // dell'ultima volta, ma sempre sullo schermo principale: di solito resta solo il clic sulla riga
+        bool Is(Ctl c, int role, string text) => (role == 0 || c.Role == role) && c.Name.StartsWith(text, StringComparison.OrdinalIgnoreCase);
+        bool Mine(Ctl c) => Is(c, Ctl.Row, screen);
+        List<Ctl> Read() => Until(() => Msaa.Controls(w, clip: true) is var c
+            && c.Any(x => Mine(x) || Is(x, Ctl.Tab, ScreensTab) && !x.Selected) ? c : null, screen);
+        var all = Read();
+        if (!all.Any(Mine))
         {
-            ready.Press();
-            WaitFor(() => SharingScreen, "l'avvio della condivisione");
-            return;
+            PickTab(w, ScreensTab); // la lista scorre agli schermi: righe e posizioni nuove
+            all = Read();
         }
+        // la scelta della riga cambia l'etichetta della conferma, non l'oggetto; se Zoom l'avesse ricreato, si cerca di nuovo
+        Ctl Get(int role, string text) => all.FirstOrDefault(c => Is(c, role, text)) is { } c && c.StillNamed(text) ? c : Until(() => Find(w, text, role, clip: true), text);
 
-        PickTab(w, ScreensTab);
-        PickRow(w, c => c.Name.StartsWith(screen), screen);
+        Pick(w, all.First(Mine), Mine, screen);
         // i cantici sono video: più fluidi a casa, e Zoom con questa spunta condivide anche il suono
-        var video = Until(() => Find(w, VideoBox, Ctl.Check), VideoBox);
+        var video = Get(Ctl.Check, VideoBox);
         if (!video.Checked) video.Press();
-        Until(() => Find(w, ConfirmScreen), ConfirmScreen).Press();
+        Get(0, ConfirmScreen).Press();
         WaitFor(() => SharingScreen, "l'avvio della condivisione");
     }
 
@@ -203,7 +220,7 @@ static class ZoomClient
         StopShare();
         var w = OpenShareWindow(OtherTab);
         PickRow(w, c => c.Name.Contains(AudioRow), AudioRow);
-        Until(() => Find(w, ConfirmAudio), ConfirmAudio).Press();
+        Until(() => Find(w, ConfirmAudio, clip: true), ConfirmAudio).Press();
         WaitFor(() => Status() == Sharing.Audio, "l'avvio dell'audio condiviso");
         _audioShared = true;
     }
@@ -218,12 +235,28 @@ static class ZoomClient
     {
         bool screen = SharingScreen;
         if (screen && audioOnly) return;
-        if (screen) Native.Focus(Win(SharingToolbar));                          // il pulsante della barra non ha azione predefinita
+        if (screen && ClickStop()) return;
+        if (screen) Native.Focus(Win(SharingToolbar));                          // barra ritirata o clic perso: il tasto di Zoom
         else if (_audioShared && Status() == Sharing.Audio) Native.Focus(Meeting); // l'audio da solo non ha barra flottante
         else { _audioShared = false; return; }
         Native.Keys(Alt, S);
         WaitFor(() => screen ? !SharingScreen : Status() == Sharing.None, "la fine della condivisione");
         if (!screen) _audioShared = false;
+    }
+
+    // il pulsante della barra non ha azione predefinita, ma accetta un clic mandato alla finestra:
+    // non ruba il fuoco all'operatore ed è più svelto di fuoco + Alt+S (~120 ms contro ~250)
+    static bool ClickStop()
+    {
+        var bar = Win(SharingToolbar);
+        if (Find(bar, StopSharing) is not { } stop) return false;
+        try
+        {
+            stop.Click(bar);
+            WaitFor(() => !SharingScreen, StopSharing, 1000);
+            return true;
+        }
+        catch (Exception e) when (e is ZoomFailed or System.Runtime.InteropServices.COMException) { return false; }
     }
 
     // l'audio condiviso si legge solo dalla propria riga nel pannello dei partecipanti, che va tenuto aperto

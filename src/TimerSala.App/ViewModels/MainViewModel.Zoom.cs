@@ -73,7 +73,7 @@ public sealed partial class MainViewModel
         bool playing = MusicOn;
         RunZoom("Condivisione schermo", () =>
         {
-            if (playing) { ZoomClient.StopShare(audioOnly: true); JwMusic.Pause(); } // la musica non deve finire nello schermo condiviso
+            if (playing) JwMusic.Pause(); // la musica non deve finire nello schermo condiviso; l'audio condiviso lo chiude ShareScreen
             ZoomClient.ShareScreen(screen);
         }, () => { MusicOn = false; ScreenShared = true; });
     });
@@ -96,8 +96,8 @@ public sealed partial class MainViewModel
         bool playing = MusicOn;
         RunZoom(auto ? "Fine della musica d'attesa" : "Ferma musica", () =>
         {
+            if (playing) JwMusic.Pause(); // prima la sala, subito; chiudere l'audio condiviso in Zoom richiede qualche decimo
             ZoomClient.StopShare(audioOnly: true);
-            if (playing) JwMusic.Pause();
         }, () => MusicOn = false);
     }
 

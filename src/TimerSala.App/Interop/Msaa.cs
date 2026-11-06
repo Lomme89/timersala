@@ -8,13 +8,23 @@ namespace TimerSala.App.Interop;
 // Mai il vero puntatore, la mano dell'operatore è sul mouse: Click manda il clic alla finestra, nella posizione del controllo.
 sealed class Ctl(IAccessible owner, object id, string name, int role, int state)
 {
-    public const int Row = 34, Tab = 37, Check = 44;
+    public const int List = 33, Row = 34, Tab = 37, Check = 44;
     public string Name => name;
     public int Role => role;
     public bool Checked => (state & 0x10) != 0;
     public bool Selected => (state & 0x02) != 0;
 
     public void Press() => owner.accDoDefaultAction(id);
+
+    /// <summary>Lo stato riletto adesso, con una chiamata sola invece di scorrere di nuovo l'albero.</summary>
+    public bool SelectedNow
+    {
+        get
+        {
+            try { return (Convert.ToInt32(owner.get_accState(id)) & 0x02) != 0; }
+            catch (Exception e) when (e is COMException or InvalidComObjectException or ArgumentException) { return false; }
+        }
+    }
 
     /// <summary>Riletto adesso: un controllo ricordato da prima vale solo se Zoom non l'ha ricreato.</summary>
     public bool StillNamed(string text)
@@ -38,34 +48,35 @@ static class Msaa
     [DllImport("oleacc")] static extern int AccessibleObjectFromWindow(IntPtr h, uint id, ref Guid iid, [MarshalAs(UnmanagedType.Interface)] out IAccessible o);
     [DllImport("oleacc")] static extern int AccessibleChildren(IAccessible p, int start, int n, [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] object[] kids, out int got);
 
-    public static List<Ctl> Controls(IntPtr hwnd, bool hidden = false)
+    /// <param name="clip">Salta i gruppi fuori dalla finestra: Condividi tiene tutte le sezioni in una lista che scorre, anche quelle non visibili.</param>
+    public static List<Ctl> Controls(IntPtr hwnd, bool hidden = false, bool clip = false)
     {
         var found = new List<Ctl>();
-        Visit(hwnd, hidden, c => { found.Add(c); return false; });
+        Visit(hwnd, hidden, clip, c => { found.Add(c); return false; });
         return found;
     }
 
     /// <summary>Il primo controllo che va bene: smette di scorrere l'albero appena lo trova (le anteprime di Condividi sono tante).</summary>
-    public static Ctl? First(IntPtr hwnd, Func<Ctl, bool> match, bool hidden = false)
+    public static Ctl? First(IntPtr hwnd, Func<Ctl, bool> match, bool hidden = false, bool clip = false)
     {
         Ctl? hit = null;
-        Visit(hwnd, hidden, c => { if (match(c)) hit = c; return hit != null; });
+        Visit(hwnd, hidden, clip, c => { if (match(c)) hit = c; return hit != null; });
         return hit;
     }
 
-    static void Visit(IntPtr hwnd, bool hidden, Func<Ctl, bool> stop)
+    static void Visit(IntPtr hwnd, bool hidden, bool clip, Func<Ctl, bool> stop)
     {
         if (hwnd == 0 || AccessibleObjectFromWindow(hwnd, 0xFFFFFFFC, ref IID, out var root) != 0 || root == null) return;
-        Walk(root, 0, hidden, stop);
+        Walk(root, 0, hidden, clip && !hidden ? Area(root) : null, stop);
     }
 
-    // true = trovato, si smette
-    static bool Walk(IAccessible parent, int depth, bool hidden, Func<Ctl, bool> stop)
+    // true = trovato, si smette. Ogni lettura è un viaggio fino a Zoom: lo stato per primo, così i nodi nascosti costano una lettura sola
+    static bool Walk(IAccessible parent, int depth, bool hidden, Box? area, Func<Ctl, bool> stop)
     {
         if (depth > 18) return false;
         int count;
         try { count = parent.accChildCount; } catch (COMException) { return false; }
-        if (count <= 0) return false;
+        if (count <= 0 || (area is { } a && Outside(parent, a))) return false;
         var kids = new object[count];
         if (AccessibleChildren(parent, 0, count, kids, out int got) != 0) return false;
         for (int i = 0; i < got; i++)
@@ -73,20 +84,30 @@ static class Msaa
             var child = kids[i] as IAccessible;
             var owner = child ?? parent;
             object id = child != null ? 0 : kids[i];
-            string name; int role, state;
             try
             {
-                name = owner.get_accName(id) ?? "";
-                role = Convert.ToInt32(owner.get_accRole(id));
-                state = Convert.ToInt32(owner.get_accState(id));
+                int state = Convert.ToInt32(owner.get_accState(id));
+                if ((state & Invisible) != 0 && !hidden) continue;
+                string name = owner.get_accName(id) ?? "";
+                if (name != "" && stop(new Ctl(owner, id, name, Convert.ToInt32(owner.get_accRole(id)), state))) return true;
             }
             catch (Exception e) when (e is COMException or InvalidCastException or NotImplementedException) { continue; }
-            if ((state & Invisible) != 0 && !hidden) continue;
-            if (name != "" && stop(new Ctl(owner, id, name, role, state))) return true;
-            if (child != null && Walk(child, depth + 1, hidden, stop)) return true;
+            if (child != null && Walk(child, depth + 1, hidden, area, stop)) return true;
         }
         return false;
     }
+
+    record struct Box(int L, int T, int R, int B);
+
+    // le posizioni le dà Zoom, finestra e controlli nello stesso sistema; null se illeggibile o vuota
+    static Box? Area(IAccessible o)
+    {
+        try { o.accLocation(out int x, out int y, out int w, out int h, 0); return w > 0 && h > 0 ? new(x, y, x + w, y + h) : null; }
+        catch (COMException) { return null; }
+    }
+
+    // nel dubbio si entra: saltare un gruppo buono costerebbe la condivisione
+    static bool Outside(IAccessible o, Box a) => Area(o) is { } c && (c.L >= a.R || c.T >= a.B || c.R <= a.L || c.B <= a.T);
 }
 
 static class Native

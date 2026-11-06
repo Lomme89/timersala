@@ -12,7 +12,9 @@ if [ -z "$notes" ]; then
 fi
 printf '%s\n\n---\n\n' "$notes"
 cat <<'MD'
-**Download:** scarica **TimerSala.exe** qui sotto e avvialo (Windows 10/11, nessuna installazione).
+**Download:** scarica **TimerSala.exe** qui sotto e aprilo (Windows 10/11). Si apre l'installazione, che non chiede permessi da amministratore.
+Se TimerSala è già sul PC, lo stesso file lo aggiorna. Impostazioni e schemi restano come sono.
+Per usarlo senza installarlo scegli «Apri senza installare».
 Al primo avvio consenti l'accesso alle reti private, per vedere il timer dagli altri dispositivi.
 Istruzioni complete nel [README](https://github.com/Lomme89/timersala#readme).
 MD

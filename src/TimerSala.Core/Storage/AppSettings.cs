@@ -64,6 +64,18 @@ public sealed class AppSettings
 
     public CountdownStyle CountdownStyle { get; set; } = CountdownStyle.Tide;
 
+    // ── Zoom e musica d'attesa (client Zoom in italiano, pilotato da fuori) ──
+    public bool ZoomEnabled { get; set; }
+
+    /// <summary>Minuti prima dell'inizio in cui parte la musica di JW Library (0 = mai).</summary>
+    public int MusicMinutes { get; set; } = 5;
+
+    /// <summary>Minuti prima dell'inizio in cui Zoom muta tutti senza riattivazione e condivide l'audio del computer (0 = mai).</summary>
+    public int ShareMusicMinutes { get; set; } = 5;
+
+    /// <summary>Riga della scheda «Schermi» di Condividi in Zoom: cambia da PC a PC.</summary>
+    public string ZoomScreen { get; set; } = "";
+
     // ── Stile dello schermo del timer ──
     public DisplayTheme DisplayTheme { get; set; } = DisplayTheme.Dark;
     public DisplayLayout DisplayLayout { get; set; } = DisplayLayout.Classic;
@@ -246,6 +258,9 @@ public sealed class AppSettings
     /// <summary>Tasti del telecomando impostati a mano (codici dei tasti virtuali): vincono sui tasti predefiniti.</summary>
     public List<int> ClickerForwardKeys { get; set; } = [];
     public List<int> ClickerBackKeys { get; set; } = [];
+
+    /// <summary>Tasti del telecomando per il pulsante Zoom (nessuno finché non se ne sceglie uno).</summary>
+    public List<int> ClickerZoomKeys { get; set; } = [];
 
     /// <summary>TimerSala si apre all'accesso a Windows.</summary>
     public bool StartWithWindows { get; set; }

@@ -91,6 +91,22 @@ public class WindowsSmokeTests
         return list;
     }
 
+    // tutta la pagina, anche la parte da scorrere, sullo sfondo delle impostazioni
+    static void Snapshot(FrameworkElement root, string file)
+    {
+        if (root is Window w) root = (FrameworkElement)w.Content;
+        var bmp = new System.Windows.Media.Imaging.RenderTargetBitmap((int)root.ActualWidth, (int)root.ActualHeight, 96, 96, System.Windows.Media.PixelFormats.Pbgra32);
+        var dv = new System.Windows.Media.DrawingVisual();
+        using (var dc = dv.RenderOpen())
+            dc.DrawRectangle(UiTheme.Brush("BgBrush"), null, new Rect(0, 0, root.ActualWidth, root.ActualHeight));
+        bmp.Render(dv);
+        bmp.Render(root);
+        var png = new System.Windows.Media.Imaging.PngBitmapEncoder();
+        png.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(bmp));
+        using var f = File.Create(file);
+        png.Save(f);
+    }
+
     static void Pump(int ms = 300)
     {
         var frame = new DispatcherFrame();
@@ -229,10 +245,15 @@ public class WindowsSmokeTests
         var settings = new SettingsWindow(vm) { Owner = main };
         settings.Show();
         Pump();
+        // TIMERSALA_SNAPSHOTS=cartella: una foto di ogni pagina, per guardare l'aspetto senza aprire il programma
+        var snaps = Environment.GetEnvironmentVariable("TIMERSALA_SNAPSHOTS");
         for (int i = 0; i < settings.Nav.Items.Count; i++)
         {
             settings.Nav.SelectedIndex = i;
             Pump(200);
+            if (snaps is { Length: > 0 } && settings.Nav.SelectedItem is System.Windows.Controls.ListBoxItem { Tag: string page })
+                Snapshot(settings.Pages.Children.OfType<System.Windows.Controls.ScrollViewer>().First(v => v.Tag as string == page).Content as FrameworkElement ?? settings,
+                    Path.Combine(snaps, page + ".png"));
         }
         settings.Close();
         Pump();

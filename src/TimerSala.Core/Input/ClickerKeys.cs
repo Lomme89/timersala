@@ -1,6 +1,7 @@
 namespace TimerSala.Core.Input;
 
-public enum ClickerAction { None, Forward, Back }
+/// <summary>Zoom: fa quello che dice il pulsante Zoom del controller (ferma musica, condividi, interrompi, fine adunanza).</summary>
+public enum ClickerAction { None, Forward, Back, Zoom }
 
 /// <summary>
 /// Tasti dei telecomandi per presentazioni. Quasi tutti mandano Pagina giù / Pagina su; alcuni le frecce, Invio o
@@ -19,8 +20,11 @@ public static class ClickerKeys
     /// <summary>
     /// Con il telecomando associato: i tasti impostati a mano, poi tutti i tasti «avanti» e «indietro» che i telecomandi usano.
     /// </summary>
-    public static ClickerAction FromAssociatedDevice(int vkey, IReadOnlyCollection<int>? forward = null, IReadOnlyCollection<int>? back = null) =>
-        forward?.Contains(vkey) == true ? ClickerAction.Forward
+    /// Il tasto Zoom non ha predefiniti: si sceglie a mano, di solito un tasto che altrimenti non serve (schermo nero, F5…).
+    public static ClickerAction FromAssociatedDevice(int vkey, IReadOnlyCollection<int>? forward = null, IReadOnlyCollection<int>? back = null,
+        IReadOnlyCollection<int>? zoom = null) =>
+        zoom?.Contains(vkey) == true ? ClickerAction.Zoom
+        : forward?.Contains(vkey) == true ? ClickerAction.Forward
         : back?.Contains(vkey) == true ? ClickerAction.Back
         : Default(vkey);
 
@@ -30,10 +34,16 @@ public static class ClickerKeys
         : ClickerAction.None;
 
     /// <summary>Tutti i tasti che fanno <paramref name="action"/>: prima quelli scelti a mano, poi i predefiniti rimasti.</summary>
-    public static IReadOnlyList<int> KeysFor(ClickerAction action, IReadOnlyCollection<int> forward, IReadOnlyCollection<int> back) =>
-        (action == ClickerAction.Forward ? forward.Concat(DefaultForward) : back.Concat(DefaultBack))
+    public static IReadOnlyList<int> KeysFor(ClickerAction action, IReadOnlyCollection<int> forward, IReadOnlyCollection<int> back,
+        IReadOnlyCollection<int>? zoom = null) =>
+        (action switch
+        {
+            ClickerAction.Forward => forward.Concat(DefaultForward),
+            ClickerAction.Back => back.Concat(DefaultBack),
+            _ => zoom ?? [],
+        })
             .Distinct()
-            .Where(k => FromAssociatedDevice(k, forward, back) == action)
+            .Where(k => FromAssociatedDevice(k, forward, back, zoom) == action)
             .ToList();
 
     /// <summary>Nome del tasto da mostrare: «Pagina giù», «→», «F5»…</summary>

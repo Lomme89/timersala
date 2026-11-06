@@ -24,16 +24,26 @@ public sealed partial class MainViewModel
 
     public string ClickerStatus { get; private set => Set(ref field, value); } = "";
     public bool ClickerAssociated => Settings.ClickerDevice is not null;
-    public bool ClickerHasCustomKeys => Settings.ClickerForwardKeys.Count + Settings.ClickerBackKeys.Count > 0;
+    public bool ClickerHasCustomKeys => Settings.ClickerForwardKeys.Count + Settings.ClickerBackKeys.Count + Settings.ClickerZoomKeys.Count > 0;
 
     /// <summary>Riga «Tasto avanti» delle impostazioni: i tasti, o l'attesa mentre se ne sceglie uno.</summary>
     public string ClickerForwardText => ClickerKeysText(ClickerAction.Forward);
     public string ClickerBackText => ClickerKeysText(ClickerAction.Back);
+    public string ClickerZoomText => ClickerKeysText(ClickerAction.Zoom) is { Length: > 0 } t ? t
+        : ClickerZoomCaps.Count == 0 ? "Nessuno: premi «Scegli» e poi il tasto sul telecomando" : "";
 
+    /// <summary>I tasti di ogni azione, da mostrare come tasti veri (vuoti mentre se ne sceglie uno).</summary>
+    public IReadOnlyList<string> ClickerForwardCaps => ClickerCaps(ClickerAction.Forward);
+    public IReadOnlyList<string> ClickerBackCaps => ClickerCaps(ClickerAction.Back);
+    public IReadOnlyList<string> ClickerZoomCaps => ClickerCaps(ClickerAction.Zoom);
+
+    IReadOnlyList<string> ClickerCaps(ClickerAction action) =>
+        _associating && _learning == action ? []
+            : ClickerKeys.KeysFor(action, Settings.ClickerForwardKeys, Settings.ClickerBackKeys, Settings.ClickerZoomKeys).Select(ClickerKeys.Name).ToList();
+
+    // solo mentre si sceglie un tasto: il resto del tempo i tasti si vedono come tasti
     string ClickerKeysText(ClickerAction action) =>
-        _associating && _learning == action
-            ? $"Premi il tasto sul telecomando… ({AssociateSeconds} s){_associateHint}"
-            : string.Join("  ·  ", ClickerKeys.KeysFor(action, Settings.ClickerForwardKeys, Settings.ClickerBackKeys).Select(ClickerKeys.Name));
+        _associating && _learning == action ? $"Premi il tasto sul telecomando… ({AssociateSeconds} s){_associateHint}" : "";
 
     int AssociateSeconds => Math.Max(0, (int)Math.Ceiling((_associateUntil - DateTime.UtcNow).TotalSeconds));
 
@@ -63,6 +73,10 @@ public sealed partial class MainViewModel
         OnPropertyChanged(nameof(ClickerHasCustomKeys));
         OnPropertyChanged(nameof(ClickerForwardText));
         OnPropertyChanged(nameof(ClickerBackText));
+        OnPropertyChanged(nameof(ClickerZoomText));
+        OnPropertyChanged(nameof(ClickerForwardCaps));
+        OnPropertyChanged(nameof(ClickerBackCaps));
+        OnPropertyChanged(nameof(ClickerZoomCaps));
         ClickerStatus = _associating && _learning == ClickerAction.None
                 ? $"Premi «avanti» o «indietro» sul telecomando… ({AssociateSeconds} s){_associateHint}"
             : !Settings.ClickerEnabled ? "Spento."
@@ -115,6 +129,7 @@ public sealed partial class MainViewModel
     {
         Settings.ClickerForwardKeys = [];
         Settings.ClickerBackKeys = [];
+        Settings.ClickerZoomKeys = [];
         SaveSettings();
         UpdateClickerStatus();
     }
@@ -133,16 +148,14 @@ public sealed partial class MainViewModel
                     UpdateClickerStatus();
                     return;
                 }
-                var (mine, other) = _learning == ClickerAction.Forward
-                    ? (Settings.ClickerForwardKeys, Settings.ClickerBackKeys)
-                    : (Settings.ClickerBackKeys, Settings.ClickerForwardKeys);
-                other.Remove(vkey);
-                if (!mine.Contains(vkey)) mine.Add(vkey);
+                // un tasto fa una cosa sola: si toglie dalle altre azioni
+                foreach (var list in new[] { Settings.ClickerForwardKeys, Settings.ClickerBackKeys, Settings.ClickerZoomKeys }) list.Remove(vkey);
                 var learned = _learning;
+                (learned switch { ClickerAction.Forward => Settings.ClickerForwardKeys, ClickerAction.Back => Settings.ClickerBackKeys, _ => Settings.ClickerZoomKeys }).Add(vkey);
                 Settings.ClickerDevice = device;
                 SaveSettings();
                 StopAssociation();
-                ShowStatus($"Telecomando: «{ClickerKeys.Name(vkey)}» ora {(learned == ClickerAction.Forward ? "avvia e ferma" : "annulla")}.");
+                ShowStatus($"Telecomando: «{ClickerKeys.Name(vkey)}» ora {learned switch { ClickerAction.Forward => "avvia e ferma", ClickerAction.Back => "annulla", _ => "fa il pulsante Zoom" }}.");
                 return;
             }
             // si associa solo premendo un tasto da telecomando (avanti o indietro); gli altri si mostrano, così si vede che arrivano
@@ -172,7 +185,7 @@ public sealed partial class MainViewModel
         RunClicker(action);
     }
 
-    ClickerAction ClickerFromDevice(int vkey) => ClickerKeys.FromAssociatedDevice(vkey, Settings.ClickerForwardKeys, Settings.ClickerBackKeys);
+    ClickerAction ClickerFromDevice(int vkey) => ClickerKeys.FromAssociatedDevice(vkey, Settings.ClickerForwardKeys, Settings.ClickerBackKeys, Settings.ClickerZoomKeys);
 
     /// <summary>
     /// Dalle scorciatoie del controller e della mini: true se il tasto è del telecomando (e quindi già gestito).
@@ -191,6 +204,7 @@ public sealed partial class MainViewModel
     void RunClicker(ClickerAction action)
     {
         if (action == ClickerAction.Forward) ToggleStartCommand.Execute(null);
+        else if (action == ClickerAction.Zoom) { if (ZoomEnabled) ZoomStepCommand.Execute(null); }
         else if (CanUndo) UndoCommand.Execute(null);
     }
 

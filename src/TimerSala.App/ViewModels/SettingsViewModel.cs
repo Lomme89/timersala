@@ -130,6 +130,8 @@ public sealed class SettingsViewModel : ObservableObject
     {
         RefreshPreview();
         OnPropertyChanged(nameof(EndTimesText));
+        OnPropertyChanged(nameof(MidweekEndText));
+        OnPropertyChanged(nameof(WeekendEndText));
         HasChanges = true;
         _applyTimer.Stop();
         _applyTimer.Start();
@@ -192,6 +194,9 @@ public sealed class SettingsViewModel : ObservableObject
     public int MeetingLength { get => Draft.MeetingLengthMinutes; set => Edit(s => s.MeetingLengthMinutes = value); }
 
     /// <summary>«Fine prevista: 20:45 · 11:45».</summary>
+    public string MidweekEndText => $"finisce verso le {Draft.MidweekTime.Add(TimeSpan.FromMinutes(Draft.MeetingLengthMinutes)):HH:mm}";
+    public string WeekendEndText => $"finisce verso le {Draft.WeekendTime.Add(TimeSpan.FromMinutes(Draft.MeetingLengthMinutes)):HH:mm}";
+
     public string EndTimesText
     {
         get
@@ -508,7 +513,58 @@ public sealed class SettingsViewModel : ObservableObject
 
     // ───── Countdown ─────
 
-    public int CountdownMinutes { get => Draft.CountdownMinutes; set => Edit(s => s.CountdownMinutes = value); }
+    public int CountdownMinutes { get => Draft.CountdownMinutes; set { Edit(s => s.CountdownMinutes = value); OnPropertyChanged(nameof(ZoomTimeline)); } }
+
+    // ───── Zoom e musica ─────
+
+    public bool ZoomEnabled { get => Draft.ZoomEnabled; set => Edit(s => s.ZoomEnabled = value); }
+    public int MusicMinutes { get => Draft.MusicMinutes; set { Edit(s => s.MusicMinutes = value); OnPropertyChanged(nameof(ZoomTimeline)); } }
+    public int ShareMusicMinutes { get => Draft.ShareMusicMinutes; set { Edit(s => s.ShareMusicMinutes = value); OnPropertyChanged(nameof(ZoomTimeline)); } }
+
+    /// <summary>Un passo della linea del tempo prima dell'inizio, nella pagina Zoom e musica.</summary>
+    public sealed record TimelineStep(string When, string Text, Brush Dot, bool HasNext);
+
+    /// <summary>Cosa succede da solo prima dell'inizio, nell'ordine, con i minuti scelti.</summary>
+    public IReadOnlyList<TimelineStep> ZoomTimeline
+    {
+        get
+        {
+            var steps = new List<(double Min, string Text, string Brush)>();
+            int music = Draft.MusicMinutes, share = Draft.ShareMusicMinutes, countdown = Draft.CountdownMinutes;
+            if (music > 0 && music == share) steps.Add((music, "Tutti muti in Zoom, senza poter riattivarsi. Parte la musica di JW Library e va anche a casa", "AmberBrush"));
+            else
+            {
+                if (music > 0) steps.Add((music, "Parte la musica di JW Library, in sala", "AmberBrush"));
+                if (share > 0) steps.Add((share, "Tutti muti in Zoom, senza poter riattivarsi. Si condivide l'audio: la musica va anche a casa", "AccentBrush"));
+            }
+            if (countdown > 0) steps.Add((countdown, "Compare il countdown sullo schermo della sala", "MutedBrush"));
+            steps.Add((0.5, "L'oratore invita ad accomodarsi: premi «Ferma musica»", "AmberBrush"));
+            steps.Add((0, "Inizio: se suona ancora, la musica si ferma da sola", "GreenBrush"));
+            var sorted = steps.OrderByDescending(x => x.Min).ToList();
+            return sorted.Select((x, i) => new TimelineStep(
+                x.Min == 0 ? "inizio" : x.Min < 1 ? "−0:30" : $"−{x.Min:0} min",
+                x.Text, Theming.UiTheme.Brush(x.Brush), i < sorted.Count - 1)).ToList();
+        }
+    }
+    public string ZoomScreen { get => Draft.ZoomScreen; set => Edit(s => s.ZoomScreen = (value ?? "").Trim()); }
+
+    /// <summary>Le righe lette dalla scheda «Schermi» di Zoom (più quella già scelta).</summary>
+    public List<string> ZoomScreens { get; private set => Set(ref field, value); } = [];
+
+    public ICommand TestWaitingMusicCommand => field ??= new RelayCommand(() => _main.StartWaitingMusic());
+
+    public ICommand ReadZoomScreensCommand => field ??= new RelayCommand(async () =>
+    {
+        try
+        {
+            var found = await MainViewModel.ReadZoomScreensAsync();
+            ZoomScreens = found;
+            if (ZoomScreen.Length == 0 && found.Count > 0) ZoomScreen = found[^1]; // di solito l'ultimo è lo schermo secondario
+            OnPropertyChanged(nameof(ZoomScreen));
+        }
+        // confine con Zoom: si dice cosa manca, il nome si può sempre scrivere a mano
+        catch (Exception e) { _main.ShowInfo($"Schermi di Zoom: {e.Message}. Entra in riunione e riprova, o scrivi il nome a mano."); }
+    });
 
     public IReadOnlyList<CountdownChoice> CountdownStyles { get; } = AllCountdownStyles;
 

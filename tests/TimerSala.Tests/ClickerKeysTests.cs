@@ -45,4 +45,14 @@ public class ClickerKeysTests
         Assert.Equal("VID 046D · PID C52B", ClickerKeys.ShortName(@"\\?\HID#VID_046D&PID_C52B&MI_00#7&2c0a2d6&0&0000#{884b96c3-56ef-11d1-bc8c-00a0c91405dd}"));
         Assert.Equal("dispositivo USB", ClickerKeys.ShortName("qualcosa"));
     }
+
+    [Fact]
+    public void Zoom_key_is_only_the_chosen_one_and_wins_over_defaults()
+    {
+        Assert.Equal(ClickerAction.Zoom, ClickerKeys.FromAssociatedDevice(0x42, [], [], [0x42]));       // B, schermo nero
+        Assert.Equal(ClickerAction.Zoom, ClickerKeys.FromAssociatedDevice(0x09, [], [], [0x09]));       // Tab tolto da «avanti»
+        Assert.DoesNotContain(0x09, ClickerKeys.KeysFor(ClickerAction.Forward, [], [], [0x09]));
+        Assert.Equal([0x09], ClickerKeys.KeysFor(ClickerAction.Zoom, [], [], [0x09]));
+        Assert.Empty(ClickerKeys.KeysFor(ClickerAction.Zoom, [], []));
+    }
 }

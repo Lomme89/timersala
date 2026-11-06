@@ -177,4 +177,57 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <!-- Pulsante Zoom: fa un passo alla volta; colore, icona e testo dicono quale -->
+    <Style x:Key="ZoomButton" TargetType="Button" BasedOn="{StaticResource FlatButton}">
+        <Setter Property="Command" Value="{Binding ZoomStepCommand}" />
+        <Setter Property="ToolTip" Value="{Binding ZoomTip}" />
+        <Setter Property="IsEnabled" Value="{Binding ZoomIdle}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding ZoomStep}" Value="StopMusic">
+                <Setter Property="Background" Value="{DynamicResource WaitBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding ZoomStep}" Value="StopShare">
+                <Setter Property="Background" Value="{DynamicResource StopBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding ZoomStep}" Value="EndMeeting">
+                <Setter Property="Background" Value="{DynamicResource EndBrush}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- tutte le azioni Zoom, per quando l'adunanza non va come previsto -->
+    <ContextMenu x:Key="ZoomMenu" x:Shared="False">
+        <MenuItem Command="{Binding WaitingMusicNowCommand}">
+            <MenuItem.Header>
+                <TextBlock><Run Text="&#xE8D6;" FontFamily="{StaticResource IconFont}" /><Run Text="   Muto e musica d'attesa ora" /></TextBlock>
+            </MenuItem.Header>
+        </MenuItem>
+        <MenuItem Command="{Binding StopMusicCommand}">
+            <MenuItem.Header>
+                <TextBlock><Run Text="&#xE769;" FontFamily="{StaticResource IconFont}" /><Run Text="   Ferma musica" /></TextBlock>
+            </MenuItem.Header>
+        </MenuItem>
+        <Separator />
+        <MenuItem Command="{Binding ShareScreenCommand}">
+            <MenuItem.Header>
+                <TextBlock><Run Text="&#xE7F4;" FontFamily="{StaticResource IconFont}" /><Run Text="   Condividi schermo" /></TextBlock>
+            </MenuItem.Header>
+        </MenuItem>
+        <MenuItem Command="{Binding StopShareCommand}">
+            <MenuItem.Header>
+                <TextBlock><Run Text="&#xE71A;" FontFamily="{StaticResource IconFont}" /><Run Text="   Interrompi condivisione" /></TextBlock>
+            </MenuItem.Header>
+        </MenuItem>
+        <Separator />
+        <MenuItem Command="{Binding EndMeetingZoomCommand}">
+            <MenuItem.Header>
+                <TextBlock><Run Text="&#xE74F;" FontFamily="{StaticResource IconFont}" /><Run Text="   Fine adunanza" /></TextBlock>
+            </MenuItem.Header>
+        </MenuItem>
+    </ContextMenu>
 </ResourceDictionary>

@@ -94,6 +94,8 @@ public static class Exchange
         s.ClickerDevice = current.ClickerDevice;
         s.ClickerForwardKeys = current.ClickerForwardKeys;
         s.ClickerBackKeys = current.ClickerBackKeys;
+        s.ClickerZoomKeys = current.ClickerZoomKeys;
+        s.ZoomScreen = current.ZoomScreen; // gli schermi cambiano da PC a PC
         return s;
     }
 

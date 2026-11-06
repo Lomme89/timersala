@@ -18,11 +18,10 @@ namespace TimerSala.App.Views;
 /// </summary>
 public partial class SettingsWindow : Window
 {
-    /// <summary>Sezioni della barra laterale, nell'ordine.</summary>
-    public enum Section { Meetings, Screen, Countdown, Messages, Voice, Network, Program }
 
     static readonly CultureInfo It = CultureInfo.GetCultureInfo("it-IT");
-    static Section _lastSection = Section.Meetings;
+    // la pagina aperta l'ultima volta (il Tag della voce nella barra laterale)
+    static string _lastPage = "Meetings";
 
     readonly MainViewModel _main;
     readonly SettingsViewModel _vm;
@@ -35,7 +34,7 @@ public partial class SettingsWindow : Window
     double _testPeak = -90;
     bool _testVoice;
 
-    public SettingsWindow(MainViewModel main, Section? section = null)
+    public SettingsWindow(MainViewModel main, string? page = null)
     {
         InitializeComponent();
         Interop.DarkTitleBar.HideIconWhenCreated(this);
@@ -52,21 +51,27 @@ public partial class SettingsWindow : Window
         PinBox.Text = _vm.RemotePin;
         ProfileNameBox.Text = main.ProfileName;
         _ready = true;
-        Nav.SelectedIndex = (int)(section ?? _lastSection);
+        ShowPage(page ?? _lastPage);
         UpdateVoiceTexts();
     }
 
     // ───── barra laterale ─────
 
+    void ShowPage(string page) =>
+        Nav.SelectedItem = Nav.Items.OfType<ListBoxItem>().FirstOrDefault(i => i.Tag as string == page) ?? Nav.Items.OfType<ListBoxItem>().First(i => i.Tag is string);
+
     void Nav_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (Nav.SelectedIndex < 0) return;
-        for (int i = 0; i < Pages.Children.Count; i++)
-            Pages.Children[i].Visibility = i == Nav.SelectedIndex ? Visibility.Visible : Visibility.Collapsed;
-        _lastSection = (Section)Nav.SelectedIndex;
+        // le intestazioni dei gruppi non hanno pagina
+        if (Nav.SelectedItem is not ListBoxItem { Tag: string page }) return;
+        foreach (FrameworkElement p in Pages.Children)
+            p.Visibility = p.Tag as string == page ? Visibility.Visible : Visibility.Collapsed;
+        _lastPage = page;
         if (!_ready) return;
-        if (_lastSection == Section.Voice) StartTest(); else StopTest();
+        if (page == "Voice") StartTest(); else StopTest();
     }
+
+    void GoToClicker_Click(object sender, RoutedEventArgs e) => ShowPage("Clicker");
 
     // ───── chiusura ─────
 
@@ -299,6 +304,12 @@ public partial class SettingsWindow : Window
         _main.StartClickerAssociation(ClickerAction.Back);
     }
 
+    void ClickerLearnZoom_Click(object sender, RoutedEventArgs e)
+    {
+        _vm.Flush();
+        _main.StartClickerAssociation(ClickerAction.Zoom);
+    }
+
     void ClickerResetKeys_Click(object sender, RoutedEventArgs e) => _main.ResetClickerKeys();
 
     void Training_Click(object sender, RoutedEventArgs e)
@@ -335,7 +346,7 @@ public partial class SettingsWindow : Window
 
     void VoiceDevice_Changed(object sender, SelectionChangedEventArgs e)
     {
-        if (_ready && _lastSection == Section.Voice) StartTest();
+        if (_ready && _lastPage == "Voice") StartTest();
     }
 
     void VoiceSlider_Changed(object sender, RoutedPropertyChangedEventArgs<double> e)

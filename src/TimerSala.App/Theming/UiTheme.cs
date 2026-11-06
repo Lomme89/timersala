@@ -39,6 +39,8 @@ public static class UiTheme
         ["StartBrush"] = ("#16A34A", "#16A34A"),
         ["StopBrush"] = ("#DC2626", "#DC2626"),
         ["WaitBrush"] = ("#B45309", "#B45309"),
+        // pulsante Zoom: condividi (AccentBrush), interrompi (StopBrush), musica (WaitBrush), fine adunanza
+        ["EndBrush"] = ("#7C3AED", "#6D28D9"),
     };
 
     static bool _prepared;

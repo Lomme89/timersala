@@ -658,6 +658,7 @@ public sealed partial class MainViewModel : ObservableObject
 
         RefreshScreenStyle();
         RefreshCountdown(s);
+        TickZoom(s);
         RefreshMessage();
         RefreshUndoStop();
         RefreshControllerCard(s);
@@ -1071,6 +1072,7 @@ public sealed partial class MainViewModel : ObservableObject
         settings.ClickerDevice = Settings.ClickerDevice;
         settings.ClickerForwardKeys = Settings.ClickerForwardKeys;
         settings.ClickerBackKeys = Settings.ClickerBackKeys;
+        settings.ClickerZoomKeys = Settings.ClickerZoomKeys;
         Settings = settings;
         OnPropertyChanged(nameof(MessagePresets));
         OnPropertyChanged(nameof(MessagesEnabled));

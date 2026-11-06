@@ -300,6 +300,8 @@ public partial class MainWindow : Window
         editor.ShowDialog();
     }
 
+    void ZoomMenu_Click(object sender, RoutedEventArgs e) => ZoomMenu.Open(sender);
+
     void Settings_Click(object sender, RoutedEventArgs e)
     {
         new SettingsWindow(_vm) { Owner = this }.ShowDialog();

@@ -1,5 +1,29 @@
 # Novità
 
+## v2.4.0-beta.1 — 6 novembre 2026 (anteprima)
+
+Ottava anteprima: TimerSala può pilotare Zoom e JW Library. Si attiva in *Impostazioni → Zoom e musica* e, se resta spento, non cambia nulla. Si può sempre tornare alla v1.14.0 senza perdere nulla.
+
+**Zoom e musica d'attesa**
+- Qualche minuto prima dell'inizio parte da sola la musica di JW Library; poi Zoom mette tutti muti, senza che possano riattivarsi, e manda la musica anche a casa. I due tempi si scelgono a parte (di solito 5 minuti, come il countdown).
+- La musica si ferma da sola allo scadere del countdown o quando avvii la prima parte; prima si ferma a mano, quando l'oratore invita ad accomodarsi.
+- Nel controller e nella mini un solo pulsante fa sempre il passo successivo: **Ferma musica** → **Condividi schermo** ⇄ **Interrompi** → dopo l'ultimo cantico **Fine adunanza** (tutti muti, ma possono riattivarsi per salutarsi). La freccia accanto ha tutte le azioni, per quando l'adunanza va diversamente.
+- Lo schermo condiviso è sempre lo stesso, scelto una volta nelle impostazioni («Leggi da Zoom» lo legge da Zoom), ottimizzato per i video e con il suono.
+- Se la condivisione viene interrotta da Zoom, il pulsante se ne accorge da solo.
+- Se Zoom non risponde subito, TimerSala riprova una volta da capo; se non riesce lo dice, e la cosa si fa a mano in Zoom.
+- «Prova ora» fa subito quello che farà il countdown: utile per controllare Zoom e l'audio prima dell'adunanza.
+- Serve Zoom in italiano, già in riunione come organizzatore.
+
+**Telecomando per presentazioni**
+- Un tasto del telecomando, scelto a mano, fa quello che dice il pulsante Zoom: per condividere senza toccare il mouse.
+- I tasti assegnati si vedono come tasti veri, con un colore per ogni azione.
+
+**Impostazioni**
+- Barra laterale divisa per gruppi: Adunanza, In sala, Regia, Sistema.
+- «Countdown» diventa «Prima dell'inizio» e contiene anche la lista di controllo.
+- Pagine nuove «Zoom e musica», con una linea del tempo di quello che succede prima dell'inizio, e «Telecomando».
+- Gli orari delle due adunanze sono in due riquadri affiancati, ciascuno con l'ora in cui finisce.
+
 ## v2.3.0-beta.4 — 14 ottobre 2026 (anteprima)
 
 Settima anteprima: una correzione. Si può sempre tornare alla v1.14.0 senza perdere nulla.

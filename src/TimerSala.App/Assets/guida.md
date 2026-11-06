@@ -10,7 +10,7 @@
 ## Telecomando per presentazioni
 
 - **Avanti** (Pagina giù) avvia o ferma, come il pulsante Avvia. **Indietro** (Pagina su) è Annulla.
-- In *Impostazioni → Programma* puoi **associare** il telecomando: così funziona anche con JW Library o Zoom in primo piano.
+- In *Impostazioni → Telecomando* puoi **associare** il telecomando: così funziona anche con JW Library o Zoom in primo piano. Lì puoi scegliere anche un tasto per il pulsante Zoom.
 
 ## Imprevisti
 
@@ -23,9 +23,14 @@ Ogni azione chiede conferma e si può annullare.
 
 ## Prima di iniziare
 
-- Il **countdown** compare da solo qualche minuto prima dell'inizio (*Impostazioni → Countdown*).
-- La **lista di controllo** (pulsante ☑ in alto) ricorda microfoni, Zoom, video e schermo. Le voci si cambiano in *Impostazioni → Adunanze*.
+- Il **countdown** compare da solo qualche minuto prima dell'inizio (*Impostazioni → Prima dell'inizio*).
+- La **lista di controllo** (pulsante ☑ in alto) ricorda microfoni, Zoom, video e schermo. Le voci si cambiano in *Impostazioni → Prima dell'inizio*.
 - Se lo schema supera la durata dell'adunanza, accanto alla settimana compare **«min oltre»**: si sistema nell'editor.
+
+## Zoom e musica
+
+- Se attivo (*Impostazioni → Zoom e musica*), prima dell'inizio parte la musica di JW Library e Zoom muta tutti mandando la musica anche a casa.
+- Nel controller e nella mini un solo pulsante fa il passo successivo: **Ferma musica** → **Condividi schermo** ⇄ **Interrompi** → dopo l'ultimo cantico **Fine adunanza**. La freccia accanto ha tutte le azioni.
 
 ## Messaggi all'oratore
 

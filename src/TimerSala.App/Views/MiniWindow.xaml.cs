@@ -59,6 +59,8 @@ public partial class MiniWindow : Window
         e.Handled = true;
     }
 
+    void ZoomMenu_Click(object sender, RoutedEventArgs e) => ZoomMenu.Open(sender);
+
     void DragBar_MouseDown(object sender, MouseButtonEventArgs e)
     {
         if (e.ButtonState == MouseButtonState.Pressed) DragMove();

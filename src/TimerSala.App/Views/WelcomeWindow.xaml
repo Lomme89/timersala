@@ -108,7 +108,7 @@
             <StackPanel Visibility="{Binding IsPhoneStep, Converter={StaticResource BoolToVis}}">
                 <TextBlock Style="{StaticResource StepTitle}" Text="Prova con il telefono" />
                 <TextBlock Style="{StaticResource StepText}"
-                           Text="Collega il telefono alla stessa rete Wi-Fi del PC e inquadra il codice: vedrai il timer in tempo reale. Il codice per comandarlo, con il PIN, è nell'icona della rete in alto nel controller." />
+                           Text="Collega il telefono alla stessa rete Wi-Fi del PC e inquadra il codice per vedere il timer. Il codice per comandarlo, con il PIN, è nell'icona della rete in alto nel controller." />
                 <StackPanel Orientation="Horizontal" Visibility="{Binding HasWebUrl, Converter={StaticResource BoolToVis}}">
                     <Border Background="White" CornerRadius="8" Padding="6">
                         <Image x:Name="QrImage" Width="190" Height="190" RenderOptions.BitmapScalingMode="NearestNeighbor" />
@@ -118,7 +118,7 @@
                         <TextBlock Text="{Binding WebUrl}" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,4,0,0" />
                     </StackPanel>
                 </StackPanel>
-                <TextBlock Style="{StaticResource StepText}" x:Name="NoWebText" Text="Il timer in rete è spento: si accende in Impostazioni → Rete e telefono. Puoi saltare questo passo." />
+                <TextBlock Style="{StaticResource StepText}" x:Name="NoWebText" Text="Il timer in rete è spento. Puoi accenderlo in Impostazioni → Rete e telefono, oppure saltare questo passo." />
             </StackPanel>
 
             <!-- 4 · fine -->

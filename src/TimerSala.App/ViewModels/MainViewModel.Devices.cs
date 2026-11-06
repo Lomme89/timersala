@@ -29,14 +29,14 @@ public sealed partial class MainViewModel
             SaveSettings();
             OnPropertyChanged();
             OnPropertyChanged(nameof(ControlUrl));
-            ShowStatus(value ? "Comandi dal telefono attivi." : "Comandi dal telefono bloccati: i telefoni vedono soltanto il timer.");
+            ShowStatus(value ? "Comandi dal telefono attivi." : "Comandi dal telefono bloccati. I telefoni vedono solo il timer.");
         }
     }
     public bool HasTrustedDevices { get; private set => Set(ref field, value); }
 
     public ICommand RevokeDeviceCommand => field ??= new RelayCommand(p =>
     {
-        if (p is string id && _devices?.Revoke(id) == true) ShowStatus("Dispositivo revocato: per comandare dovrà inserire di nuovo il PIN.");
+        if (p is string id && _devices?.Revoke(id) == true) ShowStatus("Dispositivo revocato. Per comandare dovrà rimettere il PIN.");
     });
 
     public ICommand RevokeAllDevicesCommand => field ??= new RelayCommand(() =>

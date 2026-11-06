@@ -258,6 +258,47 @@ public class WindowsSmokeTests
         settings.Close();
         Pump();
 
+        // installer: ogni schermata (si apre soltanto, non installa nulla)
+        Stage("installer: tutte le schermate");
+        var old = new TimerSala.App.Interop.Setup.InstalledCopy(@"C:\Users\sala\AppData\Local\Programs\TimerSala", "2.3.0-beta.4");
+        var newer = old with { Version = "9.0.0" };
+        var setups = new (string Name, TimerSala.Core.Info.SetupKind? Kind, TimerSala.App.Interop.Setup.InstalledCopy? Installed, bool Running, Action<SetupWindow>? Then)[]
+        {
+            ("Setup-1-installa", TimerSala.Core.Info.SetupKind.Install, null, false, null),
+            ("Setup-2-opzioni", TimerSala.Core.Info.SetupKind.Install, null, false, w => w.OptionsToggle.IsChecked = true),
+            ("Setup-3-aggiorna", TimerSala.Core.Info.SetupKind.Upgrade, old, true, null),
+            ("Setup-4-al-lavoro", TimerSala.Core.Info.SetupKind.Upgrade, old, false, w => { w.ShowWork("Aggiornamento…"); w.WorkStep.Text = "Copia del programma"; }),
+            ("Setup-5-fatto", TimerSala.Core.Info.SetupKind.Upgrade, old, false, w => w.ShowDone(true, "Aggiornato alla 2.4.0-beta.1", "Impostazioni e schemi sono quelli di prima.", "Apri TimerSala")),
+            ("Setup-6-gia-installato", TimerSala.Core.Info.SetupKind.Reinstall, old with { Version = "2.4.0-beta.1" }, false, null),
+            ("Setup-7-piu-recente", TimerSala.Core.Info.SetupKind.Downgrade, newer, false, null),
+            ("Setup-8-disinstalla", null, old, false, null),
+            ("Setup-9-errore", TimerSala.Core.Info.SetupKind.Install, null, false, w => w.ShowDone(false, "Non è andata", @"Non posso scrivere in «D:\TimerSala». Scegli un'altra cartella in «Opzioni».", "Riprova")),
+        };
+        foreach (var (name, kind, installed, running, then) in setups)
+        {
+            var setup = new SetupWindow(kind, "2.4.0-beta.1", installed, running);
+            setup.Show();
+            then?.Invoke(setup);
+            Pump(450);
+            if (snaps is { Length: > 0 }) Snapshot(setup, Path.Combine(snaps, name + ".png"));
+            setup.Close();
+            Pump();
+        }
+        // copia messa a mano in C:\TimerSala: si aggiorna lì; o è proprio questa, e si registra dov'è
+        foreach (var (name, setup) in new[]
+        {
+            ("Setup-3b-aggiorna-copia-a-mano", new SetupWindow(TimerSala.Core.Info.SetupKind.Upgrade, "2.4.0-beta.1",
+                new TimerSala.App.Interop.Setup.InstalledCopy(@"C:\TimerSala", "2.3.0-beta.4", Manual: true), true)),
+            ("Setup-1b-registra-qui", new SetupWindow(TimerSala.Core.Info.SetupKind.Install, "2.4.0-beta.1", null, false, @"C:\TimerSala")),
+        })
+        {
+            setup.Show();
+            Pump(450);
+            if (snaps is { Length: > 0 }) Snapshot(setup, Path.Combine(snaps, name + ".png"));
+            setup.Close();
+            Pump();
+        }
+
         // editor e modifica di una parte
         Stage("editor e modifica di una parte");
         var editor = new EditorWindow(vm) { Owner = main };

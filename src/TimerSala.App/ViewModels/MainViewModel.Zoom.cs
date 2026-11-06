@@ -51,9 +51,9 @@ public sealed partial class MainViewModel
             : ZoomStep.ShareScreen;
         (ZoomIcon, ZoomText, ZoomTip) = ZoomStep switch
         {
-            ZoomStep.StopMusic => ("", "Ferma musica", "Quando l'oratore invita ad accomodarsi: ferma JW Library e l'audio condiviso. All'inizio si ferma da sola"),
+            ZoomStep.StopMusic => ("", "Ferma musica", "Ferma la musica e l'audio condiviso quando l'oratore invita ad accomodarsi. All'inizio si ferma da sola"),
             ZoomStep.StopShare => ("", "Interrompi condivisione", "Interrompe la condivisione dello schermo in Zoom"),
-            ZoomStep.EndMeeting => ("", "Fine adunanza", "Dopo il cantico e la preghiera: muta tutti lasciando che si riattivino per salutarsi"),
+            ZoomStep.EndMeeting => ("", "Fine adunanza", "Dopo cantico e preghiera mette tutti muti, liberi di riattivarsi per salutarsi"),
             _ => ("", "Condividi schermo", "Condivide in Zoom lo schermo scelto nelle impostazioni, con il suono"),
         };
         if (ZoomBusy) (ZoomIcon, ZoomText) = ("", "Zoom…");

@@ -35,7 +35,7 @@ public sealed partial class MainViewModel
         UpdateAdaptiveParts();
         RebuildParts();
         RefreshDisplay();
-        ShowStatus("Addestramento: le parti durano un decimo del solito e niente viene salvato.");
+        ShowStatus("Addestramento avviato. Le parti durano un decimo del solito e non si salva niente.");
         return null;
     }
 
@@ -55,7 +55,7 @@ public sealed partial class MainViewModel
         RebuildParts();
         UpdateWeekTexts();
         RefreshDisplay();
-        ShowStatus("Addestramento finito: tutto è tornato com'era.");
+        ShowStatus("Addestramento finito, tutto è tornato com'era.");
     }
 
     /// <summary>Le azioni che toccano schemi e settimane non si fanno durante l'addestramento.</summary>

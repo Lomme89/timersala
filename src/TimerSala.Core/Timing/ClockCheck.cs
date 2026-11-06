@@ -60,7 +60,7 @@ public static class ClockCheck
         string amount = minutes >= 60 ? hours == 1 ? "1 ora" : $"{hours} ore"
             : minutes == 1 ? "1 minuto" : $"{minutes} minuti";
         string way = o > TimeSpan.Zero ? "avanti" : "indietro";
-        return $"L'orologio del PC è {way} di {amount}: countdown d'inizio e fine prevista saranno sbagliati. " +
+        return $"L'orologio del PC è {way} di {amount}, quindi countdown e fine prevista saranno sbagliati. " +
                "Correggilo in Impostazioni di Windows → Data e ora → Sincronizza ora.";
     }
 }

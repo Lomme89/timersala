@@ -55,7 +55,7 @@ public static class HelpActions
     public static void Report(Window owner, MainViewModel vm, bool isProblem)
     {
         var ask = (isProblem
-                      ? "Si apre GitHub con una segnalazione già preparata: versione, sistema, impostazioni principali ed errori recenti (mai il PIN).\n\n"
+                      ? "Si apre GitHub con una segnalazione già compilata con versione, sistema, impostazioni principali ed errori recenti, senza il PIN.\n\n"
                       : "Si apre GitHub con un suggerimento da completare.\n\n")
                   + "Serve un account GitHub (gratuito) e quello che scrivi sarà pubblico. Continuare?";
         if (ThemedDialog.Show(owner, ask, "TimerSala", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;

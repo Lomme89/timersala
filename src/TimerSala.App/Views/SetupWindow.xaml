@@ -1,0 +1,210 @@
+<Window x:Class="TimerSala.App.Views.SetupWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="TimerSala" Width="780" Height="500" ResizeMode="NoResize" WindowStyle="None"
+        WindowStartupLocation="CenterScreen" Icon="/Assets/timersala.ico"
+        Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}" FontFamily="{StaticResource UiFont}"
+        UseLayoutRounding="True" TextOptions.TextFormattingMode="Display">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <Style x:Key="Title" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="27" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+        <Style x:Key="Lead" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14.5" />
+            <Setter Property="Foreground" Value="{DynamicResource SoftTextBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Margin" Value="0,8,0,0" />
+            <Setter Property="LineHeight" Value="21" />
+        </Style>
+        <Style x:Key="Primary" TargetType="Button" BasedOn="{StaticResource FlatButton}">
+            <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Height" Value="44" />
+            <Setter Property="MinWidth" Value="170" />
+            <Setter Property="Padding" Value="22,0" />
+        </Style>
+        <!-- un vantaggio in una riga: icona in un tondo, testo accanto -->
+        <Style x:Key="PointIcon" TargetType="Border">
+            <Setter Property="Width" Value="30" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="CornerRadius" Value="15" />
+            <Setter Property="Background" Value="{DynamicResource SubtleBrush}" />
+            <Setter Property="Margin" Value="0,0,12,0" />
+        </Style>
+        <Style x:Key="PointGlyph" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="{StaticResource IconFont}" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="PointText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13.5" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="270" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- ═════ marchio: sfumatura, icona, cifre del timer in filigrana ═════ -->
+        <Border x:Name="Hero" ClipToBounds="True" MouseLeftButtonDown="Drag_MouseDown">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#1D4ED8" Offset="0" />
+                    <GradientStop Color="#4338CA" Offset="0.55" />
+                    <GradientStop Color="#6D28D9" Offset="1" />
+                </LinearGradientBrush>
+            </Border.Background>
+            <Grid>
+                <!-- luce morbida in alto, per dare profondità -->
+                <Ellipse Width="420" Height="420" Margin="-170,-210,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Opacity="0.35">
+                    <Ellipse.Fill>
+                        <RadialGradientBrush>
+                            <GradientStop Color="#93C5FD" Offset="0" />
+                            <GradientStop Color="#0093C5FD" Offset="1" />
+                        </RadialGradientBrush>
+                    </Ellipse.Fill>
+                </Ellipse>
+                <!-- le cifre del timer, grandi e appena visibili, tagliate dal bordo -->
+                <TextBlock Text="5:00" FontFamily="{StaticResource DigitsFont}" FontSize="138" Foreground="White" Opacity="0.08"
+                           VerticalAlignment="Bottom" Margin="18,0,-40,-30" />
+                <Border Height="5" VerticalAlignment="Bottom" Margin="30,0,30,34" CornerRadius="2.5" Background="#33FFFFFF">
+                    <Border x:Name="HeroBar" HorizontalAlignment="Left" Width="140" CornerRadius="2.5" Background="#CCFFFFFF" />
+                </Border>
+                <StackPanel Margin="30,34,24,0">
+                    <Border Width="56" Height="56" CornerRadius="14" Background="#26FFFFFF" HorizontalAlignment="Left">
+                        <Image Source="/Assets/timersala.ico" Width="34" Height="34" RenderOptions.BitmapScalingMode="HighQuality" />
+                    </Border>
+                    <TextBlock Text="TimerSala" Foreground="White" FontSize="30" FontWeight="SemiBold" Margin="0,22,0,0" />
+                    <TextBlock Text="Il timer per le adunanze" Foreground="#D9FFFFFF" FontSize="14.5" Margin="0,4,0,0" />
+                    <Border HorizontalAlignment="Left" CornerRadius="11" Background="#26FFFFFF" Padding="10,3" Margin="0,18,0,0">
+                        <TextBlock x:Name="HeroVersion" Foreground="White" FontSize="12.5" FontWeight="SemiBold" />
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ═════ contenuto ═════ -->
+        <Grid Grid.Column="1" Background="Transparent" MouseLeftButtonDown="Drag_MouseDown">
+            <Button Style="{StaticResource GhostIconButton}" Content="&#xE8BB;" FontSize="11" Width="40" Height="34" HorizontalAlignment="Right" VerticalAlignment="Top"
+                    Margin="0,6,6,0" Click="Close_Click" ToolTip="Chiudi" Panel.ZIndex="1" />
+
+            <!-- scelta: installa, aggiorna, reinstalla, versione più vecchia, disinstalla -->
+            <DockPanel x:Name="ChoosePage" Margin="40,40,40,32">
+                <DockPanel DockPanel.Dock="Bottom" LastChildFill="False">
+                    <Button x:Name="PrimaryButton" DockPanel.Dock="Right" Style="{StaticResource Primary}" Click="Primary_Click" IsDefault="True" />
+                    <Button x:Name="SecondaryButton" DockPanel.Dock="Left" Style="{StaticResource LinkButton}" VerticalAlignment="Center" Click="Secondary_Click" />
+                </DockPanel>
+
+                <StackPanel>
+                    <TextBlock x:Name="ChooseTitle" Style="{StaticResource Title}" />
+                    <TextBlock x:Name="ChooseLead" Style="{StaticResource Lead}" />
+
+                    <!-- aggiornamento: da quale versione a quale -->
+                    <StackPanel x:Name="VersionsRow" Orientation="Horizontal" Margin="0,16,0,0" Visibility="Collapsed">
+                        <Border CornerRadius="8" Background="{DynamicResource SubtleBrush}" Padding="10,4">
+                            <TextBlock x:Name="FromVersion" FontSize="13" Foreground="{DynamicResource MutedBrush}" FontFamily="{StaticResource DigitsFont}" />
+                        </Border>
+                        <TextBlock Text="&#xE72A;" FontFamily="{StaticResource IconFont}" FontSize="12" Foreground="{DynamicResource MutedBrush}" VerticalAlignment="Center" Margin="10,0" />
+                        <Border CornerRadius="8" Background="{DynamicResource AccentBrush}" Padding="10,4">
+                            <TextBlock x:Name="ToVersion" FontSize="13" Foreground="White" FontWeight="SemiBold" FontFamily="{StaticResource DigitsFont}" />
+                        </Border>
+                    </StackPanel>
+
+                    <!-- prima installazione: tre cose da sapere, niente di più -->
+                    <StackPanel x:Name="Points" Margin="0,22,0,0">
+                        <DockPanel Margin="0,0,0,10">
+                            <Border Style="{StaticResource PointIcon}"><TextBlock Style="{StaticResource PointGlyph}" Text="&#xE72E;" /></Border>
+                            <TextBlock Style="{StaticResource PointText}" Text="Senza permessi da amministratore, solo per questo utente" />
+                        </DockPanel>
+                        <DockPanel Margin="0,0,0,10">
+                            <Border Style="{StaticResource PointIcon}"><TextBlock Style="{StaticResource PointGlyph}" Text="&#xE8B7;" /></Border>
+                            <TextBlock Style="{StaticResource PointText}" Text="Aggiornando non perdi impostazioni e schemi" />
+                        </DockPanel>
+                        <DockPanel>
+                            <Border Style="{StaticResource PointIcon}"><TextBlock Style="{StaticResource PointGlyph}" Text="&#xE777;" /></Border>
+                            <TextBlock Style="{StaticResource PointText}" Text="Per aggiornare basta aprire il file della nuova versione" />
+                        </DockPanel>
+                    </StackPanel>
+
+                    <!-- aggiornamento: le novità, prese dal changelog -->
+                    <Border x:Name="NewsBox" Margin="0,16,0,0" CornerRadius="10" Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource LineBrush}"
+                            BorderThickness="1" Visibility="Collapsed">
+                        <ScrollViewer x:Name="NewsScroll" MaxHeight="168" VerticalScrollBarVisibility="Auto" Padding="16,12,10,12">
+                            <StackPanel x:Name="NewsPanel" />
+                        </ScrollViewer>
+                    </Border>
+
+                    <!-- TimerSala aperto: si chiude e si riapre da solo -->
+                    <Border x:Name="RunningNote" Margin="0,14,0,0" CornerRadius="8" Background="#1FFBBF24" BorderBrush="#55FBBF24" BorderThickness="1" Padding="12,8"
+                            Visibility="Collapsed">
+                        <TextBlock FontSize="13" TextWrapping="Wrap" Foreground="{DynamicResource AmberBrush}">
+                            <Run Text="&#xE7BA;" FontFamily="{StaticResource IconFont}" /><Run Text="  TimerSala è aperto. Verrà chiuso e riaperto, e se c'è una parte in corso chiederà conferma." />
+                        </TextBlock>
+                    </Border>
+
+                    <!-- opzioni: chiuse finché non servono -->
+                    <ToggleButton x:Name="OptionsToggle" Margin="0,18,0,0" HorizontalAlignment="Left" Cursor="Hand" Focusable="True">
+                        <ToggleButton.Template>
+                            <ControlTemplate TargetType="ToggleButton">
+                                <StackPanel Orientation="Horizontal" Background="Transparent">
+                                    <TextBlock Text="Opzioni" FontSize="13.5" Foreground="{DynamicResource AccentBrush}" />
+                                    <TextBlock x:Name="Chevron" Text="&#xE70D;" FontFamily="{StaticResource IconFont}" FontSize="10" Foreground="{DynamicResource AccentBrush}"
+                                               VerticalAlignment="Center" Margin="6,2,0,0" />
+                                </StackPanel>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsChecked" Value="True">
+                                        <Setter TargetName="Chevron" Property="Text" Value="&#xE70E;" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </ToggleButton.Template>
+                    </ToggleButton>
+                    <StackPanel x:Name="Options" Margin="0,10,0,0" Visibility="{Binding IsChecked, ElementName=OptionsToggle, Converter={StaticResource BoolToVis}}">
+                        <TextBlock Text="Cartella" FontSize="12.5" Foreground="{DynamicResource MutedBrush}" Margin="0,0,0,4" />
+                        <DockPanel>
+                            <Button x:Name="BrowseButton" DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Sfoglia…" Padding="14,0" Margin="8,0,0,0" Click="Browse_Click" />
+                            <TextBox x:Name="FolderBox" Height="34" VerticalContentAlignment="Center" Padding="8,0" FontSize="13" />
+                        </DockPanel>
+                        <CheckBox x:Name="DesktopBox" Content="Collegamento sul desktop" IsChecked="True" Margin="0,12,0,0" FontSize="13.5"
+                                  Foreground="{DynamicResource TextBrush}" />
+                    </StackPanel>
+                </StackPanel>
+            </DockPanel>
+
+            <!-- al lavoro -->
+            <StackPanel x:Name="WorkPage" Margin="40,0" VerticalAlignment="Center" Visibility="Collapsed">
+                <TextBlock x:Name="WorkTitle" Style="{StaticResource Title}" />
+                <ProgressBar x:Name="WorkBar" Style="{StaticResource SlimProgress}" Margin="0,22,0,0" Height="6" Maximum="3" Foreground="{DynamicResource AccentBrush}" />
+                <TextBlock x:Name="WorkStep" Style="{StaticResource Lead}" Margin="0,12,0,0" />
+            </StackPanel>
+
+            <!-- fatto, o qualcosa è andato storto -->
+            <DockPanel x:Name="DonePage" Margin="40,40,40,32" Visibility="Collapsed">
+                <DockPanel DockPanel.Dock="Bottom" LastChildFill="False">
+                    <Button x:Name="DonePrimary" DockPanel.Dock="Right" Style="{StaticResource Primary}" Click="DonePrimary_Click" IsDefault="True" />
+                    <Button x:Name="DoneSecondary" DockPanel.Dock="Left" Style="{StaticResource LinkButton}" VerticalAlignment="Center" Content="Chiudi" Click="Close_Click" />
+                </DockPanel>
+                <StackPanel VerticalAlignment="Center">
+                    <Border x:Name="DoneBadge" Width="68" Height="68" CornerRadius="34" HorizontalAlignment="Left" Background="{DynamicResource StartBrush}">
+                        <TextBlock x:Name="DoneGlyph" Text="&#xE73E;" FontFamily="{StaticResource IconFont}" FontSize="30" Foreground="White"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <TextBlock x:Name="DoneTitle" Style="{StaticResource Title}" Margin="0,22,0,0" />
+                    <TextBlock x:Name="DoneLead" Style="{StaticResource Lead}" />
+                </StackPanel>
+            </DockPanel>
+        </Grid>
+    </Grid>
+</Window>

@@ -30,7 +30,7 @@ public sealed partial class MainViewModel
     public string ClickerForwardText => ClickerKeysText(ClickerAction.Forward);
     public string ClickerBackText => ClickerKeysText(ClickerAction.Back);
     public string ClickerZoomText => ClickerKeysText(ClickerAction.Zoom) is { Length: > 0 } t ? t
-        : ClickerZoomCaps.Count == 0 ? "Nessuno: premi «Scegli» e poi il tasto sul telecomando" : "";
+        : ClickerZoomCaps.Count == 0 ? "Nessuno. Premi «Scegli» e poi il tasto sul telecomando" : "";
 
     /// <summary>I tasti di ogni azione, da mostrare come tasti veri (vuoti mentre se ne sceglie uno).</summary>
     public IReadOnlyList<string> ClickerForwardCaps => ClickerCaps(ClickerAction.Forward);
@@ -102,7 +102,7 @@ public sealed partial class MainViewModel
             {
                 if (DateTime.UtcNow <= _associateUntil) { UpdateClickerStatus(); return; }
                 StopAssociation();
-                ShowStatus("Nessun tasto del telecomando ricevuto: associazione annullata.", error: true);
+                ShowStatus("Dal telecomando non è arrivato nessun tasto, associazione annullata.", error: true);
             };
         }
         _associateTimer.Start();
@@ -144,7 +144,7 @@ public sealed partial class MainViewModel
                 // lettere e numeri no: il dispositivo verrebbe preso per una tastiera e l'associazione annullata
                 if (ClickerKeys.IsTypingKey(vkey))
                 {
-                    _associateHint = $"\n«{ClickerKeys.Name(vkey)}» non va bene: lettere e numeri sono della tastiera.";
+                    _associateHint = $"\n«{ClickerKeys.Name(vkey)}» non va bene, lettere e numeri sono della tastiera.";
                     UpdateClickerStatus();
                     return;
                 }
@@ -161,7 +161,7 @@ public sealed partial class MainViewModel
             // si associa solo premendo un tasto da telecomando (avanti o indietro); gli altri si mostrano, così si vede che arrivano
             if (ClickerFromDevice(vkey) == ClickerAction.None)
             {
-                _associateHint = $"\nRicevuto «{ClickerKeys.Name(vkey)}», che non è tra i tasti avanti/indietro: sceglilo qui sotto con «Scegli».";
+                _associateHint = $"\nRicevuto «{ClickerKeys.Name(vkey)}», che non è un tasto avanti o indietro. Puoi assegnarlo qui sotto con «Scegli».";
                 UpdateClickerStatus();
                 return;
             }
@@ -175,7 +175,7 @@ public sealed partial class MainViewModel
         if (ClickerKeys.IsTypingKey(vkey))
         {
             ForgetClicker();
-            ShowStatus("Il dispositivo associato come telecomando è una tastiera: associazione annullata. Riassocia premendo un tasto del telecomando.", error: true);
+            ShowStatus("Il dispositivo associato è una tastiera, quindi l'associazione è annullata. Riassocia premendo un tasto del telecomando.", error: true);
             return;
         }
         var action = ClickerFromDevice(vkey);

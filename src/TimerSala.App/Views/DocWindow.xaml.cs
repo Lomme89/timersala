@@ -40,7 +40,7 @@ public partial class DocWindow : Window
     /// <summary>Guida rapida dentro il programma.</summary>
     public static DocWindow Help()
     {
-        var w = new DocWindow("Guida rapida", "Le funzioni principali e i tasti. Per il resto passa il mouse sui pulsanti: c'è sempre una spiegazione.");
+        var w = new DocWindow("Guida rapida", "Le funzioni principali e i tasti. Per il resto, passando il mouse su un pulsante compare la spiegazione.");
         MarkdownView.Render(w.Body, Resource("guida.md"));
         return w;
     }

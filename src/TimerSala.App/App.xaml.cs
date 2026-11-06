@@ -18,7 +18,10 @@ public partial class App : Application
     const string InstanceName = @"Local\TimerSala.Instance";
     const string CommandEventPrefix = @"Local\TimerSala.";
     // comandi accettati dalla riga di comando (anche dal menu dell'icona): «mostra» porta solo in primo piano
-    static readonly string[] Commands = ["mostra", "schermo", "mini", "telefono"];
+    // «esci»: l'installer chiede di chiudersi per aggiornare (con la stessa conferma di chi chiude a mano)
+    static readonly string[] Commands = ["mostra", "schermo", "mini", "telefono", "esci"];
+
+    internal static string CommandEventName(string command) => CommandEventPrefix + command;
     Mutex? _instance;
     EventWaitHandle[] _commandEvents = [];
 
@@ -47,6 +50,17 @@ public partial class App : Application
     {
         base.OnStartup(e);
         if (SkipStartup) return;
+
+        // aperto il file scaricato (o «Disinstalla» da App installate): l'installer al posto del programma
+        if (SetupWindow.ForStartup(e.Args) is { } setup)
+        {
+            Theming.UiTheme.Apply(Core.Storage.ControllerTheme.Dark, 1);
+            DispatcherUnhandledException += OnUnhandled;
+            EventManager.RegisterClassHandler(typeof(Window), FrameworkElement.LoadedEvent, new RoutedEventHandler(OnWindowLoaded));
+            MainWindow = setup;
+            setup.Show();
+            return;
+        }
         _instance = new Mutex(true, InstanceName, out bool first);
         _commandEvents = Commands.Select(c => new EventWaitHandle(false, EventResetMode.AutoReset, CommandEventPrefix + c)).ToArray();
         if (!first)

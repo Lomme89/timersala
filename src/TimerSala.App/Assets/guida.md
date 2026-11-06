@@ -25,7 +25,7 @@ Ogni azione chiede conferma e si può annullare.
 
 - Il **countdown** compare da solo qualche minuto prima dell'inizio (*Impostazioni → Prima dell'inizio*).
 - La **lista di controllo** (pulsante ☑ in alto) ricorda microfoni, Zoom, video e schermo. Le voci si cambiano in *Impostazioni → Prima dell'inizio*.
-- Se lo schema supera la durata dell'adunanza, accanto alla settimana compare **«min oltre»**: si sistema nell'editor.
+- Se lo schema supera la durata dell'adunanza, accanto alla settimana compare **«min oltre»**. Puoi sistemarlo nell'editor.
 
 ## Zoom e musica
 
@@ -34,14 +34,14 @@ Ogni azione chiede conferma e si può annullare.
 
 ## Messaggi all'oratore
 
-- Scrivi nella riga dei messaggi e premi Invio: compare in una fascia gialla sullo schermo della sala.
-- **Ctrl+Invio** lo manda a tutto schermo per qualche secondo: utile anche per il numero di un cantico.
+- Scrivi nella riga dei messaggi e premi Invio. Il messaggio compare in una fascia gialla sullo schermo della sala.
+- **Ctrl+Invio** lo manda a tutto schermo per qualche secondo, per esempio per il numero di un cantico.
 - Le frasi pronte si cambiano in *Impostazioni → Messaggi*.
 
 ## Telefono e tablet
 
 - L'icona della rete in alto mostra indirizzo e codici QR.
-- Il QR **Vedi il timer** si può stampare e lasciare al leggio; quello di **controllo** contiene il PIN: mostralo solo a chi serve.
+- Il QR **Vedi il timer** si può stampare e lasciare al leggio; quello di **controllo** contiene il PIN, quindi mostralo solo a chi serve.
 - Sui tablet la pagina si può aggiungere alla schermata Home e tenere sempre accesa.
 
 ## Editor dello schema (E)
@@ -60,9 +60,9 @@ Ogni azione chiede conferma e si può annullare.
 ## Evento fuori programma
 
 - Per un discorso di matrimonio, di funerale o altro: apri il riquadro della settimana (la freccia accanto alla data) e premi **Evento fuori programma**. C'è anche nel menu del tasto destro su una parte.
-- Scrivi titolo, ora d'inizio e parti con le durate, poi **Inizia**: countdown, schermo e telefono funzionano come sempre.
+- Scrivi titolo, ora d'inizio e parti con le durate, poi premi **Inizia**. Countdown, schermo e telefono funzionano come sempre.
 - Lo schema della settimana non viene toccato. Alla fine **Torna all'adunanza** riporta tutto com'era.
 
 ## Avvio con la voce (beta)
 
-Premi Avvia mentre il presidente presenta la parte: dopo una pausa, la prima voce fa partire il timer. Si attiva in *Impostazioni → Voce*.
+Premi Avvia mentre il presidente presenta la parte. Dopo una pausa, la prima voce fa partire il timer. Si attiva in *Impostazioni → Voce*.

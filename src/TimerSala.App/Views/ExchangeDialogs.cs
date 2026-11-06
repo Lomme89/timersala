@@ -14,7 +14,7 @@ public static class ExchangeDialogs
 
     public static void ExportBackup(Window owner, MainViewModel vm) =>
         Save(owner, $"TimerSala backup {DateTime.Today:yyyy-MM-dd}", () => vm.CreateBackup(),
-            "Backup salvato. Contiene anche il PIN del controllo remoto: conservalo con cura.");
+            "Backup salvato. Contiene anche il PIN del controllo remoto, quindi conservalo con cura.");
 
     public static void ExportWeek(Window owner, MainViewModel vm) =>
         Save(owner, $"TimerSala settimana {vm.Week.WeekStart:yyyy-MM-dd}", () => vm.CreateWeekExport(),

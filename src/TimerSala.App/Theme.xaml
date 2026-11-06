@@ -204,7 +204,7 @@
     <ContextMenu x:Key="ZoomMenu" x:Shared="False">
         <MenuItem Command="{Binding WaitingMusicNowCommand}">
             <MenuItem.Header>
-                <TextBlock><Run Text="&#xE8D6;" FontFamily="{StaticResource IconFont}" /><Run Text="   Muto e musica d'attesa ora" /></TextBlock>
+                <TextBlock><Run Text="&#xE8D6;" FontFamily="{StaticResource IconFont}" /><Run Text="   Muta tutti e avvia la musica" /></TextBlock>
             </MenuItem.Header>
         </MenuItem>
         <MenuItem Command="{Binding StopMusicCommand}">

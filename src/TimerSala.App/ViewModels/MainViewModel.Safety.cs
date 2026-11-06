@@ -44,7 +44,7 @@ public sealed partial class MainViewModel
         {
             // la parte successiva potrebbe essere già in attesa della voce
             if (IsVoiceArmed) Disarm();
-            if (Timer.UndoStop()) ShowStatus("Fermata annullata: il tempo continua da dove era.");
+            if (Timer.UndoStop()) ShowStatus("Fermata annullata, il tempo riprende da dove era.");
         }
         else if (_offer is { } offer && DateTime.UtcNow < offer.Until)
         {

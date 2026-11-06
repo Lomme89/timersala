@@ -242,7 +242,7 @@
                                         <TextBox x:Name="ProfileNameBox" DockPanel.Dock="Right" VerticalAlignment="Center" Width="240" Padding="6,4" VerticalContentAlignment="Center" />
                                         <StackPanel VerticalAlignment="Center">
                                             <TextBlock Style="{StaticResource RowLabel}" Text="Questa congregazione" />
-                                            <TextBlock Style="{StaticResource RowHint}" Text="Orari, schemi, stile, frasi pronte e settimane particolari sono di ogni congregazione." />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Ogni congregazione ha i suoi orari, schemi, stile, frasi pronte e settimane particolari." />
                                         </StackPanel>
                                     </DockPanel>
                                 </Border>
@@ -252,7 +252,7 @@
                                         <TextBox x:Name="NewProfileBox" DockPanel.Dock="Right" VerticalAlignment="Center" Width="240" Padding="6,4" VerticalContentAlignment="Center" />
                                         <StackPanel VerticalAlignment="Center">
                                             <TextBlock Style="{StaticResource RowLabel}" Text="Un'altra congregazione nella stessa sala" />
-                                            <TextBlock Style="{StaticResource RowHint}" Text="Parte dalle impostazioni di questa. All'apertura TimerSala sceglie da solo quella dell'adunanza di adesso; si cambia anche con il nome in alto nel controller." />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Parte con le impostazioni di questa. All'apertura TimerSala sceglie la congregazione dell'adunanza in corso, e puoi cambiarla dal nome in alto nel controller." />
                                         </StackPanel>
                                     </DockPanel>
                                 </Border>
@@ -315,7 +315,7 @@
                                         <v:NumberBox DockPanel.Dock="Right" Width="150" Minimum="30" Maximum="300" Step="5" Unit="min" Value="{Binding MeetingLength}" />
                                         <StackPanel VerticalAlignment="Center">
                                             <TextBlock Style="{StaticResource RowLabel}" Text="Durata dell'adunanza" />
-                                            <TextBlock Style="{StaticResource RowHint}" Text="Per tutte e due le adunanze: serve per la fine prevista e per il ritardo." />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Vale per entrambe le adunanze e serve a calcolare fine prevista e ritardo." />
                                         </StackPanel>
                                     </DockPanel>
                                 </Border>
@@ -332,7 +332,7 @@
                                             <TextBlock Style="{StaticResource Info}"
                                                        ToolTip="Sorvegliante: lo schema viene adattato alla visita. Assemblea: nessuna adunanza, niente countdown, e schermo e telefono lo dicono. Commemorazione: prende il posto dell'adunanza di quel giorno, con il suo orario. Discorso speciale: il discorso pubblico diventa «Discorso speciale»." />
                                         </StackPanel>
-                                        <TextBlock Style="{StaticResource RowHint}" Text="Visita del sorvegliante, assemblea, Commemorazione, discorso speciale: anche a mesi di distanza." Margin="0,0,0,8" />
+                                        <TextBlock Style="{StaticResource RowHint}" Text="Visita del sorvegliante, assemblea, Commemorazione e discorso speciale. Si possono segnare anche mesi prima." Margin="0,0,0,8" />
                                         <!-- griglia fissa: tipo, settimana e «Aggiungi» (alto quanto le caselle) sulla stessa riga; giorno e ora della Commemorazione sotto -->
                                         <Grid Margin="0,0,0,8">
                                             <Grid.Resources>
@@ -409,7 +409,7 @@
                                         </StackPanel>
                                         <StackPanel VerticalAlignment="Center">
                                             <TextBlock Style="{StaticResource RowLabel}" Text="Infrasettimanale nella visita del sorvegliante" />
-                                            <TextBlock Style="{StaticResource RowHint}" Text="Se durante la visita l'adunanza cambia giorno, per esempio il martedì. Countdown e fine prevista seguono il giorno scelto." />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Da cambiare solo se durante la visita l'adunanza si sposta, per esempio al martedì. Countdown e fine prevista seguono il nuovo giorno." />
                                         </StackPanel>
                                     </DockPanel>
                                 </Border>
@@ -445,7 +445,7 @@
                                             <StackPanel Orientation="Horizontal">
                                                 <TextBlock Style="{StaticResource RowLabel}" Text="Studio biblico di congregazione" />
                                                 <TextBlock Style="{StaticResource Info}"
-                                                           ToolTip="Se l'adunanza è in ritardo, lo studio si accorcia per finire in orario: al massimo della metà, a passi di 15 secondi. Non si allunga mai oltre il tempo previsto. La durata adattata appare in arancione nell'elenco." />
+                                                           ToolTip="Se l'adunanza è in ritardo, lo studio si accorcia per finire in orario, a passi di 15 secondi e al massimo della metà. Non diventa mai più lungo del previsto. La durata adattata appare in arancione nell'elenco." />
                                             </StackPanel>
                                             <TextBlock Style="{StaticResource RowHint}" Text="Si accorcia se l'adunanza è in ritardo, mai oltre la metà" />
                                         </StackPanel>
@@ -458,7 +458,7 @@
                                             <StackPanel Orientation="Horizontal">
                                                 <TextBlock Style="{StaticResource RowLabel}" Text="Studio Torre di Guardia" />
                                                 <TextBlock Style="{StaticResource Info}"
-                                                           ToolTip="Se l'adunanza è in ritardo, lo studio si accorcia per finire in orario: al massimo della metà, a passi di 15 secondi. Non si allunga mai oltre il tempo previsto." />
+                                                           ToolTip="Se l'adunanza è in ritardo, lo studio si accorcia per finire in orario, a passi di 15 secondi e al massimo della metà. Non diventa mai più lungo del previsto." />
                                             </StackPanel>
                                             <TextBlock Style="{StaticResource RowHint}" Text="Si accorcia se l'adunanza è in ritardo, mai oltre la metà" />
                                         </StackPanel>
@@ -473,7 +473,7 @@
                 <ScrollViewer Tag="Screen" Style="{StaticResource Page}">
                     <StackPanel MaxWidth="1000">
                         <TextBlock Style="{StaticResource PageTitle}" Text="Schermo" />
-                        <TextBlock Style="{StaticResource PageSubtitle}" Text="Lo schermo del timer che vede la sala, e la pagina web. L'anteprima si aggiorna mentre cambi le opzioni." />
+                        <TextBlock Style="{StaticResource PageSubtitle}" Text="Come appare il timer in sala e nella pagina web. L'anteprima segue le modifiche." />
 
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -788,7 +788,7 @@
                 <ScrollViewer Tag="Countdown" Style="{StaticResource Page}">
                     <StackPanel MaxWidth="900">
                         <TextBlock Style="{StaticResource PageTitle}" Text="Prima dell'inizio" />
-                        <TextBlock Style="{StaticResource PageSubtitle}" Text="Il countdown che vede tutta la sala e la lista di controllo per chi è all'acustica. Il countdown sparisce all'orario d'inizio o quando avvii la prima parte." />
+                        <TextBlock Style="{StaticResource PageSubtitle}" Text="Il countdown sullo schermo della sala e la lista di controllo dell'acustica. Il countdown sparisce all'inizio o quando avvii la prima parte." />
 
                         <Border Style="{StaticResource Panel}">
                             <StackPanel>
@@ -798,7 +798,7 @@
                                                      Value="{Binding CountdownMinutes}" />
                                         <StackPanel VerticalAlignment="Center">
                                             <TextBlock Style="{StaticResource RowLabel}" Text="Il countdown compare" />
-                                            <TextBlock Style="{StaticResource RowHint}" Text="Minuti prima dell'inizio. Di solito 5, insieme alla musica d'attesa (Zoom e musica)." />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Minuti prima dell'inizio, di solito 5 come la musica d'attesa." />
                                         </StackPanel>
                                     </DockPanel>
                                 </Border>
@@ -817,7 +817,7 @@
                                     </Button>
                                     <StackPanel VerticalAlignment="Center">
                                         <TextBlock Style="{StaticResource PanelTitle}" Text="STILE" />
-                                        <TextBlock Style="{StaticResource RowHint}" Text="Gli stili diversi dal classico non usano verde, giallo e rosso: così il countdown non sembra una parte." />
+                                        <TextBlock Style="{StaticResource RowHint}" Text="Tranne il classico, gli stili non usano verde, giallo e rosso, così il countdown non si confonde con una parte." />
                                     </StackPanel>
                                 </DockPanel>
                                 <ListBox ItemsSource="{Binding CountdownStyles}" SelectedItem="{Binding SelectedCountdownStyle}" Margin="0,0,-8,0" Padding="0"
@@ -891,7 +891,7 @@
                                         <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding ChecklistEnabled}" />
                                         <StackPanel VerticalAlignment="Center">
                                             <TextBlock Style="{StaticResource RowLabel}" Text="Prima di iniziare" />
-                                            <TextBlock Style="{StaticResource RowHint}" Text="Compare nel controller durante il countdown d'inizio, o con il pulsante ☑ in alto. Si azzera a ogni adunanza e non blocca mai nulla." />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Compare nel controller durante il countdown o con il pulsante ☑ in alto. Si azzera a ogni adunanza e non blocca niente." />
                                         </StackPanel>
                                     </DockPanel>
                                 </Border>
@@ -934,7 +934,7 @@
                                                          Value="{Binding MessageSeconds}" />
                                             <StackPanel VerticalAlignment="Center">
                                                 <TextBlock Style="{StaticResource RowLabel}" Text="Nella fascia in basso" />
-                                                <TextBlock Style="{StaticResource RowHint}" Text="0 = finché non lo togli" />
+                                                <TextBlock Style="{StaticResource RowHint}" Text="Con 0 resta finché non lo togli" />
                                             </StackPanel>
                                         </DockPanel>
                                     </Border>
@@ -994,7 +994,7 @@
                 <ScrollViewer Tag="Voice" x:Name="VoicePage" Style="{StaticResource Page}">
                     <StackPanel MaxWidth="900">
                         <TextBlock Style="{StaticResource PageTitle}" Text="Voce" />
-                        <TextBlock Style="{StaticResource PageSubtitle}" Text="Avvio con la voce, sperimentale. La parte parte quando l'oratore inizia a parlare, contando dall'istante in cui la voce è iniziata." />
+                        <TextBlock Style="{StaticResource PageSubtitle}" Text="Funzione sperimentale. La parte comincia quando l'oratore inizia a parlare, e il tempo conta da quell'istante." />
 
                         <Border Style="{StaticResource Panel}" Padding="20,16">
                             <DockPanel>
@@ -1003,7 +1003,7 @@
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="Avvio con la voce" FontSize="16" FontWeight="SemiBold" />
                                         <TextBlock Style="{StaticResource Info}"
-                                                   ToolTip="Premi Avvia mentre il presidente presenta la parte: il pulsante diventa «In attesa». Quello che si sente subito dopo la pressione conta come voce del presidente; dopo una pausa intera, la prima voce fa partire il timer. Premi di nuovo Avvia per partire subito; Esc annulla l'attesa o, nei primi secondi, un avvio sbagliato. Dal telefono l'avvio è sempre immediato." />
+                                                   ToolTip="Premi Avvia mentre il presidente presenta la parte e il pulsante diventa «In attesa». Quello che si sente subito dopo la pressione conta come voce del presidente; dopo una pausa intera, la prima voce fa partire il timer. Premi di nuovo Avvia per partire subito; Esc annulla l'attesa o, nei primi secondi, un avvio sbagliato. Dal telefono l'avvio è sempre immediato." />
                                     </StackPanel>
                                     <TextBlock Style="{StaticResource RowHint}" Text="Avvia mette la parte in attesa; dopo una pausa, la prima voce la fa partire." />
                                 </StackPanel>
@@ -1019,7 +1019,7 @@
                                                   SelectedValue="{Binding VoiceInputDevice}" SelectionChanged="VoiceDevice_Changed" />
                                         <StackPanel VerticalAlignment="Center">
                                             <TextBlock Style="{StaticResource RowLabel}" Text="Ingresso" />
-                                            <TextBlock Style="{StaticResource RowHint}" Text="Di solito lo stesso del mixer usato per Zoom. Viene ascoltato in condivisione." />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Di solito è il mixer che usi per Zoom. TimerSala lo ascolta insieme a Zoom." />
                                         </StackPanel>
                                     </DockPanel>
                                 </Border>
@@ -1030,7 +1030,7 @@
                                                 <Ellipse x:Name="VoiceLamp" Width="10" Height="10" Fill="{DynamicResource LineBrush}" VerticalAlignment="Center" Margin="0,0,6,0" />
                                                 <TextBlock x:Name="VoiceLampText" Text="Silenzio" FontSize="12" Foreground="{DynamicResource MutedBrush}" Width="56" VerticalAlignment="Center" />
                                             </StackPanel>
-                                            <TextBlock Text="Prova: parla nel microfono" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                            <TextBlock Text="Parla nel microfono per provare" FontWeight="SemiBold" VerticalAlignment="Center" />
                                         </DockPanel>
                                         <Grid Height="16">
                                             <Border Background="{DynamicResource LineBrush}" CornerRadius="4" />
@@ -1048,9 +1048,9 @@
                                                    Text="La barra mostra il livello dell'ingresso scelto. Il segno giallo è la soglia." />
                                         <DockPanel Margin="0,10,0,0">
                                             <Button x:Name="CalibrateButton" DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Taratura" Padding="14,5"
-                                                    Click="Calibrate_Click" ToolTip="5 secondi di silenzio, poi 5 secondi di voce: la soglia si regola da sola" />
+                                                    Click="Calibrate_Click" ToolTip="5 secondi di silenzio e 5 di voce, poi la soglia si regola da sola" />
                                             <TextBlock x:Name="CalibrateText" Style="{StaticResource RowHint}" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,12,0"
-                                                       Text="Taratura automatica: prima la sala in silenzio, poi una voce al microfono." />
+                                                       Text="Taratura automatica. Serve prima il silenzio in sala, poi una voce al microfono." />
                                         </DockPanel>
                                     </StackPanel>
                                 </Border>
@@ -1077,7 +1077,7 @@
                                         <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding VoiceAutoArmNext}" />
                                         <StackPanel VerticalAlignment="Center">
                                             <TextBlock Style="{StaticResource RowLabel}" Text="Metti in attesa la parte successiva" />
-                                            <TextBlock Style="{StaticResource RowHint}" Text="Non vale se in mezzo c'è un cantico: dopo il cantico di solito parla prima il presidente." />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Non vale dopo un cantico, perché di solito parla prima il presidente." />
                                         </StackPanel>
                                     </DockPanel>
                                 </Border>
@@ -1121,7 +1121,7 @@
                 <ScrollViewer Tag="Zoom" Style="{StaticResource Page}">
                     <StackPanel MaxWidth="900">
                         <TextBlock Style="{StaticResource PageTitle}" Text="Zoom e musica" />
-                        <TextBlock Style="{StaticResource PageSubtitle}" Text="TimerSala pilota Zoom e JW Library al posto tuo: la musica d'attesa prima dell'inizio, poi un solo pulsante per condividere lo schermo e chiudere l'adunanza." />
+                        <TextBlock Style="{StaticResource PageSubtitle}" Text="TimerSala fa partire la musica d'attesa prima dell'inizio. Durante l'adunanza un solo pulsante condivide lo schermo e alla fine mette tutti muti." />
 
                         <Border Style="{StaticResource Panel}">
                             <Border Style="{StaticResource FirstRow}">
@@ -1140,7 +1140,7 @@
                             <StackPanel>
                                 <DockPanel Margin="0,0,0,12">
                                     <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Padding="14,6" VerticalAlignment="Center" Command="{Binding TestWaitingMusicCommand}"
-                                            ToolTip="Muta tutti, avvia la musica e la condivide in Zoom, come al countdown. Poi «Ferma musica» nel controller">
+                                            ToolTip="Muta tutti, avvia la musica e la condivide in Zoom, come farà il countdown. Per fermarla usa «Ferma musica» nel controller">
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Text="&#xE768;" FontFamily="{StaticResource IconFont}" VerticalAlignment="Center" Margin="0,0,8,0" />
                                             <TextBlock Text="Prova ora" />
@@ -1148,7 +1148,7 @@
                                     </Button>
                                     <StackPanel VerticalAlignment="Center">
                                         <TextBlock Style="{StaticResource PanelTitle}" Text="PRIMA DELL'INIZIO" Margin="0" />
-                                        <TextBlock Style="{StaticResource RowHint}" Text="Cosa succede da solo. «Prova ora» lo fa subito, per controllare Zoom e l'audio prima dell'adunanza." />
+                                        <TextBlock Style="{StaticResource RowHint}" Text="Cosa succede da solo. Con «Prova ora» controlli Zoom e l'audio prima dell'adunanza." />
                                     </StackPanel>
                                 </DockPanel>
 
@@ -1203,7 +1203,7 @@
                             <StackPanel>
                                 <TextBlock Style="{StaticResource PanelTitle}" Text="DURANTE L'ADUNANZA" Margin="0" />
                                 <TextBlock Style="{StaticResource RowHint}" Margin="0,2,0,14"
-                                           Text="Nel controller e nella mini c'è un solo pulsante: fa sempre il passo successivo. La freccia ⌄ accanto ha tutte le azioni, per quando l'adunanza va diversamente." />
+                                           Text="Nel controller e nella mini c'è un solo pulsante, che fa sempre il passo successivo. Le altre azioni sono nella freccia ⌄ accanto." />
                                 <Grid Margin="0,0,0,16">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
@@ -1239,7 +1239,7 @@
                                         <Border Style="{StaticResource FlowChip}" Background="{DynamicResource EndBrush}">
                                             <TextBlock HorizontalAlignment="Center"><Run Text="&#xE74F;" FontFamily="{StaticResource IconFont}" /><Run Text="  Fine adunanza" /></TextBlock>
                                         </Border>
-                                        <TextBlock Style="{StaticResource FlowCaption}" Text="dopo l'ultimo cantico: muto, con riattivazione libera" />
+                                        <TextBlock Style="{StaticResource FlowCaption}" Text="dopo l'ultimo cantico, tutti muti ma liberi di riattivarsi" />
                                     </StackPanel>
                                 </Grid>
                                 <Border Style="{StaticResource FirstRow}">
@@ -1250,7 +1250,7 @@
                                                   Text="{Binding ZoomScreen, UpdateSourceTrigger=LostFocus}" />
                                         <StackPanel VerticalAlignment="Center">
                                             <TextBlock Style="{StaticResource RowLabel}" Text="Schermo da condividere" />
-                                            <TextBlock Style="{StaticResource RowHint}" Text="Cambia da PC a PC: leggilo da Zoom, in riunione. Si condivide ottimizzato per i video, con il suono." />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Ogni PC ha i suoi nomi. Premi «Leggi da Zoom» mentre sei in riunione." />
                                         </StackPanel>
                                     </DockPanel>
                                 </Border>
@@ -1273,7 +1273,7 @@
                 <ScrollViewer Tag="Clicker" Style="{StaticResource Page}">
                     <StackPanel MaxWidth="900">
                         <TextBlock Style="{StaticResource PageTitle}" Text="Telecomando" />
-                        <TextBlock Style="{StaticResource PageSubtitle}" Text="Un telecomando per presentazioni avvia e ferma le parti, e può fare il pulsante Zoom, anche con JW Library o Zoom in primo piano." />
+                        <TextBlock Style="{StaticResource PageSubtitle}" Text="Con un telecomando per presentazioni avvii e fermi le parti e usi il pulsante Zoom, anche con JW Library o Zoom in primo piano." />
 
                         <Border Style="{StaticResource Panel}">
                             <StackPanel>
@@ -1297,7 +1297,7 @@
                                         <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
                                             <TextBlock Style="{StaticResource RowLabel}" Text="Associazione" />
                                             <TextBlock Style="{StaticResource RowHint}" Text="{Binding Main.ClickerStatus}" />
-                                            <TextBlock Style="{StaticResource RowHint}" Text="Associato, funziona anche con JW Library o Zoom in primo piano. Senza, solo Pagina giù e Pagina su con TimerSala in primo piano." />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Se è associato funziona anche con JW Library o Zoom in primo piano. Altrimenti vanno solo Pagina giù e Pagina su, con TimerSala in primo piano." />
                                         </StackPanel>
                                     </DockPanel>
                                 </Border>
@@ -1308,7 +1308,7 @@
                             <StackPanel>
                                 <TextBlock Style="{StaticResource PanelTitle}" Text="TASTI" Margin="0" />
                                 <TextBlock Style="{StaticResource RowHint}" Margin="0,2,0,8"
-                                           Text="I tasti predefiniti vanno bene per quasi tutti i telecomandi. Per cambiarne uno: «Scegli», poi premi il tasto sul telecomando." />
+                                           Text="I tasti predefiniti vanno bene per quasi tutti i telecomandi. Per cambiarne uno premi «Scegli» e poi il tasto sul telecomando." />
                                 <Border Style="{StaticResource Row}">
                                     <DockPanel>
                                         <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Scegli" Padding="12,5" MinWidth="96" VerticalAlignment="Center"
@@ -1339,7 +1339,7 @@
                                         </Border>
                                         <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
                                             <TextBlock Style="{StaticResource RowLabel}" Text="Indietro" />
-                                            <TextBlock Style="{StaticResource RowHint}" Text="Annulla l'ultima azione, mai «parte precedente»" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Annulla l'ultima azione, non torna alla parte precedente" />
                                             <ItemsControl ItemsSource="{Binding Main.ClickerBackCaps}" ItemTemplate="{StaticResource KeyCap}" Focusable="False" Margin="0,2,0,0">
                                                 <ItemsControl.ItemsPanel>
                                                     <ItemsPanelTemplate>
@@ -1360,7 +1360,7 @@
                                         </Border>
                                         <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
                                             <TextBlock Style="{StaticResource RowLabel}" Text="Zoom" />
-                                            <TextBlock Style="{StaticResource RowHint}" Text="Fa quello che dice il pulsante Zoom. Va bene un tasto che non usi, come schermo nero" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Fa quello che indica il pulsante Zoom. Scegli un tasto che non usi, come lo schermo nero" />
                                             <ItemsControl ItemsSource="{Binding Main.ClickerZoomCaps}" ItemTemplate="{StaticResource KeyCap}" Focusable="False" Margin="0,2,0,0">
                                                 <ItemsControl.ItemsPanel>
                                                     <ItemsPanelTemplate>
@@ -1440,7 +1440,7 @@
                                             <TextBox x:Name="PinBox" Width="120" FontSize="16" FontWeight="SemiBold" HorizontalContentAlignment="Center" MaxLength="12"
                                                      LostKeyboardFocus="Pin_LostFocus" KeyDown="Pin_KeyDown" />
                                             <Button Style="{StaticResource FlatButton}" Content="Nuovo" Margin="8,0,0,0" Padding="12,5" Click="NewPin_Click"
-                                                    ToolTip="Genera un PIN nuovo: i telefoni dovranno inserirlo di nuovo" />
+                                                    ToolTip="Crea un PIN nuovo. I telefoni dovranno inserirlo" />
                                         </StackPanel>
                                         <StackPanel VerticalAlignment="Center">
                                             <StackPanel Orientation="Horizontal">
@@ -1520,7 +1520,7 @@
                                         <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding AutoMiniOnFirstPart}" />
                                         <StackPanel VerticalAlignment="Center">
                                             <TextBlock Style="{StaticResource RowLabel}" Text="Passa alla mini alla prima parte" />
-                                            <TextBlock Style="{StaticResource RowHint}" Text="Quando parte la prima parte dell'adunanza, il controller diventa la mini, sempre visibile sopra JW Library e Zoom. Si torna con M." />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Alla prima parte il controller diventa la mini, che resta sopra JW Library e Zoom. Con M torni indietro." />
                                         </StackPanel>
                                     </DockPanel>
                                 </Border>
@@ -1559,7 +1559,7 @@
                                         </StackPanel>
                                         <StackPanel VerticalAlignment="Center">
                                             <TextBlock Style="{StaticResource RowLabel}" Text="Segnalazioni" />
-                                            <TextBlock Style="{StaticResource RowHint}" Text="Su GitHub, già compilate con versione ed errori recenti. Il PIN non viene mai incluso." />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Si aprono su GitHub con versione ed errori recenti già compilati. Il PIN non viene incluso." />
                                         </StackPanel>
                                     </DockPanel>
                                 </Border>
@@ -1577,7 +1577,7 @@
                                         <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Content="Inizia" Padding="12,5" Click="Training_Click" />
                                         <StackPanel VerticalAlignment="Center">
                                             <TextBlock Style="{StaticResource RowLabel}" Text="Modalità addestramento" />
-                                            <TextBlock Style="{StaticResource RowHint}" Text="Per insegnare il programma: l'adunanza della settimana con le parti dieci volte più brevi. Schermo e telefono mostrano «PROVA», niente viene salvato." />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Per insegnare il programma. L'adunanza della settimana gira con parti dieci volte più brevi, schermo e telefono mostrano «PROVA» e non si salva niente." />
                                         </StackPanel>
                                     </DockPanel>
                                 </Border>
@@ -1604,7 +1604,7 @@
                                         </StackPanel>
                                         <StackPanel VerticalAlignment="Center">
                                             <TextBlock Style="{StaticResource RowLabel}" Text="Backup" />
-                                            <TextBlock Style="{StaticResource RowHint}" Text="Impostazioni, frasi pronte e schemi modificati a mano in un file: per cambiare PC o preparare un'altra sala uguale." />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="Salva in un file impostazioni, frasi pronte e schemi modificati. Serve per cambiare PC o preparare un'altra sala uguale." />
                                         </StackPanel>
                                     </DockPanel>
                                 </Border>

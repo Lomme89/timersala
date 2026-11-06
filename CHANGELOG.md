@@ -1,5 +1,21 @@
 # Novità
 
+## v2.4.0-beta.2 — 6 novembre 2026 (anteprima)
+
+Nona anteprima: TimerSala si installa e si aggiorna da solo. Si può sempre tornare alla v1.14.0 senza perdere nulla.
+
+**Installazione e aggiornamento**
+- Aprendo il file scaricato compare l'installazione invece del programma. Un pulsante, e TimerSala va nel menu Start e in «App installate», senza permessi da amministratore.
+- In «Opzioni» si sceglie la cartella, anche su un altro disco, e se mettere il collegamento sul desktop.
+- Per aggiornare basta aprire il file della versione nuova. Mostra da quale versione a quale si passa e le novità. Se TimerSala è aperto lo chiude e lo riapre, e se c'è una parte in corso chiede prima conferma.
+- Se TimerSala era stato copiato a mano, per esempio in C:\TimerSala, lo trova e lo aggiorna lì. Collegamenti e avvio con Windows restano giusti.
+- Impostazioni, schemi e congregazioni non vengono toccati. Se l'aggiornamento non riesce resta la versione di prima.
+- Si disinstalla da «App installate». Impostazioni e schemi restano sul PC, e reinstallando ritrovi tutto.
+- Chi preferisce usare il file senza installarlo può farlo con «Apri senza installare».
+
+**Testi**
+- Rivisti i testi di impostazioni, avvisi e finestre: frasi più brevi e dirette.
+
 ## v2.4.0-beta.1 — 6 novembre 2026 (anteprima)
 
 Ottava anteprima: TimerSala può pilotare Zoom e JW Library. Si attiva in *Impostazioni → Zoom e musica* e, se resta spento, non cambia nulla. Si può sempre tornare alla v1.14.0 senza perdere nulla.
@@ -7,15 +23,15 @@ Ottava anteprima: TimerSala può pilotare Zoom e JW Library. Si attiva in *Impos
 **Zoom e musica d'attesa**
 - Qualche minuto prima dell'inizio parte da sola la musica di JW Library; poi Zoom mette tutti muti, senza che possano riattivarsi, e manda la musica anche a casa. I due tempi si scelgono a parte (di solito 5 minuti, come il countdown).
 - La musica si ferma da sola allo scadere del countdown o quando avvii la prima parte; prima si ferma a mano, quando l'oratore invita ad accomodarsi.
-- Nel controller e nella mini un solo pulsante fa sempre il passo successivo: **Ferma musica** → **Condividi schermo** ⇄ **Interrompi** → dopo l'ultimo cantico **Fine adunanza** (tutti muti, ma possono riattivarsi per salutarsi). La freccia accanto ha tutte le azioni, per quando l'adunanza va diversamente.
-- Lo schermo condiviso è sempre lo stesso, scelto una volta nelle impostazioni («Leggi da Zoom» lo legge da Zoom), ottimizzato per i video e con il suono.
+- Nel controller e nella mini un solo pulsante fa sempre il passo successivo: **Ferma musica** → **Condividi schermo** ⇄ **Interrompi** → dopo l'ultimo cantico **Fine adunanza** (tutti muti, ma possono riattivarsi per salutarsi). Le altre azioni sono nella freccia accanto.
+- Lo schermo da condividere si sceglie una volta nelle impostazioni, con «Leggi da Zoom». Viene condiviso ottimizzato per i video, con il suono.
 - Se la condivisione viene interrotta da Zoom, il pulsante se ne accorge da solo.
-- Se Zoom non risponde subito, TimerSala riprova una volta da capo; se non riesce lo dice, e la cosa si fa a mano in Zoom.
-- «Prova ora» fa subito quello che farà il countdown: utile per controllare Zoom e l'audio prima dell'adunanza.
+- Se Zoom non risponde subito, TimerSala riprova una volta. Se non ci riesce lo segnala, e l'operazione va fatta a mano in Zoom.
+- «Prova ora» fa subito quello che farà il countdown, così controlli Zoom e l'audio prima dell'adunanza.
 - Serve Zoom in italiano, già in riunione come organizzatore.
 
 **Telecomando per presentazioni**
-- Un tasto del telecomando, scelto a mano, fa quello che dice il pulsante Zoom: per condividere senza toccare il mouse.
+- Si può scegliere un tasto del telecomando che fa quello che indica il pulsante Zoom, per condividere senza toccare il mouse.
 - I tasti assegnati si vedono come tasti veri, con un colore per ogni azione.
 
 **Impostazioni**

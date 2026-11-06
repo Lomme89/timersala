@@ -126,7 +126,7 @@ public partial class SettingsWindow : Window
         _vm.Flush();
         _main.PreviewCountdown();
         if (!_main.TimerWindowVisible)
-            _main.ShowInfo("Lo schermo del timer è nascosto: l'anteprima del countdown si vede solo nella pagina web.");
+            _main.ShowInfo("Lo schermo del timer è nascosto, quindi l'anteprima del countdown si vede solo nella pagina web.");
     }
 
     // ───── Messaggi: frasi pronte ─────
@@ -218,7 +218,7 @@ public partial class SettingsWindow : Window
             return;
         }
         // un PIN non valido non viene usato: resta quello di prima
-        PinHint.Text = $"«{PinBox.Text.Trim()}» non va bene: servono da 4 a 12 cifre. Resta il PIN {_vm.RemotePin}.";
+        PinHint.Text = $"«{PinBox.Text.Trim()}» non va bene, servono da 4 a 12 cifre. Il PIN resta {_vm.RemotePin}.";
         PinHint.Foreground = (Brush)FindResource("AmberBrush");
         PinBox.Text = _vm.RemotePin;
     }
@@ -272,7 +272,7 @@ public partial class SettingsWindow : Window
         if (e.OriginalSource is not System.Windows.Controls.Button { Tag: Core.Storage.ProfileInfo p }) return;
         if (p.Id == _main.CurrentProfile?.Id)
         {
-            ThemedDialog.Show(this, "È la congregazione in uso: passa prima a un'altra.", "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
+            ThemedDialog.Show(this, "È la congregazione in uso. Passa prima a un'altra.", "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
         if (p.Id == "")
@@ -375,7 +375,7 @@ public partial class SettingsWindow : Window
     {
         if (_calibrationTimer is not null) return;
         if (_test is null) StartTest();
-        if (_test is null) { CalibrateText.Text = "Ingresso non disponibile: scegline un altro."; return; }
+        if (_test is null) { CalibrateText.Text = "Ingresso non disponibile, scegline un altro."; return; }
         CalibrateButton.IsEnabled = false;
         try
         {

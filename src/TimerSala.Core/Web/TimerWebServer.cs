@@ -174,12 +174,12 @@ public sealed class TimerWebServer : IAsyncDisposable
         // un dispositivo fidato non ha bisogno del PIN
         var device = Devices?.Validate(req.Token);
         if (device is null && req.Pin is null && req.Token is not null)
-            return Results.Json(new { error = "Questo dispositivo non è più autorizzato: inserisci il PIN.", code = "auth" }, Json, statusCode: 403);
+            return Results.Json(new { error = "Questo dispositivo non è più autorizzato. Inserisci il PIN.", code = "auth" }, Json, statusCode: 403);
 
         if (device is null) lock (_pinLock)
         {
             if (DateTime.UtcNow < _lockedUntil)
-                return Results.Json(new { error = "Troppi tentativi errati: riprova tra un minuto." }, Json, statusCode: 429);
+                return Results.Json(new { error = "Troppi tentativi errati. Riprova tra un minuto." }, Json, statusCode: 429);
             if (!PinMatches(req.Pin, r.Pin))
             {
                 if (++_failures >= MaxPinFailures)

@@ -531,15 +531,15 @@ public sealed class SettingsViewModel : ObservableObject
         {
             var steps = new List<(double Min, string Text, string Brush)>();
             int music = Draft.MusicMinutes, share = Draft.ShareMusicMinutes, countdown = Draft.CountdownMinutes;
-            if (music > 0 && music == share) steps.Add((music, "Tutti muti in Zoom, senza poter riattivarsi. Parte la musica di JW Library e va anche a casa", "AmberBrush"));
+            if (music > 0 && music == share) steps.Add((music, "Zoom mette tutti muti e parte la musica di JW Library, che arriva anche a casa", "AmberBrush"));
             else
             {
                 if (music > 0) steps.Add((music, "Parte la musica di JW Library, in sala", "AmberBrush"));
-                if (share > 0) steps.Add((share, "Tutti muti in Zoom, senza poter riattivarsi. Si condivide l'audio: la musica va anche a casa", "AccentBrush"));
+                if (share > 0) steps.Add((share, "Zoom mette tutti muti e condivide l'audio, così la musica arriva anche a casa", "AccentBrush"));
             }
             if (countdown > 0) steps.Add((countdown, "Compare il countdown sullo schermo della sala", "MutedBrush"));
-            steps.Add((0.5, "L'oratore invita ad accomodarsi: premi «Ferma musica»", "AmberBrush"));
-            steps.Add((0, "Inizio: se suona ancora, la musica si ferma da sola", "GreenBrush"));
+            steps.Add((0.5, "Quando l'oratore invita ad accomodarsi, premi «Ferma musica»", "AmberBrush"));
+            steps.Add((0, "Se suona ancora, la musica si ferma da sola", "GreenBrush"));
             var sorted = steps.OrderByDescending(x => x.Min).ToList();
             return sorted.Select((x, i) => new TimelineStep(
                 x.Min == 0 ? "inizio" : x.Min < 1 ? "−0:30" : $"−{x.Min:0} min",

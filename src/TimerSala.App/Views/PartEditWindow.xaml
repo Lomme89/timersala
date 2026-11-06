@@ -14,7 +14,7 @@
             <v:NumberBox x:Name="MinutesBox" DockPanel.Dock="Right" Width="150" Minimum="1" Maximum="180" Step="1" Unit="min" />
             <StackPanel VerticalAlignment="Center">
                 <TextBlock Text="Durata" FontSize="15" />
-                <TextBlock x:Name="RunningHint" Text="La parte è in corso: il tempo assegnato cambia subito." Style="{StaticResource Caption}"
+                <TextBlock x:Name="RunningHint" Text="La parte è in corso, quindi il nuovo tempo vale da subito." Style="{StaticResource Caption}"
                            TextWrapping="Wrap" Margin="0,2,12,0" Visibility="Collapsed" />
             </StackPanel>
         </DockPanel>

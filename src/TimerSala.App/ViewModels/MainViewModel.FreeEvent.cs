@@ -6,7 +6,7 @@ namespace TimerSala.App.ViewModels;
 
 /// <summary>
 /// Modalità libera: un evento fuori programma al posto dell'adunanza (matrimonio, funerale, adunanza per il servizio…).
-/// Countdown, schermo e telefono funzionano come sempre; lo schema della settimana non viene toccato.
+/// Lo schema della settimana resta com'è.
 /// </summary>
 public sealed partial class MainViewModel
 {
@@ -43,7 +43,7 @@ public sealed partial class MainViewModel
         RebuildParts();
         UpdatePlannedStarts();
         RefreshDisplay();
-        ShowStatus($"Evento «{ev.Title}»: lo schema della settimana non viene toccato.");
+        ShowStatus($"Evento «{ev.Title}» avviato. Lo schema della settimana resta com'è.");
         return null;
     }
 

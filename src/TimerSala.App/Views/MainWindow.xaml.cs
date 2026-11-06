@@ -102,6 +102,10 @@ public partial class MainWindow : Window
                 BringToFront();
                 ShowPhoneQr();
                 break;
+            case "esci":
+                BringToFront();
+                Close();
+                break;
             default:
                 BringToFront();
                 break;
@@ -270,7 +274,7 @@ public partial class MainWindow : Window
     void SkipPart_Click(object sender, RoutedEventArgs e)
     {
         if (_menuPart is not { } p) return;
-        if (ThemedDialog.Show(this, $"Saltare «{p.Title}»?\nConta come durata zero: il ritardo ne tiene conto.", "TimerSala",
+        if (ThemedDialog.Show(this, $"Saltare «{p.Title}»?\nNel calcolo del ritardo conta come durata zero.", "TimerSala",
                 MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             _vm.SkipPart(p);
     }

@@ -334,7 +334,7 @@ public sealed partial class MainViewModel : ObservableObject
             if (cts.IsCancellationRequested || Week.WeekStart != monday) return;
             if (Timer.IsRunning)
             {
-                ShowStatus("Schema scaricato: verrà applicato quando fermi il timer.");
+                ShowStatus("Schema scaricato. Verrà usato quando fermi il timer.");
                 // salva comunque: sarà caricato alla prossima apertura della settimana
                 _store.SaveWeek(fetched);
                 return;
@@ -354,7 +354,7 @@ public sealed partial class MainViewModel : ObservableObject
         catch (OperationCanceledException) { }
         catch (Exception ex)
         {
-            ShowStatus(silent ? "Schema non scaricato: in uso lo schema predefinito. " + ex.Message : ex.Message, error: true);
+            ShowStatus(silent ? "Schema non scaricato, uso quello predefinito. " + ex.Message : ex.Message, error: true);
         }
         finally
         {
@@ -814,7 +814,7 @@ public sealed partial class MainViewModel : ObservableObject
         {
             TimerScreenDisconnected = disconnected;
             ShowStatus(disconnected
-                ? "Schermo della sala non collegato: il timer tornerà da solo quando si ricollega."
+                ? "Lo schermo della sala non è collegato. Il timer ricompare quando lo ricolleghi."
                 : "Schermo della sala ricollegato.", error: disconnected);
         }
         if (SelectedMonitor?.DeviceName != target?.DeviceName || SelectedMonitor?.Bounds != target?.Bounds)
@@ -1023,8 +1023,8 @@ public sealed partial class MainViewModel : ObservableObject
             WebRunning = true;
             UpdateWebUrl();
             if (_web.Port != Settings.WebServerPort)
-                ShowStatus($"La porta {Settings.WebServerPort} è usata da un altro programma: il timer in rete usa la {_web.Port}. " +
-                           "Collegamenti e QR salvati con la porta vecchia non funzionano finché resta così.", error: true);
+                ShowStatus($"La porta {Settings.WebServerPort} è occupata da un altro programma, quindi il timer in rete usa la {_web.Port}. " +
+                           "Finché è così, collegamenti e QR con la porta vecchia non funzionano.", error: true);
         }
         catch (Exception ex)
         {
@@ -1056,8 +1056,8 @@ public sealed partial class MainViewModel : ObservableObject
         SaveSettings();
         if (previous is null) return;
         var hint = Settings.WebAddressMode == "hostname" ? "" :
-            " Per evitarlo, in Impostazioni → Rete e telefono scegli il nome del PC: non cambia.";
-        ShowStatus($"L'indirizzo del timer è cambiato (prima {previous.Replace("http://", "")}, ora {url.Replace("http://", "")}): i codici QR stampati non valgono più.{hint}", error: true);
+            " Per evitarlo scegli il nome del PC in Impostazioni → Rete e telefono, che non cambia.";
+        ShowStatus($"L'indirizzo del timer è cambiato (prima {previous.Replace("http://", "")}, ora {url.Replace("http://", "")}), quindi i QR stampati non funzionano più.{hint}", error: true);
     }
 
     public Task StopWebServerAsync() => _web.StopAsync();

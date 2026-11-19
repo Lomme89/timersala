@@ -1,9 +1,9 @@
 namespace TimerSala.Core.Timing;
 
-/// <summary>Quando partono musica d'attesa e condivisione dell'audio in Zoom, una volta per adunanza.</summary>
+/// <summary>Quando Zoom muta tutti e condivide l'audio della sala (la musica d'attesa), una volta per adunanza.</summary>
 public static class WaitingMusic
 {
-    /// <summary>Dopo l'invito ad accomodarsi (di solito 30 secondi prima) far partire la musica non ha più senso.</summary>
+    /// <summary>Dopo l'invito ad accomodarsi (di solito 30 secondi prima) condividere l'audio non ha più senso.</summary>
     public static readonly TimeSpan TooLate = TimeSpan.FromSeconds(30);
 
     /// <param name="left">Tempo che manca all'inizio.</param>

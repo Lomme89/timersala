@@ -27,10 +27,10 @@ Ogni azione chiede conferma e si può annullare.
 - La **lista di controllo** (pulsante ☑ in alto) ricorda microfoni, Zoom, video e schermo. Le voci si cambiano in *Impostazioni → Prima dell'inizio*.
 - Se lo schema supera la durata dell'adunanza, accanto alla settimana compare **«min oltre»**. Puoi sistemarlo nell'editor.
 
-## Zoom e musica
+## Zoom
 
-- Se attivo (*Impostazioni → Zoom e musica*), prima dell'inizio parte la musica di JW Library e Zoom muta tutti mandando la musica anche a casa.
-- Nel controller e nella mini un solo pulsante fa il passo successivo: **Ferma musica** → **Condividi schermo** ⇄ **Interrompi** → dopo l'ultimo cantico **Fine adunanza**. La freccia accanto ha tutte le azioni.
+- Se attivo (*Impostazioni → Zoom*), qualche minuto prima dell'inizio Zoom muta tutti e condivide l'audio del computer: la musica d'attesa che fai partire in sala arriva anche a casa. All'inizio quella condivisione si chiude da sola.
+- Nel controller e nella mini il pulsante in vista è sempre **Condividi schermo**; mentre condividi diventa **Interrompi**. Muto, audio del computer e **Fine adunanza** sono nella freccia ⌄ accanto.
 
 ## Messaggi all'oratore
 

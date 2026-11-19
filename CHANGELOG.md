@@ -1,5 +1,19 @@
 # Novità
 
+## v2.4.0-beta.4 — 19 novembre 2026 (anteprima)
+
+Undicesima anteprima: Zoom più semplice e la mini che si riapre bene. Si può sempre tornare alla v1.14.0 senza perdere nulla.
+
+**Zoom**
+- TimerSala non pilota più JW Library: il collegamento non era affidabile e JW Library sta per cambiare molto. La musica d'attesa la fai partire tu, come sempre.
+- Prima dell'inizio Zoom può ancora mettere tutti muti e condividere l'audio del computer, così la musica della sala arriva anche a casa. All'inizio si chiude da solo.
+- Il pulsante in vista è sempre **Condividi schermo** (mentre condividi, **Interrompi**). Muto, audio del computer e **Fine adunanza** sono nella freccia accanto.
+- La pagina delle impostazioni ora si chiama *Zoom*.
+
+**Correzioni**
+- Chiudendo TimerSala dalla barra delle applicazioni mentre era nella mini, alla riapertura restava una finestra grande e vuota dietro la mini. Ora si riapre solo la mini.
+- Gli avvisi aperti dalla mini (conferme, novità dopo un aggiornamento) compaiono sopra la mini e non dietro il controller nascosto.
+
 ## v2.4.0-beta.3 — 6 novembre 2026 (anteprima)
 
 Decima anteprima: la condivisione su Zoom è più veloce. Si può sempre tornare alla v1.14.0 senza perdere nulla.

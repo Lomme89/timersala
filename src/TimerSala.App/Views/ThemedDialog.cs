@@ -25,7 +25,7 @@ static class ThemedDialog
             ShowInTaskbar = false,
             WindowStartupLocation = owner is { IsVisible: true } ? WindowStartupLocation.CenterOwner : WindowStartupLocation.CenterScreen,
             Owner = owner is { IsVisible: true } ? owner : null,
-            FontFamily = (FontFamily)Application.Current.FindResource("UiFont"),
+            FontFamily = (FontFamily)Application.Current!.FindResource("UiFont"),
         };
         win.SetResourceReference(Control.BackgroundProperty, "BgBrush");
         win.SetResourceReference(Control.ForegroundProperty, "TextBrush");

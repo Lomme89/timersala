@@ -212,7 +212,7 @@ static class ZoomClient
         WaitFor(() => SharingScreen, "l'avvio della condivisione");
     }
 
-    /// <summary>Condivide solo l'audio del computer: a casa arriva la musica di JW Library.</summary>
+    /// <summary>Condivide solo l'audio del computer: a casa arriva la musica d'attesa che suona in sala.</summary>
     public static void ShareAudio() => TwoTries(ShareAudioOnce, () => Status() == Sharing.Audio && (_audioShared = true));
 
     static void ShareAudioOnce()
@@ -230,7 +230,7 @@ static class ZoomClient
 
     public static bool SharingScreen => Win(SharingToolbar) != 0;
 
-    /// <summary>Interrompe la condivisione in corso; con <paramref name="audioOnly"/> solo quella dell'audio (la musica), mai lo schermo.</summary>
+    /// <summary>Interrompe la condivisione in corso; con <paramref name="audioOnly"/> solo quella dell'audio, mai lo schermo.</summary>
     public static void StopShare(bool audioOnly = false)
     {
         bool screen = SharingScreen;
@@ -266,18 +266,4 @@ static class ZoomClient
         ShowParticipants();
         return Msaa.First(Meeting, c => c.Role == Ctl.Row && c.Name.Contains(Self) && c.Name.Contains(SharingAudio)) != null ? Sharing.Audio : Sharing.None;
     }
-}
-
-/// <summary>JW Library pilotata solo da fuori: link ai cantici e tasto multimediale di Windows (preso da assistant_acustica).</summary>
-static class JwMusic
-{
-    const int LastSong = 162; // ultimo della raccolta dei cantici
-
-    // ponytail: un cantico a caso, poi JW prosegue da sola con i successivi. Uno shuffle vero vorrebbe una coda di link.
-    // Mai altri link JW: in assistant_acustica `pub=sjjm` senza traccia e `alias=meetings` hanno fatto chiudere l'app.
-    public static void Start() => Process.Start(new ProcessStartInfo(
-        $"jwlibrary:///finder?srcid=jwlshare&wtlocale=I&prefer=lang&lank=pub-sjjm_{Random.Shared.Next(1, LastSong + 1)}_AUDIO") { UseShellExecute = true });
-
-    /// <summary>Play/pausa: un interruttore, quindi va mandato solo se la musica suona.</summary>
-    public static void Pause() => Native.MediaKey(0xB3);
 }

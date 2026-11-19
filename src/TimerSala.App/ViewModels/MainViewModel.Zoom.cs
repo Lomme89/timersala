@@ -1,105 +1,75 @@
 using System.Windows.Input;
 using TimerSala.App.Interop;
-using TimerSala.Core.Models;
 using TimerSala.Core.Timing;
 
 namespace TimerSala.App.ViewModels;
 
-/// <summary>Quello che fa ora il pulsante Zoom: cambia da solo con l'adunanza.</summary>
-public enum ZoomStep { StopMusic, ShareScreen, StopShare, EndMeeting }
+/// <summary>Quello che fa ora il pulsante Zoom: condivide lo schermo, o interrompe la condivisione in corso.</summary>
+public enum ZoomStep { ShareScreen, StopShare }
 
 /// <summary>
-/// Zoom e musica d'attesa. Prima dell'inizio parte la musica di JW Library, poi Zoom muta tutti (senza riattivazione)
-/// e manda a casa solo l'audio. Un solo pulsante fa il passo successivo: ferma musica → condividi schermo → interrompi →
-/// dopo l'ultimo cantico, fine adunanza. Il menu accanto ha tutte le azioni, per quando l'adunanza va diversamente.
+/// Zoom pilotato da fuori. Il pulsante in vista è sempre «Condividi schermo» (o «Interrompi» mentre si condivide);
+/// le altre azioni (muto, audio del computer, fine adunanza) sono nel menu accanto.
+/// Prima dell'inizio, se scelto, Zoom muta tutti e condivide l'audio del computer, così la musica d'attesa
+/// fatta partire in sala arriva anche a casa; all'inizio quella condivisione si chiude da sola.
+/// JW Library non si pilota più: i suoi collegamenti erano instabili e l'app sta per cambiare molto.
 /// </summary>
 public sealed partial class MainViewModel
 {
     public bool ZoomEnabled { get; private set => Set(ref field, value); }
-    public bool MusicOn { get; private set { if (Set(ref field, value)) UpdateZoomStep(); } }
+
+    /// <summary>L'audio del computer è condiviso in Zoom da TimerSala (prima dell'inizio).</summary>
+    public bool AudioShared { get; private set => Set(ref field, value); }
     public bool ZoomBusy { get; private set { if (Set(ref field, value)) { OnPropertyChanged(nameof(ZoomIdle)); UpdateZoomStep(); } } }
     public bool ZoomIdle => !ZoomBusy;
 
     /// <summary>Lo schermo è condiviso in Zoom: da TimerSala o da Zoom stesso, si rilegge ogni secondo.</summary>
-    public bool ScreenShared
-    {
-        get;
-        private set
-        {
-            if (!Set(ref field, value)) return;
-            // finita la condivisione dell'ultimo cantico: il prossimo passo è il muto di fine adunanza
-            if (!value && InClosing()) _endReady = true;
-            UpdateZoomStep();
-        }
-    }
+    public bool ScreenShared { get; private set { if (Set(ref field, value)) UpdateZoomStep(); } }
 
     public ZoomStep ZoomStep { get; private set => Set(ref field, value); } = ZoomStep.ShareScreen;
     public string ZoomIcon { get; private set => Set(ref field, value); } = "";
     public string ZoomText { get; private set => Set(ref field, value); } = "Condividi schermo";
     public string ZoomTip { get; private set => Set(ref field, value); } = "";
 
-    // per adunanza: musica e condivisione partono una volta; dopo l'ultimo cantico si offre la fine
-    DateTimeOffset? _zoomMeeting, _musicFor, _shareMusicFor;
-    bool _endReady, _endDone, _zoomBeforeStart, _zoomWasRunning;
+    // per adunanza l'audio condiviso parte una volta sola
+    DateTimeOffset? _audioFor;
+    bool _zoomBeforeStart, _zoomWasRunning;
     long _lastSharePoll;
 
     void UpdateZoomStep()
     {
-        ZoomStep = MusicOn ? ZoomStep.StopMusic
-            : ScreenShared ? ZoomStep.StopShare
-            : _endReady && !_endDone ? ZoomStep.EndMeeting
-            : ZoomStep.ShareScreen;
-        (ZoomIcon, ZoomText, ZoomTip) = ZoomStep switch
-        {
-            ZoomStep.StopMusic => ("", "Ferma musica", "Ferma la musica e l'audio condiviso quando l'oratore invita ad accomodarsi. All'inizio si ferma da sola"),
-            ZoomStep.StopShare => ("", "Interrompi condivisione", "Interrompe la condivisione dello schermo in Zoom"),
-            ZoomStep.EndMeeting => ("", "Fine adunanza", "Dopo cantico e preghiera mette tutti muti, liberi di riattivarsi per salutarsi"),
-            _ => ("", "Condividi schermo", "Condivide in Zoom lo schermo scelto nelle impostazioni, con il suono"),
-        };
+        ZoomStep = ScreenShared ? ZoomStep.StopShare : ZoomStep.ShareScreen;
+        (ZoomIcon, ZoomText, ZoomTip) = ZoomStep == ZoomStep.StopShare
+            ? ("", "Interrompi condivisione", "Interrompe la condivisione dello schermo in Zoom")
+            : ("", "Condividi schermo", "Condivide in Zoom lo schermo scelto nelle impostazioni, con il suono. Le altre azioni sono nella freccia accanto");
         if (ZoomBusy) (ZoomIcon, ZoomText) = ("", "Zoom…");
     }
 
-    /// <summary>Il pulsante Zoom (anche dal telecomando): il passo successivo.</summary>
+    /// <summary>Il pulsante Zoom (anche dal telecomando): condivide, o interrompe se sta già condividendo.</summary>
     public ICommand ZoomStepCommand => field ??= new RelayCommand(() =>
-        (ZoomStep switch { ZoomStep.StopMusic => StopMusicCommand, ZoomStep.StopShare => StopShareCommand, ZoomStep.EndMeeting => EndMeetingZoomCommand, _ => ShareScreenCommand })
-            .Execute(null));
-
-    public ICommand StopMusicCommand => field ??= new RelayCommand(() => StopMusic());
+        (ZoomStep == ZoomStep.StopShare ? StopShareCommand : ShareScreenCommand).Execute(null));
 
     public ICommand ShareScreenCommand => field ??= new RelayCommand(() =>
     {
         var screen = Settings.ZoomScreen;
-        if (screen.Length == 0) { ShowStatus("Scegli lo schermo da condividere in Impostazioni › Zoom e musica.", error: true); return; }
-        bool playing = MusicOn;
-        RunZoom("Condivisione schermo", () =>
-        {
-            if (playing) JwMusic.Pause(); // la musica non deve finire nello schermo condiviso; l'audio condiviso lo chiude ShareScreen
-            ZoomClient.ShareScreen(screen);
-        }, () => { MusicOn = false; ScreenShared = true; });
+        if (screen.Length == 0) { ShowStatus("Scegli lo schermo da condividere in Impostazioni › Zoom.", error: true); return; }
+        // la condivisione dello schermo prende il posto di quella dell'audio
+        RunZoom("Condivisione schermo", () => ZoomClient.ShareScreen(screen), () => { AudioShared = false; ScreenShared = true; });
     });
 
     public ICommand StopShareCommand => field ??= new RelayCommand(() =>
-        RunZoom("Interrompi condivisione", () => ZoomClient.StopShare(), () => ScreenShared = false));
+        RunZoom("Interrompi condivisione", () => ZoomClient.StopShare(), () => { ScreenShared = false; AudioShared = false; }));
+
+    public ICommand ShareAudioCommand => field ??= new RelayCommand(() => StartWaitingAudio());
+
+    public ICommand StopAudioCommand => field ??= new RelayCommand(() => StopAudio());
 
     public ICommand EndMeetingZoomCommand => field ??= new RelayCommand(() =>
-        RunZoom("Fine adunanza", () => ZoomClient.MuteAll(allowUnmute: true), () =>
-        {
-            _endDone = true;
-            UpdateZoomStep();
-            ShowStatus("Tutti muti, possono riattivarsi per salutarsi.");
-        }));
+        RunZoom("Fine adunanza", () => ZoomClient.MuteAll(allowUnmute: true),
+            () => ShowStatus("Tutti muti, possono riattivarsi per salutarsi.")));
 
-    public ICommand WaitingMusicNowCommand => field ??= new RelayCommand(() => StartWaitingMusic());
-
-    void StopMusic(bool auto = false)
-    {
-        bool playing = MusicOn;
-        RunZoom(auto ? "Fine della musica d'attesa" : "Ferma musica", () =>
-        {
-            if (playing) JwMusic.Pause(); // prima la sala, subito; chiudere l'audio condiviso in Zoom richiede qualche decimo
-            ZoomClient.StopShare(audioOnly: true);
-        }, () => MusicOn = false);
-    }
+    void StopAudio(bool auto = false) =>
+        RunZoom(auto ? "Fine dell'audio condiviso" : "Interrompi audio", () => ZoomClient.StopShare(audioOnly: true), () => AudioShared = false);
 
     void TickZoom(TimerSnapshot s)
     {
@@ -114,47 +84,27 @@ public sealed partial class MainViewModel
         }
 
         if (IsTemporaryMeeting || Timer.MeetingStart is not { } start) return;
-        if (_zoomMeeting != start)
-        {
-            _zoomMeeting = start;
-            _endReady = _endDone = false;
-            UpdateZoomStep();
-        }
 
-        // la musica si ferma da sola allo scadere del countdown o alla prima parte avviata
+        // l'audio condiviso si chiude da solo allo scadere del countdown o alla prima parte avviata
         var left = start - s.Now;
         bool before = left > TimeSpan.Zero;
         bool started = (_zoomBeforeStart && !before) || (s.IsRunning && !_zoomWasRunning);
         _zoomBeforeStart = before;
         _zoomWasRunning = s.IsRunning;
-        if (MusicOn && started) { StopMusic(auto: true); return; }
+        if (AudioShared && started) { StopAudio(auto: true); return; }
 
-        if (s.IsRunning) return;
-        bool music = WaitingMusic.Due(left, Settings.MusicMinutes, _musicFor == start);
-        bool share = WaitingMusic.Due(left, Settings.ShareMusicMinutes, _shareMusicFor == start);
-        if (!music && !share) return;
-        if (music) _musicFor = start;
-        if (share) _shareMusicFor = start;
-        StartWaitingMusic(music, share);
+        if (s.IsRunning || !WaitingMusic.Due(left, Settings.ShareMusicMinutes, _audioFor == start)) return;
+        _audioFor = start;
+        StartWaitingAudio();
     }
 
-    /// <summary>Quello che fa il countdown, subito: per provarlo, o se il PC è stato acceso tardi.</summary>
-    public void StartWaitingMusic(bool music = true, bool share = true) =>
-        RunZoom("Musica d'attesa", () =>
+    /// <summary>Quello che succede prima dell'inizio, subito: per provarlo, o se il PC è stato acceso tardi.</summary>
+    public void StartWaitingAudio() =>
+        RunZoom("Muto e audio condiviso", () =>
         {
-            if (share) ZoomClient.MuteAll(allowUnmute: false);
-            if (music) JwMusic.Start();
-            if (share) ZoomClient.ShareAudio();
-        }, () => { if (music) MusicOn = true; });
-
-    // l'ultimo cantico è nella parte conclusiva: da lì in poi una condivisione che finisce porta alla fine adunanza
-    bool InClosing()
-    {
-        var parts = Timer.Meeting.Parts;
-        if (parts.Count == 0) return false;
-        int closing = parts.FindIndex(p => p.Section == PartSection.Closing);
-        return Timer.SelectedIndex >= (closing >= 0 ? closing : parts.Count - 1);
-    }
+            ZoomClient.MuteAll(allowUnmute: false);
+            ZoomClient.ShareAudio();
+        }, () => AudioShared = true);
 
     async void RunZoom(string what, Action work, Action? done = null)
     {

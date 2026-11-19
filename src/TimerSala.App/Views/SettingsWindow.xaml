@@ -185,7 +185,7 @@
                 <ListBoxItem Tag="Zoom">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Style="{StaticResource NavIcon}" Text="&#xE714;" />
-                        <TextBlock Text="Zoom e musica" />
+                        <TextBlock Text="Zoom" />
                     </StackPanel>
                 </ListBoxItem>
                 <ListBoxItem Tag="Clicker">
@@ -1117,30 +1117,30 @@
                     </StackPanel>
                 </ScrollViewer>
 
-                <!-- ═════════════ ZOOM E MUSICA ═════════════ -->
+                <!-- ═════════════ ZOOM ═════════════ -->
                 <ScrollViewer Tag="Zoom" Style="{StaticResource Page}">
                     <StackPanel MaxWidth="900">
-                        <TextBlock Style="{StaticResource PageTitle}" Text="Zoom e musica" />
-                        <TextBlock Style="{StaticResource PageSubtitle}" Text="TimerSala fa partire la musica d'attesa prima dell'inizio. Durante l'adunanza un solo pulsante condivide lo schermo e alla fine mette tutti muti." />
+                        <TextBlock Style="{StaticResource PageTitle}" Text="Zoom" />
+                        <TextBlock Style="{StaticResource PageSubtitle}" Text="Nel controller e nella mini il pulsante condivide lo schermo in un clic. Prima dell'inizio Zoom può mettere tutti muti e mandare a casa l'audio della sala." />
 
                         <Border Style="{StaticResource Panel}">
                             <Border Style="{StaticResource FirstRow}">
                                 <DockPanel>
                                     <CheckBox DockPanel.Dock="Right" Style="{StaticResource Switch}" IsChecked="{Binding ZoomEnabled}" />
                                     <StackPanel VerticalAlignment="Center">
-                                        <TextBlock Style="{StaticResource RowLabel}" Text="Pilota Zoom e JW Library" />
-                                        <TextBlock Style="{StaticResource RowHint}" Text="Serve Zoom in italiano, già in riunione come organizzatore, e JW Library su questo PC." />
+                                        <TextBlock Style="{StaticResource RowLabel}" Text="Pilota Zoom" />
+                                        <TextBlock Style="{StaticResource RowHint}" Text="Serve Zoom in italiano su questo PC, già in riunione come organizzatore." />
                                     </StackPanel>
                                 </DockPanel>
                             </Border>
                         </Border>
 
-                        <!-- prima dell'inizio: i due tempi, poi una linea del tempo che si aggiorna con i minuti scelti -->
+                        <!-- prima dell'inizio: il tempo, poi una linea del tempo che si aggiorna con i minuti scelti -->
                         <Border Style="{StaticResource Panel}" IsEnabled="{Binding ZoomEnabled}">
                             <StackPanel>
                                 <DockPanel Margin="0,0,0,12">
-                                    <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Padding="14,6" VerticalAlignment="Center" Command="{Binding TestWaitingMusicCommand}"
-                                            ToolTip="Muta tutti, avvia la musica e la condivide in Zoom, come farà il countdown. Per fermarla usa «Ferma musica» nel controller">
+                                    <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}" Padding="14,6" VerticalAlignment="Center" Command="{Binding TestWaitingAudioCommand}"
+                                            ToolTip="Muta tutti e condivide l'audio del computer, come farà prima dell'inizio. Per fermarlo usa la freccia accanto al pulsante Zoom › Interrompi l'audio condiviso">
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Text="&#xE768;" FontFamily="{StaticResource IconFont}" VerticalAlignment="Center" Margin="0,0,8,0" />
                                             <TextBlock Text="Prova ora" />
@@ -1148,32 +1148,20 @@
                                     </Button>
                                     <StackPanel VerticalAlignment="Center">
                                         <TextBlock Style="{StaticResource PanelTitle}" Text="PRIMA DELL'INIZIO" Margin="0" />
-                                        <TextBlock Style="{StaticResource RowHint}" Text="Cosa succede da solo. Con «Prova ora» controlli Zoom e l'audio prima dell'adunanza." />
+                                        <TextBlock Style="{StaticResource RowHint}" Text="Cosa succede da solo. La musica d'attesa la fai partire tu in sala, come sempre." />
                                     </StackPanel>
                                 </DockPanel>
 
-                                <UniformGrid Columns="2" Margin="0,0,0,14">
-                                    <Border Background="{DynamicResource SubtleBrush}" CornerRadius="10" Padding="14,12" Margin="0,0,6,0">
-                                        <DockPanel>
-                                            <v:NumberBox DockPanel.Dock="Right" Width="130" Minimum="0" Maximum="60" Step="1" Unit="min" ZeroText="mai" Value="{Binding MusicMinutes}" />
-                                            <TextBlock Text="&#xE8D6;" FontFamily="{StaticResource IconFont}" FontSize="18" Foreground="{DynamicResource AmberBrush}" VerticalAlignment="Center" Margin="0,0,12,0" />
-                                            <StackPanel VerticalAlignment="Center">
-                                                <TextBlock Style="{StaticResource RowLabel}" Text="Musica" />
-                                                <TextBlock Style="{StaticResource RowHint}" Text="prima dell'inizio, in sala" />
-                                            </StackPanel>
-                                        </DockPanel>
-                                    </Border>
-                                    <Border Background="{DynamicResource SubtleBrush}" CornerRadius="10" Padding="14,12" Margin="6,0,0,0">
-                                        <DockPanel>
-                                            <v:NumberBox DockPanel.Dock="Right" Width="130" Minimum="0" Maximum="60" Step="1" Unit="min" ZeroText="mai" Value="{Binding ShareMusicMinutes}" />
-                                            <TextBlock Text="&#xE74F;" FontFamily="{StaticResource IconFont}" FontSize="18" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" Margin="0,0,12,0" />
-                                            <StackPanel VerticalAlignment="Center">
-                                                <TextBlock Style="{StaticResource RowLabel}" Text="Muto e audio a casa" />
-                                                <TextBlock Style="{StaticResource RowHint}" Text="prima dell'inizio, in Zoom" />
-                                            </StackPanel>
-                                        </DockPanel>
-                                    </Border>
-                                </UniformGrid>
+                                <Border Background="{DynamicResource SubtleBrush}" CornerRadius="10" Padding="14,12" Margin="0,0,0,14">
+                                    <DockPanel>
+                                        <v:NumberBox DockPanel.Dock="Right" Width="130" Minimum="0" Maximum="60" Step="1" Unit="min" ZeroText="mai" Value="{Binding ShareMusicMinutes}" />
+                                        <TextBlock Text="&#xE74F;" FontFamily="{StaticResource IconFont}" FontSize="18" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" Margin="0,0,12,0" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource RowLabel}" Text="Muto e audio a casa" />
+                                            <TextBlock Style="{StaticResource RowHint}" Text="minuti prima dell'inizio: tutti muti, e la musica della sala arriva anche a casa" />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
 
                                 <ItemsControl ItemsSource="{Binding ZoomTimeline}" Focusable="False" Margin="4,0,0,0">
                                     <ItemsControl.ItemTemplate>
@@ -1198,48 +1186,30 @@
                             </StackPanel>
                         </Border>
 
-                        <!-- durante l'adunanza: il percorso del pulsante unico, con i suoi colori veri -->
+                        <!-- durante l'adunanza: il pulsante in vista, con i suoi colori veri; il resto nel menu -->
                         <Border Style="{StaticResource Panel}" IsEnabled="{Binding ZoomEnabled}">
                             <StackPanel>
                                 <TextBlock Style="{StaticResource PanelTitle}" Text="DURANTE L'ADUNANZA" Margin="0" />
                                 <TextBlock Style="{StaticResource RowHint}" Margin="0,2,0,14"
-                                           Text="Nel controller e nella mini c'è un solo pulsante, che fa sempre il passo successivo. Le altre azioni sono nella freccia ⌄ accanto." />
-                                <Grid Margin="0,0,0,16">
+                                           Text="Il pulsante in vista condivide lo schermo e, mentre condividi, la interrompe. Muto, audio del computer e fine adunanza sono nella freccia ⌄ accanto." />
+                                <Grid Margin="0,0,0,16" HorizontalAlignment="Center" Width="520">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <Border Style="{StaticResource FlowChip}" Background="{DynamicResource WaitBrush}">
-                                            <TextBlock HorizontalAlignment="Center"><Run Text="&#xE8D6;" FontFamily="{StaticResource IconFont}" /><Run Text="  Ferma musica" /></TextBlock>
-                                        </Border>
-                                        <TextBlock Style="{StaticResource FlowCaption}" Text="all'invito ad accomodarsi, o da sola all'inizio" />
-                                    </StackPanel>
-                                    <TextBlock Grid.Column="1" Style="{StaticResource FlowArrow}" Text="&#xE72A;" />
-                                    <StackPanel Grid.Column="2">
                                         <Border Style="{StaticResource FlowChip}" Background="{DynamicResource AccentBrush}">
                                             <TextBlock HorizontalAlignment="Center"><Run Text="&#xE7F4;" FontFamily="{StaticResource IconFont}" /><Run Text="  Condividi schermo" /></TextBlock>
                                         </Border>
                                         <TextBlock Style="{StaticResource FlowCaption}" Text="per ogni cantico o video" />
                                     </StackPanel>
-                                    <TextBlock Grid.Column="3" Style="{StaticResource FlowArrow}" Text="&#xE8AB;" ToolTip="Si alternano a ogni cantico" />
-                                    <StackPanel Grid.Column="4">
+                                    <TextBlock Grid.Column="1" Style="{StaticResource FlowArrow}" Text="&#xE8AB;" ToolTip="Si alternano a ogni cantico" />
+                                    <StackPanel Grid.Column="2">
                                         <Border Style="{StaticResource FlowChip}" Background="{DynamicResource StopBrush}">
                                             <TextBlock HorizontalAlignment="Center"><Run Text="&#xE71A;" FontFamily="{StaticResource IconFont}" /><Run Text="  Interrompi" /></TextBlock>
                                         </Border>
                                         <TextBlock Style="{StaticResource FlowCaption}" Text="anche se la interrompi da Zoom" />
-                                    </StackPanel>
-                                    <TextBlock Grid.Column="5" Style="{StaticResource FlowArrow}" Text="&#xE72A;" />
-                                    <StackPanel Grid.Column="6">
-                                        <Border Style="{StaticResource FlowChip}" Background="{DynamicResource EndBrush}">
-                                            <TextBlock HorizontalAlignment="Center"><Run Text="&#xE74F;" FontFamily="{StaticResource IconFont}" /><Run Text="  Fine adunanza" /></TextBlock>
-                                        </Border>
-                                        <TextBlock Style="{StaticResource FlowCaption}" Text="dopo l'ultimo cantico, tutti muti ma liberi di riattivarsi" />
                                     </StackPanel>
                                 </Grid>
                                 <Border Style="{StaticResource FirstRow}">

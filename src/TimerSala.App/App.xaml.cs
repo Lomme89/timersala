@@ -87,7 +87,7 @@ public partial class App : Application
         Theming.UiTheme.Apply(_vm.Settings);
         var main = new MainWindow(_vm);
         MainWindow = main;
-        main.Show();
+        main.Open();
         ListenForSecondInstance(main);
         SetJumpList();
         await _vm.StartWebServerAsync();

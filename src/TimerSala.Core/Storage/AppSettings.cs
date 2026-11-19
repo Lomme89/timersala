@@ -64,11 +64,9 @@ public sealed class AppSettings
 
     public CountdownStyle CountdownStyle { get; set; } = CountdownStyle.Tide;
 
-    // ── Zoom e musica d'attesa (client Zoom in italiano, pilotato da fuori) ──
+    // ── Zoom (client Zoom in italiano, pilotato da fuori) ──
     public bool ZoomEnabled { get; set; }
 
-    /// <summary>Minuti prima dell'inizio in cui parte la musica di JW Library (0 = mai).</summary>
-    public int MusicMinutes { get; set; } = 5;
 
     /// <summary>Minuti prima dell'inizio in cui Zoom muta tutti senza riattivazione e condivide l'audio del computer (0 = mai).</summary>
     public int ShareMusicMinutes { get; set; } = 5;

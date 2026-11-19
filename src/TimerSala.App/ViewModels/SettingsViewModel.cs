@@ -515,13 +515,12 @@ public sealed class SettingsViewModel : ObservableObject
 
     public int CountdownMinutes { get => Draft.CountdownMinutes; set { Edit(s => s.CountdownMinutes = value); OnPropertyChanged(nameof(ZoomTimeline)); } }
 
-    // ───── Zoom e musica ─────
+    // ───── Zoom ─────
 
     public bool ZoomEnabled { get => Draft.ZoomEnabled; set => Edit(s => s.ZoomEnabled = value); }
-    public int MusicMinutes { get => Draft.MusicMinutes; set { Edit(s => s.MusicMinutes = value); OnPropertyChanged(nameof(ZoomTimeline)); } }
     public int ShareMusicMinutes { get => Draft.ShareMusicMinutes; set { Edit(s => s.ShareMusicMinutes = value); OnPropertyChanged(nameof(ZoomTimeline)); } }
 
-    /// <summary>Un passo della linea del tempo prima dell'inizio, nella pagina Zoom e musica.</summary>
+    /// <summary>Un passo della linea del tempo prima dell'inizio, nella pagina Zoom.</summary>
     public sealed record TimelineStep(string When, string Text, Brush Dot, bool HasNext);
 
     /// <summary>Cosa succede da solo prima dell'inizio, nell'ordine, con i minuti scelti.</summary>
@@ -530,19 +529,13 @@ public sealed class SettingsViewModel : ObservableObject
         get
         {
             var steps = new List<(double Min, string Text, string Brush)>();
-            int music = Draft.MusicMinutes, share = Draft.ShareMusicMinutes, countdown = Draft.CountdownMinutes;
-            if (music > 0 && music == share) steps.Add((music, "Zoom mette tutti muti e parte la musica di JW Library, che arriva anche a casa", "AmberBrush"));
-            else
-            {
-                if (music > 0) steps.Add((music, "Parte la musica di JW Library, in sala", "AmberBrush"));
-                if (share > 0) steps.Add((share, "Zoom mette tutti muti e condivide l'audio, così la musica arriva anche a casa", "AccentBrush"));
-            }
+            int share = Draft.ShareMusicMinutes, countdown = Draft.CountdownMinutes;
+            if (share > 0) steps.Add((share, "Zoom mette tutti muti e condivide l'audio del computer: la musica d'attesa che suona in sala arriva anche a casa", "AccentBrush"));
             if (countdown > 0) steps.Add((countdown, "Compare il countdown sullo schermo della sala", "MutedBrush"));
-            steps.Add((0.5, "Quando l'oratore invita ad accomodarsi, premi «Ferma musica»", "AmberBrush"));
-            steps.Add((0, "Se suona ancora, la musica si ferma da sola", "GreenBrush"));
+            steps.Add((0, share > 0 ? "L'audio condiviso si chiude da solo; il pulsante è pronto per condividere lo schermo" : "Il pulsante è pronto per condividere lo schermo", "GreenBrush"));
             var sorted = steps.OrderByDescending(x => x.Min).ToList();
             return sorted.Select((x, i) => new TimelineStep(
-                x.Min == 0 ? "inizio" : x.Min < 1 ? "−0:30" : $"−{x.Min:0} min",
+                x.Min == 0 ? "inizio" : $"−{x.Min:0} min",
                 x.Text, Theming.UiTheme.Brush(x.Brush), i < sorted.Count - 1)).ToList();
         }
     }
@@ -551,7 +544,7 @@ public sealed class SettingsViewModel : ObservableObject
     /// <summary>Le righe lette dalla scheda «Schermi» di Zoom (più quella già scelta).</summary>
     public List<string> ZoomScreens { get; private set => Set(ref field, value); } = [];
 
-    public ICommand TestWaitingMusicCommand => field ??= new RelayCommand(() => _main.StartWaitingMusic());
+    public ICommand TestWaitingAudioCommand => field ??= new RelayCommand(() => _main.StartWaitingAudio());
 
     public ICommand ReadZoomScreensCommand => field ??= new RelayCommand(async () =>
     {

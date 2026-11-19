@@ -166,13 +166,6 @@ static class Native
         PostMessage(h, 0x202, 0, at); // up
     }
 
-    /// <summary>Raggiunge l'app che ha la sessione multimediale di Windows; tasto esteso, come quello di una tastiera vera.</summary>
-    public static void MediaKey(byte key)
-    {
-        keybd_event(key, 0, 1, 0);
-        keybd_event(key, 0, 3, 0);
-    }
-
     public static void Keys(params byte[] chord)
     {
         foreach (var k in chord) keybd_event(k, 0, 0, 0);

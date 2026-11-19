@@ -54,6 +54,7 @@ public class WindowsSmokeTests
 
     [System.Runtime.InteropServices.DllImport("kernel32.dll")]
     static extern uint GetCurrentThreadId();
+[System.Runtime.InteropServices.DllImport("user32.dll")] static extern bool PostMessage(IntPtr hwnd, int msg, IntPtr w, IntPtr l);
 
     delegate bool EnumProc(IntPtr hwnd, IntPtr data);
 
@@ -362,6 +363,33 @@ public class WindowsSmokeTests
         UiTheme.Apply(ControllerTheme.Dark, 1.0);
         Pump();
 
+        // in mini, chiusa dalla barra delle applicazioni (WM_CLOSE alla mini) e riaperta: deve tornare solo la mini.
+        // Con il controller ingrandito, prima restava dietro una finestra grande e vuota
+        Stage("mini chiusa dalla barra e riaperta");
+        app.ShutdownMode = ShutdownMode.OnExplicitShutdown; // qui la «riapertura» avviene nello stesso processo
+        main.WindowState = WindowState.Maximized;
+        Pump();
+        vm.IsMiniMode = true;
+        Pump(600);
+        var mini = app.Windows.OfType<MiniWindow>().Single();
+        PostMessage(new System.Windows.Interop.WindowInteropHelper(mini).Handle, 0x10, 0, 0);
+        Pump(600);
+        Assert.False(main.IsVisible);
+        var vm2 = new MainViewModel(new DataStore(dir));
+        Assert.True(vm2.IsMiniMode);
+        var main2 = new MainWindow(vm2);
+        app.MainWindow = main2;
+        main2.Open();
+        Pump(800);
+        Assert.False(IsWindowVisible(new System.Windows.Interop.WindowInteropHelper(main2).Handle), "il controller è rimasto sullo schermo");
+        Assert.Contains(app.Windows.OfType<MiniWindow>(), w => w.IsVisible && w.ActualHeight < 400);
+        // e il controller, quando si torna, si apre ingrandito e disegnato
+        vm2.IsMiniMode = false;
+        Pump(800);
+        Assert.True(main2.IsVisible);
+        Assert.Equal(WindowState.Maximized, main2.WindowState);
+        Assert.True(((FrameworkElement)main2.Content).ActualWidth > 600);
+        main = main2;
         Stage("chiusura");
         main.Close();
         Pump();

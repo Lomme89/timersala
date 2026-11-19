@@ -1,6 +1,6 @@
 namespace TimerSala.Core.Input;
 
-/// <summary>Zoom: fa quello che dice il pulsante Zoom del controller (ferma musica, condividi, interrompi, fine adunanza).</summary>
+/// <summary>Zoom: fa quello che dice il pulsante Zoom del controller (condividi lo schermo, o interrompi la condivisione).</summary>
 public enum ClickerAction { None, Forward, Back, Zoom }
 
 /// <summary>

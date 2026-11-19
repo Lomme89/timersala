@@ -21,7 +21,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         _vm = vm;
         DataContext = vm;
-        vm.Confirm = msg => ThemedDialog.Show(this, msg, "TimerSala", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
+        vm.Confirm = msg => ThemedDialog.Show(Front, msg, "TimerSala", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
         vm.DisplayTargetChanged += (_, _) => Dispatcher.BeginInvoke(UpdateTimerWindow);
 
         RestorePlacement();
@@ -32,17 +32,7 @@ public partial class MainWindow : Window
         Topmost = vm.Settings.ControllerTopmost;
 
         vm.MiniModeChanged += (_, _) => ApplyMiniMode();
-        Loaded += (_, _) =>
-        {
-            UpdateTimerWindow();
-            ApplyMiniMode();
-            OfferRestore();
-            // la prima volta la configurazione guidata; dopo un aggiornamento le novità (mai nel mezzo di un'adunanza ripresa)
-            if (_vm.IsRunning) return;
-            if (_vm.IsFirstRun && !_vm.Settings.OnboardingDone)
-                Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ApplicationIdle, new Action(ShowWelcome));
-            HelpActions.ShowNewsIfUpdated(this, _vm);
-        };
+        Loaded += (_, _) => Startup();
         LocationChanged += (_, _) => UpdateTopmostOfDisplay();
         vm.Timer.StateChanged += (_, _) => Dispatcher.BeginInvoke(CenterCurrentPart, System.Windows.Threading.DispatcherPriority.Background);
         SystemEvents.DisplaySettingsChanged += OnDisplaySettingsChanged;
@@ -54,6 +44,36 @@ public partial class MainWindow : Window
             [new System.Windows.Controls.Primitives.CustomPopupPlacement(new Point(target.Width - popup.Width, target.Height * 1.18),
                 System.Windows.Controls.Primitives.PopupPrimaryAxis.Horizontal)];
     }
+
+    /// <summary>
+    /// Apre il programma. In modalità mini il controller non si mostra nemmeno per un attimo: mostrato e nascosto subito,
+    /// se era ingrandito restava sullo schermo una finestra grande e vuota (WPF la credeva già nascosta).
+    /// </summary>
+    public void Open()
+    {
+        if (!_vm.IsMiniMode) { Show(); return; }
+        new System.Windows.Interop.WindowInteropHelper(this).EnsureHandle(); // posizione ricordata, come con Show
+        Startup();
+    }
+
+    bool _started;
+
+    void Startup()
+    {
+        if (_started) return; // aperto nella mini: Loaded arriva solo quando si torna al controller
+        _started = true;
+        UpdateTimerWindow();
+        ApplyMiniMode();
+        OfferRestore();
+        // la prima volta la configurazione guidata; dopo un aggiornamento le novità (mai nel mezzo di un'adunanza ripresa)
+        if (_vm.IsRunning) return;
+        if (_vm.IsFirstRun && !_vm.Settings.OnboardingDone)
+            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ApplicationIdle, new Action(ShowWelcome));
+        HelpActions.ShowNewsIfUpdated(Front, _vm);
+    }
+
+    /// <summary>La finestra che l'operatore vede, mini o controller: i dialoghi vanno sopra questa.</summary>
+    Window Front => _vm.IsMiniMode && _mini is not null ? _mini : this;
 
     // Windows avvisa del cambio di schermi prima di aver finito di sistemarli (e a volte sposta le finestre dopo):
     // si ricontrolla subito e poi ancora due volte
@@ -76,7 +96,7 @@ public partial class MainWindow : Window
     /// <summary>Riporta in primo piano il programma (controller o mini), per esempio se lo si apre una seconda volta.</summary>
     public void BringToFront()
     {
-        Window w = _vm.IsMiniMode && _mini is not null ? _mini : this;
+        Window w = Front;
         w.Show();
         if (w.WindowState == WindowState.Minimized) w.WindowState = WindowState.Normal;
         w.Activate();
@@ -132,7 +152,7 @@ public partial class MainWindow : Window
     void OfferRestore()
     {
         if (_vm.PendingRestore is not { } session) return;
-        var owner = _vm.IsMiniMode && _mini is not null ? (Window)_mini : this;
+        var owner = Front;
         var dlg = new RestoreWindow(_vm.DescribeRestore(session)) { Owner = owner };
         _vm.Restore(dlg.ShowDialog() == true ? dlg.Choice : MainViewModel.RestoreChoice.StartOver);
     }
@@ -367,7 +387,7 @@ public partial class MainWindow : Window
     }
 
     /// <summary>Configurazione guidata (al primo avvio, o da Impostazioni → Programma).</summary>
-    public void ShowWelcome() => new WelcomeWindow(_vm) { Owner = this }.ShowDialog();
+    public void ShowWelcome() => new WelcomeWindow(_vm) { Owner = Front }.ShowDialog();
 
     void ExportWeek_Click(object sender, RoutedEventArgs e) => ExchangeDialogs.ExportWeek(this, _vm);
 
@@ -375,7 +395,7 @@ public partial class MainWindow : Window
 
     void ShowPhoneQr()
     {
-        Window owner = _vm.IsMiniMode && _mini is not null ? _mini : this;
+        Window owner = Front;
         if (_vm.WebUrl is null)
         {
             ThemedDialog.Show(owner, "Il server web non è attivo. Attivalo in Impostazioni → Rete e telefono.", "TimerSala", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -434,7 +454,7 @@ public partial class MainWindow : Window
     protected override void OnClosing(CancelEventArgs e)
     {
         if (_vm.CloseWarning() is { } warning &&
-            ThemedDialog.Show(_vm.IsMiniMode && _mini is not null ? _mini : this, $"{warning}\nChiudere comunque TimerSala?", "TimerSala",
+            ThemedDialog.Show(Front, $"{warning}\nChiudere comunque TimerSala?", "TimerSala",
                 MessageBoxButton.YesNo, MessageBoxImage.Warning, yes: "Chiudi", no: "Resta aperto") != MessageBoxResult.Yes)
         {
             e.Cancel = true;
